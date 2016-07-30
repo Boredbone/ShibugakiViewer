@@ -25,6 +25,7 @@ using System.Diagnostics;
 using System.Reactive;
 using ShibugakiViewer.Views.Behaviors;
 using System.Reactive.Subjects;
+using Boredbone.XamlTools;
 
 namespace ShibugakiViewer.Views.Controls
 {
@@ -774,7 +775,7 @@ namespace ShibugakiViewer.Views.Controls
 
         //public event Action<object, MouseButtonEventArgs> PanelTapped;
         //public event Action<object, MouseButtonEventArgs> PanelDoubleTapped;
-        public event Action<object, MouseButtonEventArgs> PanelRightTapped;
+        public event Action<object, PointerTapEventArgs> PanelRightTapped;
 
 
         public ScrollViewer ScrollViewer { get { return this.scrollViewer; } }
@@ -888,7 +889,7 @@ namespace ShibugakiViewer.Views.Controls
                 //    await Task.Delay(100);
                 //}
 
-                Point p = e.InnerArgs.GetPosition(this.scrollViewer);
+                Point p = e.GetPosition(this.scrollViewer);
                 this.StartAutoScaling(p.X, p.Y);
             }
         }
@@ -933,6 +934,10 @@ namespace ShibugakiViewer.Views.Controls
                     }
 
                 }
+                //else if (e.Span >= TimeSpan.FromMilliseconds(shortTapTimeThreshold))
+                //{
+                //    this.PanelRightTapped?.Invoke(o, e);
+                //}
 
                 this.TapCommand?.Execute(new ViewerTapEventArgs()
                 {
@@ -944,7 +949,7 @@ namespace ShibugakiViewer.Views.Controls
                 });
             }
         }
-        
+
 
         /// <summary>
         /// 右クリックイベント
@@ -952,7 +957,8 @@ namespace ShibugakiViewer.Views.Controls
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void scrollViewer_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
-            => this.PanelRightTapped?.Invoke(sender, e);
+            => this.PanelRightTapped?.Invoke(sender, new PointerTapEventArgs(e));
+        
 
         /// <summary>
         /// 画像サイズ変更
@@ -1718,6 +1724,39 @@ namespace ShibugakiViewer.Views.Controls
             var p = e.GetPosition((UIElement)sender);
             this.PointerMoveCommand?.Execute(p);
         }
+
+        private void scrollViewer_ManipulationDelta(object sender, ManipulationDeltaEventArgs e)
+        {
+            var scale = Math.Max(e.DeltaManipulation.Scale.X,e.DeltaManipulation.Scale.Y);
+
+            if (scale != 0 && scale!=1)
+            {
+                this.ZoomImage(null, null, this.ZoomFactor * scale, 0, false);
+            }
+        }
+
+        private void Grid_ManipulationDelta(object sender, ManipulationDeltaEventArgs e)
+        {
+            var scale = Math.Max(e.DeltaManipulation.Scale.X, e.DeltaManipulation.Scale.Y);
+
+            if (scale != 0)
+            {
+                this.ZoomImage(null, null, this.ZoomFactor * scale, 0, false);
+            }
+
+        }
+
+
+        //private void imageGrid_ManipulationDelta(object sender, ManipulationDeltaEventArgs e)
+        //{
+        //    var scale = Math.Max(e.DeltaManipulation.Scale.X, e.DeltaManipulation.Scale.Y);
+        //
+        //    if (scale != 0)
+        //    {
+        //        this.ZoomImage(null, null, this.ZoomFactor * scale, 0, false);
+        //    }
+        //
+        //}
     }
 
 

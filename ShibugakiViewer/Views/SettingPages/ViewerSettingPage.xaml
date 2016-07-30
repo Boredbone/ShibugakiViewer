@@ -117,6 +117,17 @@
                 Content="IsFolderUpdatedNotificationVisible" 
                 IsChecked="{Binding IsFolderUpdatedNotificationVisible.Value,Mode=TwoWay}"/>
 
+                <TextBlock
+                        Text="{x:Static properties:Resources.CursorKeyFuncHelp_Header}"/>
+
+                <ComboBox 
+                    SelectedIndex="{Binding CursorKeyBind.Value,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                    <ComboBoxItem 
+                            Content="{x:Static properties:Resources.CursorKeyToFlipHelp_Content}"/>
+                    <ComboBoxItem
+                            Content="{x:Static properties:Resources.CursorKeyToMoveHelp_Content}"/>
+                </ComboBox>
+                
             </StackPanel>
         </ScrollViewer>
     </Grid>

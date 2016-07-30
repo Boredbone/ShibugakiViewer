@@ -22,6 +22,7 @@ namespace ShibugakiViewer.ViewModels.SettingPages
         
         public ReactiveProperty<string> Text { get; }
 
+        public ReactiveProperty<int> CursorKeyBind { get; }
         public ReactiveProperty<int> ThumbnailSize { get; }
         public ReactiveProperty<bool> IsAutoInformationPaneEnabled { get; }
 
@@ -94,6 +95,10 @@ namespace ShibugakiViewer.ViewModels.SettingPages
             this.IsFolderUpdatedNotificationVisible = core
                 .ToReactivePropertyAsSynchronized(x => x.IsFolderUpdatedNotificationVisible)
                 .AddTo(this.Disposables);
+
+            this.CursorKeyBind = core
+                .ToReactivePropertyAsSynchronized(x => x.CursorKeyBind).AddTo(this.Disposables);
+
 
             this.GenerateNewClientCommand = new ReactiveCommand()
                 .WithSubscribe(_ => core.ShowNewClient(null), this.Disposables);

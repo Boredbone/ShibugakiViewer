@@ -30,7 +30,7 @@ namespace ShibugakiViewer.Models
     {
 
         private const double resizedImageLoadDelayMillisec = 200.0;
-        private const double originalImageLoadDelayMillisec = 1200.0;//1200.0;
+        private const double originalImageLoadDelayMillisec = 1200.0;
         private const double animationStartDelayMillisec = 500.0;
 
         /// <summary>
@@ -72,18 +72,13 @@ namespace ShibugakiViewer.Models
                 }
             }
         }
-
-        //private Subject<long> CatalogIndexChangedSubject { get; }
-        //private Subject<long> ViewerIndexChangedSubject { get; }
+        
         public ReactiveProperty<long> CatalogIndex { get; }
         public ReactiveProperty<long> ViewerIndex { get; }
 
 
         public double ViewWidth { get; set; }
         public double ViewHeight { get; set; }
-
-        //public IObservable<ViewState> HistoryChanged => this.History.StateChanged;
-        //public ViewState CurrentState => this.History.Current;
 
 
         public IObservable<SearchCompletedEventArgs> SearchCompleted => this.front.SearchCompleted;

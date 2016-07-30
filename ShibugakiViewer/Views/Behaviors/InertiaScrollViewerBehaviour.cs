@@ -12,6 +12,9 @@ using Boredbone.XamlTools.Extensions;
 using System.Windows.Controls;
 using System.Windows.Interactivity;
 using System.Windows.Media.Animation;
+using Boredbone.XamlTools;
+using System.Reactive.Subjects;
+using System.Diagnostics;
 
 namespace ShibugakiViewer.Views.Behaviors
 {
@@ -46,8 +49,8 @@ namespace ShibugakiViewer.Views.Behaviors
 
         private const double _maxDampingVelocity = 0.5;
         private const double _minDampingVelocity = 15.0;
-        
 
+        private bool isTouch;
 
         #region CurrentOffset
 
@@ -82,10 +85,11 @@ namespace ShibugakiViewer.Views.Behaviors
             var x = point.Value.X.Limit(0, viewer.ScrollableWidth);
             var y = point.Value.Y.Limit(0, viewer.ScrollableHeight);
 
+            viewer.ScrollToHorizontalOffset(x);
+            viewer.ScrollToVerticalOffset(y);
 
-            viewer.ScrollToHorizontalOffset(point.Value.X);
-            viewer.ScrollToVerticalOffset(point.Value.Y);
 
+            //Debug.WriteLine($"({x},{y}):({viewer.HorizontalOffset},{viewer.VerticalOffset})");
         }
 
         #endregion
@@ -169,6 +173,7 @@ namespace ShibugakiViewer.Views.Behaviors
 
 
                     // マウスダウン、マウスアップ、マウスムーブのIObservable
+                    /*
                     var mouseDown = Observable.FromEvent<MouseButtonEventHandler, MouseButtonEventArgs>(
                         h => (s, e) => h(e),
                         h => target.PreviewMouseLeftButtonDown += h,
@@ -182,8 +187,46 @@ namespace ShibugakiViewer.Views.Behaviors
                     var mouseUp = Observable.FromEvent<MouseButtonEventHandler, MouseButtonEventArgs>(
                         h => (s, e) => h(e),
                         h => target.PreviewMouseLeftButtonUp += h,
-                        h => target.PreviewMouseLeftButtonUp -= h);
+                        h => target.PreviewMouseLeftButtonUp -= h);*/
 
+                    var touchCount = 0;
+
+                    this.AssociatedObject
+                        .ObserveTouchCountDelta().Subscribe(x =>
+                        {
+                            touchCount += x;
+                            //Debug.WriteLine(touchCount);
+
+                            if (touchCount > 1)
+                            {
+                                this.isMouseCapturing = false;
+                            }
+                        })
+                        .AddTo(this.Disposables, "TouchCount");
+
+                    var mouseDown = Observable.FromEvent<MouseButtonEventHandler, MouseButtonEventArgs>(
+                        h => (s, e) => h(e),
+                        h => target.PreviewMouseLeftButtonDown += h,
+                        h => target.PreviewMouseLeftButtonDown -= h)
+                        .Select(x => new PointerTapEventArgs(x))
+                        .Merge(this.AssociatedObject.ManipulationStartedAsObservable());
+
+                    var mouseMove = Observable.FromEvent<MouseEventHandler, MouseEventArgs>(
+                        h => (s, e) => h(e),
+                        h => target.MouseMove += h,
+                        h => target.MouseMove -= h)
+                        .Select(x => new PointerTapEventArgs(x))
+                        .Merge(this.AssociatedObject.ManipulationDeltaAsObservable()
+                        .Where(__ => touchCount == 1))
+                        .Where(x => x.IsTouch == this.isTouch);
+
+                    var mouseUp = Observable.FromEvent<MouseButtonEventHandler, MouseButtonEventArgs>(
+                        h => (s, e) => h(e),
+                        h => target.PreviewMouseLeftButtonUp += h,
+                        h => target.PreviewMouseLeftButtonUp -= h)
+                        .Select(x => new PointerTapEventArgs(x))
+                        .Merge(this.AssociatedObject.ManipulationCompletedAsObservable())
+                        .Where(x => x.IsTouch == this.isTouch);
 
 
                     mouseMove
@@ -217,9 +260,14 @@ namespace ShibugakiViewer.Views.Behaviors
         /// ダウン時動作
         /// </summary>
         /// <param name="e"></param>
-        private void OnDown(MouseButtonEventArgs e, UIElement target)
+        private void OnDown(PointerTapEventArgs e, UIElement target)
         {
             // マウスムーブをマウスダウンまでスキップ。マウスダウン時にマウスをキャプチャ
+
+            if (this.isMouseCapturing)
+            {
+                return;
+            }
 
             this.StopAnimation();
             //this.story?.Pause();
@@ -235,9 +283,10 @@ namespace ShibugakiViewer.Views.Behaviors
             this.startOffset = new Vector
                 (this.AssociatedObject.HorizontalOffset, this.AssociatedObject.VerticalOffset);
 
+            this.isTouch = e.IsTouch;
 
             //this.isInartiaMoving = false;
-            this.isMouseCapturing = false;
+            //this.isMouseCapturing = false;
 
             //if (e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
             {
@@ -250,7 +299,7 @@ namespace ShibugakiViewer.Views.Behaviors
         /// 移動中動作
         /// </summary>
         /// <param name="e"></param>
-        private void OnMove(MouseEventArgs e, UIElement target)
+        private void OnMove(PointerTapEventArgs e, UIElement target)
         {
             //this.isInartiaMoving = false;
 
@@ -270,7 +319,7 @@ namespace ShibugakiViewer.Views.Behaviors
         /// アップ時動作
         /// </summary>
         /// <param name="e"></param>
-        private void OnUp(MouseButtonEventArgs e, UIElement target)
+        private void OnUp(PointerTapEventArgs e, UIElement target)
         {
             if (target?.IsMouseCaptured == true)
             {

@@ -245,6 +245,34 @@
                         Text="{Binding CurrentSearch.Value.DateLastUsed, StringFormat={}{0:G}}"
                         TextWrapping="Wrap" FontSize="{StaticResource NormalTextSize}"
                         Margin="8"/>
+
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Bottom"
+                          Visibility="{Binding IsFavoriteSearch.Value,Mode=OneWay,
+                        Converter={StaticResource TrueToVisibleConverter}}"
+                          Margin="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition MaxWidth="300"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock 
+                            Grid.Column="0"
+                            Text="{x:Static properties:Resources.Name}"
+                            TextWrapping="Wrap" FontSize="{StaticResource NormalTextSize}"
+                            VerticalAlignment="Bottom"
+                            Margin="0"/>
+                        <TextBox
+                            Grid.Column="1"
+                            Text="{Binding CurrentSearch.Value.Name,Mode=TwoWay,UpdateSourceTrigger=Explicit}"
+                            HorizontalAlignment="Stretch"
+                            Margin="8,0,0,0"
+                            MaxWidth="300"
+                            Background="#80FFFFFF"
+                            FontSize="{StaticResource NormalTextSize}"
+                            VerticalAlignment="Bottom"
+                            behaviors:TextBoxBehavior.UpdateByReturn="True"
+                            />
+                    </Grid>
                 </Grid>
             </Grid>
             <!--

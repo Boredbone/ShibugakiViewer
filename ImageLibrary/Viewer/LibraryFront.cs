@@ -265,22 +265,6 @@ namespace ImageLibrary.Viewer
 
         private async Task SearchMainAsync(long offset, int takes)
         {
-            //ISearchCriteria criteria;
-            //
-            //if (this.FeaturedGroup != null)
-            //{
-            //    criteria = this.FeaturedGroup;
-            //}
-            //else if (this.SearchInformation != null)
-            //{
-            //    criteria = library.Searcher
-            //        .AddSearchToDictionaryAndActivate(this.SearchInformation);
-            //}
-            //else
-            //{
-            //    return;
-            //}
-
             var criteria = this.GetActiveSearch();
 
             if (criteria == null)
@@ -328,8 +312,6 @@ namespace ImageLibrary.Viewer
                     offset = 0;
                 }
             }
-
-            //var takes = this.Takes;
 
             var result = await this.RequestSearchAsync(criteria, offset, takes).ConfigureAwait(false);
 
@@ -464,25 +446,16 @@ namespace ImageLibrary.Viewer
                     if (direction == 0)
                     {
                         margin = (searchLengthMax - searchLength) / 2;
-                        //endSearch = searchLength + startSearch + margin;
                         startSearch = startSearch - margin;
-                    }
-                    else if (direction > 0)
-                    {
-                        //margin = searchLengthMax - searchLength;
-                        //endSearch = searchLength + startSearch + margin;
                     }
                     else if (direction < 0)
                     {
-                        //margin = searchLengthMax - searchLength;
-                        //endSearch = searchLength + startSearch;
                         startSearch = startSearch - margin;
                     }
                     searchLength += margin;
                 }
 
                 this.StartSearchAsync(startSearch, searchLength, wait).FireAndForget();
-                //this.StartSearchAsync(offset + result.Start, result.End - result.Start + 1, wait).FireAndForget();
             }
 
             return result.Result.Where(x => x != dummyRecord).ToArray();
@@ -612,7 +585,6 @@ namespace ImageLibrary.Viewer
                 .ToList()
                 .Find(x => x.Value?.Id != null && x.Value.Id.Equals(value.Id));
 
-
             return (item.Value != null) ? item.Key : -1;
 
             //var item = this.Cache
@@ -624,8 +596,6 @@ namespace ImageLibrary.Viewer
 
         public async Task<long> FindIndexFromDatabaseAsync(Record value)
         {
-            //var criteria = (ISearchCriteria)this.FeaturedGroup ?? this.SearchInformation;
-            //return await this.library.FindIndexAsync(criteria, value);
             return await this.library.FindIndexAsync(this.GetActiveSearch(), value);
         }
 
@@ -648,15 +618,7 @@ namespace ImageLibrary.Viewer
             this.SetSearch(null, false);
 
             this.Length.Value = this.Cache.Count;
-
-            //if (this.Cache.Count == 1)
-            //{
-            //    
-            //    Task.Run(async () =>
-            //    {
-            //    })
-            //    .FireAndForget();
-            //}
+            
 
             return recors;
         }

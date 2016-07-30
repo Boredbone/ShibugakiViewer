@@ -74,7 +74,9 @@
                       ScrollChanged="scrollViewer_ScrollChanged"
                       MouseRightButtonDown="scrollViewer_MouseRightButtonDown"
                       PreviewMouseWheel="scrollViewer_PreviewMouseWheel"
-                      MouseMove="scrollViewer_MouseMove">
+                      MouseMove="scrollViewer_MouseMove"
+                      ManipulationDelta="scrollViewer_ManipulationDelta"
+                      IsManipulationEnabled="True">
             <!--
                       MouseWheel="Grid_MouseWheel"
                       MouseDoubleClick="scrollViewer_MouseDoubleClick"

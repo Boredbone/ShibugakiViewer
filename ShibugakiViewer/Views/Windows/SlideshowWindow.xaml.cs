@@ -39,25 +39,5 @@ namespace ShibugakiViewer.Views.Windows
         {
             this.Dispose();
         }
-
-
-        //public void OpenPopup
-        //    (FrameworkElement content, Thickness position,
-        //    HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment,
-        //    FrameworkElement dock = null, bool isMaskVisible = true)
-        //{
-        //    this.popupDialog.IsMasked = isMaskVisible;
-        //    this.popupDialog.DockControl = dock;
-        //    this.popupDialog.HorizontalDialogAlignment = horizontalAlignment;
-        //    this.popupDialog.VerticalDialogAlignment = verticalAlignment;
-        //    this.popupDialog.Position = position;
-        //    this.popupDialog.DialogContent = content;
-        //    this.popupDialog.IsOpen = true;
-        //}
-        //
-        //public void ClosePopup()
-        //{
-        //    this.popupDialog.IsOpen = false;
-        //}
     }
 }

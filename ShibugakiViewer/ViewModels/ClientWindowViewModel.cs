@@ -6,9 +6,7 @@ using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using Boredbone.Utility.Extensions;
 using Boredbone.Utility.Notification;
 using Database.Search;
@@ -33,6 +31,8 @@ namespace ShibugakiViewer.ViewModels
 
         private const double middleWindowWidth = 720.0;
         private const double wideWindowWidth = 970.0;
+        private const double compactPaneWidth = 48.0;// (double)Application.Current.Resources["CompactPaneWidth"];
+        private const double openPaneWidth = 320.0;// (double)Application.Current.Resources["OpenPaneWidth"];
 
 
         public CatalogPageViewModel Catalog
@@ -76,21 +76,7 @@ namespace ShibugakiViewer.ViewModels
             }
         }
         private SearchPageViewModel _fieldSearch;
-
-        //public SlideshowPageViewModel Slideshow
-        //{
-        //    get { return _fieldSlideshow; }
-        //    set
-        //    {
-        //        if (_fieldSlideshow != value)
-        //        {
-        //            _fieldSlideshow = value;
-        //            RaisePropertyChanged(nameof(Slideshow));
-        //        }
-        //    }
-        //}
-        //private SlideshowPageViewModel _fieldSlideshow;
-
+        
 
         public ReactiveProperty<int> SelectedTab { get; }
 
@@ -125,31 +111,17 @@ namespace ShibugakiViewer.ViewModels
         public ReactiveProperty<double> JumpListWidth { get; }
 
         public ReactiveProperty<OptionPaneType> SelectedInformationPage { get; }
-
-        //public ReactiveProperty<SolidColorBrush> InformationToggleBackgroud { get; }
-        //public ReactiveProperty<SolidColorBrush> SettingToggleBackgroud { get; }
+        
 
         public ReactiveCommand<string> OptionPageCommand { get; }
 
         private ReactiveProperty<PaneMode> DefaultPaneMode { get; }
-        //public ReactiveProperty<bool> IsMenuAlwaysVisible { get; set; }
 
         public ReactiveProperty<Visibility> OptionPaneVisibility { get; }
         public ReactiveProperty<Visibility> PaneOpenButtonVisibility { get; }
         public ReactiveProperty<Visibility> PaneFixButtonVisibility { get; }
 
         public ReactiveProperty<bool> IsPopupOpen { get; }
-        ////public ReactiveCommand PopupCloseCommand { get; }
-        //public ReactiveProperty<FrameworkElement> PopupContent { get; }
-        //public ReactiveProperty<FrameworkElement> PopupDockControl { get; }
-        //public ReactiveProperty<Thickness> PopupPosition { get; }
-        //public ReactiveProperty<HorizontalAlignment> PopupHorizontalAlignment { get; }
-        //public ReactiveProperty<VerticalAlignment> PopupVerticalAlignment { get; }
-        ////public ReactiveProperty<Brush> PopupMask { get; }
-        //public ReactiveProperty<bool> IsPopupMaskEnabled { get; }
-
-        //private Brush maskBrush;
-        //private Brush transparentBrush = new SolidColorBrush(Colors.Transparent);
 
         public ReadOnlyReactiveProperty<Record> SelectedRecord => this.Client.SelectedRecord;
         public ReadOnlyReactiveProperty<string> WindowTitle { get; }
@@ -289,8 +261,8 @@ namespace ShibugakiViewer.ViewModels
                 .ToReactiveProperty(PaneMode.AlwaysVisible)
                 .AddTo(this.Disposables);
 
-            var compactPaneWidth = 48.0;// (double)Application.Current.Resources["CompactPaneWidth"];
-            var openPaneWidth = 320.0;// (double)Application.Current.Resources["OpenPaneWidth"];
+            //var compactPaneWidth = 48.0;// (double)Application.Current.Resources["CompactPaneWidth"];
+            //var openPaneWidth = 320.0;// (double)Application.Current.Resources["OpenPaneWidth"];
 
 
 
@@ -326,28 +298,7 @@ namespace ShibugakiViewer.ViewModels
                         }
                     }
                 }, this.Disposables);
-
-            //this.IsInformationPaneOpen
-            //    .Subscribe(x =>
-            //    {
-            //        if (x)
-            //        {
-            //            if (this.prevPaneSelected == OptionPaneType.None)
-            //            {
-            //                this.prevPaneSelected = OptionPaneType.NoInformation;
-            //            }
-            //            this.ShowInformationPane();
-            //            this.IsPaneOpen.Value = true;
-            //        }
-            //        else
-            //        {
-            //            if (this.SelectedInformationPage.Value != OptionPaneType.Setting)
-            //            {
-            //                this.SelectedInformationPage.Value = OptionPaneType.None;
-            //            }
-            //        }
-            //    })
-            //    .AddTo(this.Disposables);
+            
 
 
             //設定
@@ -372,26 +323,7 @@ namespace ShibugakiViewer.ViewModels
                         }
                     }
                 }, this.Disposables);
-
-            //this.IsSettingPaneOpen
-            //    .Subscribe(x =>
-            //    {
-            //        if (x)
-            //        {
-            //            this.SelectedInformationPage.Value = OptionPaneType.Setting;
-            //            this.IsPaneOpen.Value = true;
-            //        }
-            //        else
-            //        {
-            //            if (this.SelectedInformationPage.Value == OptionPaneType.Setting)
-            //            {
-            //                this.SelectedInformationPage.Value = OptionPaneType.None;
-            //            }
-            //        }
-            //    })
-            //    .AddTo(this.Disposables);
-
-
+            
 
 
 
@@ -454,72 +386,14 @@ namespace ShibugakiViewer.ViewModels
                 }
             }).AddTo(this.Disposables);
 
-
-            //this.InformationToggleBackgroud = this.SelectedInformationPage
-            //    .Select(x => (x == (int)OptionPaneType.ItemInfo || x == (int)OptionPaneType.SelectedItems)
-            //        ? new SolidColorBrush(Colors.DarkGray) : new SolidColorBrush(Colors.Transparent))
-            //    .ToReactiveProperty().AddTo(this.Disposables);
-            //
-            //this.SettingToggleBackgroud = this.SelectedInformationPage
-            //    .Select(x => (x == (int)OptionPaneType.Setting)
-            //        ? new SolidColorBrush(Colors.DarkGray) : new SolidColorBrush(Colors.Transparent))
-            //    .ToReactiveProperty().AddTo(this.Disposables);
-
+            
 
 
             this.OpenSettingWindowCommand = new ReactiveCommand()
                 .WithSubscribe(_ => ((App)Application.Current).ShowSettingWindow(), this.Disposables);
 
             this.OptionPageCommand = new ReactiveCommand<string>().AddTo(this.Disposables);
-
-            /*
-            this.OptionPageCommand.Subscribe(x =>
-            {
-                int id;
-                if (!int.TryParse(x, out id))
-                {
-                    id = NormalPane;
-                }
-
-                if (id >= 0 && this.OptionPageSelected.Value != id)
-                {
-                    this.OptionPageSelected.Value = id;
-
-                    switch (id)
-                    {
-                        case InformationPane:
-                            var page = this.MainFrame.Content as IInformationPaneUser;
-                            if (page != null)
-                            {
-                                page.SetInformation(this.OptionFrame);
-                            }
-                            else
-                            {
-                                this.ClearInformation();
-                            }
-                            break;
-                        case SettingPane:
-                            this.OptionFrame.Navigate(typeof(SettingsListPage));
-                            break;
-                    }
-
-                    this.IsPaneOpen.Value = true;
-                }
-                else
-                {
-                    if (this.IsPaneOpen.Value)
-                    {
-                        this.OptionPageSelected.Value = NormalPane;
-                    }
-                    else
-                    {
-                        this.IsPaneOpen.Value = true;
-                    }
-                }
-            }).AddTo(this.Disposables);
-            */
-
-
+            
 
 
 
@@ -531,20 +405,7 @@ namespace ShibugakiViewer.ViewModels
                     = (int)(x ? KeyReceiverMode.PopupIsOpened : KeyReceiverMode.Normal))
                 .AddTo(this.Disposables);
 
-
-            //this.PopupContent = new ReactiveProperty<FrameworkElement>().AddTo(this.Disposables);
-            //this.PopupPosition = new ReactiveProperty<Thickness>().AddTo(this.Disposables);
-            //this.PopupHorizontalAlignment
-            //    = new ReactiveProperty<HorizontalAlignment>(HorizontalAlignment.Center)
-            //    .AddTo(this.Disposables);
-            //this.PopupVerticalAlignment
-            //    = new ReactiveProperty<VerticalAlignment>(VerticalAlignment.Center)
-            //    .AddTo(this.Disposables);
-            //this.PopupDockControl = new ReactiveProperty<FrameworkElement>().AddTo(this.Disposables);
-            ////this.PopupMask = new ReactiveProperty<Brush>().AddTo(this.Disposables);
-            //this.IsPopupMaskEnabled = new ReactiveProperty<bool>().AddTo(this.Disposables);
             
-
 
 
             this.prevPaneMode = this.PaneDisplayMode.Value;
@@ -802,36 +663,7 @@ namespace ShibugakiViewer.ViewModels
                 this.IsPaneOpen.Value = false;
             }
         }
-
-        /*
-        public void OpenPopup(FrameworkElement content, Thickness position,
-            HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment,
-            FrameworkElement dock = null, bool isMaskVisible = true)
-        {
-            //if (this.PopupOwner == null)
-            //{
-            //    return;
-            //}
-            //this.PopupOwner.OpenPopup
-            //    (content, position, horizontalAlignment, verticalAlignment, dock, isMaskVisible);
-
-
-            //if (this.maskBrush == null)
-            //{
-            //    var color = Application.Current.Resources["PopupMaskColor"];
-            //    this.maskBrush = (Brush)color;
-            //}
-            //
-            //this.PopupMask.Value = (isMaskVisible) ? this.maskBrush : this.transparentBrush;
-
-            this.IsPopupMaskEnabled.Value = isMaskVisible;
-            this.PopupDockControl.Value = dock;
-            this.PopupHorizontalAlignment.Value = horizontalAlignment;
-            this.PopupVerticalAlignment.Value = verticalAlignment;
-            this.PopupPosition.Value = position;
-            this.PopupContent.Value = content;
-            this.IsPopupOpen.Value = true;
-        }*/
+        
 
         private void ClosePopupOrMenu()
         {

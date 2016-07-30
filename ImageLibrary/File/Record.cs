@@ -315,40 +315,7 @@ namespace ImageLibrary.File
             private set { this.SortSettings = SortHelper.FromEntry(value); }
         }
 
-
-        //[RecordMember]
-        //[DataMember]
-        //public bool IsParticularFlipDirectionEnabled
-        //{
-        //    get { return _fieldIsParticularFlipDirectionEnabled; }
-        //    set
-        //    {
-        //        if (_fieldIsParticularFlipDirectionEnabled != value)
-        //        {
-        //            _fieldIsParticularFlipDirectionEnabled = value;
-        //            RaisePropertyChanged(nameof(IsParticularFlipDirectionEnabled));
-        //        }
-        //    }
-        //}
-        //private bool _fieldIsParticularFlipDirectionEnabled;
-        //
-        //
-        //[RecordMember]
-        //[DataMember]
-        //public bool IsFlipReversed
-        //{
-        //    get { return _fieldIsFlipReversed; }
-        //    set
-        //    {
-        //        if (_fieldIsFlipReversed != value)
-        //        {
-        //            _fieldIsFlipReversed = value;
-        //            RaisePropertyChanged(nameof(IsFlipReversed));
-        //        }
-        //    }
-        //}
-        //private bool _fieldIsFlipReversed;
-
+        
 
         [RecordMember]
         [DataMember]
@@ -548,26 +515,7 @@ namespace ImageLibrary.File
 
         #endregion
 
-
-
-
-
-        //public bool IsEdited
-        //{
-        //    get { return this._isEdited || (this.TagSet != null && this.TagSet.IsEdited); }
-        //    private set
-        //    {
-        //        this._isEdited = value;
-        //        if (!value && this.TagSet != null)
-        //        {
-        //            this.TagSet.IsEdited = false;
-        //        }
-        //    }
-        //}
-        //private bool _isEdited;
-        //
-        //public bool IsPropertiesUnloaded { get; set; } = false;
-        //public bool IsFileChanged { get; set; } = false;
+        
 
         bool ITrackable.IsLoaded { get; set; } = false;
 
@@ -640,10 +588,7 @@ namespace ImageLibrary.File
         {
             this.Id = source.Id;
             this.FullPath = source.FullPath;
-
-            //this.RootDirectoryToken = source.RootDirectoryToken;
-            //this.RootDirectory = source.RootDirectory;
-            //this.RelativeDirectory = source.RelativeDirectory;
+            
             this.Directory = source.Directory;
             this.SetName(source.FileName);
 
@@ -666,26 +611,13 @@ namespace ImageLibrary.File
             this.TagEntry = source.TagEntry;
 
             this.Rating = source.Rating;
-            //this.IsLeader = source.IsLeader;
             this.GroupKey = source.GroupKey;
 
             this.SortEntry = source.SortEntry;
             this.FlipDirection = source.FlipDirection;
             this.IsGroup = source.IsGroup;
         }
-
-        //public Record Clone()
-        //{
-        //    var clone = new Record();
-        //    clone.CopyFrom(this);
-        //    return clone;
-        //}
-        //
-        //private void CopyFrom(Record source)
-        //{
-        //    this.CopyCoreInformation(source);
-        //    this.CopyAdditionalInformation(source);
-        //}
+        
 
         #endregion
 
@@ -862,13 +794,7 @@ namespace ImageLibrary.File
 
         public Task<Record[]> SearchAsync(Library library, long skip, long take)
             => library.GroupQuery.SearchAsync(this, skip, take);
-
-        //public Task<long> FindIndexAsync(Library library, Record record)
-        //    => library.GroupQuery.FindIndexAsync(this, record);
-
-        //public Task<string[]> GetAllIdsAsync(Library library)
-        //    => library.GroupQuery.GetAllIdsAsync(this);
-
+        
 
 
         #endregion
@@ -881,23 +807,6 @@ namespace ImageLibrary.File
         public event PropertyChangedEventHandler PropertyChanged;
         protected void RaisePropertyChanged(string propertyName)
         {
-            //if (!this.IsLoaded)
-            //{
-            //    return;
-            //}
-            //if (!this.IsGroup && this.GroupKey != null && propertyName.Contains("Date"))
-            //{
-            //    //refrash group date
-            //    Task.Run(async () =>
-            //    {
-            //        var group = await LibraryOwner.GetCurrent().GetRecordAsync(this.GroupKey);
-            //        if (group != null)
-            //        {
-            //            group.RefreshGroupDate(this);
-            //        }
-            //    });
-            //}
-
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }

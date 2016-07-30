@@ -224,15 +224,13 @@ namespace ShibugakiViewer.ViewModels
             this.TogglePaneCommand = new ReactiveCommand()
                 .WithSubscribe(_ => this.TogglePane(), this.Disposables);
 
-            this.TapCommand = new ReactiveCommand()
-                .WithSubscribe(x =>
-                {
-                    var e = x as ViewerTapEventArgs;
-                    if (e == null)
-                    {
-                        return;
-                    }
+            this.TapCommand = new ReactiveCommand().AddTo(this.Disposables);
 
+            var tapped = this.TapCommand.OfType<ViewerTapEventArgs>().Publish().RefCount();
+
+            tapped
+                .Subscribe(e =>
+                {
                     if (e.HolizontalRate < edgeTapThreshold)
                     {
                         this.MoveLeft();
@@ -242,7 +240,24 @@ namespace ShibugakiViewer.ViewModels
                         this.MoveRight();
                     }
 
-                }, this.Disposables);
+                })
+                .AddTo(this.Disposables);
+
+            tapped
+                .Where(_ => parent.Core.IsOpenNavigationWithSingleTapEnabled)
+                .Throttle(TimeSpan.FromMilliseconds(500))
+                .Subscribe(e =>
+                {
+                    if (e.Count == 1
+                        && parent.Core.IsOpenNavigationWithSingleTapEnabled
+                        && e.HolizontalRate >= edgeTapThreshold
+                        && e.HolizontalRate <= (1.0 - edgeTapThreshold))
+                    {
+                        this.IsTopBarOpen.Toggle();
+                    }
+                })
+                .AddTo(this.Disposables);
+
 
             this.PointerMoveCommand = new ReactiveCommand()
                 .WithSubscribe(x =>

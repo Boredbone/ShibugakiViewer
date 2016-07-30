@@ -48,17 +48,12 @@ namespace ShibugakiViewer.Models
         public Library Library { get; private set; }
         public ImageBuffer ImageBuffer { get; private set; }
         private ResourceManager ResourceManager { get; set; }
-
-        //private BehaviorSubject<LibraryLoadResult> LibraryLoadedSubject { get; set; }
-        //public IObservable<LibraryLoadResult> LibraryLoaded => this.LibraryLoadedSubject.AsObservable();
-
-        //private Subject<string> SystemNotificationSubject { get; }
-        public IObservable<string> SystemNotification { get; private set; }// => this.SystemNotificationSubject.AsObservable();
+        
+        
+        public IObservable<string> SystemNotification { get; private set; }
 
         public ReactiveCollection<LibraryUpdateHistoryItem> LibraryUpdateHistory { get; private set; }
-
-        //private FolderWatcher FolderWatcher { get; set; }
-
+        
 
         public string AppName { get; private set; }
 
@@ -390,8 +385,7 @@ namespace ShibugakiViewer.Models
             get { return this.Settings.IsViewerPageLeftBarFixed; }
             set { this.Settings.IsViewerPageLeftBarFixed = value; }
         }
-
-        //private AsyncLock storageAccessLock = new AsyncLock();
+        
         private object lockObject = new object();
 
         private bool isChanged;
@@ -441,9 +435,7 @@ namespace ShibugakiViewer.Models
             library.AddTo(this.Disposables);
 
             this.Library = library;
-
-            //this.LibraryLoadedSubject = new BehaviorSubject<LibraryLoadResult>(null).AddTo(this.Disposables);
-            //this.Library.Loaded.Subscribe(this.LibraryLoadedSubject).AddTo(this.Disposables);
+            
 
             this.LibraryUpdateHistory = new ReactiveCollection<LibraryUpdateHistoryItem>().AddTo(this.Disposables);
 
@@ -484,21 +476,6 @@ namespace ShibugakiViewer.Models
             this.PropertyChangedAsObservable().Subscribe(x => this.isChanged = true).AddTo(this.Disposables);
             
 
-            ////フォルダ変更監視
-            //this.FolderWatcher = new FolderWatcher().AddTo(this.Disposables);
-
-            //this.FolderWatcher.FolderChanged
-            //    .Where(x => x.ChangeType != WatcherChangeTypes.Changed)
-            //    //.Where(x => config.FileTypeFilter.Contains(System.IO.Path.GetExtension(x.FullPath)))
-            //    .BufferUntilThrottle(2000, true)
-            //    //.ObserveOnUIDispatcher()
-            //    .Subscribe(x => this.CheckFolderUpdate(x, config))
-            //    .AddTo(this.Disposables);
-            ////MessageBox.Show(x.Select(y => $"{y.FullPath},{y.OldFullPath},{y.ChangeType}").Join("\n"));
-
-            //library.Folders.GetAvailable()
-            //    .ForEach(x => this.FolderWatcher.Add(x.Path, !x.IsTopDirectoryOnly));
-
             //ライブラリ更新
             if (this.RefreshLibraryOnLaunched)
             {
@@ -506,57 +483,6 @@ namespace ShibugakiViewer.Models
             }
         }
         
-        ///// <summary>
-        ///// フォルダの変更を監視
-        ///// </summary>
-        ///// <param name="x"></param>
-        ///// <param name="config"></param>
-        //private void CheckFolderUpdate(IList<ExtendedFileSystemEventArgs> files,LibraryConfiguration config)
-        //{
-
-        //    var added = new List<string>();
-        //    var removed = new List<string>();
-        //    var folders = new List<string>();
-
-        //    foreach (var item in files)
-        //    {
-        //        if (config.FileTypeFilter.Contains(System.IO.Path.GetExtension(item.FullPath)))
-        //        {
-        //            switch (item.ChangeType)
-        //            {
-        //                case WatcherChangeTypes.Created:
-        //                    added.Add(item.FullPath);
-        //                    break;
-        //                case WatcherChangeTypes.Deleted:
-        //                    removed.Add(item.FullPath);
-        //                    break;
-        //                case WatcherChangeTypes.Changed:
-        //                    break;
-        //                case WatcherChangeTypes.Renamed:
-        //                    added.Add(item.FullPath);
-        //                    removed.Add(item.OldFullPath);
-        //                    break;
-        //                case WatcherChangeTypes.All:
-        //                    break;
-        //                default:
-        //                    break;
-        //            }
-        //        }
-        //        else
-        //        {
-        //            folders.Add(item.FullPath);
-        //            if (item.ChangeType == WatcherChangeTypes.Renamed)
-        //            {
-        //                folders.Add(item.OldFullPath);
-        //            }
-        //        }
-        //    }
-        //    this.Library.CheckFolderUpdateAsync(
-        //            added.Distinct().ToArray(), removed.Distinct().ToArray(), folders.Distinct().ToArray())
-        //        .FireAndForget();
-
-
-        //}
 
         /// <summary>
         /// 設定ファイルをローカルストレージに保存
@@ -650,24 +576,7 @@ namespace ShibugakiViewer.Models
             App.Current.Resources["SearchLabel"] = this.GetResourceString("Search");
             App.Current.Resources["WidthLabel"] = this.GetResourceString("Width");
             App.Current.Resources["HeightLabel"] = this.GetResourceString("Height");
-
-            //App.Current.Resources["ShareLabel"] = this.GetResourceString("Share");
-            //App.Current.Resources["PlaySlideShowLabel"] = this.GetResourceString("PlaySlideShow");
-
-
-            //App.Current.Resources["TagLabel"] = this.GetResourceString("Tag");
-            //App.Current.Resources["SortLabel"] = this.GetResourceString("Sort");
-            //App.Current.Resources["GroupNameLabel"] = this.GetResourceString("GroupName");
-            //App.Current.Resources["ThumbnailLabel"] = this.GetResourceString("Thumbnail");
-            //App.Current.Resources["RemoveGroupLabel"] = this.GetResourceString("RemoveGroup");
-
-            //App.Current.Resources["PropertyLabel"] = this.GetResourceString("Property");
-            //App.Current.Resources["GroupPropertyLabel"] = this.GetResourceString("GroupProperty");
-            //App.Current.Resources["PageTurningLabel"] = this.GetResourceString("PageTurning");
-            //App.Current.Resources["NameLabel"] = this.GetResourceString("Name");
-            //App.Current.Resources["RefreshLibraryLabel"] = this.GetResourceString("RefreshLibrary");
-            //App.Current.Resources["FolderManagementLabel"] = this.GetResourceString("FolderManagement");
-
+            
             this.AppName = Application.Current.Resources["AppName"].ToString();
         }
 
