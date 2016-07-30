@@ -115,9 +115,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj">
+    <ProjectReference Include="..\CsCommon\CsCommon.csproj">
       <Project>{84dad39a-811d-4c38-9a03-99daaf96f191}</Project>
-      <Name>Common</Name>
+      <Name>CsCommon</Name>
     </ProjectReference>
     <ProjectReference Include="..\Database\Database.csproj">
       <Project>{a3c50f5f-b23c-4298-a14b-eec5913418f8}</Project>

@@ -1,13 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShibugakiViewer", "ShibugakiViewer\ShibugakiViewer.csproj", "{023518F5-440E-49AB-889A-1EE00ED61993}"
-EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Utility", "Utility\Utility.shproj", "{42AB21E2-202C-4001-9578-5E8D166B9B6C}"
-EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "XamlTools", "XamlTools\XamlTools.shproj", "{19C859C2-CD1F-4A28-BBF5-615CC5F7427F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShibugakiViewer.Launcher", "ShibugakiViewer.Launcher\ShibugakiViewer.Launcher.csproj", "{0AA696A5-ABC7-436E-8920-556DB65F8D4B}"
 EndProject
@@ -21,17 +17,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryConverter", "LibraryConverter\LibraryConverter.csproj", "{8CA0C8C2-F7EC-4ED7-9DB6-D3FA208EBF93}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsCommon", "CsCommon\CsCommon.csproj", "{84DAD39A-811D-4C38-9A03-99DAAF96F191}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfTools", "WpfTools\WpfTools.csproj", "{DE06A2D5-B092-4788-8050-59D253676D1F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{84DAD39A-811D-4C38-9A03-99DAAF96F191}"
-EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Utility\Utility.projitems*{84dad39a-811d-4c38-9a03-99daaf96f191}*SharedItemsImports = 4
-		XamlTools\XamlTools.projitems*{19c859c2-cd1f-4a28-bbf5-615cc5f7427f}*SharedItemsImports = 13
-		XamlTools\XamlTools.projitems*{de06a2d5-b092-4788-8050-59d253676d1f}*SharedItemsImports = 4
-		Utility\Utility.projitems*{42ab21e2-202c-4001-9578-5e8d166b9b6c}*SharedItemsImports = 13
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -65,14 +55,14 @@ Global
 		{8CA0C8C2-F7EC-4ED7-9DB6-D3FA208EBF93}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8CA0C8C2-F7EC-4ED7-9DB6-D3FA208EBF93}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8CA0C8C2-F7EC-4ED7-9DB6-D3FA208EBF93}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DE06A2D5-B092-4788-8050-59D253676D1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DE06A2D5-B092-4788-8050-59D253676D1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DE06A2D5-B092-4788-8050-59D253676D1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DE06A2D5-B092-4788-8050-59D253676D1F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{84DAD39A-811D-4C38-9A03-99DAAF96F191}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{84DAD39A-811D-4C38-9A03-99DAAF96F191}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84DAD39A-811D-4C38-9A03-99DAAF96F191}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{84DAD39A-811D-4C38-9A03-99DAAF96F191}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE06A2D5-B092-4788-8050-59D253676D1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE06A2D5-B092-4788-8050-59D253676D1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE06A2D5-B092-4788-8050-59D253676D1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE06A2D5-B092-4788-8050-59D253676D1F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

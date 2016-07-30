@@ -440,9 +440,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj">
+    <ProjectReference Include="..\CsCommon\CsCommon.csproj">
       <Project>{84dad39a-811d-4c38-9a03-99daaf96f191}</Project>
-      <Name>Common</Name>
+      <Name>CsCommon</Name>
     </ProjectReference>
     <ProjectReference Include="..\Database\Database.csproj">
       <Project>{A3C50F5F-B23C-4298-A14B-EEC5913418F8}</Project>

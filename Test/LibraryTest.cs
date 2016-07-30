@@ -621,7 +621,7 @@ namespace Test
 
             var search = new SearchInformation(new ComplexSearch(false));
 
-            library.Searcher.AddSearchToDictionaryAndActivate(search);
+            library.Searcher.AddSearchToDictionary(search);
 
             return library;
         }
