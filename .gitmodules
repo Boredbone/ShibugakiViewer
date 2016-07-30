@@ -1,0 +1,6 @@
+[submodule "WpfTools"]
+	path = WpfTools
+	url = https://github.com/Boredbone/WpfTools.git
+[submodule "CsCommon"]
+	path = CsCommon
+	url = https://github.com/Boredbone/CsCommon.git
