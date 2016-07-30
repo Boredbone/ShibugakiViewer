@@ -1,0 +1,36 @@
+﻿<Window x:Class="ShibugakiViewer.Views.Windows.SlideshowWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ShibugakiViewer.Views.Windows"
+        xmlns:pages="clr-namespace:ShibugakiViewer.Views.Pages"
+        xmlns:viewModels="clr-namespace:ShibugakiViewer.ViewModels"
+        xmlns:control="clr-namespace:ShibugakiViewer.Views.Controls"
+        xmlns:infoPane="clr-namespace:ShibugakiViewer.Views.InformationPanes"
+        xmlns:b="clr-namespace:ShibugakiViewer.Views.Behaviors"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
+        xmlns:cc="clr-namespace:WpfTools.Controls;assembly=WpfTools"
+        xmlns:properties="clr-namespace:ShibugakiViewer.Properties"
+        xmlns:converter="clr-namespace:ShibugakiViewer.Views.Converters"
+        mc:Ignorable="d"
+        Style="{StaticResource DefaultWindowStyle}"
+        Title="SlideshowWindow" Height="720" Width="1280"
+        ShowActivated="True"
+        ShowInTaskbar="False"
+        Closed="Window_Closed">
+    <!--
+        WindowState="Maximized"
+        Topmost="True"
+        WindowStyle="None"-->
+    <Grid>
+        <pages:SlideshowPage
+            x:Name="slideshowPage"
+            HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        
+        <!-- Popup dialog -->
+        <control:PopupDialog
+            x:Name="popupDialog"
+            HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+    </Grid>
+</Window>

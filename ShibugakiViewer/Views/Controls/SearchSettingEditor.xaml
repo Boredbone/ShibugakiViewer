@@ -1,0 +1,161 @@
+﻿<UserControl x:Class="ShibugakiViewer.Views.Controls.SearchSettingEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ShibugakiViewer.Views.Controls"
+             xmlns:behavior="clr-namespace:ShibugakiViewer.Views.Behaviors"
+             xmlns:properties="clr-namespace:ShibugakiViewer.Properties"
+             x:Name="editor"
+             IsEnabled="{Binding IsEditing.Value,Mode=TwoWay}"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <DataTemplate x:Key="ComboBoxTemplate">
+            <TextBlock Text="{Binding Key}" Padding="0,0,27,0"/>
+        </DataTemplate>
+    </UserControl.Resources>
+    <Border Background="White" BorderThickness="1" BorderBrush="Gray">
+        <Grid Margin="10">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
+
+                <TextBlock Text="{x:Static properties:Resources.SearchCriteria}"
+                           FontSize="{StaticResource NormalTextSize}"
+                           Margin="4"/>
+
+                <StackPanel Orientation="Horizontal" Margin="10,10,10,10">
+                    <Grid HorizontalAlignment="Left"
+                          VerticalAlignment="Top">
+                        <ComboBox HorizontalAlignment="Left"
+                                  VerticalAlignment="Center" Width="172"
+                                  ItemsSource="{Binding PropertyList}"
+                                  ItemTemplate="{StaticResource ComboBoxTemplate}" 
+                                  SelectedIndex="{Binding PropertyListSelectedIndex.Value,Mode=TwoWay}"/>
+                        <TextBlock
+                            Style="{StaticResource comboBoxPlaceHolderTextStyle}"
+                            Visibility="{Binding PropertyComboBoxDefaultVisibility.Value,Mode=OneWay}"
+                            Text="{Binding PropertyComboBoxDefault}"/>
+                    </Grid>
+
+                    <!--
+                      PlaceholderText="{Binding PropertyComboBoxDefault}"-->
+                    <TextBlock Text="{Binding IsVString}"
+                           VerticalAlignment="Center"  FontSize="16" Margin="3"
+                           Visibility="{Binding IsVStringVisibility.Value,Mode=TwoWay}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="10,10,10,10"
+                      Visibility="{Binding CompareListVisibility.Value,Mode=TwoWay}">
+                    <TextBlock Text="{Binding BelowRefString}" Visibility="{Binding SOVVisibility}"
+                           VerticalAlignment="Center" FontSize="16" Margin="3"/>
+                    <ComboBox HorizontalAlignment="Left"
+                      VerticalAlignment="Center" Width="172" 
+                      ItemsSource="{Binding CompareOperator}"
+                      SelectedIndex="{Binding CompareOperatorSelectedIndex.Value,Mode=TwoWay}"
+                      ItemTemplate="{StaticResource ComboBoxTemplate}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="10,10,10,10"
+                      Visibility="{Binding EqualityListVisibility.Value,Mode=TwoWay}">
+                    <TextBlock Text="{Binding BelowRefString}" Visibility="{Binding SOVVisibility}"
+                           VerticalAlignment="Center" FontSize="16" Margin="3"/>
+                    <ComboBox HorizontalAlignment="Left"
+                      VerticalAlignment="Center" Width="172"
+                      ItemsSource="{Binding EqualitySelector}"
+                      SelectedIndex="{Binding EqualitySelectedIndex.Value,Mode=TwoWay}"/>
+                </StackPanel>
+                
+                <TextBox HorizontalAlignment="Left" Margin="10,10,10,10"
+                     VerticalAlignment="Top" Width="172"
+                     Visibility="{Binding NumericTextVisibility.Value,Mode=TwoWay}"
+                     Text="{Binding NumericText.Value,Mode=TwoWay,UpdateSourceTrigger=Default}"
+                      x:Uid="NumericTextBox"
+                     behavior:PlaceHolderBehavior.PlaceHolderText="{x:Static properties:Resources.NumericTextBox_PlaceholderText}"
+                     InputScope="Number"/>
+                <!--PlaceholderText="Value"-->
+
+                <ScrollViewer MinHeight="150" MaxHeight="200" Margin="10,10,10,10" Width="250"
+                          Visibility="{Binding DirectoryListVisibility.Value}"
+                          Background="LightGray" 
+                          HorizontalContentAlignment="Stretch"
+                          VerticalScrollBarVisibility="Auto" 
+                          HorizontalScrollBarVisibility="Disabled"
+                              PanningMode="VerticalOnly"
+                          HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <ItemsControl ItemsSource="{Binding DirectoryList}" SizeChanged="ItemsControl_SizeChanged"
+                              HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch"
+                              Margin="0,0,0,0">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel HorizontalAlignment="Stretch">
+                                </VirtualizingStackPanel>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ComboBox HorizontalAlignment="Stretch"  Margin="8,8,8,4"
+                                  VerticalAlignment="Center"  ItemsSource="{Binding Children}"
+                                  SelectedIndex="{Binding SelectedIndex.Value,Mode=TwoWay}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Key}"  Padding="0,0,27,0"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+
+                                </ComboBox>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                </ScrollViewer>
+
+                <Grid HorizontalAlignment="Left" Margin="10,10,10,26"
+                      VerticalAlignment="Top"
+                      Visibility="{Binding TagListVisibility.Value,Mode=TwoWay}">
+
+                    <ComboBox HorizontalAlignment="Left" Margin="0"
+                      VerticalAlignment="Center" Width="172"
+                      ItemsSource="{Binding RegisteredTags}"
+                      SelectedIndex="{Binding TagListSelectedIndex.Value,Mode=TwoWay}">
+                        <!--
+                      behavior:PlaceHolderBehavior.PlaceHolderText="{Binding TagComboBoxDefault}"
+                      PlaceholderText="{Binding TagComboBoxDefault}"-->
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Value.Name}" Padding="0,0,27,0"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <TextBlock
+                        Style="{StaticResource comboBoxPlaceHolderTextStyle}"
+                        Visibility="{Binding TagComboBoxDefaultVisibility.Value,Mode=OneWay}"
+                        Text="{Binding TagComboBoxDefault}"/>
+                </Grid>
+                <TextBox HorizontalAlignment="Left" Margin="10,10,10,10"
+                     VerticalAlignment="Top" Width="172"
+                     Visibility="{Binding TextBoxVisibility.Value,Mode=TwoWay}"
+                     x:Uid="StringTextBox"
+                     behavior:PlaceHolderBehavior.PlaceHolderText="{x:Static properties:Resources.StringTextBox_PlaceholderText}"
+                     Text="{Binding TextBoxContent.Value,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                <!--PlaceholderText="Value" -->
+
+                <DatePicker Visibility="{Binding DateVisibility.Value,Mode=TwoWay}"
+                        SelectedDate="{Binding DateContent.Value,Mode=TwoWay}"
+                         Margin="10,8,10,16"/>
+
+                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center"
+                        Margin="0,0,0,10">
+
+                    <Button x:Uid="OkButton"
+                            Content="{x:Static properties:Resources.OkButton_Content}"
+                            Command="{Binding OkCommand}" Width="100" Margin="20,0"/>
+
+                    <Button x:Uid="CancelButton"
+                            Content="{x:Static properties:Resources.CancelButton_Content}"
+                            Command="{Binding CancelCommand}" Width="100" Margin="20,0"/>
+
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

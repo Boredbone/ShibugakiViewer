@@ -1,0 +1,101 @@
+﻿<UserControl x:Class="ShibugakiViewer.Views.Controls.SearchList"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ShibugakiViewer.Views.Controls"
+             xmlns:behaviors="clr-namespace:ShibugakiViewer.Views.Behaviors"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions" 
+             xmlns:search="clr-namespace:ImageLibrary.Search;assembly=ImageLibrary"
+             xmlns:properties="clr-namespace:ShibugakiViewer.Properties"
+             xmlns:cc="clr-namespace:WpfTools.Controls;assembly=WpfTools"
+             mc:Ignorable="d" 
+             x:Name="searchListRoot"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+
+        <DataTemplate x:Key="historyListItemTemplate">
+            <Border Height="96" Background="{StaticResource ThumbnailColor}" Margin="2">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseLeftButtonDown">
+                            <i:InvokeCommandAction 
+                                Command="{Binding ElementName=searchListRoot, Path=StartCommand}" 
+                                CommandParameter="{Binding}"/>
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="MouseRightButtonDown">
+                            <i:InvokeCommandAction 
+                                Command="{Binding ElementName=searchListRoot, Path=SelectCommand}" 
+                                CommandParameter="{Binding}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <Image Grid.Column="0" Grid.ColumnSpan="2"
+                            Stretch="UniformToFill"
+                            HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                        <!--
+                            behaviors:ImageLoadingBehavior.FilePath="{Binding ThumbnailFilePath}"
+                            behaviors:ImageLoadingBehavior.DecodeHeight="96"
+                            behaviors:ImageLoadingBehavior.DecodeWidth="256"
+                            behaviors:ImageLoadingBehavior.Quality="ThumbNail"-->
+                        <i:Interaction.Behaviors>
+                            <behaviors:ImageBehavior
+                                FilePath="{Binding ThumbnailFilePath}"
+                                DecodeHeight="96"
+                                DecodeWidth="256"
+                                Quality="ThumbNail"
+                                />
+                        </i:Interaction.Behaviors>
+                    </Image>
+                    <Border Grid.Column="0" Grid.ColumnSpan="2"
+                            Background="{StaticResource SmokeColor}"/>
+                    <Grid Grid.Column="0">
+                        <TextBlock Text="{Binding DateLastUsed,Mode=OneWay, StringFormat={}{0:G}}"
+                                   FontSize="{StaticResource NormalTextSize}"
+                                   TextWrapping="Wrap" Margin="8" 
+                                   HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                        <TextBlock Text="{Binding Name,Mode=OneWay}"
+                                   FontSize="{StaticResource NormalTextSize}"
+                                   TextWrapping="Wrap" Margin="8"
+                                   VerticalAlignment="Bottom"
+                                   Visibility="{Binding ElementName=searchListRoot, Path=NameVisibility}" 
+                                   HorizontalAlignment="Left"/>
+                    </Grid>
+                    <cc:FlatButton Grid.Column="1"
+                            Content="{StaticResource EditSymbol}"
+                            Style="{StaticResource symbolButton}"
+                            Width="48" Height="48"
+                            VerticalAlignment="Center" Margin="10,10,20,10"
+                            x:Uid="EditButton"
+                            ToolTipService.ToolTip="{x:Static properties:Resources.EditButton_ToolTip}"
+                            Command="{Binding ElementName=searchListRoot, Path=SelectCommand}"
+                            CommandParameter="{Binding}"/>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <Style TargetType="ListViewItem" x:Key="listItemStyle">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Foreground" Value="Black" />
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Foreground" Value="Black"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <ListView ItemsSource="{Binding ElementName=searchListRoot, Path=ItemsSource,Mode=OneWay}"
+                  ItemTemplate="{StaticResource historyListItemTemplate}"
+                  ItemContainerStyle="{StaticResource listItemStyle}" SelectionMode="Single" 
+                  VirtualizingPanel.ScrollUnit="Pixel"
+                  Background="Transparent"
+                  Padding="2"
+                  BorderThickness="0">
+        </ListView>
+    </Grid>
+</UserControl>

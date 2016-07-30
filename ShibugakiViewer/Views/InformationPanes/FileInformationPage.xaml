@@ -1,0 +1,426 @@
+﻿<UserControl x:Class="ShibugakiViewer.Views.InformationPanes.FileInformationPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ShibugakiViewer.Views.InformationPanes"
+             xmlns:converter="clr-namespace:ShibugakiViewer.Views.Converters"
+             xmlns:tb="clr-namespace:WpfTools.Behaviors;assembly=WpfTools"
+             xmlns:cc="clr-namespace:WpfTools.Controls;assembly=WpfTools"
+             xmlns:properties="clr-namespace:ShibugakiViewer.Properties"
+             xmlns:b="clr-namespace:ShibugakiViewer.Views.Behaviors"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+
+        <!--<local:TagNameConverter x:Key="tagNameConverter" />-->
+        <converter:PathConverter x:Key="pathConverter" />
+        <converter:RatingConverter x:Key="ratingConverter" />
+
+    </UserControl.Resources>
+
+    <Grid x:Name="rootGrid" Background="Transparent" HorizontalAlignment="Stretch">
+
+        <Grid.Resources>
+            <Style TargetType="TextBlock" x:Key="propertyValue">
+                <!--
+                               BasedOn="{StaticResource BodyTextBlockStyle}"-->
+                <Setter Property="TextWrapping" Value="Wrap" />
+                <Setter Property="FontSize" Value="{StaticResource NormalTextSize}"/>
+                <Setter Property="Margin" Value="12,4,4,8"/>
+            </Style>
+            <Style TargetType="TextBlock" x:Key="propertyName" >
+                <!--
+                               BasedOn="{StaticResource BodyTextBlockStyle}"-->
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="TextWrapping" Value="Wrap" />
+                <Setter Property="Margin" Value="4,8,4,4"/>
+            </Style>
+        </Grid.Resources>
+
+        <ScrollViewer Margin="8,0,0,0"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      PanningMode="VerticalOnly"
+                      VerticalContentAlignment="Stretch" Padding="0,0,16,0">
+            <StackPanel>
+
+
+                <!-- File Property -->
+                <Grid
+                    Visibility="{Binding IsGroup,
+                    Converter={StaticResource FalseToVisibleConverter}}">
+                    <StackPanel>
+
+                        <TextBlock 
+                            Text="{x:Static properties:Resources.FilePropertyText_Text}"
+                            Margin="8" FontSize="20"/>
+
+                        <TextBlock Style="{StaticResource propertyName}" >
+                            <Run Text="{StaticResource FileNameLabel}"/>
+                            <Run Text=" :"/>
+                        </TextBlock>
+
+                        <TextBlock MaxHeight="50" TextTrimming="CharacterEllipsis"
+                           Text="{Binding FileName}"
+                           Style="{StaticResource propertyValue}" >
+                            <ToolTipService.ToolTip>
+                                <TextBlock MaxWidth="200"
+                                           Text="{Binding FileName}"
+                                           TextWrapping="Wrap"/>
+                            </ToolTipService.ToolTip>
+                        </TextBlock>
+
+                        <Grid Style="{StaticResource informationPaneButtonGridStyle}">
+                            <cc:FlatButton
+                                Style="{StaticResource informationPaneButtonStyle}"
+                                ToolTip="{x:Static properties:Resources.FileOperation}">
+                                <cc:LabeledIcon
+                                    Style="{StaticResource informationPaneContentStyle}"
+                                    IconText="{StaticResource FileSymbol}"
+                                    Text="{x:Static properties:Resources.FileOperation}"/>
+
+                                <i:Interaction.Behaviors>
+                                    <b:PopupDialogBehavior
+                                        IsHorizontalOverlay="True"
+                                        IsVerticalOverlay="False"
+                                        HorizontalContentAlignment="Right"
+                                        VerticalContentAlignment="Bottom"                            
+                                        Position="0,4,0,0"
+                                        IsMaskVisible="False">
+                                        <b:PopupDialogBehavior.Content>
+                                            <Border
+                                                x:Name="fileOperationDialog"
+                                                Background="{StaticResource OptionPaneColor}"
+                                                Width="Auto"
+                                                BorderBrush="Gray"
+                                                BorderThickness="1">
+                                                <StackPanel Margin="0,8" Background="Transparent">
+
+                                                    <cc:FlatButton
+                                                        Style="{StaticResource contextMenuButtonStyle}"
+                                                        Click="copyButton_Click">
+                                                        <TextBlock 
+                                                            Style="{StaticResource contextMenuTextStyle}"
+                                                            Margin="16,0"
+                                                            Text="{x:Static
+                                                            properties:Resources.CopyPath}"/>
+                                                    </cc:FlatButton>
+
+                                                    <cc:FlatButton
+                                                        Style="{StaticResource contextMenuButtonStyle}"
+                                                        Click="explorerButton_Click">
+                                                        <TextBlock 
+                                                            Style="{StaticResource contextMenuTextStyle}"
+                                                            Margin="16,0"
+                                                            Text="{x:Static
+                                                            properties:Resources.OpenFileLocation}"/>
+                                                    </cc:FlatButton>
+
+                                                    <cc:FlatButton
+                                                        Style="{StaticResource contextMenuButtonStyle}"
+                                                        Click="anotherAppButton_Click">
+                                                        <TextBlock 
+                                                            Style="{StaticResource contextMenuTextStyle}"
+                                                            Margin="16,0"
+                                                            Text="{x:Static
+                                                            properties:Resources.OpenWith}"/>
+                                                    </cc:FlatButton>
+                                                    
+                                                    <!--
+                                                    <Button Content="copy" HorizontalAlignment="Stretch"
+                                                            Click="copyButton_Click"/>
+
+                                                    <Button Content="explorer" HorizontalAlignment="Stretch"
+                                                            Click="explorerButton_Click"/>
+
+                                                    <Button Content="another app" HorizontalAlignment="Stretch"
+                                                            Click="anotherAppButton_Click"/>-->
+                                                    
+                                                </StackPanel>
+                                            </Border>
+                                        </b:PopupDialogBehavior.Content>
+                                    </b:PopupDialogBehavior>
+                                </i:Interaction.Behaviors>
+
+                                <!--
+                                <b:PopupMenuBehavior.PopupMenu>
+                                    <ContextMenu Placement="Bottom"  HasDropShadow="False">
+                                        <ContextMenu.Template>
+                                            <ControlTemplate>
+                                                <Border Background="White" Width="200"
+                                                        BorderBrush="Gray"
+                                                        BorderThickness="1"
+                                                        Margin="4">
+                                                    <StackPanel Margin="4" Background="White" >
+
+                                                        <Button Content="copy" HorizontalAlignment="Stretch"
+                                                                Click="copyButton_Click"/>
+
+                                                        <Button Content="explorer" HorizontalAlignment="Stretch"
+                                                                Click="explorerButton_Click"/>
+
+                                                        <Button Content="another app" HorizontalAlignment="Stretch"
+                                                                Click="anotherAppButton_Click"/>
+
+                                                    </StackPanel>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </ContextMenu.Template>
+                                    </ContextMenu>
+                                </b:PopupMenuBehavior.PopupMenu>-->
+                            </cc:FlatButton>
+                        </Grid>
+
+
+                    </StackPanel>
+
+                </Grid>
+                <!-- Group Property -->
+                <StackPanel
+                    Visibility="{Binding IsGroup,
+                    Converter={StaticResource TrueToVisibleConverter}}">
+
+                    <TextBlock 
+                        Text="{x:Static properties:Resources.GroupProperty}"
+                        Margin="8" FontSize="20"/>
+
+                    <TextBlock Style="{StaticResource propertyName}" >
+                        <Run Text="{x:Static properties:Resources.GroupName}"/>
+                        <Run Text=" :"/>
+                    </TextBlock>
+
+                    <TextBox
+                        x:Name="groupNameBox"
+                        Margin="4,4,4,8"
+                        FontSize="18"
+                        Text="{Binding FileName,Mode=OneWay}"
+                        HorizontalAlignment="Stretch"/>
+
+                </StackPanel>
+
+
+
+                <!-- Rating -->
+                <TextBlock Style="{StaticResource propertyName}" >
+                    <Run Text="{StaticResource RatingLabel}"/>
+                    <Run Text=" :"/>
+                </TextBlock>
+                <cc:Rating HorizontalAlignment="Left"
+                           Value="{Binding Rating,Mode=TwoWay,
+                    Converter={StaticResource ratingConverter}}"/>
+
+
+                <!--<Slider Maximum="5.49"
+                        TickFrequency="1"
+                        IsMoveToPointEnabled="True"
+                        IsSnapToTickEnabled="False"
+                        AutoToolTipPlacement="TopLeft"
+                        AutoToolTipPrecision="0"
+                        tb:SliderBehavior.MoveToPointOnDrag="True"
+                        LargeChange="1"
+                        SmallChange="1"
+                        Margin="0,8,0,0"
+                        HorizontalAlignment="Stretch"/>-->
+                <!--<control:Rate x:Name="star" SymbolSize="30" Max="5"
+                              Margin="0,8,0,0"
+                              Value="{Binding Rating,Mode=TwoWay}"
+                              VerticalAlignment="Top" HorizontalAlignment="Left"
+                              SymbolColor="{StaticResource ViewerRateFillColor}"
+                              BorderColor="{StaticResource ViewerRateEdgeColor}"
+                              OverBackGround="{StaticResource ViewerRateBackColor}"/>-->
+
+
+
+                <!-- Tag -->
+                <TextBlock Style="{StaticResource propertyName}">
+                    <Run Text="{x:Static properties:Resources.Tags}"/>
+                    <Run Text=" :"/>
+                </TextBlock>
+
+
+                <Grid Style="{StaticResource informationPaneButtonGridStyle}">
+                    <cc:FlatButton
+                        Style="{StaticResource informationPaneButtonStyle}"
+                        Click="Button_Click"
+                        ToolTip="{x:Static properties:Resources.TagAdd}">
+                        <cc:LabeledIcon
+                            Style="{StaticResource informationPaneContentStyle}"
+                            IconText="{StaticResource TagSymbol}"
+                            Text="{x:Static properties:Resources.TagAdd}"/>
+                    </cc:FlatButton>
+                </Grid>
+
+
+
+                <ItemsControl
+                    ItemsSource="{Binding TagSet,Mode=OneWay}"
+                    Margin="8,0,0,0">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel HorizontalAlignment="Stretch">
+                            </VirtualizingStackPanel>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="{StaticResource TagItemColor}"  Margin="4">
+                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <cc:FlatButton Click="tagButton_Click"
+                                            Style="{StaticResource tagNameButtonStyle}"
+                                            Grid.Column="0">
+                                        <Button.Content>
+                                            <TextBlock
+                                                Style="{StaticResource tagNameButtonTextStyle}"
+                                                Text="{Binding Name,Mode=OneWay}"/>
+                                        </Button.Content>
+                                    </cc:FlatButton>
+                                    <cc:FlatButton Content="{StaticResource RemoveSymbol}" 
+                                            Click="tagRemoveButton_Click"
+                                            HorizontalAlignment="Center" VerticalAlignment="Stretch"
+                                            Width="{StaticResource RemoveButtonWidth}" Margin="0" Height="Auto"
+                                            Grid.Column="1"
+                                            Style="{StaticResource symbolButton}"
+                                            ToolTip="{x:Static properties:Resources.TagRemove}"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+
+                <StackPanel
+                    Visibility="{Binding IsGroup,
+                    Converter={StaticResource FalseToVisibleConverter}}">
+
+                    <!-- Directory -->
+                    <ItemsControl
+                    ItemsSource="{Binding Directory,
+                    Converter={StaticResource pathConverter},Mode=OneWay}"
+                    Margin="8,0,0,0">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel HorizontalAlignment="Stretch">
+                                </VirtualizingStackPanel>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{StaticResource PathItemColor}"  Margin="4">
+                                    <cc:FlatButton Click="pathButton_Click" 
+                                            HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                            Style="{StaticResource tagNameButtonStyle}">
+                                        <Button.Content>
+                                            <TextBlock
+                                                Style="{StaticResource tagNameButtonTextStyle}"
+                                                Margin="8,2,8,2"
+                                                Text="{Binding Name,Mode=OneWay}"/>
+                                        </Button.Content>
+                                    </cc:FlatButton>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+
+
+
+                    <!-- Width -->
+                    <TextBlock Style="{StaticResource propertyName}" >
+                        <Run Text="{StaticResource WidthLabel}"/>
+                        <Run Text=" :"/>
+                    </TextBlock>
+                    <TextBlock Text="{Binding Width}"
+                               Style="{StaticResource propertyValue}" />
+
+                    <!-- Height -->
+                    <TextBlock Style="{StaticResource propertyName}" >
+                        <Run Text="{StaticResource HeightLabel}"/>
+                        <Run Text=" :"/>
+                    </TextBlock>
+                    <TextBlock Text="{Binding Height}"
+                                       Style="{StaticResource propertyValue}" />
+
+                    <!-- Size -->
+                    <TextBlock Style="{StaticResource propertyName}" >
+                        <Run Text="{StaticResource FileSizeLabel}"/>
+                        <Run Text=" :"/>
+                    </TextBlock>
+                    <TextBlock Style="{StaticResource propertyValue}" >
+                        <Run Text="{Binding Size,Converter={StaticResource FileSizeConverter}}"/>
+                        <LineBreak/>
+                        <Run Text=" ("/>
+                        <Run Text="{Binding Size, StringFormat=#\,0}"/>
+                        <Run Text=" byte)"/>
+                    </TextBlock>
+
+                    <!-- Date -->
+                    <TextBlock Style="{StaticResource propertyName}" >
+                        <Run Text="{StaticResource DateCreatedLabel}"/>
+                        <Run Text=" :"/>
+                    </TextBlock>
+                    <TextBlock Text="{Binding DateCreated, StringFormat={}{0:G}}"
+                                       Style="{StaticResource propertyValue}" />
+
+                    <TextBlock Style="{StaticResource propertyName}" >
+                        <Run Text="{StaticResource DateModifiedLabel}"/>
+                        <Run Text=" :"/>
+                    </TextBlock>
+
+                    <TextBlock Text="{Binding DateModified, StringFormat={}{0:G}}"
+                               Style="{StaticResource propertyValue}" />
+                </StackPanel>
+
+
+
+
+
+                <!-- Flip Direction -->
+                <StackPanel
+                    Visibility="{Binding IsGroup,
+                    Converter={StaticResource TrueToVisibleConverter}}">
+
+                    <TextBlock Style="{StaticResource propertyName}" >
+                        <Run Text="{x:Static properties:Resources.PageTurning}"/>
+                        <Run Text=" :"/>
+                    </TextBlock>
+
+                    <ComboBox
+                        SelectedIndex="{Binding FlipDirection,Mode=TwoWay}"
+                        Margin="16,8,4,4" HorizontalAlignment="Left"
+                        MinWidth="150">
+                        <ComboBoxItem Content="{x:Static properties:Resources.Default}"/>
+                        <ComboBoxItem Content="{x:Static properties:Resources.FlipNormal}"/>
+                        <ComboBoxItem Content="{x:Static properties:Resources.FlipReverse}"/>
+                    </ComboBox>
+
+
+                </StackPanel>
+
+
+                <!-- Debug -->
+                <TextBlock>
+                    <Run Text="IsGroup = "/>
+                    <Run Text="{Binding IsGroup,Mode=OneWay}"/>
+                </TextBlock>
+
+                <TextBlock>
+                    <Run Text="Rating = "/>
+                    <Run Text="{Binding Rating,Mode=OneWay,Converter={StaticResource ratingConverter}}"/>
+                </TextBlock>
+
+                <TextBlock>
+                    <Run Text="FlipDirection = "/>
+                    <Run Text="{Binding FlipDirection}"/>
+                </TextBlock>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
+    

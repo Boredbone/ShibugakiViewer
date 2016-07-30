@@ -1,0 +1,148 @@
+﻿<Window x:Class="ShibugakiViewer.Views.Windows.VersionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ShibugakiViewer.Views.Windows"
+        xmlns:tb="clr-namespace:WpfTools.Behaviors;assembly=WpfTools"
+        mc:Ignorable="d"
+        Style="{StaticResource DefaultWindowStyle}"
+        ShowActivated="True" WindowStartupLocation="CenterOwner"
+        Title="About" Height="500" Width="400">
+
+    <Window.Resources>
+        <Style x:Key="titleTextStyle" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="FontSize" Value="12"/>
+            <!--
+            <Setter Property="FontWeight" Value="Bold"/>-->
+        </Style>
+        <Style x:Key="smallTextStyle" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="FontSize" Value="11"/>
+        </Style>
+    </Window.Resources>
+    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <ScrollViewer x:Name="scroller"
+                      VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                      HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto"
+                      HorizontalContentAlignment="Stretch"
+                      VerticalContentAlignment="Stretch">
+            
+            <Grid HorizontalAlignment="Stretch">
+                <Grid VerticalAlignment="Stretch" HorizontalAlignment="Left" Margin="4,4,12,4">
+
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    
+                    <StackPanel Grid.Row="0">
+
+                        <TextBlock Style="{StaticResource titleTextStyle}">
+                            <Run Text="Version "/>
+                            <Run Name="versionText" Text="1.0"/>
+                        </TextBlock>
+                        
+                        <TextBlock Style="{StaticResource smallTextStyle}">
+                            <Run Text="Date "/>
+                            <Run Name="buildDate" Text="1.0"/>
+                        </TextBlock>
+
+                        <TextBlock x:Name="description" Style="{StaticResource smallTextStyle}"
+                                   Text="This software is built using these libraries:"/>
+
+
+
+                        <!-- Rx -->
+                        <TextBlock Style="{StaticResource titleTextStyle}">
+                            <Hyperlink NavigateUri="https://github.com/Reactive-Extensions/Rx.NET"
+                                       tb:HyperlinkBehavior.NavigateByClick="True">
+                                <Run Text="Reactive Extensions" FontWeight="Bold"/>
+                            </Hyperlink>
+                            <Run Text=" "/>
+                            <Hyperlink NavigateUri="http://www.apache.org/licenses/LICENSE-2.0"
+                                       tb:HyperlinkBehavior.NavigateByClick="True">
+                                <Run Text="Apache License"/>
+                            </Hyperlink>
+                        </TextBlock>
+
+
+                        <!-- Rp -->
+                        <TextBlock Style="{StaticResource titleTextStyle}">
+                            <Hyperlink NavigateUri="https://github.com/runceel/ReactiveProperty"
+                                       tb:HyperlinkBehavior.NavigateByClick="True">
+                                <Run Text="ReactiveProperty" FontWeight="Bold"/>
+                            </Hyperlink>
+                            <Run Text=" "/>
+                            <Hyperlink NavigateUri="https://github.com/runceel/ReactiveProperty/blob/master/LICENSE.txt"
+                                       tb:HyperlinkBehavior.NavigateByClick="True">
+                                <Run Text="The MIT License"/>
+                            </Hyperlink>
+                        </TextBlock>
+
+
+
+                        <!-- XamlAnimatedGif -->
+                        <TextBlock Style="{StaticResource titleTextStyle}">
+                            <Hyperlink NavigateUri="https://github.com/XamlAnimatedGif/XamlAnimatedGif"
+                                       tb:HyperlinkBehavior.NavigateByClick="True">
+                                <Run Text="XamlAnimatedGif" FontWeight="Bold"/>
+                            </Hyperlink>
+                            <Run Text=" "/>
+                            <Hyperlink NavigateUri="http://www.apache.org/licenses/LICENSE-2.0"
+                                       tb:HyperlinkBehavior.NavigateByClick="True">
+                                <Run Text="Apache License"/>
+                            </Hyperlink>
+                        </TextBlock>
+
+                        <!-- Dapper -->
+                        <TextBlock Style="{StaticResource titleTextStyle}">
+                            <Hyperlink NavigateUri="https://github.com/StackExchange/dapper-dot-net"
+                                       tb:HyperlinkBehavior.NavigateByClick="True">
+                                <Run Text="Dapper" FontWeight="Bold"/>
+                            </Hyperlink>
+                            <Run Text=" "/>
+                            <Hyperlink NavigateUri="http://www.apache.org/licenses/LICENSE-2.0"
+                                       tb:HyperlinkBehavior.NavigateByClick="True">
+                                <Run Text="Apache License"/>
+                            </Hyperlink>
+                        </TextBlock>
+
+                        <!-- Hardcodet WPF NotifyIcon -->
+                        <TextBlock Style="{StaticResource titleTextStyle}">
+                            <Hyperlink NavigateUri="http://www.hardcodet.net/wpf-notifyicon"
+                                       tb:HyperlinkBehavior.NavigateByClick="True">
+                                <Run Text="Hardcodet WPF NotifyIcon" FontWeight="Bold"/>
+                            </Hyperlink>
+                            <Run Text=" "/>
+                            <Hyperlink NavigateUri="http://www.codeproject.com/info/cpol10.aspx"
+                                       tb:HyperlinkBehavior.NavigateByClick="True">
+                                <Run Text="The Code Project Open License"/>
+                            </Hyperlink>
+                        </TextBlock>
+                        
+                        <!-- Material Icons -->
+                        <TextBlock Style="{StaticResource titleTextStyle}">
+                            <Hyperlink NavigateUri="https://design.google.com/icons/"
+                                       tb:HyperlinkBehavior.NavigateByClick="True">
+                                <Run Text="Material Icons" FontWeight="Bold"/>
+                            </Hyperlink>
+                            <Run Text=" "/>
+                            <Hyperlink NavigateUri="https://creativecommons.org/licenses/by/4.0/legalcode"
+                                       tb:HyperlinkBehavior.NavigateByClick="True">
+                                <Run Text="Attribution 4.0 International"/>
+                            </Hyperlink>
+                        </TextBlock>
+
+
+                    </StackPanel>
+
+                </Grid>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</Window>

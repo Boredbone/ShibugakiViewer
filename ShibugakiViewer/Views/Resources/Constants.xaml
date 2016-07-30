@@ -1,0 +1,296 @@
+﻿<ResourceDictionary 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ShibugakiViewer"
+    xmlns:properties="clr-namespace:ShibugakiViewer.Properties"
+    xmlns:converters="clr-namespace:Boredbone.XamlTools.Converters;assembly=WpfTools"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
+    xmlns:tool="clr-namespace:WpfTools;assembly=WpfTools"
+    xmlns:cc="clr-namespace:WpfTools.Controls;assembly=WpfTools"
+    xmlns:sc="clr-namespace:ShibugakiViewer.Views.Converters">
+
+
+    <system:String x:Key="AppName">ShibugakiViewer</system:String>
+
+    
+    <system:String x:Key="FileNameLabel">File Name</system:String>
+    <system:String x:Key="FileSizeLabel">File Size</system:String>
+    <system:String x:Key="RatingLabel">Rating</system:String>
+    <system:String x:Key="DateCreatedLabel">Created Date</system:String>
+    <system:String x:Key="DateModifiedLabel">Modified Date</system:String>
+    <system:String x:Key="ImageSizeLabel">Image Size</system:String>
+    <system:String x:Key="SearchLabel">Search</system:String>
+    <system:String x:Key="WidthLabel">Width</system:String>
+    <system:String x:Key="HeightLabel">Height</system:String>
+
+    <!--
+    <system:String x:Key="ShareLabel">Share</system:String>
+    <system:String x:Key="TagLabel">Tag</system:String>
+    <system:String x:Key="GroupNameLabel">Group Name</system:String>
+    <system:String x:Key="SortLabel">Sort</system:String>
+    <system:String x:Key="PropertyLabel">Property</system:String>
+    <system:String x:Key="GroupPropertyLabel">Group Property</system:String>
+    <system:String x:Key="PageTurningLabel">Page-Turning</system:String>
+    <system:String x:Key="NameLabel">Name</system:String>
+    <system:String x:Key="RefreshLibraryLabel">Refresh Library</system:String>
+    <system:String x:Key="FolderManagementLabel">Folder Management</system:String>
+    <system:String x:Key="PlaySlideShowLabel">Play Slideshow</system:String>-->
+
+    <!--<FontFamily x:Key="SymbolFont">Segoe MDL2 Assets</FontFamily>
+
+    <system:String x:Key="EditSymbol">&#xE104;</system:String>
+    <system:String x:Key="SwitchSymbol">&#xE13C;</system:String>
+    <system:String x:Key="AddSymbol">&#xE109;</system:String>
+    <system:String x:Key="RemoveSymbol">&#xE10A;</system:String>
+    <system:String x:Key="BackSymbol">&#xE72B;</system:String>
+    <system:String x:Key="MenuSymbol">&#xE700;</system:String>
+    <system:String x:Key="InformationSymbol">&#xE946;</system:String>
+    <system:String x:Key="SearchSymbol">&#xE721;</system:String>
+    <system:String x:Key="SettingSymbol">&#xE713;</system:String>
+    <system:String x:Key="PinSymbol">&#xE840;</system:String>
+
+    <system:String x:Key="TreeOpenSymbol">&#xE8C4;</system:String>
+    <system:String x:Key="TreeCloseSymbol">&#xE8C5;</system:String>
+
+    <system:String x:Key="UpSymbol">&#xE098;</system:String>
+    <system:String x:Key="DownSymbol">&#xE099;</system:String>
+
+    <system:String x:Key="UpArSymbol">&#xE74A;</system:String>
+    <system:String x:Key="DownArSymbol">&#xE74B;</system:String>
+    <system:String x:Key="LeftArSymbol">&#xE72B;</system:String>
+    <system:String x:Key="RightArSymbol">&#xE72A;</system:String>
+    <system:String x:Key="AllArSymbol">&#xE72B;&#xE74A;&#xE74B;&#xE72A;</system:String>
+
+
+    <system:String x:Key="StepSymbol">&#xE904;</system:String>
+
+    <system:String x:Key="StarSymbol">&#xE1CF;</system:String>
+    <system:String x:Key="StarBorderSymbol">&#xE1CE;</system:String>
+    <system:String x:Key="UnStarSymbol">&#xE195;</system:String>
+    <system:String x:Key="HistorySymbol">&#xE121;</system:String>
+
+    <system:String x:Key="TagSymbol">&#xE8EC;</system:String>
+    <system:String x:Key="FileSymbol">&#xE8E5;</system:String>
+
+    <system:String x:Key="RefreshSymbol">&#xE72C;</system:String>
+    <system:String x:Key="QuestionSymbol">&#xE897;</system:String>
+    <system:String x:Key="KeyboardSymbol">&#xE765;</system:String>
+    
+    <system:String x:Key="SelectAllSymbol">&#xE8B3;</system:String>
+    <system:String x:Key="ClearSelectionSymbol">&#xE8E6;</system:String>
+    
+    <system:String x:Key="SortSymbol">&#xE8CB;</system:String>
+
+    <system:String x:Key="GroupingSymbol">&#xE716;</system:String>
+    <system:String x:Key="ThumbnailSymbol">&#xE8B8;</system:String>
+    <system:String x:Key="RemoveGroupSymbol">&#xE8F8;</system:String>
+    <system:String x:Key="UndoSymbol">&#xE7A7;</system:String>
+
+    <system:String x:Key="RotateSymbol">&#xE8B4;</system:String>
+    <system:String x:Key="SlideshowSymbol">&#xE786;</system:String>
+
+    <system:String x:Key="PlaySymbol">&#xE768;</system:String>
+    <system:String x:Key="StopSymbol">&#xE71A;</system:String>
+    <system:String x:Key="PauseSymbol">&#xE769;</system:String>
+    <system:String x:Key="PrevSymbol">&#xE892;</system:String>
+    <system:String x:Key="NextSymbol">&#xE893;</system:String>
+
+
+    <system:String x:Key="TurnSymbol">&#xE72C;</system:String>
+    <system:String x:Key="FlipSymbol">&#xE8CB;</system:String>
+    <system:String x:Key="ZoomSymbol">&#xE8A3;</system:String>-->
+
+
+    <FontFamily x:Key="SymbolFont">/ShibugakiViewer;component/Assets/Fonts/#Material Icons</FontFamily>
+
+    <system:String x:Key="EditSymbol">&#xE22B;</system:String>
+    <system:String x:Key="SwitchSymbol">&#xE8D4;</system:String>
+    <system:String x:Key="AddSymbol">&#xE145;</system:String>
+    <system:String x:Key="RemoveSymbol">&#xE14C;</system:String>
+    <system:String x:Key="BackSymbol">&#xE5C4;</system:String>
+    <system:String x:Key="MenuSymbol">&#xE5D2;</system:String>
+    <system:String x:Key="InformationSymbol">&#xE88F;</system:String>
+    <system:String x:Key="SearchSymbol">&#xE8B6;</system:String>
+    <system:String x:Key="SettingSymbol">&#xE8B8;</system:String>
+    <system:String x:Key="PinSymbol">&#xE0C8;</system:String>
+    <system:String x:Key="MessageSymbol">&#xE0CB;</system:String>
+
+    <system:String x:Key="TreeOpenSymbol">&#xE5CC;</system:String>
+    <system:String x:Key="TreeCloseSymbol">&#xE5CF;</system:String>
+
+    <system:String x:Key="UpSymbol">&#xE5CE;</system:String>
+    <system:String x:Key="DownSymbol">&#xE5CF;</system:String>
+
+    <system:String x:Key="UpArSymbol">&#xE5D8;</system:String>
+    <system:String x:Key="DownArSymbol">&#xE5DB;</system:String>
+    <system:String x:Key="LeftArSymbol">&#xE5C4;</system:String>
+    <system:String x:Key="RightArSymbol">&#xE5C8;</system:String>
+    <system:String x:Key="AllArSymbol">&#xE5C4;&#xE5D8;&#xE5DB;&#xE5C8;</system:String>
+
+
+    <system:String x:Key="DescSymbol">&#xE164;</system:String>
+
+    <system:String x:Key="StarSymbol">&#xE838;</system:String>
+    <system:String x:Key="StarBorderSymbol">&#xE83A;</system:String>
+    <system:String x:Key="UnStarSymbol">&#xE83A;</system:String>
+    <system:String x:Key="HistorySymbol">&#xE192;</system:String>
+
+    <system:String x:Key="TagSymbol">&#xE54E;</system:String>
+    <system:String x:Key="FileSymbol">&#xE24D;</system:String>
+
+    <system:String x:Key="RefreshSymbol">&#xE86A;</system:String>
+    <system:String x:Key="QuestionSymbol">&#xE8FD;</system:String>
+    <system:String x:Key="KeyboardSymbol">&#xE312;</system:String>
+
+    <system:String x:Key="SelectAllSymbol">&#xE228;</system:String>
+    <system:String x:Key="ClearSelectionSymbol">&#xE22A;</system:String>
+
+    <system:String x:Key="SortSymbol">&#xE8D5;</system:String>
+
+    <system:String x:Key="GroupingSymbol">&#xE7EF;</system:String>
+    <system:String x:Key="ThumbnailSymbol">&#xE416;</system:String>
+    <system:String x:Key="RemoveGroupSymbol">&#xE7FF;</system:String>
+    <system:String x:Key="UndoSymbol">&#xE166;</system:String>
+
+    <system:String x:Key="RotateSymbol">&#xE428;</system:String>
+    <system:String x:Key="SlideshowSymbol">&#xE037;</system:String>
+
+    <system:String x:Key="PlaySymbol">&#xE037;</system:String>
+    <system:String x:Key="StopSymbol">&#xE047;</system:String>
+    <system:String x:Key="PauseSymbol">&#xE034;</system:String>
+    <system:String x:Key="PrevSymbol">&#xE045;</system:String>
+    <system:String x:Key="NextSymbol">&#xE044;</system:String>
+    <system:String x:Key="ShuffleSymbol">&#xE043;</system:String>
+
+
+    <system:String x:Key="TurnCcwSymbol">&#xE042;</system:String>
+    <system:String x:Key="FlipHorizontalSymbol">&#xE8D4;</system:String>
+    <system:String x:Key="ZoomSymbol">&#xE8B6;</system:String>
+
+
+    <!--
+    <system:String x:Key="UpArSymbol">&#x2191;</system:String>
+    <system:String x:Key="DownArSymbol">&#x2193;</system:String>
+    <system:String x:Key="LeftArSymbol">&#x2190;</system:String>
+    <system:String x:Key="RightArSymbol">&#x2192;</system:String>
+    <system:String x:Key="AllArSymbol">&#x2190;&#x2191;&#x2192;&#x2193;</system:String>-->
+    <!--
+        <system:String x:Key="AscendingSymbol">&#xE904;</system:String>
+        <system:String x:Key="DescendingSymbol">&#xE904;</system:String>-->
+
+    <!--
+        <system:String x:Key="ApplicationId1">e50c46c5-4ff9-46e6-90a5-ac975948544a</system:String>
+        <system:String x:Key="AdUnitId1">11499275</system:String>
+
+        <system:String x:Key="AdduplexApplicationId1">801d0a65-7615-41a8-a12d-3efa92019916</system:String>
+        <system:String x:Key="AdduplexAdUnitId1">161723</system:String>
+
+        <system:String x:Key="AdduplexApplicationId2">d98638ac-2ff7-41ae-a396-4b85cf392f6b</system:String>
+        <system:String x:Key="AdduplexAdUnitId2">174691</system:String>
+
+
+        <system:Double x:Key="AdWidth1">480.0</system:Double>
+        <system:Double x:Key="AdHeight1">80.0</system:Double>
+
+        <system:Double x:Key="AdWidth2">480.0</system:Double>
+        <system:Double x:Key="AdHeight2">80.0</system:Double>-->
+
+    <system:Double x:Key="CompactPaneWidth">48.0</system:Double>
+    <system:Double x:Key="OpenPaneWidth">320.0</system:Double>
+    <system:Double x:Key="PaneItemHeight">48.0</system:Double>
+
+    <system:Double x:Key="RemoveButtonWidth">48.0</system:Double>
+    <system:Double x:Key="ToolButtonWidth">68.0</system:Double>
+
+    <system:Double x:Key="IconFontSize">24</system:Double>
+    <system:Double x:Key="NormalTextSize">18</system:Double>
+    <system:Double x:Key="ContextMenuTextSize">16</system:Double>
+
+    <SolidColorBrush x:Key="BasicBackColor" Color="White"/>
+
+    <SolidColorBrush x:Key="MenuTextColor" Color="#FF383838"/>
+
+    <SolidColorBrush x:Key="UnitSearchItemColor" Color="#FFFBBD80"/>
+    <SolidColorBrush x:Key="ComplexSearchItemColor" Color="#FFFDA6A6"/>
+
+
+    <SolidColorBrush x:Key="SettingTitleColor" Color="LightGray"/>
+    <SolidColorBrush x:Key="SettingBackgroundColor" Color="#FFF0F0F0"/>
+
+
+    <SolidColorBrush x:Key="AppBackgroundColor" Color="#FFFAD3AF"/>
+
+
+    <SolidColorBrush x:Key="PopupMaskColor" Color="#40000000"/>
+
+
+    <SolidColorBrush x:Key="SearchItemCoverNormalColor" Color="#00F5F5F5"/>
+    <SolidColorBrush x:Key="SearchItemCoverHoverColor" Color="#40F5F5F5"/>
+
+    <SolidColorBrush x:Key="ThumbnailSelectColor" Color="#FF55682F"/>
+    <SolidColorBrush x:Key="ThumbnailSelectHoverColor" Color="#FF647537"/>
+    <SolidColorBrush x:Key="ThumbnailDefaultBorderColor" Color="LightGray"/>
+    <SolidColorBrush x:Key="ThumbnailGroupBorderColor" Color="#FFC59454"/>
+
+    <SolidColorBrush x:Key="ThumbnailNameTextColor" Color="White"/>
+    <SolidColorBrush x:Key="ThumbnailSizeTextColor" Color="#C0FFFFFF"/>
+
+
+    <SolidColorBrush x:Key="BaseColor" Color="White"/>
+
+    <SolidColorBrush x:Key="ControlColor" Color="DarkOliveGreen"/>
+
+    <SolidColorBrush x:Key="TagItemColor" Color="#FFf6ad49"/>
+    <SolidColorBrush x:Key="PathItemColor" Color="#FFb9d08b"/>
+
+    <SolidColorBrush x:Key="TagTextColor" Color="Black"/>
+
+    <SolidColorBrush x:Key="SmokeColor" Color="#80FFFFFF"/>
+
+    <SolidColorBrush x:Key="PopupBackColor" Color="#FFF5F5F5"/>
+    <!--<SolidColorBrush x:Key="TopBarBackColor" Color="#C0FFFFFF"/>-->
+
+    <SolidColorBrush x:Key="ViewerRateEdgeColor" Color="Black"/>
+    <SolidColorBrush x:Key="ViewerRateFillColor" Color="DimGray"/>
+    <SolidColorBrush x:Key="ViewerRateBackColor" Color="#20000000"/>
+
+    <SolidColorBrush x:Key="RateEdgeColor" Color="Black"/>
+    <SolidColorBrush x:Key="RateFillColor" Color="DimGray"/>
+    <SolidColorBrush x:Key="RateBackColor" Color="#20000000"/>
+
+    <SolidColorBrush x:Key="TagListBackColor" Color="#FFEDEDED"/>
+    <SolidColorBrush x:Key="TagListBorderColor" Color="Black"/>
+
+    <SolidColorBrush x:Key="TabColor0" Color="#fff8b862"/>
+    <SolidColorBrush x:Key="TabColor1" Color="#93D87C"/><!-- #ffaacf53"/>-->
+    <SolidColorBrush x:Key="TabColor2" Color="#ffbbc8e6"/>
+    <SolidColorBrush x:Key="ThumbnailColor" Color="Beige"/>
+    <SolidColorBrush x:Key="ControllerColor" Color="#FFFDCA94"/>
+    <SolidColorBrush x:Key="TreeBackGround" Color="#FFF5F5F5"/>
+
+    <SolidColorBrush x:Key="LoadingTextForeGround" Color="Gray"/>
+
+    <SolidColorBrush x:Key="ProgressColor" Color="#FF2e2930"/>
+    <!--<x:String x:Key="ProgressBarIndeterminateForegroundThemeBrush">#FF2e2930</system:String>-->
+
+
+    <SolidColorBrush x:Key="OptionPaneColor" Color="#FFF5F5F5"/>
+
+
+    <SolidColorBrush x:Key="CheckBoxBaseColor" Color="#A0FFFFFF"/>
+    <SolidColorBrush x:Key="CheckBoxHoverColor" Color="LightGray"/>
+
+    <SolidColorBrush x:Key="MenuBackgroundColor" Color="#FFFAD3AF"/>
+
+
+    <SolidColorBrush x:Key="FlatButtonHoverBackground" Color="#20000000"/>
+    <SolidColorBrush x:Key="FlatButtonPressedBackground" Color="#40000000"/>
+    <SolidColorBrush x:Key="FlatToggleButtonCheckedHoverBackground" Color="#A0808080"/>
+
+
+    <SolidColorBrush x:Key="HistoryAddColor" Color="#FFCCFFCC"/>
+    <SolidColorBrush x:Key="HistoryRemoveColor" Color="#FFFFCCCC"/>
+    <!--<SolidColorBrush x:Key="HistoryRemoveColor" Color="#FFCCECFF"/>-->
+    <SolidColorBrush x:Key="HistoryUpdateColor" Color="#FFFFFFCC"/>
+
+</ResourceDictionary>

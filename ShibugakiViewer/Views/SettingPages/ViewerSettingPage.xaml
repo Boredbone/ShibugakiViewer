@@ -1,0 +1,123 @@
+﻿<UserControl x:Class="ShibugakiViewer.Views.SettingPages.ViewerSettingPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ShibugakiViewer.Views.SettingPages"
+             xmlns:viewModels="clr-namespace:ShibugakiViewer.ViewModels.SettingPages"
+             xmlns:b="clr-namespace:ShibugakiViewer.Views.Behaviors"
+             xmlns:tc="clr-namespace:WpfTools.Controls;assembly=WpfTools"
+             xmlns:converter="clr-namespace:ShibugakiViewer.Views.Converters"
+             xmlns:properties="clr-namespace:ShibugakiViewer.Properties"
+             xmlns:tb="clr-namespace:WpfTools.Behaviors;assembly=WpfTools"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.DataContext>
+        <viewModels:ViewerSettingPageViewModel/>
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <Style TargetType="ComboBox" x:Key="comboBoxStyle">
+            <Setter Property="Margin" Value="4"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <ScrollViewer
+            Grid.Row="0"
+            Margin="0"
+            VerticalScrollBarVisibility="Auto"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalContentAlignment="Stretch">
+            <StackPanel HorizontalAlignment="Left" Grid.Row="0">
+                <TextBlock Text="{Binding Text.Value}"/>
+
+                <Button Content="Convert" Width="200" HorizontalAlignment="Right"
+                    Command="{Binding ConvertCommand}"/>
+
+                <Button Content="Client" Command="{Binding GenerateNewClientCommand}"/>
+
+                <TextBlock Text="{x:Static properties:Resources.ThumbSizeSelector_Header}"/>
+                <TextBox Width="200" 
+                     Text="{Binding ThumbnailSize.Value,Mode=TwoWay,UpdateSourceTrigger=Explicit}"
+                     b:TextBoxBehavior.UpdateByReturn="True"/>
+
+                <CheckBox Content="IsAutoInformationPaneEnabled"
+                      IsChecked="{Binding IsAutoInformationPaneEnabled.Value,Mode=TwoWay}"/>
+
+
+                <CheckBox Content="Theme" IsChecked="{Binding IsDarkTheme.Value,Mode=TwoWay}"/>
+
+                <TextBlock Text="{x:Static properties:Resources.ThemeSelectorHeader_Text}"/>
+                <ComboBox 
+                Style="{StaticResource comboBoxStyle}"
+                SelectedIndex="{Binding IsDarkTheme.Value,Mode=TwoWay,Converter={StaticResource BoolIntConverter}}">
+                    <ComboBoxItem>
+                        <TextBlock Text="{x:Static properties:Resources.LightText_Text}"/>
+                    </ComboBoxItem>
+                    <ComboBoxItem>
+                        <TextBlock Text="{x:Static properties:Resources.DarkText_Text}"/>
+                    </ComboBoxItem>
+                </ComboBox>
+
+
+                <tc:ColorSelector SelectedColor="{Binding BackColor.Value,Mode=TwoWay}"/>
+
+
+                <CheckBox 
+                Content="{x:Static properties:Resources.GroupingSwitch_Header}" 
+                IsChecked="{Binding IsGroupingEnabled.Value,Mode=TwoWay}"/>
+                <CheckBox 
+                Content="{x:Static properties:Resources.LibRefreshModeHelp_Header}" 
+                IsChecked="{Binding RefreshLibraryCompletely.Value,Mode=TwoWay}"/>
+
+                <TextBlock Text="{x:Static properties:Resources.LibRefreshModeHelp_Header}"/>
+                <ComboBox 
+                Style="{StaticResource comboBoxStyle}"
+                SelectedIndex="{Binding RefreshLibraryCompletely.Value,Mode=TwoWay,Converter={StaticResource BoolIntConverter}}">
+                    <ComboBoxItem>
+                        <TextBlock Text="{x:Static properties:Resources.RefreshModeFast}"/>
+                    </ComboBoxItem>
+                    <ComboBoxItem>
+                        <TextBlock Text="{x:Static properties:Resources.RefreshModeSlow}"/>
+                    </ComboBoxItem>
+                </ComboBox>
+
+
+                <CheckBox 
+                Content="{x:Static properties:Resources.PageTurning}" 
+                IsChecked="{Binding IsFlipReversed.Value,Mode=TwoWay}"/>
+
+                <TextBlock Text="{x:Static properties:Resources.PageTurning}"/>
+                <ComboBox 
+                Style="{StaticResource comboBoxStyle}"
+                SelectedIndex="{Binding IsFlipReversed.Value,Mode=TwoWay,Converter={StaticResource BoolIntConverter}}">
+                    <ComboBoxItem>
+                        <TextBlock Text="{x:Static properties:Resources.FlipNormal}"/>
+                    </ComboBoxItem>
+                    <ComboBoxItem>
+                        <TextBlock Text="{x:Static properties:Resources.FlipReverse}"/>
+                    </ComboBoxItem>
+                </ComboBox>
+
+                <CheckBox 
+                Content="{x:Static properties:Resources.AnimatedGifSwitch_Text}" 
+                IsChecked="{Binding IsAnimatedGifEnabled.Value,Mode=TwoWay}"/>
+                <CheckBox 
+                Content="{x:Static properties:Resources.OpenNaviSingleTapSwitch_Text}" 
+                IsChecked="{Binding IsOpenNavigationWithSingleTapEnabled.Value,Mode=TwoWay}"/>
+                <CheckBox 
+                Content="{x:Static properties:Resources.ExtendedMouseSwitch_Text}" 
+                IsChecked="{Binding UseExtendedMouseButtonsToSwitchImage.Value,Mode=TwoWay}"/>
+                <CheckBox 
+                Content="{x:Static properties:Resources.AutoRefereshHelp_Text}" 
+                IsChecked="{Binding RefreshLibraryOnLaunched.Value,Mode=TwoWay}"/>
+                <CheckBox 
+                Content="{x:Static properties:Resources.RefreshFolderVisibleHelp_Header}" 
+                IsChecked="{Binding IsLibraryRefreshStatusVisible.Value,Mode=TwoWay}"/>
+                <CheckBox 
+                Content="IsFolderUpdatedNotificationVisible" 
+                IsChecked="{Binding IsFolderUpdatedNotificationVisible.Value,Mode=TwoWay}"/>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

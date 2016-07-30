@@ -1,0 +1,750 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Ascending" xml:space="preserve">
+    <value>Ascending</value>
+  </data>
+  <data name="BelowRef" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CancelButton_Content" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ClearSelectionButton_Label" xml:space="preserve">
+    <value>Clear Selection</value>
+  </data>
+  <data name="Contains" xml:space="preserve">
+    <value>contains</value>
+  </data>
+  <data name="DateCreated" xml:space="preserve">
+    <value>Created Date</value>
+  </data>
+  <data name="DateModified" xml:space="preserve">
+    <value>Modified Date</value>
+  </data>
+  <data name="Descending" xml:space="preserve">
+    <value>Descending</value>
+  </data>
+  <data name="DoNotContains" xml:space="preserve">
+    <value>does not contain</value>
+  </data>
+  <data name="EqualsTo" xml:space="preserve">
+    <value>is equal to (==)</value>
+  </data>
+  <data name="FileName" xml:space="preserve">
+    <value>File Name</value>
+  </data>
+  <data name="FileNameContains" xml:space="preserve">
+    <value>File Name (Contains)</value>
+  </data>
+  <data name="FileSize" xml:space="preserve">
+    <value>File Size</value>
+  </data>
+  <data name="FolderRelativeId" xml:space="preserve">
+    <value>File Path</value>
+  </data>
+  <data name="GreaterEqual" xml:space="preserve">
+    <value>is greater or equal to (&gt;=)</value>
+  </data>
+  <data name="GreaterThan" xml:space="preserve">
+    <value>is greater than (&gt;)</value>
+  </data>
+  <data name="GroupingButton_Label" xml:space="preserve">
+    <value>Grouping</value>
+  </data>
+  <data name="GroupLeader" xml:space="preserve">
+    <value>GroupLeader</value>
+  </data>
+  <data name="Height" xml:space="preserve">
+    <value>Height</value>
+  </data>
+  <data name="ImageSize" xml:space="preserve">
+    <value>Image Size</value>
+  </data>
+  <data name="Is" xml:space="preserve">
+    <value>is</value>
+  </data>
+  <data name="IsNot" xml:space="preserve">
+    <value>is not</value>
+  </data>
+  <data name="IsV" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>en-US</value>
+  </data>
+  <data name="LessEqual" xml:space="preserve">
+    <value>is less or equal to (&lt;=)</value>
+  </data>
+  <data name="LessThan" xml:space="preserve">
+    <value>is less than (&lt;)</value>
+  </data>
+  <data name="MatchAll" xml:space="preserve">
+    <value>match all (AND)</value>
+  </data>
+  <data name="MatchAny" xml:space="preserve">
+    <value>match any (OR)</value>
+  </data>
+  <data name="NotEqualsTo" xml:space="preserve">
+    <value>is not equal to (!=)</value>
+  </data>
+  <data name="NumOfTags" xml:space="preserve">
+    <value>Number of tags</value>
+  </data>
+  <data name="OkButton_Content" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Path" xml:space="preserve">
+    <value>Path</value>
+  </data>
+  <data name="Property" xml:space="preserve">
+    <value>Properties</value>
+  </data>
+  <data name="Rating" xml:space="preserve">
+    <value>Rating</value>
+  </data>
+  <data name="RelativePath" xml:space="preserve">
+    <value>Relative Path</value>
+  </data>
+  <data name="RelativePathSequenceNum" xml:space="preserve">
+    <value>Relative Path (Sequence Number)</value>
+  </data>
+  <data name="RemoveButton_Label" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="RemoveButton_ToolTip" xml:space="preserve">
+    <value>Remove from Group</value>
+  </data>
+  <data name="RootDirectoryAccessToken" xml:space="preserve">
+    <value>RootDirectoryAccessToken</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="SelectAllButton_Label" xml:space="preserve">
+    <value>Select All</value>
+  </data>
+  <data name="SetGroupThumbnail" xml:space="preserve">
+    <value>Set to Group Thumbnail</value>
+  </data>
+  <data name="Sort" xml:space="preserve">
+    <value>Sort</value>
+  </data>
+  <data name="Tag" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="UndoRemovalButton_Label" xml:space="preserve">
+    <value>Undo Removal</value>
+  </data>
+  <data name="Width" xml:space="preserve">
+    <value>Width</value>
+  </data>
+  <data name="DateRegistered" xml:space="preserve">
+    <value>Registered Date</value>
+  </data>
+  <data name="FileCount" xml:space="preserve">
+    <value>Contains</value>
+  </data>
+  <data name="GroupName" xml:space="preserve">
+    <value>Group Name</value>
+  </data>
+  <data name="GroupProperty" xml:space="preserve">
+    <value>Group Property</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="PageTurning" xml:space="preserve">
+    <value>Page-Turning</value>
+  </data>
+  <data name="NewSearchText_Text" xml:space="preserve">
+    <value>New Search</value>
+  </data>
+  <data name="SearchHelpText1_Text" xml:space="preserve">
+    <value>Tap Add(</value>
+  </data>
+  <data name="SearchHelpText2_Text" xml:space="preserve">
+    <value>) button to filter images</value>
+  </data>
+  <data name="KeyShortcut" xml:space="preserve">
+    <value>Keyboard Shortcut</value>
+  </data>
+  <data name="NumericTextBox_PlaceholderText" xml:space="preserve">
+    <value>Numerical Value</value>
+  </data>
+  <data name="StringTextBox_PlaceholderText" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="TagNameBox_PlaceholderText" xml:space="preserve">
+    <value>Tag Name</value>
+  </data>
+  <data name="UpdatingText_Text" xml:space="preserve">
+    <value>Updating...</value>
+  </data>
+  <data name="AddedText" xml:space="preserve">
+    <value>Added</value>
+  </data>
+  <data name="RefreshedText" xml:space="preserve">
+    <value>Library has been Updated</value>
+  </data>
+  <data name="RemovedText" xml:space="preserve">
+    <value>Removed</value>
+  </data>
+  <data name="UnitText" xml:space="preserve">
+    <value>Images</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="FlipNormal" xml:space="preserve">
+    <value>Left to Right</value>
+  </data>
+  <data name="FlipReverse" xml:space="preserve">
+    <value>Right to Left</value>
+  </data>
+  <data name="MirrorHorizontalText_Text" xml:space="preserve">
+    <value>Flip Horizontal</value>
+  </data>
+  <data name="MirrorVerticalText_Text" xml:space="preserve">
+    <value>Flip Vertical</value>
+  </data>
+  <data name="RotateCcwText_Text" xml:space="preserve">
+    <value>Rotate Left 90deg</value>
+  </data>
+  <data name="RotateCwText_Text" xml:space="preserve">
+    <value>Rotate Right 90deg</value>
+  </data>
+  <data name="AddButton_ToolTip" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="AddConditionButton_ToolTip" xml:space="preserve">
+    <value>Add new condition</value>
+  </data>
+  <data name="App" xml:space="preserve">
+    <value>App</value>
+  </data>
+  <data name="BackButton_ToolTip" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="EditButton_ToolTip" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="FavoriteButton_ToolTip" xml:space="preserve">
+    <value>Add to Albums</value>
+  </data>
+  <data name="FavoriteText_Text" xml:space="preserve">
+    <value>Album</value>
+  </data>
+  <data name="FixButton_Label" xml:space="preserve">
+    <value>Fix the Bar</value>
+  </data>
+  <data name="FolderPageButton_Label" xml:space="preserve">
+    <value>Add Folder</value>
+  </data>
+  <data name="HistoryText_Text" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="Library" xml:space="preserve">
+    <value>Library</value>
+  </data>
+  <data name="PropertiesButton_ToolTip" xml:space="preserve">
+    <value>Properties</value>
+  </data>
+  <data name="RemoveSimpleButton_ToolTip" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="RotateButton_Label" xml:space="preserve">
+    <value>Scaling and Rotation</value>
+  </data>
+  <data name="SearchTitleText_Text" xml:space="preserve">
+    <value>Search for Images</value>
+  </data>
+  <data name="UnFavoriteButton_ToolTip" xml:space="preserve">
+    <value>Remove from Album</value>
+  </data>
+  <data name="Viewer" xml:space="preserve">
+    <value>Viewer</value>
+  </data>
+  <data name="CmsSwitch_Header" xml:space="preserve">
+    <value>Use color management</value>
+  </data>
+  <data name="DarkText_Text" xml:space="preserve">
+    <value>Black</value>
+  </data>
+  <data name="ExtendedMouseSwitch_Text" xml:space="preserve">
+    <value>Use extended mouse buttons to change the image</value>
+  </data>
+  <data name="FlipAnimationSwitch_Text" xml:space="preserve">
+    <value>Always animate page flip</value>
+  </data>
+  <data name="GroupingSwitch_Header" xml:space="preserve">
+    <value>Use Grouping</value>
+  </data>
+  <data name="LibrarySettings_Text" xml:space="preserve">
+    <value>Search Options</value>
+  </data>
+  <data name="LightText_Text" xml:space="preserve">
+    <value>White</value>
+  </data>
+  <data name="OpenNaviSingleTapSwitch_Text" xml:space="preserve">
+    <value>Open navigation with single tap</value>
+  </data>
+  <data name="ThemeSelectorHeader_Text" xml:space="preserve">
+    <value>Toolbar Color</value>
+  </data>
+  <data name="ThumbSizeSelector_Header" xml:space="preserve">
+    <value>Thumbnail Size</value>
+  </data>
+  <data name="ViewerSettings_Text" xml:space="preserve">
+    <value>Viewer Options</value>
+  </data>
+  <data name="FolderManagement" xml:space="preserve">
+    <value>Folder Management</value>
+  </data>
+  <data name="PrivacyPolicy_Text" xml:space="preserve">
+    <value>Privacy Policy</value>
+  </data>
+  <data name="RefreshLibrary" xml:space="preserve">
+    <value>Update Library</value>
+  </data>
+  <data name="RefreshModeFast" xml:space="preserve">
+    <value>Quickly : Check only the presence of image</value>
+  </data>
+  <data name="RefreshModeSlow" xml:space="preserve">
+    <value>In Detail : Check image content change</value>
+  </data>
+  <data name="MoveImageHelp_Text" xml:space="preserve">
+    <value>Move Image</value>
+  </data>
+  <data name="ZoomInHelp_Text" xml:space="preserve">
+    <value>Zoom In</value>
+  </data>
+  <data name="ZoomOutHelp_Text" xml:space="preserve">
+    <value>Zoom Out</value>
+  </data>
+  <data name="NextImage" xml:space="preserve">
+    <value>Next Image</value>
+  </data>
+  <data name="PreviousImage" xml:space="preserve">
+    <value>Previous Image</value>
+  </data>
+  <data name="AutomaticZoomHelp_Text" xml:space="preserve">
+    <value>Automatic Zoom</value>
+  </data>
+  <data name="IncreaseRatingHelp_Text" xml:space="preserve">
+    <value>Increase Rating</value>
+  </data>
+  <data name="DecreaseRatingHelp_Text" xml:space="preserve">
+    <value>Decrease Rating</value>
+  </data>
+  <data name="Tags" xml:space="preserve">
+    <value>Tags</value>
+  </data>
+  <data name="RotateRightHelp_Text" xml:space="preserve">
+    <value>Rotate Right 90deg</value>
+  </data>
+  <data name="RotateLeftHelp_Text" xml:space="preserve">
+    <value>Rotate Left 90deg</value>
+  </data>
+  <data name="FlipHorizontalHelp_Text" xml:space="preserve">
+    <value>Flip Horizontal</value>
+  </data>
+  <data name="FlipVerticalHelp_Text" xml:space="preserve">
+    <value>Flip Vertical</value>
+  </data>
+  <data name="TagSelectorHelp_Text" xml:space="preserve">
+    <value>Select Tag</value>
+  </data>
+  <data name="TagShortcutHelp_Text" xml:space="preserve">
+    <value>Shortcuts for Tag</value>
+  </data>
+  <data name="AutoRefereshHelp_Text" xml:space="preserve">
+    <value>Update Automatically when the App is Launched</value>
+  </data>
+  <data name="BackHelp_Text" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="CursorKeyFuncHelp_Header" xml:space="preserve">
+    <value>Function of Cursor Keys</value>
+  </data>
+  <data name="CursorKeyToFlipHelp_Content" xml:space="preserve">
+    <value>Flip or Zoom Image</value>
+  </data>
+  <data name="CursorKeyToMoveHelp_Content" xml:space="preserve">
+    <value>Move Image</value>
+  </data>
+  <data name="DispAndNaviHelp_Text" xml:space="preserve">
+    <value>Display and Navigation</value>
+  </data>
+  <data name="DispPropHelp_Text" xml:space="preserve">
+    <value>Show Properties</value>
+  </data>
+  <data name="DispSearchResultHelp_Text" xml:space="preserve">
+    <value>Search Result Layout</value>
+  </data>
+  <data name="ImageLibraryLabel_Text" xml:space="preserve">
+    <value>Image Library</value>
+  </data>
+  <data name="KeyBindHelp_Text" xml:space="preserve">
+    <value>Key Binds</value>
+  </data>
+  <data name="KeyboardHelp_Text" xml:space="preserve">
+    <value>Enabled when keyboard is connected_</value>
+  </data>
+  <data name="LibRefreshModeHelp_Header" xml:space="preserve">
+    <value>Library Update Mode</value>
+  </data>
+  <data name="PurchaseButton_Content" xml:space="preserve">
+    <value>Purchase</value>
+  </data>
+  <data name="PurchaseFlyoutTitle_Text" xml:space="preserve">
+    <value>In-App Purchase</value>
+  </data>
+  <data name="RefreshFolderVisibleHelp_Header" xml:space="preserve">
+    <value>Notify when the library is updated</value>
+  </data>
+  <data name="RemoveAdsHelp_Text" xml:space="preserve">
+    <value>You can purchase a license to remove Ads.</value>
+  </data>
+  <data name="RemoveAdsTitle_Text" xml:space="preserve">
+    <value>Remove Ads</value>
+  </data>
+  <data name="AdvancedSettingsSwitch_Header" xml:space="preserve">
+    <value>Advanced Settings</value>
+  </data>
+  <data name="ChangeFolderButton_Content" xml:space="preserve">
+    <value>Change Referenced Folder</value>
+  </data>
+  <data name="FolderManagePageTitle_Text" xml:space="preserve">
+    <value>Folders to load Images</value>
+  </data>
+  <data name="ImageUnitLabel_Text" xml:space="preserve">
+    <value>items</value>
+  </data>
+  <data name="RefreshModeDefault" xml:space="preserve">
+    <value>Use Default Setting</value>
+  </data>
+  <data name="RemoveFolderButton_Content" xml:space="preserve">
+    <value>Unregister</value>
+  </data>
+  <data name="UpdateEnabledCheckBox_Content" xml:space="preserve">
+    <value>Always Up-To-Date</value>
+  </data>
+  <data name="UpdateFlagLabel_Text" xml:space="preserve">
+    <value>Updating will be started after page transition.</value>
+  </data>
+  <data name="UpdateNowButton_Content" xml:space="preserve">
+    <value>Update Now</value>
+  </data>
+  <data name="RegisterFolderButton_Content" xml:space="preserve">
+    <value>Register Folders</value>
+  </data>
+  <data name="StartButton_Content" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="TutorialText1_Text" xml:space="preserve">
+    <value>This app loads image files from user's "Pictures" folder.</value>
+  </data>
+  <data name="TutorialText2_Text" xml:space="preserve">
+    <value>Tap "Register folders" if you want to load more images from other folders.</value>
+  </data>
+  <data name="TutorialText3_Text" xml:space="preserve">
+    <value>Checking images in folders</value>
+  </data>
+  <data name="TutorialText4_Text" xml:space="preserve">
+    <value>This may take several minutes.</value>
+  </data>
+  <data name="WelcomeText1_Text" xml:space="preserve">
+    <value>Welcome to</value>
+  </data>
+  <data name="WelcomeText2_Text" xml:space="preserve">
+    <value>!</value>
+  </data>
+  <data name="NoImageText1_Text" xml:space="preserve">
+    <value>No image files in all the folders.</value>
+  </data>
+  <data name="NoImageText2_Text" xml:space="preserve">
+    <value>Please register the folder that contains image files.</value>
+  </data>
+  <data name="Settings_Text" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="AnimatedGifSwitch_Text" xml:space="preserve">
+    <value>Play Animated GIF</value>
+  </data>
+  <data name="Share" xml:space="preserve">
+    <value>Share</value>
+  </data>
+  <data name="ShareImageTitle" xml:space="preserve">
+    <value>This image</value>
+  </data>
+  <data name="CopyPath" xml:space="preserve">
+    <value>Copy Path</value>
+  </data>
+  <data name="LockScreenText_Text" xml:space="preserve">
+    <value>Set Lock Screen</value>
+  </data>
+  <data name="OpenWith" xml:space="preserve">
+    <value>Open in Another App</value>
+  </data>
+  <data name="PlaySlideShow" xml:space="preserve">
+    <value>Play Slideshow</value>
+  </data>
+  <data name="UnitTextFull" xml:space="preserve">
+    <value>Images</value>
+  </data>
+  <data name="LicenseTitle_Text" xml:space="preserve">
+    <value>License</value>
+  </data>
+  <data name="Slideshow" xml:space="preserve">
+    <value>Slideshow</value>
+  </data>
+  <data name="DurationText_Text" xml:space="preserve">
+    <value>Duration</value>
+  </data>
+  <data name="FillText_Content" xml:space="preserve">
+    <value>Fill</value>
+  </data>
+  <data name="FitText_Content" xml:space="preserve">
+    <value>Fit</value>
+  </data>
+  <data name="PauseButton_Label" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="ResizeMethodText_Text" xml:space="preserve">
+    <value>Resizing Method</value>
+  </data>
+  <data name="ResizeSmallImageText_Text" xml:space="preserve">
+    <value>Resize Small Image</value>
+  </data>
+  <data name="SecondsText_Text" xml:space="preserve">
+    <value>Seconds</value>
+  </data>
+  <data name="SettingsButton_Label" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="ShuffleButton_Label" xml:space="preserve">
+    <value>Shuffle</value>
+  </data>
+  <data name="TransitionTimeText_Text" xml:space="preserve">
+    <value>Transition Time</value>
+  </data>
+  <data name="LockScreenTextLabel_Label" xml:space="preserve">
+    <value>Set Lock Screen</value>
+  </data>
+  <data name="OpenFileLocation" xml:space="preserve">
+    <value>Open file location</value>
+  </data>
+  <data name="FilePropertyText_Text" xml:space="preserve">
+    <value>File Property</value>
+  </data>
+  <data name="SlideshowSetting_Text" xml:space="preserve">
+    <value>Slideshow Settings</value>
+  </data>
+  <data name="Version_Text" xml:space="preserve">
+    <value>Version Information</value>
+  </data>
+  <data name="MenuButton_ToolTip" xml:space="preserve">
+    <value>Menu</value>
+  </data>
+  <data name="AspectRatio" xml:space="preserve">
+    <value>Aspect Ratio (W/H)</value>
+  </data>
+  <data name="FullscreenText_Text" xml:space="preserve">
+    <value>Show at Full-screen</value>
+  </data>
+  <data name="CommonTagsText_Text" xml:space="preserve">
+    <value>Common Tags</value>
+  </data>
+  <data name="ImageSelectedTaxt_Text" xml:space="preserve">
+    <value> Images Selected</value>
+  </data>
+  <data name="InformationText_Text" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="PaneFixButton_ToolTip" xml:space="preserve">
+    <value>Inline</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="DirectoryPathContains" xml:space="preserve">
+    <value>Directory (Contains)</value>
+  </data>
+  <data name="FileNameSequenceNumLeft" xml:space="preserve">
+    <value>File Name (Left Sequence Number)</value>
+  </data>
+  <data name="FileNameSequenceNumRight" xml:space="preserve">
+    <value>File Name (Right Sequence Number)</value>
+  </data>
+  <data name="SearchCriteria" xml:space="preserve">
+    <value>Search Criteria</value>
+  </data>
+  <data name="DirectoryPath" xml:space="preserve">
+    <value>Folder Path</value>
+  </data>
+  <data name="FullPath" xml:space="preserve">
+    <value>File Path</value>
+  </data>
+  <data name="Down" xml:space="preserve">
+    <value>Down</value>
+  </data>
+  <data name="SwitchLabel" xml:space="preserve">
+    <value>Switch</value>
+  </data>
+  <data name="Up" xml:space="preserve">
+    <value>Up</value>
+  </data>
+  <data name="TagAdd" xml:space="preserve">
+    <value>Add Tag</value>
+  </data>
+  <data name="FileOperation" xml:space="preserve">
+    <value>File Operation</value>
+  </data>
+  <data name="TagRemove" xml:space="preserve">
+    <value>Remove Tag</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="NewTag" xml:space="preserve">
+    <value>New Tag</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="Tools" xml:space="preserve">
+    <value>Tools</value>
+  </data>
+  <data name="Exit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="OpenNewWindow" xml:space="preserve">
+    <value>Open New Window</value>
+  </data>
+  <data name="UpdatedText" xml:space="preserve">
+    <value>Updated</value>
+  </data>
+  <data name="ExitApp" xml:space="preserve">
+    <value>Exit this Application</value>
+  </data>
+  <data name="LibraryUpdateStatus" xml:space="preserve">
+    <value>Library Update Status</value>
+  </data>
+</root>

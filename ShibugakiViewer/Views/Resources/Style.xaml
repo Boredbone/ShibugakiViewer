@@ -1,0 +1,497 @@
+﻿<ResourceDictionary 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ShibugakiViewer"
+    xmlns:properties="clr-namespace:ShibugakiViewer.Properties"
+    xmlns:converters="clr-namespace:Boredbone.XamlTools.Converters;assembly=WpfTools"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
+    xmlns:tool="clr-namespace:WpfTools;assembly=WpfTools"
+    xmlns:cc="clr-namespace:WpfTools.Controls;assembly=WpfTools"
+    xmlns:sc="clr-namespace:ShibugakiViewer.Views.Converters">
+
+    <!-- Window -->
+    <Style TargetType="Window" x:Key="DefaultWindowStyle">
+        <Setter Property="UseLayoutRounding" Value="True"/>
+        
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+        <!--<Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>-->
+    </Style>
+
+
+    <!-- Symbol -->
+    <Style TargetType="TextBlock" x:Key="symbolTextStyleBase">
+        <Style.Setters>
+            <Setter Property="FontFamily" Value="{StaticResource SymbolFont}"/>
+            <Setter Property="TextOptions.TextFormattingMode" Value="Ideal"/>
+        </Style.Setters>
+    </Style>
+
+    <!-- Symbol -->
+    <Style TargetType="TextBlock" x:Key="symbolTextStyle"
+           BasedOn="{StaticResource symbolTextStyleBase}">
+        <Style.Setters>
+            <Setter Property="FontSize" Value="{StaticResource IconFontSize}"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="TextAlignment"  Value="Center"/>
+        </Style.Setters>
+    </Style>
+    
+    <!-- Button -->
+    <Style TargetType="{x:Type cc:FlatButton}" x:Key="flatButtonStyle">
+        <Style.Setters>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="0"/>
+            
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            
+            <Setter Property="PointerHoverBackground" Value="{StaticResource FlatButtonHoverBackground}"/>
+            <Setter Property="PointerHoverBorderBrush" Value="Transparent"/>
+            
+            <Setter Property="PressedBackground" Value="{StaticResource FlatButtonPressedBackground}"/>
+            <Setter Property="PressedBorderBrush" Value="Transparent"/>
+            <Setter Property="PressedBorderThickness" Value="0"/>
+            
+            <Setter Property="DisabledBackground" Value="Transparent"/>
+            <Setter Property="DisabledBorderBrush" Value="Transparent"/>
+            <Setter Property="DisabledForeground" Value="LightGray"/>
+        </Style.Setters>
+    </Style>
+
+
+
+
+    <!-- Flat Stretched Button -->
+    <Style TargetType="{x:Type cc:FlatButton}" x:Key="flatButtonStretchStyle"
+           BasedOn="{StaticResource flatButtonStyle}">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+
+        <Setter Property="Height" Value="{StaticResource PaneItemHeight}"/>
+        <Setter Property="IsTabStop" Value="False"/>
+    </Style>
+
+
+    <!-- Symbol -->
+    <Style TargetType="{x:Type cc:FlatButton}" x:Key="symbolButton"
+           BasedOn="{StaticResource flatButtonStyle}">
+        <Style.Setters>
+            <Setter Property="FontFamily" Value="{StaticResource SymbolFont}"/>
+            <Setter Property="FontSize" Value="{StaticResource IconFontSize}"/>
+            <Setter Property="TextOptions.TextFormattingMode" Value="Ideal"/>
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+        </Style.Setters>
+    </Style>
+    
+    <!-- Icon -->
+    <Style TargetType="{x:Type cc:FlatButton}"
+               BasedOn="{StaticResource symbolButton}"
+               x:Key="iconButtonStyle">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="Width" Value="{StaticResource CompactPaneWidth}"/>
+        <Setter Property="Height" Value="{StaticResource PaneItemHeight}"/>
+    </Style>
+
+    <!-- Symbol with Theme -->
+    <Style TargetType="{x:Type cc:FlatButton}" x:Key="themeSymbolFlatButtonStyle"
+           BasedOn="{StaticResource symbolButton}">
+        <Style.Setters>
+            <Setter Property="Foreground" Value="{DynamicResource ThemeTextColor}"/>
+            <Setter Property="PointerHoverBackground" Value="{DynamicResource ThemeFlatButtonHoverBackground}"/>
+            <Setter Property="PressedBackground" Value="{DynamicResource ThemeFlatButtonPressedBackground}"/>
+        </Style.Setters>
+    </Style>
+
+    <!-- Symbol with Theme -->
+    <Style TargetType="{x:Type cc:FlatButton}" x:Key="themeIconFlatButtonStyle"
+           BasedOn="{StaticResource iconButtonStyle}">
+        <Style.Setters>
+            <Setter Property="Foreground" Value="{DynamicResource ThemeTextColor}"/>
+            <Setter Property="PointerHoverBackground" Value="{DynamicResource ThemeFlatButtonHoverBackground}"/>
+            <Setter Property="PressedBackground" Value="{DynamicResource ThemeFlatButtonPressedBackground}"/>
+        </Style.Setters>
+    </Style>
+    
+    <!-- ToggleButton -->
+    <Style TargetType="{x:Type cc:FlatToggleButton}" x:Key="flatToggleButtonStyle">
+        <Style.Setters>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="0"/>
+
+            <!--<Setter Property="Foreground" Value="Black"/>-->
+            <Setter Property="NormalForeground" Value="Black"/>
+
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+
+            <Setter Property="PointerHoverBackground" Value="{StaticResource FlatButtonHoverBackground}"/>
+            <Setter Property="PointerHoverBorderBrush" Value="Transparent"/>
+
+            <Setter Property="PressedBackground" Value="{StaticResource FlatButtonPressedBackground}"/>
+            <Setter Property="PressedBorderBrush" Value="Transparent"/>
+            <Setter Property="PressedBorderThickness" Value="0"/>
+
+            <Setter Property="DisabledBackground" Value="Transparent"/>
+            <Setter Property="DisabledBorderBrush" Value="Transparent"/>
+            <Setter Property="DisabledForeground" Value="LightGray"/>
+
+            <Setter Property="CheckedForeground" Value="White"/>
+            <Setter Property="CheckedBackground" Value="#80808080"/>
+            <Setter Property="CheckedPointerHoverBackground"
+                    Value="{StaticResource FlatToggleButtonCheckedHoverBackground}"/>
+        </Style.Setters>
+    </Style>
+
+
+    <!-- Flat Stretched ToggleButton -->
+    <Style TargetType="{x:Type cc:FlatToggleButton}" x:Key="flatToggleButtonStretchStyle"
+           BasedOn="{StaticResource flatToggleButtonStyle}">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+
+        <Setter Property="Height" Value="{StaticResource PaneItemHeight}"/>
+        <Setter Property="IsTabStop" Value="False"/>
+
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+
+    </Style>
+
+    <!-- Symbol Toggle Button -->
+    <Style TargetType="{x:Type cc:FlatToggleButton}" x:Key="symbolToggleButton"
+           BasedOn="{StaticResource flatToggleButtonStyle}">
+        <Style.Setters>
+            <Setter Property="FontFamily" Value="{StaticResource SymbolFont}"/>
+            <Setter Property="FontSize" Value="{StaticResource IconFontSize}"/>
+            <Setter Property="TextOptions.TextFormattingMode" Value="Ideal"/>
+        </Style.Setters>
+    </Style>
+
+
+    <!-- Symbol Toggle Button with Theme -->
+    <Style TargetType="{x:Type cc:FlatToggleButton}" x:Key="themeSymbolFlatToggleButtonStyle"
+           BasedOn="{StaticResource symbolToggleButton}">
+        <Style.Setters>
+            <Setter Property="NormalForeground" Value="{DynamicResource ThemeTextColor}"/>
+            <Setter Property="PointerHoverBackground" Value="{DynamicResource ThemeFlatButtonHoverBackground}"/>
+            <Setter Property="PressedBackground" Value="{DynamicResource ThemeFlatButtonPressedBackground}"/>
+
+            <Setter Property="CheckedForeground" Value="{DynamicResource ThemeNegatedTextColor}"/>
+            <!---->
+            <Setter Property="CheckedBackground" Value="{DynamicResource ThemeFlatToggleButtonCheckedBackground}"/>
+            <Setter Property="CheckedPointerHoverBackground"
+                    Value="{DynamicResource ThemeFlatToggleButtonCheckedHoverBackground}"/>
+        </Style.Setters>
+    </Style>
+
+
+
+    <!-- Labeled Icon -->
+    <Style TargetType="{x:Type cc:LabeledIcon}" x:Key="labeledIconStyle">
+        <!--
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="LightGray"/>
+                </Trigger>
+            </Style.Triggers>-->
+        <Style.Setters>
+            <Setter Property="IconFontFamily" Value="{StaticResource SymbolFont}"/>
+            <Setter Property="IconFontSize" Value="{StaticResource IconFontSize}"/>
+            <Setter Property="IconWidth" Value="{StaticResource CompactPaneWidth}"/>
+            <Setter Property="Height" Value="{StaticResource PaneItemHeight}"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="IsTabStop" Value="False"/>
+            <!---->
+                
+            </Style.Setters>
+        </Style>
+
+    <!-- Labeled Icon -->
+    <Style TargetType="{x:Type cc:LabeledIcon}" BasedOn="{StaticResource labeledIconStyle}">
+    </Style>
+    
+    
+    <!-- Vertical Labeled Icon -->
+    <ControlTemplate TargetType="{x:Type cc:LabeledIcon}" x:Key="verticalLabeledIcon">
+        
+        <Border
+            BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                CornerRadius="0"
+                Padding="0"
+                Height="Auto"
+                HorizontalAlignment="Stretch" VerticalAlignment="Top"
+                x:Name="PART_RootBorder">
+            <Grid
+                Height="Auto"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top">
+                <Grid.RowDefinitions>          
+                    <RowDefinition Height="32"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock
+                    x:Name="PART_Icon" Grid.Row="0"
+                    HorizontalAlignment="Center"
+                    TextAlignment="Center"
+                    VerticalAlignment="Center"
+                    TextOptions.TextFormattingMode="Ideal"/>
+                <TextBlock x:Name="PART_Label" Grid.Row="1"
+                           HorizontalAlignment="Center"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap"
+                           VerticalAlignment="Top"/>
+            </Grid>
+        </Border>
+    </ControlTemplate>
+
+
+    <!-- Vertical Labeled Icon -->
+    <Style TargetType="{x:Type cc:LabeledIcon}" BasedOn="{StaticResource labeledIconStyle}"
+           x:Key="verticalLabeledIconStyle">
+        <Style.Setters>
+            <Setter Property="IconFontFamily" Value="{StaticResource SymbolFont}"/>
+            <Setter Property="IconFontSize" Value="{StaticResource IconFontSize}"/>
+            <Setter Property="IconWidth" Value="{StaticResource CompactPaneWidth}"/>
+            <Setter Property="Width" Value="{StaticResource ToolButtonWidth}"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Top"/>
+            <Setter Property="Height" Value="Auto"/>
+            <!---->
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="Template" Value="{StaticResource verticalLabeledIcon}"/>
+
+        </Style.Setters>
+    </Style>
+
+
+
+    <!-- Tag Name -->
+    <Style TargetType="{x:Type cc:FlatButton}" x:Key="tagNameButtonStyle"
+           BasedOn="{StaticResource flatButtonStyle}">
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <!--
+        <Setter Property="Template" Value="{StaticResource flatButton}"/>-->
+    </Style>
+
+    <!-- Tag Name -->
+    <Style TargetType="TextBlock" x:Key="tagNameButtonTextStyle">
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="Foreground" Value="{StaticResource TagTextColor}"/>
+        <Setter Property="Margin" Value="8,2,2,2"/>
+    </Style>
+
+
+
+    <!-- Title -->
+    <Style TargetType="TextBlock" x:Key="TitleTextBlockStyle">
+    </Style>
+
+    <!-- ComboBox -->
+    <Style TargetType="ComboBox">
+        <Setter Property="IsEditable" Value="False"/>
+    </Style>
+
+    <!-- ScrollViewer -->
+    <Style TargetType="ScrollViewer">
+        <Setter Property="PanningMode" Value="Both"/>
+    </Style>
+
+    <!-- Slider -->
+    <Style TargetType="Slider">
+        <Setter Property="IsMoveToPointEnabled" Value="True"/>
+        <Setter Property="AutoToolTipPlacement" Value="BottomRight"/>
+        <Setter Property="AutoToolTipPrecision" Value="0"/>
+        <Setter Property="LargeChange" Value="1"/>
+        <Setter Property="SmallChange" Value="1"/>
+    </Style>
+
+    <!-- Rating -->
+    <Style TargetType="{x:Type cc:Rating}">
+        <Setter Property="Maximum" Value="5"/>
+        <Setter Property="SymbolHoverBackGround" Value="#20000000"/>
+        <Setter Property="ItemTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <Border TextOptions.TextFormattingMode="Ideal">
+                        <Grid
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Margin="2">
+                            <Grid.Resources>
+                                <Style TargetType="TextBlock" x:Key="ratingTextStyle"
+                                       BasedOn="{StaticResource symbolTextStyle}">
+                                    <Setter Property="Text" Value="{StaticResource StarBorderSymbol}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger
+                                            Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="Text" Value="{StaticResource StarSymbol}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Resources>
+
+                            <TextBlock
+                                FontSize="28"
+                                Foreground="#FF606060"
+                                Style="{StaticResource ratingTextStyle}"/>
+
+                            <TextBlock
+                                Style="{StaticResource symbolTextStyle}"
+                                FontSize="28"
+                                Text="{StaticResource StarBorderSymbol}"/>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <!-- ContextMenu -->
+    <Style TargetType="{x:Type ContextMenu}" x:Key="popupMenuStyle">
+        <Setter Property="SnapsToDevicePixels"
+                    Value="True" />
+        <Setter Property="OverridesDefaultStyle"
+                    Value="True" />
+        <Setter Property="Grid.IsSharedSizeScope"
+                    Value="true" />
+        <Setter Property="HasDropShadow"
+                    Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ContextMenu}">
+                    <Border x:Name="Border"
+                            Margin="4"
+                            Background="Transparent"
+                            BorderThickness="1">
+                        <Border.BorderBrush>
+                            <SolidColorBrush Color="Gray" />
+                        </Border.BorderBrush>
+                        <StackPanel IsItemsHost="True"
+                                    KeyboardNavigation.DirectionalNavigation="Cycle" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <PopupAnimation x:Key="{x:Static SystemParameters.MenuPopupAnimationKey}">None</PopupAnimation>
+
+
+
+    <!-- Information Pane Button Grid -->
+    <Style TargetType="Grid" x:Key="informationPaneButtonGridStyle">
+        <Setter Property="Height" Value="32"/>
+        <Setter Property="Margin" Value="12,4,4,4"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <!-- Information Pane Button -->
+    <Style TargetType="{x:Type cc:FlatButton}" x:Key="informationPaneButtonStyle"
+           BasedOn="{StaticResource flatButtonStyle}">
+        <!--<Setter Property="Template" Value="{StaticResource flatButton5}"/>-->
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Background" Value="#FFE0E0E0"/>
+        <Setter Property="BorderBrush" Value="Gray"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+
+        <Setter Property="PointerHoverBackground" Value="#FFD0D0D0"/>
+        <Setter Property="PointerHoverBorderBrush" Value="#FF606060"/>
+
+        <Setter Property="PressedBackground" Value="#FF808080"/>
+        <Setter Property="PressedBorderBrush" Value="#FF606060"/>
+        <Setter Property="PressedBorderThickness" Value="2"/>
+
+        <Setter Property="DisabledBackground" Value="#FFEFEFEF"/>
+        <Setter Property="DisabledBorderBrush" Value="LightGray"/>
+        <Setter Property="DisabledForeground" Value="LightGray"/>
+    </Style>
+
+    <!-- Information Pane Button Content -->
+    <Style TargetType="{x:Type cc:LabeledIcon}" x:Key="informationPaneContentStyle"
+               BasedOn="{StaticResource labeledIconStyle}">
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <!-- Place Holder-->
+    <Style TargetType="TextBlock" x:Key="placeHolderTextStyle">
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="Opacity" Value="0.5" />
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="IsHitTestVisible" Value="False"/>
+        <Setter Property="Margin" Value="5,1,1,1"/>
+    </Style>
+
+    <!-- Place Holder-->
+    <Style TargetType="TextBlock" x:Key="comboBoxPlaceHolderTextStyle"
+               BasedOn="{StaticResource placeHolderTextStyle}">
+        <Setter Property="Margin" Value="10,0,0,0"/>
+    </Style>
+
+
+
+    <!-- Context Menu Text -->
+    <Style TargetType="TextBlock" x:Key="contextMenuTextStyle">
+        <Setter Property="FontSize" Value="{StaticResource ContextMenuTextSize}"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="0,0,16,0"/>
+    </Style>
+    
+    <!-- Context Menu Button -->
+    <Style TargetType="{x:Type cc:FlatButton}" x:Key="contextMenuButtonStyle" 
+           BasedOn="{StaticResource flatButtonStyle}">
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="Height" Value="32"/>
+        <Setter Property="Padding" Value="4,0"/>
+    </Style>
+
+    <!-- ListView -->
+    <Style TargetType="ListViewItem">
+        <Style.Triggers>
+            <Trigger Property="IsSelected"  Value="True">
+                <Setter Property="Foreground" Value="Black"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    
+</ResourceDictionary>

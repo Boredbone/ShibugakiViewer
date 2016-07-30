@@ -1,0 +1,15 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:ShibugakiViewer.Views">
+
+    <SolidColorBrush x:Key="ThemeTextColor" Color="Black"/>
+    <SolidColorBrush x:Key="ThemeNegatedTextColor" Color="White"/>
+    <SolidColorBrush x:Key="ThemeBackColor" Color="White"/>
+    <SolidColorBrush x:Key="TopBarBackColor" Color="#C0FFFFFF"/>
+
+    <SolidColorBrush x:Key="ThemeFlatButtonHoverBackground" Color="#20000000"/>
+    <SolidColorBrush x:Key="ThemeFlatButtonPressedBackground" Color="#40000000"/>
+    <SolidColorBrush x:Key="ThemeFlatToggleButtonCheckedBackground" Color="#80808080"/>
+    <SolidColorBrush x:Key="ThemeFlatToggleButtonCheckedHoverBackground" Color="#A0808080"/>
+    
+</ResourceDictionary>

@@ -1,0 +1,23 @@
+﻿<ResourceDictionary 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ShibugakiViewer"
+    xmlns:properties="clr-namespace:ShibugakiViewer.Properties"
+    xmlns:converters="clr-namespace:Boredbone.XamlTools.Converters;assembly=WpfTools"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
+    xmlns:tool="clr-namespace:WpfTools;assembly=WpfTools"
+    xmlns:cc="clr-namespace:WpfTools.Controls;assembly=WpfTools"
+    xmlns:sc="clr-namespace:ShibugakiViewer.Views.Converters">
+
+    <properties:Resources x:Key="resources" />
+
+    <tool:NoOperationCommand x:Key="NoOperationCommand"/>
+
+    <converters:BooleanToVisibilityConverter x:Key="TrueToVisibleConverter" />
+    <converters:BooleanToVisibilityConverter x:Key="FalseToVisibleConverter" IsReversed="True" />
+    <converters:MultiplyConverter x:Key="MultiplyConverter" />
+    <sc:ComplexSearchModeConverter x:Key="ComplexSearchModeConverter" />
+    <sc:SizeConverter x:Key="FileSizeConverter" />
+    <sc:BoolIntConverter x:Key="BoolIntConverter" />
+
+</ResourceDictionary>

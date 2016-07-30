@@ -1,0 +1,750 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Ascending" xml:space="preserve">
+    <value>昇順</value>
+  </data>
+  <data name="BelowRef" xml:space="preserve">
+    <value>以下の条件</value>
+  </data>
+  <data name="CancelButton_Content" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="ClearSelectionButton_Label" xml:space="preserve">
+    <value>選択の解除</value>
+  </data>
+  <data name="Contains" xml:space="preserve">
+    <value>を含む</value>
+  </data>
+  <data name="DateCreated" xml:space="preserve">
+    <value>作成日時</value>
+  </data>
+  <data name="DateModified" xml:space="preserve">
+    <value>更新日時</value>
+  </data>
+  <data name="Descending" xml:space="preserve">
+    <value>降順</value>
+  </data>
+  <data name="DoNotContains" xml:space="preserve">
+    <value>を含まない</value>
+  </data>
+  <data name="EqualsTo" xml:space="preserve">
+    <value>に等しい(==)</value>
+  </data>
+  <data name="FileName" xml:space="preserve">
+    <value>ファイル名</value>
+  </data>
+  <data name="FileNameContains" xml:space="preserve">
+    <value>ファイル名(部分一致)</value>
+  </data>
+  <data name="FileSize" xml:space="preserve">
+    <value>ファイルサイズ</value>
+  </data>
+  <data name="FolderRelativeId" xml:space="preserve">
+    <value>ファイルパス</value>
+  </data>
+  <data name="GreaterEqual" xml:space="preserve">
+    <value>以上(&gt;=)</value>
+  </data>
+  <data name="GreaterThan" xml:space="preserve">
+    <value>より大きい(&gt;)</value>
+  </data>
+  <data name="GroupingButton_Label" xml:space="preserve">
+    <value>グループ化</value>
+  </data>
+  <data name="GroupLeader" xml:space="preserve">
+    <value>GroupLeader</value>
+  </data>
+  <data name="Height" xml:space="preserve">
+    <value>高さ</value>
+  </data>
+  <data name="ImageSize" xml:space="preserve">
+    <value>画像サイズ</value>
+  </data>
+  <data name="Is" xml:space="preserve">
+    <value>である</value>
+  </data>
+  <data name="IsNot" xml:space="preserve">
+    <value>ではない</value>
+  </data>
+  <data name="IsV" xml:space="preserve">
+    <value>が</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>ja-JP</value>
+  </data>
+  <data name="LessEqual" xml:space="preserve">
+    <value>以下(&lt;=)</value>
+  </data>
+  <data name="LessThan" xml:space="preserve">
+    <value>より小さい(&lt;)</value>
+  </data>
+  <data name="MatchAll" xml:space="preserve">
+    <value>全てに一致(AND)</value>
+  </data>
+  <data name="MatchAny" xml:space="preserve">
+    <value>いずれかに一致(OR)</value>
+  </data>
+  <data name="NotEqualsTo" xml:space="preserve">
+    <value>ではない(!=)</value>
+  </data>
+  <data name="NumOfTags" xml:space="preserve">
+    <value>タグの数</value>
+  </data>
+  <data name="OkButton_Content" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Path" xml:space="preserve">
+    <value>ファイルの場所</value>
+  </data>
+  <data name="Property" xml:space="preserve">
+    <value>プロパティ</value>
+  </data>
+  <data name="Rating" xml:space="preserve">
+    <value>評価</value>
+  </data>
+  <data name="RelativePath" xml:space="preserve">
+    <value>相対パス</value>
+  </data>
+  <data name="RelativePathSequenceNum" xml:space="preserve">
+    <value>相対パス(連番)</value>
+  </data>
+  <data name="RemoveButton_Label" xml:space="preserve">
+    <value>グループから外す</value>
+  </data>
+  <data name="RemoveButton_ToolTip" xml:space="preserve">
+    <value>グループから外す</value>
+  </data>
+  <data name="RootDirectoryAccessToken" xml:space="preserve">
+    <value>RootDirectoryAccessToken</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>検索</value>
+  </data>
+  <data name="SelectAllButton_Label" xml:space="preserve">
+    <value>すべて選択</value>
+  </data>
+  <data name="SetGroupThumbnail" xml:space="preserve">
+    <value>グループのサムネイルに設定</value>
+  </data>
+  <data name="Sort" xml:space="preserve">
+    <value>並び替え</value>
+  </data>
+  <data name="Tag" xml:space="preserve">
+    <value>タグ</value>
+  </data>
+  <data name="UndoRemovalButton_Label" xml:space="preserve">
+    <value>グループに戻す</value>
+  </data>
+  <data name="Width" xml:space="preserve">
+    <value>幅</value>
+  </data>
+  <data name="DateRegistered" xml:space="preserve">
+    <value>登録日時</value>
+  </data>
+  <data name="FileCount" xml:space="preserve">
+    <value>ファイル数</value>
+  </data>
+  <data name="GroupName" xml:space="preserve">
+    <value>グループ名</value>
+  </data>
+  <data name="GroupProperty" xml:space="preserve">
+    <value>グループのプロパティ</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>名前</value>
+  </data>
+  <data name="PageTurning" xml:space="preserve">
+    <value>ページめくり方向</value>
+  </data>
+  <data name="NewSearchText_Text" xml:space="preserve">
+    <value>新しい検索</value>
+  </data>
+  <data name="SearchHelpText1_Text" xml:space="preserve">
+    <value>画像を探すには、追加(</value>
+  </data>
+  <data name="SearchHelpText2_Text" xml:space="preserve">
+    <value>)ボタンをタップして条件を設定してください</value>
+  </data>
+  <data name="KeyShortcut" xml:space="preserve">
+    <value>キーボード　ショートカット</value>
+  </data>
+  <data name="NumericTextBox_PlaceholderText" xml:space="preserve">
+    <value>数値を入力</value>
+  </data>
+  <data name="StringTextBox_PlaceholderText" xml:space="preserve">
+    <value>文字列を入力</value>
+  </data>
+  <data name="TagNameBox_PlaceholderText" xml:space="preserve">
+    <value>タグの名前</value>
+  </data>
+  <data name="UpdatingText_Text" xml:space="preserve">
+    <value>更新中...</value>
+  </data>
+  <data name="AddedText" xml:space="preserve">
+    <value>追加</value>
+  </data>
+  <data name="RefreshedText" xml:space="preserve">
+    <value>ライブラリの更新が完了しました</value>
+  </data>
+  <data name="RemovedText" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="UnitText" xml:space="preserve">
+    <value>個</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value>既定</value>
+  </data>
+  <data name="FlipNormal" xml:space="preserve">
+    <value>左から右</value>
+  </data>
+  <data name="FlipReverse" xml:space="preserve">
+    <value>右から左</value>
+  </data>
+  <data name="MirrorHorizontalText_Text" xml:space="preserve">
+    <value>左右反転</value>
+  </data>
+  <data name="MirrorVerticalText_Text" xml:space="preserve">
+    <value>上下反転</value>
+  </data>
+  <data name="RotateCcwText_Text" xml:space="preserve">
+    <value>左へ90度回転</value>
+  </data>
+  <data name="RotateCwText_Text" xml:space="preserve">
+    <value>右へ90度回転</value>
+  </data>
+  <data name="AddButton_ToolTip" xml:space="preserve">
+    <value>追加</value>
+  </data>
+  <data name="AddConditionButton_ToolTip" xml:space="preserve">
+    <value>条件を追加</value>
+  </data>
+  <data name="App" xml:space="preserve">
+    <value>アプリ</value>
+  </data>
+  <data name="BackButton_ToolTip" xml:space="preserve">
+    <value>戻る</value>
+  </data>
+  <data name="EditButton_ToolTip" xml:space="preserve">
+    <value>編集</value>
+  </data>
+  <data name="FavoriteButton_ToolTip" xml:space="preserve">
+    <value>アルバムに追加</value>
+  </data>
+  <data name="FavoriteText_Text" xml:space="preserve">
+    <value>アルバム</value>
+  </data>
+  <data name="FixButton_Label" xml:space="preserve">
+    <value>バーを固定</value>
+  </data>
+  <data name="FolderPageButton_Label" xml:space="preserve">
+    <value>フォルダを追加</value>
+  </data>
+  <data name="HistoryText_Text" xml:space="preserve">
+    <value>履歴</value>
+  </data>
+  <data name="Library" xml:space="preserve">
+    <value>ライブラリ</value>
+  </data>
+  <data name="PropertiesButton_ToolTip" xml:space="preserve">
+    <value>プロパティ</value>
+  </data>
+  <data name="RemoveSimpleButton_ToolTip" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="RotateButton_Label" xml:space="preserve">
+    <value>スケーリングと回転</value>
+  </data>
+  <data name="SearchTitleText_Text" xml:space="preserve">
+    <value>画像を検索</value>
+  </data>
+  <data name="UnFavoriteButton_ToolTip" xml:space="preserve">
+    <value>アルバムから削除</value>
+  </data>
+  <data name="Viewer" xml:space="preserve">
+    <value>ビューア</value>
+  </data>
+  <data name="CmsSwitch_Header" xml:space="preserve">
+    <value>カラーマネジメントを使用する</value>
+  </data>
+  <data name="DarkText_Text" xml:space="preserve">
+    <value>黒</value>
+  </data>
+  <data name="ExtendedMouseSwitch_Text" xml:space="preserve">
+    <value>マウスの拡張ボタンで画像を切り替える</value>
+  </data>
+  <data name="FlipAnimationSwitch_Text" xml:space="preserve">
+    <value>スワイプ時以外にもページめくりをアニメーション</value>
+  </data>
+  <data name="GroupingSwitch_Header" xml:space="preserve">
+    <value>グループ化を使用する</value>
+  </data>
+  <data name="LibrarySettings_Text" xml:space="preserve">
+    <value>検索の設定</value>
+  </data>
+  <data name="LightText_Text" xml:space="preserve">
+    <value>白</value>
+  </data>
+  <data name="OpenNaviSingleTapSwitch_Text" xml:space="preserve">
+    <value>画像タップでナビゲーションを表示</value>
+  </data>
+  <data name="ThemeSelectorHeader_Text" xml:space="preserve">
+    <value>ツールバーの色</value>
+  </data>
+  <data name="ThumbSizeSelector_Header" xml:space="preserve">
+    <value>サムネイルのサイズ</value>
+  </data>
+  <data name="ViewerSettings_Text" xml:space="preserve">
+    <value>ビューアの設定</value>
+  </data>
+  <data name="FolderManagement" xml:space="preserve">
+    <value>フォルダの管理</value>
+  </data>
+  <data name="PrivacyPolicy_Text" xml:space="preserve">
+    <value>プライバシーポリシー</value>
+  </data>
+  <data name="RefreshLibrary" xml:space="preserve">
+    <value>ライブラリを更新</value>
+  </data>
+  <data name="RefreshModeFast" xml:space="preserve">
+    <value>高速 : 画像の有無のみを検査する</value>
+  </data>
+  <data name="RefreshModeSlow" xml:space="preserve">
+    <value>詳細 : 内容の変更を検査する</value>
+  </data>
+  <data name="MoveImageHelp_Text" xml:space="preserve">
+    <value>画像を移動</value>
+  </data>
+  <data name="ZoomInHelp_Text" xml:space="preserve">
+    <value>拡大</value>
+  </data>
+  <data name="ZoomOutHelp_Text" xml:space="preserve">
+    <value>縮小</value>
+  </data>
+  <data name="NextImage" xml:space="preserve">
+    <value>次の画像</value>
+  </data>
+  <data name="PreviousImage" xml:space="preserve">
+    <value>前の画像</value>
+  </data>
+  <data name="AutomaticZoomHelp_Text" xml:space="preserve">
+    <value>自動ズーム</value>
+  </data>
+  <data name="IncreaseRatingHelp_Text" xml:space="preserve">
+    <value>評価を上げる</value>
+  </data>
+  <data name="DecreaseRatingHelp_Text" xml:space="preserve">
+    <value>評価を下げる</value>
+  </data>
+  <data name="Tags" xml:space="preserve">
+    <value>タグ</value>
+  </data>
+  <data name="RotateRightHelp_Text" xml:space="preserve">
+    <value>右へ90度回転</value>
+  </data>
+  <data name="RotateLeftHelp_Text" xml:space="preserve">
+    <value>左へ90度回転</value>
+  </data>
+  <data name="FlipHorizontalHelp_Text" xml:space="preserve">
+    <value>左右反転</value>
+  </data>
+  <data name="FlipVerticalHelp_Text" xml:space="preserve">
+    <value>上下反転</value>
+  </data>
+  <data name="TagSelectorHelp_Text" xml:space="preserve">
+    <value>タグを選択</value>
+  </data>
+  <data name="TagShortcutHelp_Text" xml:space="preserve">
+    <value>タグのショートカット</value>
+  </data>
+  <data name="AutoRefereshHelp_Text" xml:space="preserve">
+    <value>起動時に自動でライブラリを更新</value>
+  </data>
+  <data name="BackHelp_Text" xml:space="preserve">
+    <value>戻る</value>
+  </data>
+  <data name="CursorKeyFuncHelp_Header" xml:space="preserve">
+    <value>カーソルキーの機能</value>
+  </data>
+  <data name="CursorKeyToFlipHelp_Content" xml:space="preserve">
+    <value>画像の切り替えとズーム</value>
+  </data>
+  <data name="CursorKeyToMoveHelp_Content" xml:space="preserve">
+    <value>画像の位置を移動</value>
+  </data>
+  <data name="DispAndNaviHelp_Text" xml:space="preserve">
+    <value>表示とナビゲーション</value>
+  </data>
+  <data name="DispPropHelp_Text" xml:space="preserve">
+    <value>プロパティを表示</value>
+  </data>
+  <data name="DispSearchResultHelp_Text" xml:space="preserve">
+    <value>検索結果の表示</value>
+  </data>
+  <data name="ImageLibraryLabel_Text" xml:space="preserve">
+    <value>画像ライブラリ</value>
+  </data>
+  <data name="KeyBindHelp_Text" xml:space="preserve">
+    <value>キー割り当て</value>
+  </data>
+  <data name="KeyboardHelp_Text" xml:space="preserve">
+    <value>キーボードの接続時に有効化されます</value>
+  </data>
+  <data name="LibRefreshModeHelp_Header" xml:space="preserve">
+    <value>ライブラリ更新方法</value>
+  </data>
+  <data name="PurchaseButton_Content" xml:space="preserve">
+    <value>購入</value>
+  </data>
+  <data name="PurchaseFlyoutTitle_Text" xml:space="preserve">
+    <value>アプリ内購入</value>
+  </data>
+  <data name="RefreshFolderVisibleHelp_Header" xml:space="preserve">
+    <value>ライブラリの更新結果を通知</value>
+  </data>
+  <data name="RemoveAdsHelp_Text" xml:space="preserve">
+    <value>ライセンスを購入して、広告を非表示にします。</value>
+  </data>
+  <data name="RemoveAdsTitle_Text" xml:space="preserve">
+    <value>広告を非表示</value>
+  </data>
+  <data name="AdvancedSettingsSwitch_Header" xml:space="preserve">
+    <value>高度な設定</value>
+  </data>
+  <data name="ChangeFolderButton_Content" xml:space="preserve">
+    <value>参照先変更</value>
+  </data>
+  <data name="FolderManagePageTitle_Text" xml:space="preserve">
+    <value>画像を読み込むフォルダ</value>
+  </data>
+  <data name="ImageUnitLabel_Text" xml:space="preserve">
+    <value>個の画像</value>
+  </data>
+  <data name="RefreshModeDefault" xml:space="preserve">
+    <value>既定の設定に従う</value>
+  </data>
+  <data name="RemoveFolderButton_Content" xml:space="preserve">
+    <value>登録解除</value>
+  </data>
+  <data name="UpdateEnabledCheckBox_Content" xml:space="preserve">
+    <value>更新対象に含める</value>
+  </data>
+  <data name="UpdateFlagLabel_Text" xml:space="preserve">
+    <value>ページ遷移時に画像の検査を開始します</value>
+  </data>
+  <data name="UpdateNowButton_Content" xml:space="preserve">
+    <value>今すぐ更新</value>
+  </data>
+  <data name="RegisterFolderButton_Content" xml:space="preserve">
+    <value>フォルダを登録</value>
+  </data>
+  <data name="StartButton_Content" xml:space="preserve">
+    <value>開始</value>
+  </data>
+  <data name="TutorialText1_Text" xml:space="preserve">
+    <value>このアプリは、ユーザーの"ピクチャ"フォルダから画像を読み込みます。</value>
+  </data>
+  <data name="TutorialText2_Text" xml:space="preserve">
+    <value>他のフォルダーからも画像を読み込みたい場合は"フォルダを登録"をタップしてください。</value>
+  </data>
+  <data name="TutorialText3_Text" xml:space="preserve">
+    <value>フォルダ内の画像を検査中です</value>
+  </data>
+  <data name="TutorialText4_Text" xml:space="preserve">
+    <value>完了まで数分かかる場合があります。</value>
+  </data>
+  <data name="WelcomeText1_Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="WelcomeText2_Text" xml:space="preserve">
+    <value>へようこそ！</value>
+  </data>
+  <data name="NoImageText1_Text" xml:space="preserve">
+    <value>フォルダ内に画像ファイルが見つかりません。</value>
+  </data>
+  <data name="NoImageText2_Text" xml:space="preserve">
+    <value>画像ファイルが含まれているフォルダを登録してください。</value>
+  </data>
+  <data name="Settings_Text" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="AnimatedGifSwitch_Text" xml:space="preserve">
+    <value>アニメーションGIFを再生</value>
+  </data>
+  <data name="Share" xml:space="preserve">
+    <value>共有</value>
+  </data>
+  <data name="ShareImageTitle" xml:space="preserve">
+    <value>表示中の画像</value>
+  </data>
+  <data name="CopyPath" xml:space="preserve">
+    <value>パスをコピー</value>
+  </data>
+  <data name="LockScreenText_Text" xml:space="preserve">
+    <value>ロック画面に設定</value>
+  </data>
+  <data name="OpenWith" xml:space="preserve">
+    <value>他のアプリで開く</value>
+  </data>
+  <data name="PlaySlideShow" xml:space="preserve">
+    <value>スライドショーの開始</value>
+  </data>
+  <data name="UnitTextFull" xml:space="preserve">
+    <value>個の画像</value>
+  </data>
+  <data name="LicenseTitle_Text" xml:space="preserve">
+    <value>ライセンス(英語)</value>
+  </data>
+  <data name="Slideshow" xml:space="preserve">
+    <value>スライドショー</value>
+  </data>
+  <data name="DurationText_Text" xml:space="preserve">
+    <value>画像の表示時間</value>
+  </data>
+  <data name="FillText_Content" xml:space="preserve">
+    <value>画面に合わせてトリミング</value>
+  </data>
+  <data name="FitText_Content" xml:space="preserve">
+    <value>全体を表示</value>
+  </data>
+  <data name="PauseButton_Label" xml:space="preserve">
+    <value>一時停止</value>
+  </data>
+  <data name="ResizeMethodText_Text" xml:space="preserve">
+    <value>画像のリサイズ方法</value>
+  </data>
+  <data name="ResizeSmallImageText_Text" xml:space="preserve">
+    <value>画面より小さい画像もリサイズする</value>
+  </data>
+  <data name="SecondsText_Text" xml:space="preserve">
+    <value>秒</value>
+  </data>
+  <data name="SettingsButton_Label" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="ShuffleButton_Label" xml:space="preserve">
+    <value>シャッフル</value>
+  </data>
+  <data name="TransitionTimeText_Text" xml:space="preserve">
+    <value>切り替えアニメーション</value>
+  </data>
+  <data name="LockScreenTextLabel_Label" xml:space="preserve">
+    <value>ロック画面に設定</value>
+  </data>
+  <data name="OpenFileLocation" xml:space="preserve">
+    <value>ファイルの場所を開く</value>
+  </data>
+  <data name="FilePropertyText_Text" xml:space="preserve">
+    <value>ファイルのプロパティ</value>
+  </data>
+  <data name="SlideshowSetting_Text" xml:space="preserve">
+    <value>スライドショーの設定</value>
+  </data>
+  <data name="Version_Text" xml:space="preserve">
+    <value>バージョン情報</value>
+  </data>
+  <data name="MenuButton_ToolTip" xml:space="preserve">
+    <value>メニュー</value>
+  </data>
+  <data name="AspectRatio" xml:space="preserve">
+    <value>アスペクト比 (幅/高さ)</value>
+  </data>
+  <data name="FullscreenText_Text" xml:space="preserve">
+    <value>フルスクリーンで表示</value>
+  </data>
+  <data name="CommonTagsText_Text" xml:space="preserve">
+    <value>共通のタグ</value>
+  </data>
+  <data name="ImageSelectedTaxt_Text" xml:space="preserve">
+    <value> 個の画像を選択</value>
+  </data>
+  <data name="InformationText_Text" xml:space="preserve">
+    <value>情報</value>
+  </data>
+  <data name="PaneFixButton_ToolTip" xml:space="preserve">
+    <value>ペインを固定</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>検索</value>
+  </data>
+  <data name="DirectoryPathContains" xml:space="preserve">
+    <value>ファイルの場所(部分一致)</value>
+  </data>
+  <data name="FileNameSequenceNumLeft" xml:space="preserve">
+    <value>ファイル名(左側の連番)</value>
+  </data>
+  <data name="FileNameSequenceNumRight" xml:space="preserve">
+    <value>ファイル名(右側の連番)</value>
+  </data>
+  <data name="SearchCriteria" xml:space="preserve">
+    <value>検索条件</value>
+  </data>
+  <data name="DirectoryPath" xml:space="preserve">
+    <value>フォルダパス</value>
+  </data>
+  <data name="FullPath" xml:space="preserve">
+    <value>ファイルパス</value>
+  </data>
+  <data name="Down" xml:space="preserve">
+    <value>下へ</value>
+  </data>
+  <data name="SwitchLabel" xml:space="preserve">
+    <value>切り替え</value>
+  </data>
+  <data name="Up" xml:space="preserve">
+    <value>上へ</value>
+  </data>
+  <data name="TagAdd" xml:space="preserve">
+    <value>タグを追加</value>
+  </data>
+  <data name="FileOperation" xml:space="preserve">
+    <value>ファイルの操作</value>
+  </data>
+  <data name="TagRemove" xml:space="preserve">
+    <value>タグを外す</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>更新</value>
+  </data>
+  <data name="NewTag" xml:space="preserve">
+    <value>新しいタグ</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>オプション</value>
+  </data>
+  <data name="Tools" xml:space="preserve">
+    <value>ツール</value>
+  </data>
+  <data name="Exit" xml:space="preserve">
+    <value>終了</value>
+  </data>
+  <data name="OpenNewWindow" xml:space="preserve">
+    <value>新しいウィンドウを開く</value>
+  </data>
+  <data name="UpdatedText" xml:space="preserve">
+    <value>更新</value>
+  </data>
+  <data name="ExitApp" xml:space="preserve">
+    <value>アプリケーションの終了</value>
+  </data>
+  <data name="LibraryUpdateStatus" xml:space="preserve">
+    <value>ライブラリ更新状況</value>
+  </data>
+</root>

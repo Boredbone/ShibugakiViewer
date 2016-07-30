@@ -1,0 +1,122 @@
+﻿<UserControl x:Class="ShibugakiViewer.Views.Controls.SearchCriteriaControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ShibugakiViewer.Views.Controls"
+             xmlns:b="clr-namespace:ShibugakiViewer.Views.Behaviors"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:properties="clr-namespace:ShibugakiViewer.Properties"
+             xmlns:cc="clr-namespace:WpfTools.Controls;assembly=WpfTools"
+             x:Name="searchCriteriaItemRoot"
+             DataContextChanged="searchCriteriaItemRoot_DataContextChanged"
+             Unloaded="searchCriteriaItemRoot_Unloaded"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <Style TargetType="TextBlock" x:Key="textStyle">
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="FontSize" Value="{StaticResource NormalTextSize}"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+    </UserControl.Resources>
+    
+    <Grid Background="{Binding BackGroundColor,ElementName=searchCriteriaItemRoot,Mode=OneWay}"
+          MinWidth="300" MinHeight="70" MaxWidth="400" 
+          x:Name="rootGrid"
+          Margin="2">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid x:Name="treeItemPanel"
+              Grid.Column="0" Height="Auto"
+              HorizontalAlignment="Stretch"
+              MouseUp="treeItemPanel_MouseUp">
+            <!--
+              PointerReleased="ItemPanel_PointerReleased" 
+              Tapped="ItemPanel_Tapped"
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseUp">
+                    <i:InvokeCommandAction 
+                        Command="{Binding ElementName=searchCriteriaItemRoot, Path=DataContext.ItemClickCommand}" 
+                        CommandParameter="{Binding}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>-->
+
+            <i:Interaction.Behaviors>
+                <b:HoverGridBehavior
+                    Background="{StaticResource SearchItemCoverNormalColor}"
+                    HoverBackground="{StaticResource SearchItemCoverHoverColor}"/>
+            </i:Interaction.Behaviors>
+
+            <StackPanel Margin="1,1,1,1" Orientation="Vertical" HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center">
+                <StackPanel Margin="8,4,4,4" Orientation="Vertical" Width="Auto"
+                            Visibility="{Binding IsComplex,ElementName=searchCriteriaItemRoot,Mode=OneWay,Converter={StaticResource FalseToVisibleConverter}}">
+                    <TextBlock Text="{Binding Property,ElementName=searchCriteriaItemRoot,Mode=OneWay}"
+                               Style="{StaticResource textStyle}"/>
+                    <TextBlock Text="{Binding Mode,ElementName=searchCriteriaItemRoot,Mode=OneWay}"
+                               Style="{StaticResource textStyle}"
+                               Visibility="{Binding IsSVO,ElementName=searchCriteriaItemRoot,Mode=OneWay,Converter={StaticResource TrueToVisibleConverter}}"/>
+                    <TextBlock Text="{Binding ReferenceLabel,Mode=OneWay}"
+                               Style="{StaticResource textStyle}"/>
+                    <TextBlock Text="{Binding Mode,ElementName=searchCriteriaItemRoot,Mode=OneWay}"
+                               Style="{StaticResource textStyle}"
+                               Visibility="{Binding IsSVO,ElementName=searchCriteriaItemRoot,Mode=OneWay,Converter={StaticResource FalseToVisibleConverter}}"/>
+                </StackPanel>
+                <StackPanel Margin="4" Orientation="Vertical" 
+                            HorizontalAlignment="Stretch" 
+                            Visibility="{Binding IsComplex,ElementName=searchCriteriaItemRoot,Mode=OneWay,Converter={StaticResource TrueToVisibleConverter}}">
+                    <Grid HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+
+                        <cc:FlatButton Grid.Column="0"
+                                Content="{StaticResource SwitchSymbol}"
+                                Style="{StaticResource symbolButton}"
+                            Width="40" Height="48"
+                                VerticalAlignment="Center" HorizontalAlignment="Center" Margin="4"
+                                ToolTipService.ToolTip="{x:Static properties:Resources.SwitchLabel}"
+                                Click="Button_Click"/>
+                        
+
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding Mode,ElementName=searchCriteriaItemRoot,Mode=OneWay}" 
+                                   Style="{StaticResource textStyle}" Margin="0"
+                                   VerticalAlignment="Center" />
+
+                    </Grid>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="1"
+                    Background="{Binding Background,ElementName=treeItemPanel,Mode=OneWay}">
+
+            <cc:FlatButton Visibility="{Binding IsComplex,ElementName=searchCriteriaItemRoot,
+                Mode=OneWay,Converter={StaticResource TrueToVisibleConverter}}"
+                    Content="{StaticResource AddSymbol}"
+                    Style="{StaticResource symbolButton}"
+                            Width="40" Height="48"
+                    VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,4"
+                    ToolTipService.ToolTip="{x:Static properties:Resources.AddButton_ToolTip}"
+                    Click="Button_Click_2"/>
+            <!--
+                    Command="{Binding ElementName=searchCriteriaItemRoot, Path=DataContext.ItemClickCommand}" 
+                    CommandParameter="{Binding}"-->
+
+            <cc:FlatButton Content="{StaticResource RemoveSymbol}" 
+                    Style="{StaticResource symbolButton}"
+                            Width="40" Height="48"
+                    VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,4,4,4"
+                    ToolTipService.ToolTip="{x:Static properties:Resources.RemoveSimpleButton_ToolTip}" 
+                    Click="Button_Click_1"/>
+            
+        </StackPanel>
+    </Grid>
+</UserControl>

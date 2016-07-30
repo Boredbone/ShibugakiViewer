@@ -1,0 +1,483 @@
+﻿<UserControl x:Class="ShibugakiViewer.Views.InformationPanes.KeyBindPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ShibugakiViewer.Views.InformationPanes"
+             xmlns:converter="clr-namespace:ShibugakiViewer.Views.Converters"
+             xmlns:properties="clr-namespace:ShibugakiViewer.Properties"
+             xmlns:tb="clr-namespace:WpfTools.Behaviors;assembly=WpfTools"
+             xmlns:cc="clr-namespace:WpfTools.Controls;assembly=WpfTools"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+
+    <Grid x:Name="rootGrid" Background="Transparent" HorizontalAlignment="Stretch">
+
+        <ScrollViewer Margin="0"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      PanningMode="VerticalOnly"
+                      VerticalContentAlignment="Stretch" Padding="0">
+            <StackPanel Margin="4">
+
+                
+                    <TextBlock
+                        Text="{x:Static properties:Resources.KeyShortcut}"
+                        Style="{StaticResource TitleTextBlockStyle}"/>
+                
+                
+                <StackPanel
+                     HorizontalAlignment="Stretch" Width="Auto">
+                    
+                    <TextBlock
+                        Text="{x:Static properties:Resources.CursorKeyFuncHelp_Header}"/>
+
+                    <ComboBox 
+                        Margin="0,7,0,27"
+                        SelectedIndex="{Binding CursorKeyBind.Value,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                        HorizontalAlignment="Left">
+                        <ComboBoxItem 
+                            Content="{x:Static properties:Resources.CursorKeyToFlipHelp_Content}"/>
+                        <ComboBoxItem
+                            Content="{x:Static properties:Resources.CursorKeyToMoveHelp_Content}"/>
+                    </ComboBox>
+
+
+                    <Border
+                        BorderThickness="1,1,0,0" BorderBrush="Black"
+                        HorizontalAlignment="Stretch" Width="Auto">
+                        <!-- Width="Auto"-->
+                        <Grid  HorizontalAlignment="Stretch">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <!-- MinWidth="120"-->
+                            </Grid.ColumnDefinitions>
+                            
+                            <Grid.Resources>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="Margin" Value="4,4,4,8"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Margin" Value="0"/>
+                                    <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                                    <Setter Property="BorderBrush" Value="Black"/>
+                                </Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Margin" Value="4,2"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                </Style>
+                            </Grid.Resources>
+
+
+
+                            <Border Grid.Column="1" Grid.Row="0">
+                                <StackPanel>
+                                    <TextBlock Visibility="{Binding CursorKeyToFlipVisibility.Value}">
+                                        <Run Text="Shift + "/>
+                                        <Run Text="{StaticResource AllArSymbol}"
+                                             FontFamily="{StaticResource SymbolFont}"/>
+                                    </TextBlock>
+                                    <TextBlock Visibility="{Binding CursorKeyToFlipVisibility.Value}">
+                                        <Run Text="Ctrl + "/>
+                                        <Run Text="{StaticResource AllArSymbol}" FontFamily="{StaticResource SymbolFont}"/>
+                                    </TextBlock>
+                                    <TextBlock Visibility="{Binding CursorKeyToMoveVisibility.Value}">
+                                        <Run Text="{StaticResource AllArSymbol}" FontFamily="{StaticResource SymbolFont}"/>
+                                    </TextBlock>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="0" Grid.Row="0">
+                                <StackPanel>
+                                    <TextBlock
+                                        Text="{x:Static properties:Resources.MoveImageHelp_Text}"/>
+                                </StackPanel>
+                            </Border>
+
+
+
+
+
+                            <Border Grid.Column="1" Grid.Row="1">
+                                <StackPanel>
+                                    <TextBlock Text="{StaticResource UpArSymbol}" FontFamily="{StaticResource SymbolFont}"
+                                       Visibility="{Binding CursorKeyToFlipVisibility.Value}"/>
+
+                                    <TextBlock Visibility="{Binding CursorKeyToMoveVisibility.Value}">
+                                        <Run Text="Shift + "/>
+                                        <Run Text="{StaticResource UpArSymbol}" FontFamily="{StaticResource SymbolFont}"/>
+                                    </TextBlock>
+                                    <TextBlock Visibility="{Binding CursorKeyToMoveVisibility.Value}">
+                                        <Run Text="Ctrl + "/>
+                                        <Run Text="{StaticResource UpArSymbol}" FontFamily="{StaticResource SymbolFont}"/>
+                                    </TextBlock>
+
+                                    <TextBlock Text="Ctrl + &quot;+&quot;"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="0" Grid.Row="1">
+                                <StackPanel>
+                                    <TextBlock
+                                        Text="{x:Static properties:Resources.ZoomInHelp_Text}"/>
+                                </StackPanel>
+                            </Border>
+
+
+                            <Border Grid.Column="1" Grid.Row="2">
+                                <StackPanel>
+                                    <TextBlock Text="{StaticResource DownArSymbol}" FontFamily="{StaticResource SymbolFont}"
+                                       Visibility="{Binding CursorKeyToFlipVisibility.Value}"/>
+
+                                    <TextBlock Visibility="{Binding CursorKeyToMoveVisibility.Value}">
+                                <Run Text="Shift + "/>
+                                <Run Text="{StaticResource DownArSymbol}" FontFamily="{StaticResource SymbolFont}"/>
+                                    </TextBlock>
+                                    <TextBlock Visibility="{Binding CursorKeyToMoveVisibility.Value}">
+                                <Run Text="Ctrl + "/>
+                                <Run Text="{StaticResource DownArSymbol}" FontFamily="{StaticResource SymbolFont}"/>
+                                    </TextBlock>
+
+                                    <TextBlock Text="Ctrl + &quot;-&quot;"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="0" Grid.Row="2">
+                                <StackPanel>
+                                    <TextBlock
+                                        Text="{x:Static properties:Resources.ZoomOutHelp_Text}"/>
+                                </StackPanel>
+                            </Border>
+
+
+                            <Border Grid.Column="1" Grid.Row="3">
+                                <StackPanel>
+                                    <TextBlock Text="{StaticResource RightArSymbol}" FontFamily="{StaticResource SymbolFont}"
+                                        Visibility="{Binding CursorKeyToFlipVisibility.Value}"/>
+
+                                    <TextBlock Visibility="{Binding CursorKeyToMoveVisibility.Value}">
+                                <Run Text="Shift + "/>
+                                <Run Text="{StaticResource RightArSymbol}" FontFamily="{StaticResource SymbolFont}"/>
+                                    </TextBlock>
+                                    <TextBlock Visibility="{Binding CursorKeyToMoveVisibility.Value}">
+                                <Run Text="Ctrl + "/>
+                                <Run Text="{StaticResource RightArSymbol}" FontFamily="{StaticResource SymbolFont}"/>
+                                    </TextBlock>
+
+                                    <TextBlock Text="PageDown"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="0" Grid.Row="3">
+                                <StackPanel>
+                                    <TextBlock
+                                        Text="{x:Static properties:Resources.NextImage}"/>
+                                </StackPanel>
+                            </Border>
+
+
+                            <Border Grid.Column="1" Grid.Row="4">
+                                <StackPanel>
+                                    <TextBlock Text="{StaticResource LeftArSymbol}" FontFamily="{StaticResource SymbolFont}"
+                                        Visibility="{Binding CursorKeyToFlipVisibility.Value}"/>
+
+                                    <TextBlock Visibility="{Binding CursorKeyToMoveVisibility.Value}">
+                                <Run Text="Shift + "/>
+                                <Run Text="{StaticResource LeftArSymbol}" FontFamily="{StaticResource SymbolFont}"/>
+                                    </TextBlock>
+                                    <TextBlock Visibility="{Binding CursorKeyToMoveVisibility.Value}">
+                                <Run Text="Ctrl + "/>
+                                <Run Text="{StaticResource LeftArSymbol}" FontFamily="{StaticResource SymbolFont}"/>
+                                    </TextBlock>
+
+                                    <TextBlock 
+                                        Text="PageUp"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="0" Grid.Row="4">
+                                <StackPanel>
+                                    <TextBlock
+                                        Text="{x:Static properties:Resources.PreviousImage}" />
+                                </StackPanel>
+                            </Border>
+
+
+
+                            <Border Grid.Column="1" Grid.Row="5">
+                                <StackPanel>
+                                    <TextBlock Text="Space"/>
+                                    <TextBlock Text="Enter"/>
+                                    <TextBlock Text="&quot;.&quot;"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="0" Grid.Row="5">
+                                <StackPanel>
+                                    <TextBlock 
+                                        Text="{x:Static properties:Resources.AutomaticZoomHelp_Text}"/>
+                                </StackPanel>
+                            </Border>
+
+
+                            <Border Grid.Column="1" Grid.Row="6">
+                                <StackPanel>
+                                    <TextBlock Text="&quot;+&quot;"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="0" Grid.Row="6">
+                                <StackPanel>
+                                    <TextBlock 
+                                        Text="{x:Static properties:Resources.IncreaseRatingHelp_Text}"/>
+                                </StackPanel>
+                            </Border>
+
+
+                            <Border Grid.Column="1" Grid.Row="7">
+                                <StackPanel>
+                                    <TextBlock Text="&quot;-&quot;"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="0" Grid.Row="7">
+                                <StackPanel>
+                                    <TextBlock 
+                                        Text="{x:Static properties:Resources.DecreaseRatingHelp_Text}"/>
+                                </StackPanel>
+                            </Border>
+
+
+                            <Border Grid.Column="1" Grid.Row="8">
+                                <StackPanel>
+                                    <TextBlock Text="Ctrl + Space"/>
+                                    <TextBlock Text="Ctrl + Enter"/>
+                                    <!--<TextBlock Text="Ctrl + &quot;.&quot;"/>-->
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="0" Grid.Row="8">
+                                <StackPanel>
+                                    <TextBlock Text="{x:Static properties:Resources.PlaySlideShow}"/>
+                                </StackPanel>
+                            </Border>
+
+
+
+                            <Border Grid.Column="1" Grid.Row="9">
+                                <StackPanel>
+                                    <TextBlock Text="Ctrl + &quot;T&quot;"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="0" Grid.Row="9">
+                                <StackPanel>
+                                    <TextBlock
+                                        Text="{x:Static properties:Resources.TagSelectorHelp_Text}"/>
+                                </StackPanel>
+                            </Border>
+
+
+
+                            <Border Grid.Column="1" Grid.Row="10">
+                                <StackPanel>
+                                    <TextBlock Text="&quot;A&quot;-&quot;Z&quot;"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="0" Grid.Row="10">
+                                <StackPanel>
+                                    <TextBlock
+                                        Text="{x:Static properties:Resources.TagShortcutHelp_Text}"/>
+                                </StackPanel>
+                            </Border>
+
+
+                            <Border Grid.Column="1" Grid.Row="11">
+                                <StackPanel>
+                                    <TextBlock Text="Ctrl + &quot;R&quot;"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="0" Grid.Row="11">
+                                <StackPanel>
+                                    <TextBlock 
+                                        Text="{x:Static properties:Resources.RotateRightHelp_Text}"/>
+                                </StackPanel>
+                            </Border>
+
+
+
+                            <Border Grid.Column="1" Grid.Row="12">
+                                <StackPanel>
+                                    <TextBlock Text="Ctrl + &quot;E&quot;"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="0" Grid.Row="12">
+                                <StackPanel>
+                                    <TextBlock
+                                        Text="{x:Static properties:Resources.RotateRightHelp_Text}"/>
+                                </StackPanel>
+                            </Border>
+
+
+
+                            <Border Grid.Column="1" Grid.Row="13">
+                                <StackPanel>
+                                    <TextBlock Text="Ctrl + &quot;H&quot;"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="0" Grid.Row="13">
+                                <StackPanel>
+                                    <TextBlock
+                                        Text="{x:Static properties:Resources.FlipHorizontalHelp_Text}"/>
+                                </StackPanel>
+                            </Border>
+
+
+                            <Border Grid.Column="1" Grid.Row="14">
+                                <StackPanel>
+                                    <TextBlock Text="Ctrl + &quot;V&quot;"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="0" Grid.Row="14">
+                                <StackPanel>
+                                    <TextBlock 
+                                        Text="{x:Static properties:Resources.FlipVerticalHelp_Text}"/>
+                                </StackPanel>
+                            </Border>
+
+
+
+                            <Border Grid.Column="1" Grid.Row="15">
+                                <StackPanel>
+                                    <TextBlock Text="Ctrl + &quot;P&quot;"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="0" Grid.Row="15">
+                                <StackPanel>
+                                    <TextBlock 
+                                        Text="{x:Static properties:Resources.DispPropHelp_Text}"/>
+                                </StackPanel>
+                            </Border>
+
+
+                            <Border Grid.Column="1" Grid.Row="16">
+                                <StackPanel>
+                                    <TextBlock Text="Ctrl + &quot;F&quot;"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="0" Grid.Row="16">
+                                <StackPanel>
+                                    <TextBlock Text="{StaticResource SearchLabel}"/>
+                                </StackPanel>
+                            </Border>
+
+
+                            <!--<Border Grid.Column="1" Grid.Row="17">
+                                <StackPanel>
+                                    <TextBlock Text="Ctrl + &quot;S&quot;"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="0" Grid.Row="17">
+                                <StackPanel>
+                                    <TextBlock Text="{x:Static properties:Resources.Share}"/>
+                                </StackPanel>
+                            </Border>-->
+
+
+                            <Border Grid.Column="1" Grid.Row="18">
+                                <StackPanel>
+                                    <TextBlock Text="Ctrl + &quot;C&quot;"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="0" Grid.Row="18">
+                                <StackPanel>
+                                    <TextBlock
+                                        Text="{x:Static properties:Resources.CopyPath}"/>
+                                </StackPanel>
+                            </Border>
+
+
+                            <Border Grid.Column="1" Grid.Row="19">
+                                <StackPanel>
+                                    <TextBlock>
+                                <Run Text="Alt + "/>
+                                <Run Text="{StaticResource LeftArSymbol}" FontFamily="{StaticResource SymbolFont}"/>
+                                    </TextBlock>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="0" Grid.Row="19">
+                                <StackPanel>
+                                    <TextBlock 
+                                        Text="{x:Static properties:Resources.BackHelp_Text}"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="1" Grid.Row="20">
+                                <StackPanel>
+                                    <TextBlock Text="Alt + &quot;Q&quot;"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="0" Grid.Row="20">
+                                <StackPanel>
+                                    <TextBlock 
+                                        Text="{x:Static properties:Resources.ExitApp}"/>
+                                </StackPanel>
+                            </Border>
+                            
+                            
+                        </Grid>
+                    </Border>
+
+                </StackPanel>
+
+
+            </StackPanel>
+        </ScrollViewer>
+
+    </Grid>
+</UserControl>

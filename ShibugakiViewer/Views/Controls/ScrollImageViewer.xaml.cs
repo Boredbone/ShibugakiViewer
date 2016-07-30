@@ -1,0 +1,1732 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using ImageLibrary.File;
+using System.Reactive.Disposables;
+using Reactive.Bindings.Extensions;
+using Boredbone.Utility.Extensions;
+using System.Reactive.Linq;
+using Reactive.Bindings;
+using WpfTools;
+using System.Diagnostics;
+using System.Reactive;
+using ShibugakiViewer.Views.Behaviors;
+using System.Reactive.Subjects;
+
+namespace ShibugakiViewer.Views.Controls
+{
+    /// <summary>
+    /// ScrollImageViewer.xaml の相互作用ロジック
+    /// </summary>
+    public partial class ScrollImageViewer : UserControl, IDisposable
+    {
+        private CompositeDisposable dispsables = new CompositeDisposable();
+
+        private const double normalZoomTime = 150.0;
+        private const double autoZoomTime = 200.0;
+
+        private const double scrollDelta = 50.0;
+
+        private const double scrollAnimationTime = 150;
+        private const double rotateAnimationTime = 400;
+
+        private int tapCount = 0;
+        private Vector firstTapPosition;
+
+        private const double tapMoveLengthSquaredThreshold = 64 * 64;//[px*px]
+        private const double shortTapTimeThreshold = 500;//[ms]
+        private const double tapDifferentPositionLengthSquaredThreshold =  100 * 100;//[px*px]
+        
+        private Lazy<double> doubleTapTimeThreshold = new Lazy<double>(() =>
+        {
+            return System.Windows.Forms.SystemInformation.DoubleClickTime;
+            //return 400;//[ms]
+        });
+        private const double edgeTapThreshold = 0.2;
+
+
+
+        #region AutoFit
+
+        public bool AutoFit
+        {
+            get { return (bool)GetValue(AutoFitProperty); }
+            set { SetValue(AutoFitProperty, value); }
+        }
+        public static readonly DependencyProperty AutoFitProperty =
+            DependencyProperty.Register("AutoFit", typeof(bool), typeof(ScrollImageViewer),
+            new PropertyMetadata(true, new PropertyChangedCallback(OnAutoFitChanged)));
+
+        private static void OnAutoFitChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as ScrollImageViewer;
+            var value = (bool)e.NewValue;
+
+            if (value)
+            {
+                if (thisInstance.ScrollViewer.ScrollableHeight > 0 && thisInstance.ScrollViewer.ScrollableWidth > 0)
+                {
+                    var ho = thisInstance.scrollViewer.HorizontalOffset;
+                    var vo = thisInstance.scrollViewer.VerticalOffset;
+                    thisInstance.ChangeView(ho, vo, null);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Source
+
+        public Record Source
+        {
+            get { return (Record)GetValue(SourceProperty); }
+            set { SetValue(SourceProperty, value); }
+        }
+
+        public static readonly DependencyProperty SourceProperty =
+            DependencyProperty.Register(nameof(Source), typeof(Record), typeof(ScrollImageViewer),
+            new PropertyMetadata(null, new PropertyChangedCallback(OnSourceChanged)));
+
+        private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as ScrollImageViewer;
+            var value = e.NewValue as Record;
+            var old = e.OldValue as Record;
+
+            thisInstance.OnRecordChanged(value, old);
+        }
+
+        private void OnRecordChanged(Record record, Record oldRecord)
+        {
+            //if (oldRecord == null || record == null
+            //    || record.Width != oldRecord.Width || record.Height != oldRecord.Height)
+            //{
+            this.IsChanging = true;
+            //}
+        
+            var oldPath = oldRecord?.FullPath;
+
+            this.image.DataContext = record;
+
+            if (!this.isImageLoaded)
+            {
+                this.ZoomFactor = 1;
+            }
+
+            if (record == null)
+            {
+                this.ImageHeight = 0;
+                this.ImageWidth = 0;
+            }
+            else
+            {
+                this.ImageHeight = record.Height;
+                this.ImageWidth = record.Width;
+            }
+
+            //if (record != null && record?.FullPath == oldPath)
+            //{
+            //    Debug.WriteLine($"same path:{oldPath}");
+            //}
+
+            if (record?.FullPath != oldPath)
+            {
+                this.rotateTransform.Angle = 0;
+                this.Orientation = 0;
+                this.CurrentOrientation = 0.0;
+                this.IsInHorizontalMirror = false;
+                this.IsInVerticalMirror = false;
+
+                //this.MetaImageZoomFactorSubject?.OnNext(1.0);
+                if (this.isImageLoaded)
+                {
+                    this.DoAutoScaling();
+                }
+                this.scaleInitializeFlag = true;
+
+            }
+
+            //this.IsChanging = false;
+        }
+
+        #endregion
+
+
+        #region ViewWidth
+
+        public double ViewWidth
+        {
+            get { return (double)GetValue(ViewWidthProperty); }
+            set { SetValue(ViewWidthProperty, value); }
+        }
+
+        public static readonly DependencyProperty ViewWidthProperty =
+            DependencyProperty.Register(nameof(ViewWidth), typeof(double),
+                typeof(ScrollImageViewer), new PropertyMetadata(0.0));
+
+        #endregion
+
+        #region ViewHeight
+
+        public double ViewHeight
+        {
+            get { return (double)GetValue(ViewHeightProperty); }
+            set { SetValue(ViewHeightProperty, value); }
+        }
+
+        public static readonly DependencyProperty ViewHeightProperty =
+            DependencyProperty.Register(nameof(ViewHeight), typeof(double),
+                typeof(ScrollImageViewer), new PropertyMetadata(0.0));
+
+        #endregion
+
+
+
+
+        public double ImageHeight
+        {
+            get { return this.Source?.Height ?? 0; }
+            set
+            {
+                if (_fieldImageHeight != value)
+                {
+                    _fieldImageHeight = value;
+                    //this.InnerHeight = value;
+                    //this.OuterHeight = value;
+
+                    RaisePropertyChanged(nameof(ImageHeight));
+                    //RaisePropertyChanged(nameof(FixedHeight));
+                }
+            }
+        }
+        private double _fieldImageHeight;
+
+
+        public double ImageWidth
+        {
+            get { return this.Source?.Width ?? 0; }
+            set
+            {
+                if (_fieldImageWidth != value)
+                {
+                    _fieldImageWidth = value;
+                    //this.InnerWidth = value;
+                    //this.OuterWidth = value;
+
+                    RaisePropertyChanged(nameof(ImageWidth));
+                    //RaisePropertyChanged(nameof(FixedWidth));
+                }
+            }
+        }
+        private double _fieldImageWidth;
+
+
+
+
+        #region ZoomFactor
+
+        public double ZoomFactor
+        {
+            get { return (double)GetValue(ZoomFactorProperty); }
+            set { SetValue(ZoomFactorProperty, value); }
+        }
+
+        public static readonly DependencyProperty ZoomFactorProperty =
+            DependencyProperty.Register(nameof(ZoomFactor), typeof(double), typeof(ScrollImageViewer),
+            new PropertyMetadata(1.0, new PropertyChangedCallback(OnZoomFactorChanged)));
+
+        private static void OnZoomFactorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as ScrollImageViewer;
+            var value = e.NewValue as double?;
+
+            if (value == null)
+            {
+                return;
+            }
+
+            if ((double)e.NewValue == 0)
+            {
+                Debug.WriteLine("a");
+            }
+
+            thisInstance.RefreshScale();
+            if (!thisInstance.dispsables.IsDisposed)
+            {
+                thisInstance.MetaImageZoomFactorSubject.OnNext(value.Value);
+            }
+
+        }
+
+        #endregion
+
+
+        #region AnimatedZoomFactor
+
+        public double AnimatedZoomFactor
+        {
+            get { return (double)GetValue(AnimatedZoomFactorProperty); }
+            set { SetValue(AnimatedZoomFactorProperty, value); }
+        }
+
+        public static readonly DependencyProperty AnimatedZoomFactorProperty =
+            DependencyProperty.Register(nameof(AnimatedZoomFactor), typeof(double), typeof(ScrollImageViewer),
+            new PropertyMetadata(1.0, new PropertyChangedCallback(OnAnimatedZoomFactorChanged)));
+
+        private static void OnAnimatedZoomFactorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as ScrollImageViewer;
+            var value = e.NewValue as double?;
+
+            if (value == null)
+            {
+                return;
+            }
+            var zoom = value.Value;
+            thisInstance.OnAnimatedZoomFactorChanged(zoom);
+        }
+
+        private void OnAnimatedZoomFactorChanged(double zoom)
+        {
+            var zoomRate = zoom / this.baseZoomFactor;
+
+            var offset = zoomRate * this.baseOffset + (zoomRate - 1.0) * this.baseCenter;
+
+            this.ZoomFactor = zoom;
+
+            this.CurrentOffset = (Point)offset;
+
+            this.scrollViewer.ScrollToHorizontalOffset(offset.X);
+            this.scrollViewer.ScrollToVerticalOffset(offset.Y);
+        }
+
+
+        #endregion
+
+        #region DesiredZoomFactor
+
+        public double DesiredZoomFactor
+        {
+            get { return (double)GetValue(DesiredZoomFactorProperty); }
+            set { SetValue(DesiredZoomFactorProperty, value); }
+        }
+
+        public static readonly DependencyProperty DesiredZoomFactorProperty =
+            DependencyProperty.Register(nameof(DesiredZoomFactor), typeof(double), typeof(ScrollImageViewer),
+                new PropertyMetadata(0.0, new PropertyChangedCallback(OnDesiredZoomFactorChanged)));
+
+        private static void OnDesiredZoomFactorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as ScrollImageViewer;
+            var value = e.NewValue as double?;
+
+            if (value == null || value.Value <= 0)
+            {
+                return;
+            }
+            var zoom = value.Value;
+
+            var p = thisInstance.GetCenter();
+            /*
+            var x = 0.0;
+            if (thisInstance.scrollViewer.ActualWidth.IsValid())
+            {
+                x = thisInstance.scrollViewer.ActualWidth / 2.0;
+            }
+            var y = 0.0;
+            if (thisInstance.scrollViewer.ActualHeight.IsValid())
+            {
+                y = thisInstance.scrollViewer.ActualHeight / 2.0;
+            }*/
+
+            thisInstance.ZoomImage(p.X, p.Y, zoom, 100.0, false);
+        }
+
+        #endregion
+
+        #region MetaImageZoomFactorDp
+
+        public double MetaImageZoomFactorDp
+        {
+            get { return (double)GetValue(MetaImageZoomFactorDpProperty); }
+            set { SetValue(MetaImageZoomFactorDpProperty, value); }
+        }
+
+        public static readonly DependencyProperty MetaImageZoomFactorDpProperty =
+            DependencyProperty.Register(nameof(MetaImageZoomFactorDp), typeof(double),
+                typeof(ScrollImageViewer), new PropertyMetadata(1.0));
+
+        #endregion
+
+
+
+
+        #region CurrentOffset
+
+        public Point CurrentOffset
+        {
+            get { return new Point(this.scrollViewer.HorizontalOffset, this.scrollViewer.VerticalOffset); }
+            // (Point)GetValue(CurrentOffsetProperty); }
+            set { SetValue(CurrentOffsetProperty, value); }
+        }
+
+        public static readonly DependencyProperty CurrentOffsetProperty =
+            DependencyProperty.Register(nameof(CurrentOffset), typeof(Point), typeof(ScrollImageViewer),
+            new PropertyMetadata(default(Point), new PropertyChangedCallback(OnCurrentOffsetChanged)));
+
+        private static void OnCurrentOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as ScrollImageViewer;
+            var point = e.NewValue as Point?;
+
+            if (point == null || thisInstance.scrollViewer == null)
+            {
+                return;
+            }
+
+            thisInstance.scrollViewer.ScrollToHorizontalOffset(point.Value.X);
+            thisInstance.scrollViewer.ScrollToVerticalOffset(point.Value.Y);
+
+        }
+
+        #endregion
+        
+
+        #region ActualOffset
+
+        public Point ActualOffset
+        {
+            get { return (Point)GetValue(ActualOffsetProperty); }
+            set { SetValue(ActualOffsetProperty, value); }
+        }
+
+        public static readonly DependencyProperty ActualOffsetProperty =
+            DependencyProperty.Register(nameof(ActualOffset), typeof(Point), typeof(ScrollImageViewer),
+            new PropertyMetadata(default(Point)));
+
+        #endregion
+
+        #region CheckHorizontalScrollRequestFunction
+
+        public Func<int> CheckHorizontalScrollRequestFunction
+        {
+            get { return (Func<int>)GetValue(CheckHorizontalScrollRequestFunctionProperty); }
+            set { SetValue(CheckHorizontalScrollRequestFunctionProperty, value); }
+        }
+
+        public static readonly DependencyProperty CheckHorizontalScrollRequestFunctionProperty =
+            DependencyProperty.Register(nameof(CheckHorizontalScrollRequestFunction),
+                typeof(Func<int>), typeof(ScrollImageViewer),
+            new PropertyMetadata(null, new PropertyChangedCallback(OnCheckHorizontalScrollRequestFunctionChanged)));
+
+        private static void OnCheckHorizontalScrollRequestFunctionChanged
+            (DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as ScrollImageViewer;
+            var value = e.NewValue as Func<int>;
+
+        }
+
+        #endregion
+
+        #region CheckVerticalScrollRequestFunction
+
+        public Func<int> CheckVerticalScrollRequestFunction
+        {
+            get { return (Func<int>)GetValue(CheckVerticalScrollRequestFunctionProperty); }
+            set { SetValue(CheckVerticalScrollRequestFunctionProperty, value); }
+        }
+
+        public static readonly DependencyProperty CheckVerticalScrollRequestFunctionProperty =
+            DependencyProperty.Register(nameof(CheckVerticalScrollRequestFunction),
+                typeof(Func<int>), typeof(ScrollImageViewer),
+            new PropertyMetadata(null, new PropertyChangedCallback(OnCheckVerticalScrollRequestFunctionChanged)));
+
+        private static void OnCheckVerticalScrollRequestFunctionChanged
+            (DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as ScrollImageViewer;
+            var value = e.NewValue as Func<int>;
+
+        }
+
+        #endregion
+
+        #region IsScrollRequested
+
+        public bool IsScrollRequested
+        {
+            get { return (bool)GetValue(IsScrollRequestedProperty); }
+            set { SetValue(IsScrollRequestedProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsScrollRequestedProperty =
+            DependencyProperty.Register(nameof(IsScrollRequested), typeof(bool), typeof(ScrollImageViewer),
+            new PropertyMetadata(false, new PropertyChangedCallback(OnIsScrollRequestedChanged)));
+
+        private static void OnIsScrollRequestedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as ScrollImageViewer;
+            var value = e.NewValue as bool?;
+
+            if (thisInstance != null && value.HasValue && value.Value)
+            {
+                thisInstance.IsScrollRequested = false;
+                thisInstance.StartScrollAnimation();
+            }
+        }
+
+        #endregion
+
+
+
+
+
+
+        #region ImageLoadingTrigger
+
+        public bool ImageLoadingTrigger
+        {
+            get { return (bool)GetValue(ImageLoadingTriggerProperty); }
+            set { SetValue(ImageLoadingTriggerProperty, value); }
+        }
+
+        public static readonly DependencyProperty ImageLoadingTriggerProperty =
+            DependencyProperty.Register(nameof(ImageLoadingTrigger), typeof(bool),
+                typeof(ScrollImageViewer), new PropertyMetadata(false));
+
+
+        #endregion
+
+        #region DeviceScale
+
+        public double DeviceScale
+        {
+            get { return (double)GetValue(DeviceScaleProperty); }
+            set { SetValue(DeviceScaleProperty, value); }
+        }
+
+        public static readonly DependencyProperty DeviceScaleProperty =
+            DependencyProperty.Register(nameof(DeviceScale), typeof(double),
+                typeof(ScrollImageViewer), new PropertyMetadata(1.0));
+
+        #endregion
+
+
+        #region IsAnimationEnabled
+
+        public bool IsAnimationEnabled
+        {
+            get { return (bool)GetValue(IsAnimationEnabledProperty); }
+            set { SetValue(IsAnimationEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsAnimationEnabledProperty =
+            DependencyProperty.Register(nameof(IsAnimationEnabled), typeof(bool), typeof(ScrollImageViewer),
+            new PropertyMetadata(false, new PropertyChangedCallback(OnIsAnimationEnabledChanged)));
+
+        private static void OnIsAnimationEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as ScrollImageViewer;
+            var value = e.NewValue as bool?;
+
+            if (value == null)
+            {
+                return;
+            }
+
+            thisInstance.SetAnimation(value.Value);
+
+        }
+
+
+        private void SetAnimation(bool enabled)
+        {
+            var path = this.Source?.FullPath;
+            /*
+            if (enabled)
+            {
+                if (uri != null)
+                {
+                    ClearAnimator();
+
+                    XamlAnimatedGif.AnimationBehavior.SetSourceUri(this.animationImage, uri);
+
+                    this.animationImage.Visibility = Visibility.Visible;
+
+                    XamlAnimatedGif.AnimationBehavior.SetAutoStart(this.animationImage, true);
+
+                    return;
+                }
+            }
+
+            ClearAnimator();
+            this.animationImage.Visibility = Visibility.Collapsed;
+            */
+        }
+
+        #endregion
+
+        #region IsInHorizontalMirror
+
+        public bool IsInHorizontalMirror
+        {
+            get { return (bool)GetValue(IsInHorizontalMirrorProperty); }
+            set { SetValue(IsInHorizontalMirrorProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsInHorizontalMirrorProperty =
+            DependencyProperty.Register(nameof(IsInHorizontalMirror), typeof(bool), typeof(ScrollImageViewer),
+            new PropertyMetadata(false, new PropertyChangedCallback(OnIsInHorizontalMirrorChanged)));
+
+        private static void OnIsInHorizontalMirrorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as ScrollImageViewer;
+            thisInstance.RefreshScale();
+        }
+
+        #endregion
+
+
+        #region IsInVerticalMirror
+
+        public bool IsInVerticalMirror
+        {
+            get { return (bool)GetValue(IsInVerticalMirrorProperty); }
+            set { SetValue(IsInVerticalMirrorProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsInVerticalMirrorProperty =
+            DependencyProperty.Register(nameof(IsInVerticalMirror), typeof(bool), typeof(ScrollImageViewer),
+            new PropertyMetadata(false, new PropertyChangedCallback(OnIsInVerticalMirrorChanged)));
+
+        private static void OnIsInVerticalMirrorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as ScrollImageViewer;
+            thisInstance.RefreshScale();
+
+            /*
+            var value = e.NewValue as bool?;
+
+            if (thisInstance != null && value != null)
+            {
+                thisInstance.scaleTransform.ScaleY = value.Value ? -1.0 : 1.0;
+            }*/
+        }
+
+        #endregion
+
+        #region IsAutoScalingEnabled
+
+        public bool IsAutoScalingEnabled
+        {
+            get { return (bool)GetValue(IsAutoScalingEnabledProperty); }
+            set { SetValue(IsAutoScalingEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsAutoScalingEnabledProperty =
+            DependencyProperty.Register(nameof(IsAutoScalingEnabled), typeof(bool), typeof(ScrollImageViewer),
+            new PropertyMetadata(false, new PropertyChangedCallback(OnIsAutoScalingEnabledChanged)));
+
+        private static void OnIsAutoScalingEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as ScrollImageViewer;
+            var value = e.NewValue as bool?;
+
+            if (thisInstance != null && value.HasValue)// && value.Value)
+            {
+                var p = thisInstance.GetCenter();
+                thisInstance.StartAutoScaling(p.X, p.Y);
+                //thisInstance.IsAutoScalingEnabled = false;
+            }
+        }
+
+        #endregion
+
+
+        #region ScrollBarVisibility
+
+        public Visibility ScrollBarVisibility
+        {
+            get { return (Visibility)GetValue(ScrollBarVisibilityProperty); }
+            set { SetValue(ScrollBarVisibilityProperty, value); }
+        }
+
+        public static readonly DependencyProperty ScrollBarVisibilityProperty =
+            DependencyProperty.Register(nameof(ScrollBarVisibility), typeof(Visibility),
+                typeof(ScrollImageViewer), new PropertyMetadata(Visibility.Visible));
+
+        #endregion
+
+
+
+        #region TapCommand
+
+        public ICommand TapCommand
+        {
+            get { return (ICommand)GetValue(TapCommandProperty); }
+            set { SetValue(TapCommandProperty, value); }
+        }
+
+        public static readonly DependencyProperty TapCommandProperty =
+            DependencyProperty.Register(nameof(TapCommand), typeof(ICommand),
+                typeof(ScrollImageViewer), new PropertyMetadata(null));
+
+        #endregion
+
+        #region PointerMoveCommand
+
+        public ICommand PointerMoveCommand
+        {
+            get { return (ICommand)GetValue(PointerMoveCommandProperty); }
+            set { SetValue(PointerMoveCommandProperty, value); }
+        }
+
+        public static readonly DependencyProperty PointerMoveCommandProperty =
+            DependencyProperty.Register(nameof(PointerMoveCommand), typeof(ICommand),
+                typeof(ScrollImageViewer), new PropertyMetadata(null));
+
+        #endregion
+
+
+
+        #region Orientation
+
+        public int Orientation
+        {
+            get { return (int)GetValue(OrientationProperty); }
+            set { SetValue(OrientationProperty, value); }
+        }
+
+        public static readonly DependencyProperty OrientationProperty =
+            DependencyProperty.Register(nameof(Orientation), typeof(int), typeof(ScrollImageViewer),
+            new PropertyMetadata(0, new PropertyChangedCallback(OnOrientationChanged)));
+
+        private static void OnOrientationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as ScrollImageViewer;
+            var value = e.NewValue as int?;
+
+            if (thisInstance != null && value.HasValue)
+            {
+                thisInstance.Rotate(value.Value);
+            }
+        }
+
+        #endregion
+
+        #region CurrentOrientation
+
+        public double CurrentOrientation
+        {
+            get { return (double)GetValue(CurrentOrientationProperty); }
+            set { SetValue(CurrentOrientationProperty, value); }
+        }
+
+        public static readonly DependencyProperty CurrentOrientationProperty =
+            DependencyProperty.Register(nameof(CurrentOrientation), typeof(double), typeof(ScrollImageViewer),
+            new PropertyMetadata(0.0, new PropertyChangedCallback(OnCurrentOrientationChanged)));
+
+        private static void OnCurrentOrientationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as ScrollImageViewer;
+            var value = e.NewValue as double?;
+
+            if (thisInstance != null && value.HasValue)
+            {
+                thisInstance.rotateTransform.Angle = value.Value;
+            }
+        }
+
+        #endregion
+
+        #region IsChanging
+
+        public bool IsChanging
+        {
+            get { return (bool)GetValue(IsChangingProperty); }
+            set { SetValue(IsChangingProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsChangingProperty =
+            DependencyProperty.Register(nameof(IsChanging), typeof(bool),
+                typeof(ScrollImageViewer), new PropertyMetadata(false));
+        
+        #endregion
+
+
+
+
+        private const double maxZoomFactor = 8.0;
+
+        //public event Action<object, MouseButtonEventArgs> PanelTapped;
+        //public event Action<object, MouseButtonEventArgs> PanelDoubleTapped;
+        public event Action<object, MouseButtonEventArgs> PanelRightTapped;
+
+
+        public ScrollViewer ScrollViewer { get { return this.scrollViewer; } }
+        public Image Image { get { return this.image; } }
+
+        private bool IsTurned => this.Orientation % 180 != 0;
+
+        private Vector baseOffset;
+        private Vector baseCenter;
+        private double baseZoomFactor;
+
+
+        private bool alwaysFit = false;
+        private bool isImageLoaded = false;
+        private bool scaleInitializeFlag = false;
+        private bool isScrollAnimating = false;
+
+        
+        private Subject<double> MetaImageZoomFactorSubject { get; }
+        public ReadOnlyReactiveProperty<double> MetaImageZoomFactor { get; }
+        
+
+
+
+        public ScrollImageViewer()
+        {
+            InitializeComponent();
+
+            this.Source = Record.Empty;
+
+            this.inertiaBehavior.AddTo(this.dispsables);
+            this.tapBehavior.AddTo(this.dispsables);
+            this.imageBehabior.AddTo(this.dispsables);
+            this.gifBehabior.AddTo(this.dispsables);
+
+            var buffer = ((App)Application.Current).Core.ImageBuffer;
+            buffer.Updated
+                .ObserveOnUIDispatcher()
+                .Where(x => x.Equals(this.Source?.FullPath))
+                .Subscribe(x =>
+                {
+                    this.ImageLoadingTrigger = !this.ImageLoadingTrigger;
+                    //this.ImageLoadingTrigger = false;
+                })
+                .AddTo(this.dispsables);
+
+            var scrollChanged = Observable.FromEvent<ScrollChangedEventHandler, ScrollChangedEventArgs>
+                (h => (sender, e) => h(e),
+                h => this.scrollViewer.ScrollChanged += h,
+                h => this.scrollViewer.ScrollChanged -= h)
+                .Select(_ => Unit.Default);
+
+            var mouseMoving = Observable.FromEvent<MouseEventHandler, MouseEventArgs>
+                (h => (sender, e) => h(e),
+                h => this.image.MouseMove += h,
+                h => this.image.MouseMove -= h)
+                .Select(_ => Unit.Default);
+
+            var scrollBarEvent = scrollChanged.Merge(mouseMoving).Publish().RefCount();
+
+            scrollBarEvent.Throttle(TimeSpan.FromMilliseconds(1000)).Select(_ => false)
+                .Merge(scrollBarEvent.Select(_ => true))
+                .Select(x => VisibilityHelper.Set(x))
+                .ObserveOnUIDispatcher()
+                .Subscribe(x => this.ScrollBarVisibility = x)
+                .AddTo(this.dispsables);
+
+            this.MetaImageZoomFactorSubject = new Subject<double>().AddTo(this.dispsables);
+            //this.MetaImageZoomFactor = this.MetaImageZoomFactorSubject
+            //    .Throttle(TimeSpan.FromMilliseconds(300))
+            //    .ObserveOnUIDispatcher()
+            //    .ToReadOnlyReactiveProperty()
+            //    .AddTo(this.dispsables);
+
+            this.MetaImageZoomFactorSubject
+                .Throttle(TimeSpan.FromMilliseconds(300))
+                .ObserveOnUIDispatcher()
+                .Subscribe(x => this.MetaImageZoomFactorDp = x)
+                .AddTo(this.dispsables);
+            //this.MetaImageZoomFactor.Subscribe(x => this.MetaImageZoomFactorDp = x).AddTo(this.dispsables);
+            
+        }
+
+        ///// <summary>
+        ///// ダブルクリックでアニメーション付き自動スケーリング
+        ///// </summary>
+        ///// <param name="sender"></param>
+        ///// <param name="e"></param>
+        ////private void scrollViewer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        //private void tapBehavior_PointerDoubleTapped(object sender, PointerTapEventArgs e)
+        //{
+        //    //this.PanelDoubleTapped?.Invoke(sender, e);
+        //
+        //    this.OnDoubleTapped(e);
+        //}
+
+
+
+        /// <summary>
+        /// ダブルクリックでアニメーション付き自動スケーリング
+        /// </summary>
+        /// <param name="e"></param>
+        private void OnDoubleTapped(PointerTapEventArgs e)
+        {
+            if (this.scrollViewer != null)
+            {
+
+                // タップによるスクロール位置ずれを回避
+                //if (false)//(e.PointerDeviceType != PointerDeviceType.Mouse)
+                //{
+                //    await Task.Delay(100);
+                //}
+
+                Point p = e.InnerArgs.GetPosition(this.scrollViewer);
+                this.StartAutoScaling(p.X, p.Y);
+            }
+        }
+
+
+
+
+        /// <summary>
+        /// マウスボタンが離された時
+        /// </summary>
+        /// <param name="o"></param>
+        /// <param name="e"></param>
+        private void tapBehavior_PointerTapped(object o, PointerTapEventArgs e)
+        {
+
+            var length = (e.EndPosition - e.StartPosition).LengthSquared;
+            if (length < tapMoveLengthSquaredThreshold)
+            {
+                var h = e.EndPosition.X / e.SenderWidth;
+                var v = e.EndPosition.Y / e.SenderHeight;
+
+                if (e.Span < TimeSpan.FromMilliseconds(shortTapTimeThreshold))
+                {
+                    //ダウン中に動いてない && 長押しでない
+
+                    if (e.Interval > TimeSpan.FromMilliseconds(doubleTapTimeThreshold.Value)
+                        || (this.firstTapPosition - e.EndPosition).LengthSquared
+                            > tapDifferentPositionLengthSquaredThreshold)
+                    {
+                        //前のタップから時間が開いた || タップ位置が離れた
+                        this.tapCount = 1;
+                        this.firstTapPosition = e.EndPosition;
+                    }
+                    else
+                    {
+                        this.tapCount++;
+                    }
+
+                    if (this.tapCount == 2 && h > edgeTapThreshold && h < (1.0 - edgeTapThreshold))
+                    {
+                        this.OnDoubleTapped(e);
+                    }
+
+                }
+
+                this.TapCommand?.Execute(new ViewerTapEventArgs()
+                {
+                    VerticalRate = v,
+                    HolizontalRate = h,
+                    Count = this.tapCount,
+                    Span = e.Span,
+                    Interval = e.Interval,
+                });
+            }
+        }
+        
+
+        /// <summary>
+        /// 右クリックイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void scrollViewer_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+            => this.PanelRightTapped?.Invoke(sender, e);
+
+        /// <summary>
+        /// 画像サイズ変更
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void mainImage_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.NewSize.Width > 0.0 && e.NewSize.Height > 0.0
+                && this.AutoFit
+                && (this.scaleInitializeFlag || e.PreviousSize.Height <= 0 || e.PreviousSize.Width < 0))
+            {
+                this.IsChanging = true;
+                this.isImageLoaded = true;
+                this.DoAutoScaling();
+
+                //var zoomed = FitImageToScrollView(true, !alwaysFit);
+                ////新しい画像に移ったときはやる、画質が変化しただけの時はやらない
+                //
+                //if (this.scaleInitializeFlag && !zoomed)
+                //{
+                //    this.ZoomImage(null, null, 1, true);
+                //}
+                this.scaleInitializeFlag = false;
+                this.IsChanging = false;
+            }
+
+            //FitEnableフラグはUserControlのScrollImageViewerの依存プロパティにして
+            //Bindingでtrue,falseを切り替え
+
+        }
+
+        /// <summary>
+        /// 画面に合わせて画像をスケーリング
+        /// </summary>
+        /// <returns></returns>
+        private bool DoAutoScaling()
+        {
+
+            var zoomed = FitImageToScrollView(true, !alwaysFit);
+            //新しい画像に移ったときはやる、画質が変化しただけの時はやらない
+
+            if (this.scaleInitializeFlag && !zoomed)
+            {
+                this.ZoomImage(null, null, 1, 0.0, false);
+            }
+            this.scaleInitializeFlag = false;
+            this.IsChanging = false;
+            return zoomed;
+        }
+
+        /// <summary>
+        /// マウスホイールで拡大率変更
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void scrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            var elm = this.ScrollViewer;
+
+            if (elm != null)
+            {
+                //var image = (UIElement)sender;
+
+                double newvalue = e.Delta;// point.Properties.MouseWheelDelta;
+
+                var scale = this.ZoomFactor;
+
+
+                if (newvalue > 0)
+                {
+                    scale *= 1.2f;
+                }
+                if (newvalue < 0)
+                {
+                    scale /= 1.2f;
+                }
+
+                var p = e.GetPosition(elm);
+
+                this.ZoomImage(p.X, p.Y, scale, 0.0, false);
+
+                e.Handled = true;
+            }
+        }
+
+
+        private double GetFitScale()
+        {
+            return GetFitOrFillScale(false);
+        }
+
+        private double GetFillScale()
+        {
+            return GetFitOrFillScale(true);
+        }
+
+        private double GetFitOrFillScale(bool fill)
+        {
+            var view = this.ScrollViewer;
+            var image = this.Image;
+            //var size = GetOriginalImageSize();
+
+
+            //horizontalRate = view.ViewportWidth / size.Width;
+            //verticalRate = view.ViewportHeight / size.Height;
+
+            //horizontalRate = view.ViewportWidth / image.ActualWidth;
+            //verticalRate = view.ViewportHeight / image.ActualHeight;
+
+            var originalWidth = image.ActualWidth;
+            var originalHeight = image.ActualHeight;
+
+            //DesiredSizeだとワンテンポ遅れるのでNG
+            //InnerHeight,OuterHeightはどうか？
+
+            var width = originalWidth <= 0 ? this.ImageWidth : originalWidth;
+            var height = originalHeight <= 0 ? this.ImageHeight : originalHeight;
+
+            if (this.IsTurned)
+            {
+                var buf = width;
+                width = height;
+                height = buf;
+            }
+
+            var horizontalRate = (this.ViewWidth - 1.0) / width;// view.ViewportWidth / width;
+            var verticalRate = (this.ViewHeight - 1.0) / height;// view.ViewportHeight / height;
+
+            if (fill)
+            {
+                return Math.Max(horizontalRate, verticalRate);
+            }
+            else
+            {
+                return Math.Min(horizontalRate, verticalRate);
+            }
+        }
+
+        //public void ZoomImage(double? centerX, double? centerY, double scale)
+        //{
+        //    this.ZoomImage(centerX, centerY, scale, autoZoomTime, true);
+        //}
+        public void ZoomImage(double? centerX, double? centerY, double scale,
+            double timeMilliSeconds, bool exponential)
+        {
+            //var horizontalRate = view.ViewportWidth / image.ActualWidth;
+            //var verticalRate = view.ViewportHeight / image.ActualHeight;
+
+            var oldScale = this.ZoomFactor;
+
+            if (this.HasAnimatedProperties)
+            {
+                var zoom = this.AnimatedZoomFactor;
+                this.BeginAnimation(AnimatedZoomFactorProperty, null);
+                this.AnimatedZoomFactor = zoom;
+            }
+
+            var view = this.ScrollViewer;
+            var image = this.Image;
+
+            double frameWidth = this.ViewWidth;// view.ViewportWidth;
+            double frameHeight = this.ViewHeight;// view.ViewportHeight;
+
+
+
+
+            double imageWidth = image.ActualWidth * this.ZoomFactor;
+            double imageHeight = image.ActualHeight * this.ZoomFactor;
+
+            if (this.IsTurned)
+            {
+                var tmp = imageWidth;
+                imageWidth = imageHeight;
+                imageHeight = tmp;
+            }
+
+            var zoomRate = scale / oldScale;
+
+
+            var size = GetOriginalImageSize();
+
+
+            var newImageWidth = size.Width * scale;
+            var newImageHeight = size.Height * scale;
+
+            double oldHorizontalOffset = view.HorizontalOffset;
+            double oldVerticalOffset = view.VerticalOffset;
+
+
+            if (imageWidth < frameWidth)
+            {
+                oldHorizontalOffset -= (frameWidth - imageWidth) / 2.0;
+            }
+            if (imageHeight < frameHeight)
+            {
+                oldVerticalOffset -= (frameHeight - imageHeight) / 2.0;
+            }
+
+
+            double horizontalOffset;
+            double verticalOffset;
+
+            double cX = (double)(centerX ?? (frameWidth / 2));
+            double cY = (double)(centerY ?? (frameHeight / 2));
+            //double cX = (double)(centerX ?? (size.Width / 2));
+            //double cY = (double)(centerY ?? (size.Height / 2));
+
+
+            //horizontalOffset = (2 - zoomRate) * oldHorizontalOffset - (1 - zoomRate) * cX;
+            //verticalOffset = (2 - zoomRate) * oldVerticalOffset - (1 - zoomRate) * cY;
+
+            horizontalOffset = zoomRate * oldHorizontalOffset + (zoomRate - 1) * cX;
+            verticalOffset = zoomRate * oldVerticalOffset + (zoomRate - 1) * cY;
+
+            this.baseCenter = new Vector(cX, cY);
+            this.baseOffset = new Vector(oldHorizontalOffset, oldVerticalOffset);
+            this.baseZoomFactor = oldScale;
+
+
+            if (newImageWidth < frameWidth)
+            {
+                horizontalOffset = (frameWidth - newImageWidth) / 2;
+            }
+            else if (horizontalOffset < 0)
+            {
+                horizontalOffset = 0;
+            }
+            else if (horizontalOffset > newImageWidth - frameWidth)
+            {
+                horizontalOffset = (newImageWidth - frameWidth) / 2;
+            }
+
+
+            if (newImageHeight < frameHeight)
+            {
+                verticalOffset = (frameHeight - newImageHeight) / 2;
+            }
+            else if (verticalOffset < 0)
+            {
+                verticalOffset = 0;
+            }
+            else if (verticalOffset > newImageHeight - frameHeight)
+            {
+                verticalOffset = (newImageHeight - frameHeight) / 2;
+            }
+
+            //scale = 2.0f;
+
+            //this.imageFitFlag = false;
+
+            //アニメーション無効化時
+            if (timeMilliSeconds < 1)
+            {
+                this.ChangeView(Math.Round(horizontalOffset), Math.Round(verticalOffset), scale);
+                return;
+            }
+
+            //アニメーションの設定
+
+            if (oldScale <= 0)
+            {
+                oldScale = 0.01;
+            }
+
+            var zoomAnimation = new DoubleAnimation()
+            {
+                From = oldScale,
+                To = scale,
+                Duration = new Duration(TimeSpan.FromMilliseconds(timeMilliSeconds)),
+                //EasingFunction = new ExponentialEase()
+                //{
+                //    Exponent = exp,
+                //    EasingMode = EasingMode.EaseIn
+                //},
+                //EnableDependentAnimation = true,
+            };
+            if (exponential)
+            {/*
+                zoomAnimation.EasingFunction = new ExponentialEase()
+                {
+                    Exponent = 3.0,
+                    EasingMode = EasingMode.EaseIn
+                };*/
+            }
+            //Storyboard.SetTarget(zoomAnimation, this);
+            //Storyboard.SetTargetProperty(zoomAnimation, new PropertyPath(AnimatedZoomFactorProperty));
+
+            zoomAnimation.Completed += (o, e) =>
+            {
+                this.AnimatedZoomFactor = scale;
+                //this.ZoomFactor = scale;
+            };
+
+
+            this.BeginAnimation(AnimatedZoomFactorProperty, zoomAnimation);
+
+
+        }
+
+
+        private Size GetOriginalImageSize()
+        {
+            //var view = this.ScrollViewer;
+            var image = this.Image;
+
+            if (image == null)
+            {
+                return new Size(1, 1);
+            }
+            //return new Size(image.ActualWidth, image.ActualHeight);
+
+
+
+            var width = this.ImageWidth;
+            var height = this.ImageHeight;
+
+            if (height < 1 || width < 1)
+            {
+                width = image.ActualWidth;
+                height = image.ActualHeight;
+            }
+
+            if (this.IsTurned)
+            {
+                var buf = width;
+                width = height;
+                height = buf;
+            }
+
+            return new Size(width, height);
+        }
+
+        public bool FitImageToScrollView(bool disableAnimation, bool zoomOutOnly)
+        {
+            if (!this.isImageLoaded)
+            {
+                return false;
+            }
+            var view = this.ScrollViewer;
+            var image = this.Image;
+
+            //return;
+            //var view = image.Parent as ScrollViewer;
+
+
+            if (view != null)
+            {
+                var size = GetOriginalImageSize();
+                if (size.Width > 0 && size.Height > 0)
+                {
+                    var oldScale = this.ZoomFactor;
+
+
+                    //var horizontalRate = view.ViewportWidth / image.ActualWidth;
+                    //var verticalRate = view.ViewportHeight / image.ActualHeight;
+
+
+                    var newScale = GetFitScale();
+
+
+                    if (zoomOutOnly && newScale * this.DeviceScale > 1)
+                    {
+                        if (oldScale * this.DeviceScale > 0.99 && oldScale * this.DeviceScale < 1.01)
+                        {
+                            //this.IsChanging = false;
+                            return false;
+                        }
+                        newScale = (1.0 / this.DeviceScale);
+                    }
+
+                    var rate = oldScale / newScale;
+
+                    //if (oldScale != newScale)
+                    {
+                        //this.imageFitFlag = false;
+
+
+                        this.ZoomImage(null, null, newScale, disableAnimation ? 0.0 : normalZoomTime, true);
+                        //view.ChangeView(null, null, newScale, disableAnimation);
+
+                        //this.IsChanging = false;
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        //public void ChangeView(double? horizontalOffset, double? verticalOffset,
+        //    double? zoomFactor)
+        //{
+        //    this.ChangeView(horizontalOffset, verticalOffset, zoomFactor);
+        //}
+
+        public void StartAutoScaling(double? x, double? y)
+        {
+            var view = this.ScrollViewer;
+            var image = this.Image;
+            var currentScale = this.ZoomFactor * this.DeviceScale;
+
+            var newScale = 1.0;
+
+            double th = 1.01;
+
+            if (image != null)
+            {
+                var fitScale = GetFitScale() * this.DeviceScale;
+                var fillScale = GetFillScale() * this.DeviceScale;
+
+                if (fitScale > 1)//画面より小さい画像
+                {
+                    if (currentScale > fitScale * th)//画面からはみ出ている
+                    {
+                        newScale = fitScale;
+                    }
+                    else if (currentScale > Math.Sqrt(fitScale))//少し拡大されている
+                    {
+                        newScale = 1f;
+                    }
+                    else if (currentScale > 1 / th)//画面サイズに近い
+                    {
+                        newScale = fillScale;// fitScale;
+                    }
+                    else//縮小されている
+                    {
+                        newScale = 1f;
+                    }
+                }
+                else//画面より大きい画像
+                {
+                    if (fitScale / fillScale < th && fillScale / fitScale < th)//FillとFitがほぼ同じ
+                    {
+                        if (currentScale > th)//拡大されている
+                        {
+                            newScale = 1f;
+                        }
+                        else if (currentScale > Math.Sqrt(fitScale))//少し拡大
+                        {
+                            newScale = fitScale;
+                        }
+                        else if (currentScale > fitScale / th)//ほぼ画面サイズ
+                        {
+                            newScale = 1f;
+                        }
+                        else//画面より小さい
+                        {
+                            newScale = fitScale;
+                        }
+                    }
+                    else if (fillScale < 1)//縦も横も画面より大きい
+                    {
+                        if (currentScale > th)//拡大されている
+                        {
+                            newScale = fillScale;
+                        }
+                        else if (currentScale > Math.Sqrt(fitScale))//
+                        {
+                            newScale = fitScale;
+                        }
+                        else if (currentScale > fillScale / th)//Fill近く
+                        {
+                            newScale = fitScale;
+                        }
+                        else if (currentScale > fitScale / th)//ほぼ画面サイズ
+                        {
+                            newScale = 1f;
+                        }
+                        else//画面より小さい
+                        {
+                            newScale = fitScale;
+                        }
+                    }
+                    else//Fitより大きいがFillより小さい
+                    {
+
+                        if (currentScale > fillScale * th)//Fillより大きい
+                        {
+                            newScale = fillScale;
+                        }
+                        else if (currentScale > fillScale / th)//Fill近い
+                        {
+                            newScale = fitScale;
+                        }
+                        else if (currentScale > th)//拡大されている
+                        {
+                            newScale = fillScale;
+                        }
+                        else if (currentScale > Math.Sqrt(fitScale))
+                        {
+                            newScale = fitScale;
+                        }
+                        else if (currentScale > fitScale / th)//ほぼ画面サイズ
+                        {
+                            newScale = 1f;
+                        }
+                        else//画面より小さい
+                        {
+                            newScale = fitScale;
+                        }
+                    }
+                }
+                ZoomImage(x, y, (newScale / this.DeviceScale), autoZoomTime, true);
+            }
+        }
+
+
+
+
+        private void scrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var oldSize = e.PreviousSize;
+            var newSize = e.NewSize;
+
+            this.ViewHeight = newSize.Height;
+            this.ViewWidth = newSize.Width;
+
+            if (oldSize.Width <= 0 || oldSize.Height <= 0)
+            {
+                this.FitImageToScrollView(true, !alwaysFit);
+            }
+
+            var sv = (ScrollViewer)sender;
+
+            var newHorizontalOffset = sv.HorizontalOffset + oldSize.Width - newSize.Width;
+            var newVerticalOffset = sv.VerticalOffset + oldSize.Height - newSize.Height;
+
+            this.ChangeView(newHorizontalOffset, newVerticalOffset, null);
+        }
+
+
+        public void Raise()
+        {
+            RaisePropertyChanged("FixedHeight");
+            RaisePropertyChanged("FixedWidth");
+        }
+
+
+        private void Rotate(int desiredAngle)
+        {
+            var currentAngle = this.rotateTransform.Angle;// % 360;
+            //desiredAngle = desiredAngle % 360;
+
+            while (currentAngle < 0)
+            {
+                currentAngle += 360.0;
+            }
+            while (desiredAngle < 0)
+            {
+                desiredAngle += 360;
+            }
+
+            currentAngle = currentAngle % 360;
+            desiredAngle = desiredAngle % 360;
+
+            if (desiredAngle - currentAngle > 180)
+            {
+                desiredAngle -= 360;
+            }
+            if (desiredAngle - currentAngle < -180)
+            {
+                desiredAngle += 360;
+            }
+
+            this.rotateTransform.Angle = currentAngle;
+            this.Orientation = desiredAngle;
+
+            var animation = new DoubleAnimation()
+            {
+                From = currentAngle,
+                To = this.Orientation,
+                Duration = new Duration(TimeSpan.FromMilliseconds(rotateAnimationTime)),
+            };
+
+            animation.Completed += (o, e) =>
+            {
+                this.rotateTransform.Angle = this.Orientation;
+            };
+
+
+            this.BeginAnimation(CurrentOrientationProperty, animation);
+            
+        }
+
+        private void ChangeSize(double width, double height)
+        {
+            var zoom = this.ZoomFactor;
+
+            var oldHo = this.ScrollViewer.HorizontalOffset;
+            if (imageGrid.ActualWidth < ScrollViewer.ActualWidth)
+            {
+                //oldHo -= (ScrollViewer.ActualWidth - imageGrid.ActualWidth) / 2.0;
+            }
+
+            var newHo = oldHo + zoom * (width - imageGrid.ActualWidth) / 2.0;
+
+            var oldVo = this.ScrollViewer.VerticalOffset;
+            if (imageGrid.ActualHeight < ScrollViewer.ActualHeight)
+            {
+                //oldVo -= (ScrollViewer.ActualHeight - imageGrid.ActualHeight) / 2.0;
+            }
+
+            var newVo = oldVo + zoom * (height - imageGrid.ActualHeight) / 2.0;
+
+            //this.OuterHeight = height;
+            //this.OuterWidth = width;
+
+            this.ChangeView(newHo, newVo, null);
+        }
+
+
+        public void ChangeView(double? horizontalOffset, double? verticalOffset, double? zoomFactor)
+        {
+            if (horizontalOffset != null && horizontalOffset.Value.IsValid())
+            {
+                this.scrollViewer.ScrollToHorizontalOffset(horizontalOffset.Value);
+            }
+            if (verticalOffset != null && verticalOffset.Value.IsValid())
+            {
+                this.scrollViewer.ScrollToVerticalOffset(verticalOffset.Value);
+            }
+
+            if (zoomFactor != null && zoomFactor.Value.IsValid())
+            {
+                this.ZoomFactor = zoomFactor.Value;
+            }
+
+
+        }
+
+        private void StartScrollAnimation()
+        {
+            if (this.isScrollAnimating)
+            {
+                return;
+            }
+
+            var xDelta = this.CheckHorizontalScrollRequestFunction();
+            var yDelta = this.CheckVerticalScrollRequestFunction();
+
+            if (xDelta == 0 && yDelta == 0)
+            {
+                return;
+            }
+
+
+            this.isScrollAnimating = true;
+            
+            var x = this.ActualOffset.X + xDelta * scrollDelta;
+            var y = this.ActualOffset.Y + yDelta * scrollDelta;
+            
+
+            var animation = new PointAnimation()
+            {
+                From = this.ActualOffset,
+                To = new Point(Math.Round(x), Math.Round(y)),
+                Duration = new Duration(TimeSpan.FromMilliseconds(scrollAnimationTime)),
+            };
+
+            animation.Completed += (o, e) =>
+            {
+                this.IsScrollRequested = false;
+                this.isScrollAnimating = false;
+                this.StartScrollAnimation();
+            };
+
+
+            this.BeginAnimation(CurrentOffsetProperty, animation);
+        }
+        
+
+        private void RefreshScale()
+        {
+            var zoom = this.ZoomFactor;
+            if (zoom <= 0 || zoom > maxZoomFactor)
+            {
+                return;
+            }
+
+            this.scaleTransform.ScaleX = (this.IsInHorizontalMirror) ? -zoom : zoom;
+            this.scaleTransform.ScaleY = (this.IsInVerticalMirror) ? -zoom : zoom;
+
+        }
+
+        private Point GetCenter()
+        {
+            var x = 0.0;
+            if (this.scrollViewer.ActualWidth.IsValid())
+            {
+                x = this.scrollViewer.ActualWidth / 2.0;
+            }
+            var y = 0.0;
+            if (this.scrollViewer.ActualHeight.IsValid())
+            {
+                y = this.scrollViewer.ActualHeight / 2.0;
+            }
+            return new Point(x, y);
+        }
+
+        private void scrollImageViewer_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            this.Orientation = 0;
+            this.rotateTransform.Angle = 0;
+
+            this.ZoomFactor = 1.0;
+
+
+            ClearAnimator();
+            //this.animationImage.Visibility = Visibility.Collapsed;
+            
+
+        }
+
+
+
+        private void scrollImageViewer_Unloaded(object sender, RoutedEventArgs e)
+        {
+            //ClearAnimator();
+            //this.DataContext = null;
+        }
+
+        private void ClearAnimator()
+        {
+            /*
+            var animator = XamlAnimatedGif.AnimationBehavior.GetAnimator(this.animationImage);
+            animator?.Dispose();
+
+            XamlAnimatedGif.AnimationBehavior.SetSourceUri(this.animationImage, null);
+            XamlAnimatedGif.AnimationBehavior.SetSourceStream(this.animationImage, null);
+            */
+        }
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void RaisePropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void Dispose()
+        {
+            ClearAnimator();
+            this.DataContext = null;
+            this.dispsables.Dispose();
+        }
+
+        private void ImageBehavior_SourceChanged(OldNewPair<string> obj)
+        {
+            if (obj.OldItem == obj.NewItem && obj.NewItem != null)
+            {
+                this.scaleInitializeFlag = false;
+            }
+        }
+
+        private void scrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            this.ActualOffset = new Point(e.HorizontalOffset, e.VerticalOffset);
+        }
+
+        private void scrollViewer_MouseMove(object sender, MouseEventArgs e)
+        {
+            var p = e.GetPosition((UIElement)sender);
+            this.PointerMoveCommand?.Execute(p);
+        }
+    }
+
+
+    public class ViewerTapEventArgs : EventArgs
+    {
+        public double HolizontalRate { get; set; }
+        public double VerticalRate { get; set; }
+        public int Count { get; set; }
+        public TimeSpan Span { get; set; }
+        public TimeSpan Interval { get; set; }
+    }
+}

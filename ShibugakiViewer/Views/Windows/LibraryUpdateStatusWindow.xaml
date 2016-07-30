@@ -1,0 +1,18 @@
+﻿<Window x:Class="ShibugakiViewer.Views.Windows.LibraryUpdateStatusWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ShibugakiViewer.Views.Windows"
+        xmlns:viewModels="clr-namespace:ShibugakiViewer.ViewModels.SettingPages"
+        xmlns:pages="clr-namespace:ShibugakiViewer.Views.SettingPages"
+        xmlns:properties="clr-namespace:ShibugakiViewer.Properties"
+        mc:Ignorable="d"
+        Title="{x:Static properties:Resources.LibraryUpdateStatus}"
+        Height="720" Width="640"
+        Style="{StaticResource DefaultWindowStyle}"
+        Closed="Window_Closed">
+    <Grid>
+        <pages:LibraryCreationPage x:Name="libraryCreation"/>
+    </Grid>
+</Window>
