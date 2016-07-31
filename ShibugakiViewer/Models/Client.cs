@@ -489,13 +489,13 @@ namespace ShibugakiViewer.Models
         /// <param name="search"></param>
         public void SetNewSearch(SearchInformation search)
         {
-            if (this.History.Current != null
-                && this.History.Current.GroupKey == null
-                && this.History.Current.Search != null
-                && this.History.Current.Search.SettingEquals(search))
-            {
-                return;
-            }
+            //if (this.History.Current != null
+            //    && this.History.Current.GroupKey == null
+            //    && this.History.Current.Search != null
+            //    && this.History.Current.Search.SettingEquals(search))
+            //{
+            //    return;
+            //}
 
             this.History.MoveNew(new ViewState()
             {

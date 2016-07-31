@@ -38,6 +38,7 @@ namespace ShibugakiViewer.Views.Controls
 
         private const double normalZoomTime = 150.0;
         private const double autoZoomTime = 200.0;
+        private const double stepZoomTime = 80.0;
 
         private const double scrollDelta = 50.0;
 
@@ -353,7 +354,7 @@ namespace ShibugakiViewer.Views.Controls
                 y = thisInstance.scrollViewer.ActualHeight / 2.0;
             }*/
 
-            thisInstance.ZoomImage(p.X, p.Y, zoom, 100.0, false);
+            thisInstance.ZoomImage(p.X, p.Y, zoom, stepZoomTime, false);
         }
 
         #endregion
@@ -1039,7 +1040,7 @@ namespace ShibugakiViewer.Views.Controls
 
                 var p = e.GetPosition(elm);
 
-                this.ZoomImage(p.X, p.Y, scale, 0.0, false);
+                this.ZoomImage(p.X, p.Y, scale, stepZoomTime, false);
 
                 e.Handled = true;
             }
