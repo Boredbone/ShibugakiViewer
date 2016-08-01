@@ -106,8 +106,8 @@
                                 </Grid>
 
 
-                                <TextBlock
-                                    Text="{Binding Shortcut,Mode=OneWay}"/>
+                                <!--<TextBlock
+                                    Text="{Binding Shortcut,Mode=OneWay}"/>-->
 
                                 <Grid Margin="10" HorizontalAlignment="Stretch">
                                     <ComboBox

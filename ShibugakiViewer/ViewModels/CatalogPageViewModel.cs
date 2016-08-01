@@ -52,6 +52,7 @@ namespace ShibugakiViewer.ViewModels
         public ReadOnlyReactiveProperty<Size> ThumbnailViewSize { get; }
         public ReactiveProperty<Visibility> ImagePropertiesVisibility { get; }
         public ReadOnlyReactiveProperty<bool> IsInSelecting { get; }
+        public ReadOnlyReactiveProperty<bool> IsRefreshEnabled { get; }
 
         //public ReactiveProperty<KeyValuePair<int, double>> ScrollOffset { get; }
         public Action<Vector> RequestScrollAction { get; set; }
@@ -136,6 +137,12 @@ namespace ShibugakiViewer.ViewModels
                 }
                 return new Thickness(4);
             }).ToReactiveProperty().AddTo(this.Disposables);
+
+            this.IsRefreshEnabled = this.client.IsStateChanging
+                .Select(x => !x)
+                .ObserveOnUIDispatcher()
+                .ToReadOnlyReactiveProperty()
+                .AddTo(this.Disposables);
 
             //戻ってきたときにサムネイル再読み込み
             client.BackHistoryCount

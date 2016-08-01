@@ -68,6 +68,7 @@ namespace ShibugakiViewer.Models.ImageViewer
 
         private readonly Boredbone.Utility.AsyncLock asyncLock;
 
+        private static IObserver<int> emptyObserver = Observer.Create<int>(_ => { });
 
 
         public ImageBuffer()
@@ -312,20 +313,26 @@ namespace ShibugakiViewer.Models.ImageViewer
             (Record file, ImageLoadingOptions option, IObserver<int> observer,
             bool hasPriority, CancellationToken token)
         {
-            this.RequestLoadingMain(file, file.FullPath, option, observer, hasPriority, token);
+            if (file != null)
+            {
+                this.RequestLoadingMain(file, file.FullPath, option, observer, hasPriority, token);
+            }
         }
         public void RequestLoading
             (string path, ImageLoadingOptions option, IObserver<int> observer,
             bool hasPriority, CancellationToken token)
         {
-            this.RequestLoadingMain(null, path, option, observer, hasPriority, token);
+            if (path != null)
+            {
+                this.RequestLoadingMain(null, path, option, observer, hasPriority, token);
+            }
         }
 
         public void RequestLoading
             (Record file, ImageLoadingOptions option, IObserver<int> observer,
             bool hasPriority, ObservableCancellationTokenSource tokenSource)
         {
-            if (tokenSource.IsDisposed)
+            if (file == null || tokenSource.IsDisposed)
             {
                 return;
             }
@@ -340,7 +347,7 @@ namespace ShibugakiViewer.Models.ImageViewer
             (string path, ImageLoadingOptions option, IObserver<int> observer,
             bool hasPriority, ObservableCancellationTokenSource tokenSource)
         {
-            if (tokenSource.IsDisposed)
+            if (path == null || tokenSource.IsDisposed)
             {
                 return;
             }
@@ -357,6 +364,10 @@ namespace ShibugakiViewer.Models.ImageViewer
             (Record file, string path, ImageLoadingOptions option, IObserver<int> observer,
             bool hasPriority, CancellationToken token)
         {
+            if (observer == null)
+            {
+                observer = emptyObserver;
+            }
 
             var filePath = file?.FullPath ?? path;
 

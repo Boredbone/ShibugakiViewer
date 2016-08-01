@@ -55,6 +55,10 @@ namespace ImageLibrary.SearchProperty
         private static Dictionary<FileProperty, SortDefinition> sortDictionary
             = MakeSortDictionary();
         
+        /// <summary>
+        /// 各プロパティによる検索方法の定義
+        /// </summary>
+        /// <returns></returns>
         private static Dictionary<FileProperty, PropertySearch> MakeSearchDictionary()
         {
             var dictionary = new Dictionary<FileProperty, PropertySearch>();
@@ -85,9 +89,33 @@ namespace ImageLibrary.SearchProperty
                     (DatabaseFunction.Combine(nameof(Record.Directory), nameof(Record.FileName))),
                 true, o => DatabaseFunction.ToLowerEqualsString(o));
 
-            dictionary[FileProperty.FileName] = new PropertySearch(
-                DatabaseFunction.ToLower(nameof(Record.FileName)), true,
-                o => DatabaseFunction.ToLowerEqualsString(o));
+            //dictionary[FileProperty.FileName] = new PropertySearch(
+            //    DatabaseFunction.ToLower(nameof(Record.FileName)), true,
+            //    o => DatabaseFunction.ToLowerEqualsString(o));
+            dictionary[FileProperty.FileName] = new PropertySearch(true,
+                (o,mode)=>
+                {
+                    var column = DatabaseFunction.ToLower(nameof(Record.FileName));
+
+                    if (mode == CompareMode.Equal || mode == CompareMode.NotEqual)
+                    {
+                        var converted = DatabaseFunction.Match(o.ToString());
+
+                        if (mode == CompareMode.Equal)
+                        {
+                            return $"({column} {converted})";
+                        }
+                        else
+                        {
+                            return $"({column} NOT {converted})";
+                        }
+                    }
+                    else
+                    {
+                        var converted = DatabaseFunction.ToLowerEqualsString(o);
+                        return $"({column} {mode.ToSymbol()} {converted})";
+                    }
+                });
 
             dictionary[FileProperty.FileNameContains] = new PropertySearch(
                 DatabaseFunction.ToLower(nameof(Record.FileName)),
@@ -142,6 +170,10 @@ namespace ImageLibrary.SearchProperty
             return dictionary;
         }
 
+        /// <summary>
+        /// 各プロパティによるソート方法の定義
+        /// </summary>
+        /// <returns></returns>
         private static Dictionary<FileProperty, SortDefinition> MakeSortDictionary()
         {
             var dictionary = new Dictionary<FileProperty, SortDefinition>();
@@ -192,15 +224,33 @@ namespace ImageLibrary.SearchProperty
             return dictionary;
         }
 
+        /// <summary>
+        /// プロパティの名前
+        /// </summary>
         private static Dictionary<string, FileProperty> EnumName
             = Enum.GetValues(typeof(FileProperty)).OfType<FileProperty>()
                 .ToDictionary(x => x.ToString(), x => x);
 
+        /// <summary>
+        /// 列挙型から名前の取得
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
         public static string GetName(this FileProperty property)
             => EnumName.First(x => x.Value.Equals(property)).Key;
+
+        /// <summary>
+        /// 名前から列挙型の取得
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public static FileProperty FromName(string name) => EnumName[name];
 
-
+        /// <summary>
+        /// 比較検索が可能か
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
         public static bool IsComperable(this FileProperty property)
         {
             if (!searchDictionary.ContainsKey(property))
@@ -210,6 +260,9 @@ namespace ImageLibrary.SearchProperty
             return searchDictionary[property].IsComparable;
         }
 
+        /// <summary>
+        /// 検索可能なプロパティのリスト
+        /// </summary>
         private static Lazy<KeyValuePair<string, FileProperty>[]> propertyListToSearch
             = new Lazy<KeyValuePair<string, FileProperty>[]>(() =>
             {
@@ -220,6 +273,9 @@ namespace ImageLibrary.SearchProperty
                    .ToArray();
             });
 
+        /// <summary>
+        /// ソート可能なプロパティのリスト
+        /// </summary>
         private static Lazy<KeyValuePair<string, FileProperty>[]> propertyListToSort
             = new Lazy<KeyValuePair<string, FileProperty>[]>(() =>
             {
@@ -230,25 +286,50 @@ namespace ImageLibrary.SearchProperty
                    .ToArray();
             });
 
+        /// <summary>
+        /// 検索可能なプロパティのリスト
+        /// </summary>
+        /// <returns></returns>
         public static KeyValuePair<string, FileProperty>[] GetPropertyListToSearch()
             => propertyListToSearch.Value;
 
+        /// <summary>
+        /// ソート可能なプロパティのリスト
+        /// </summary>
+        /// <returns></returns>
         public static KeyValuePair<string, FileProperty>[] GetPropertyListToSort()
             => propertyListToSort.Value;
 
-
+        /// <summary>
+        /// 検索用SQL
+        /// </summary>
+        /// <param name="property"></param>
+        /// <param name="threshold"></param>
+        /// <param name="mode"></param>
+        /// <returns></returns>
         public static string ToSearch
             (this FileProperty property, object threshold, CompareMode mode)
         {
             return searchDictionary[property].ToSql(mode, threshold);
         }
 
+        /// <summary>
+        /// ソート用SQL
+        /// </summary>
+        /// <param name="property"></param>
+        /// <param name="byDescending"></param>
+        /// <returns></returns>
         public static string ToSort(this FileProperty property, bool byDescending)
         {
             var direction = byDescending ? "DESC" : "ASC";
             return sortDictionary[property].Columns.Select(x => $"{x} {direction}").Join(", ");
         }
 
+        /// <summary>
+        /// ソートする列
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
         public static string[] GetSortColumns(this FileProperty property)
         {
             return sortDictionary[property].Columns;
@@ -256,6 +337,11 @@ namespace ImageLibrary.SearchProperty
         
 
         private static Dictionary<FileProperty, ResourceString> Labels;
+
+        /// <summary>
+        /// プロパティの表示名をリソースから取得
+        /// </summary>
+        /// <param name="getString"></param>
         public static void InitializeLabels(Func<string, string> getString)
         {
             if (Labels != null)
@@ -296,6 +382,11 @@ namespace ImageLibrary.SearchProperty
             orLabel = getString("MatchAny");
         }
 
+        /// <summary>
+        /// プロパティの表示名
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
         public static string GetPropertyLabel(this FileProperty property)
         {
             ResourceString result;
@@ -442,7 +533,9 @@ namespace ImageLibrary.SearchProperty
         }
     }
 
-
+    /// <summary>
+    /// レーティングの変換
+    /// </summary>
     public static class RateConvertingHelper
     {
 

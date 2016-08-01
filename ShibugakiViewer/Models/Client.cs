@@ -99,9 +99,11 @@ namespace ShibugakiViewer.Models
         public IObservable<Record> FeaturedGroupChanged => this.front.FeaturedGroupChanged;
         public IObservable<CacheUpdatedEventArgs> CacheUpdated => this.front.CacheUpdated;
 
+        private Subject<bool> IsStateChangingSubject { get; }
+        public IObservable<bool> IsStateChanging => this.IsStateChangingSubject.AsObservable();
+
         public ReadOnlyReactiveProperty<PageType> SelectedPage { get; }
         private Subject<PageType> PageChangeRequestSubject { get; }
-        //public IObservable<PageType> PageChangeRequest => this.PageChangeRequestSubject.AsObservable();
 
         public SelectionManager SelectedItems { get; }
         public ReadOnlyReactiveProperty<int> SelectedItemsCount { get; }
@@ -110,8 +112,6 @@ namespace ShibugakiViewer.Models
         private History<ViewState> History { get; }
 
         private Record lastGroup = null;
-
-        //private Action onHistoryChangedAction = null;
 
         public ReadOnlyReactiveProperty<int> BackHistoryCount => this.History.BackHistoryCount;
         public ReadOnlyReactiveProperty<int> ForwardHistoryCount => this.History.ForwardHistoryCount;
@@ -136,10 +136,7 @@ namespace ShibugakiViewer.Models
                 .ObserveProperty(x => x.Count)
                 .ToReadOnlyReactiveProperty()
                 .AddTo(this.Disposables);
-
-            //var initialSearch = core.Library.Searcher.GetLatest()
-            //    ?? new SearchInformation(new ComplexSearch(false));
-
+            
 
             this.History = new History<ViewState>(new ViewState()).AddTo(this.Disposables);
 
@@ -147,9 +144,8 @@ namespace ShibugakiViewer.Models
             this.SelectedPage = this.PageChangeRequestSubject
                 .ToReadOnlyReactiveProperty(PageType.Search)
                 .AddTo(this.Disposables);
-            //this.PageChangeRequestSubject = new Subject<PageType>().AddTo(this.Disposables);
 
-
+            this.IsStateChangingSubject = new Subject<bool>().AddTo(this.Disposables);
 
             this.ViewerDisplayingInner = new ReactiveProperty<Record>().AddTo(this.Disposables);
             this.ViewerDisplaying = this.ViewerDisplayingInner
@@ -222,7 +218,6 @@ namespace ShibugakiViewer.Models
             var viewerDisplaying = this.ViewerDisplayingInner
                 .CombineLatest(this.SelectedPage, (r, p) => p == PageType.Viewer ? r : null)
                 .Where(x => x != null);
-            //.Publish().RefCount();
 
             var catalogDisplaying = this.SelectedItems.SelectedItemChanged
                 .CombineLatest(this.front.FeaturedGroupChanged, (s, g) => s ?? g)
@@ -231,8 +226,6 @@ namespace ShibugakiViewer.Models
 
             this.SelectedRecord = viewerDisplaying
                 .Merge(catalogDisplaying)
-                //.Select(x => x ?? front.FeaturedGroup)
-                //.Merge(front.CacheCleared.Select(_ => (Record)null))
                 .ToReadOnlyReactiveProperty()
                 .AddTo(this.Disposables);
 
@@ -245,8 +238,7 @@ namespace ShibugakiViewer.Models
             this.PageSize
                 .Subscribe(x => core.ImageBuffer.ThumbnailRequestCapacity = Math.Max(x * 2, 32))
                 .AddTo(this.Disposables);
-
-            //long prevCatalogIndex = 0;
+            
 
             //TODO 移動方向アイテムを多めに先読み
             //var databaseUpdated = front.SearchCompleted
@@ -266,29 +258,14 @@ namespace ShibugakiViewer.Models
                         return;
                     }
 
-                    var offset = x.Index.NewItem - (x.ViewSize / 2);
+                    var offset = Math.Max(x.Index.NewItem - (x.ViewSize / 2), 0);
                     var takes = x.ViewSize * 2;
-
-                    if (offset <= 0)
-                    {
-                        offset = 0;
-                    }
-
                     var direction = (x.Index.NewItem == 0) ? 1 : (int)(x.Index.NewItem - x.Index.OldItem);
-                    //prevCatalogIndex = x.Index;
 
-                    //Debug.WriteLine($"load-{offset}-{offset+takes}");
                     this.front.GetRecords(offset, takes, direction, true);
-
-                    //if (offset <= 0)
-                    //{
-                    //    this.front.GetRecords(-2, 2, direction, true);
-                    //}
                 })
                 .AddTo(this.Disposables);
-
-            //this.CatalogIndex.Subscribe(x => Debug.WriteLine($"index-{x}")).AddTo(this.Disposables);
-
+            
             //TODO 余裕があれば離れたところも読み込むようにキューイング
             //TODO 移動方向アイテムを多めに先読み
 
@@ -406,58 +383,60 @@ namespace ShibugakiViewer.Models
             //検索条件が変化したらライブラリに設定して最初の方を読み込む
             this.History.StateChanged
                 .Where(x => x != null)
-                .Subscribe(state =>
-                {
-                    var refreshList = false;
-
-                    if (state.Type != PageType.Search)
-                    {
-                        if (state.GroupKey != null)
-                        {
-                            if (this.lastGroup != null && this.lastGroup.Id.Equals(state.GroupKey))
-                            {
-                                this.front.SetGroupSearch(this.lastGroup);
-                                this.lastGroup = null;
-                            }
-                            else
-                            {
-                                this.front.SetGroupSearchAsync(state.GroupKey).FireAndForget();
-                            }
-                        }
-                        else
-                        {
-                            this.front.SetSearch(state.Search, false);
-                            refreshList = true;
-                        }
-                    }
-
-                    if (state.Type == PageType.Viewer)
-                    {
-                        this.ChangeToViewerSubject.OnNext(state.ViewerIndex);
-                        this.ViewerIndex.Value = state.ViewerIndex;
-                    }
-
-                    this.CatalogIndex.Value = state.CatalogIndex;
-
-                    if (state.GroupKey != null || state.Search != null)
-                    {
-                        core.ImageBuffer.ClearThumbNailRequests();
-                        core.ImageBuffer.ClearRequests();
-
-                        var direction = (state.CatalogIndex == 0) ? 1 : 0;
-                        this.front.GetRecords(state.CatalogIndex, this.PageSize.Value * 2, direction, true);
-                    }
-
-                    if (state.Type != PageType.None)
-                    {
-                        this.PageChangeRequestSubject.OnNext(state.Type);
-                    }
-                    if (refreshList)
-                    {
-                        this.front.RefreshSearchList();
-                    }
-                })
+                .Subscribe(this.OnStateChanged)
                 .AddTo(this.Disposables);
+                //.Subscribe(state =>
+                //{
+                //    var refreshList = false;
+
+                //    if (state.Type != PageType.Search)
+                //    {
+                //        if (state.GroupKey != null)
+                //        {
+                //            if (this.lastGroup != null && this.lastGroup.Id.Equals(state.GroupKey))
+                //            {
+                //                this.front.SetGroupSearch(this.lastGroup);
+                //                this.lastGroup = null;
+                //            }
+                //            else
+                //            {
+                //                this.front.SetGroupSearchAsync(state.GroupKey).FireAndForget();
+                //            }
+                //        }
+                //        else
+                //        {
+                //            this.front.SetSearch(state.Search, false);
+                //            refreshList = true;
+                //        }
+                //    }
+
+                //    if (state.Type == PageType.Viewer)
+                //    {
+                //        this.ChangeToViewerSubject.OnNext(state.ViewerIndex);
+                //        this.ViewerIndex.Value = state.ViewerIndex;
+                //    }
+
+                //    this.CatalogIndex.Value = state.CatalogIndex;
+
+                //    if (state.GroupKey != null || state.Search != null)
+                //    {
+                //        core.ImageBuffer.ClearThumbNailRequests();
+                //        core.ImageBuffer.ClearRequests();
+
+                //        var direction = (state.CatalogIndex == 0) ? 1 : 0;
+                //        this.front.GetRecords(state.CatalogIndex, this.PageSize.Value * 2, direction, true);
+                //    }
+
+                //    if (state.Type != PageType.None)
+                //    {
+                //        this.PageChangeRequestSubject.OnNext(state.Type);
+                //    }
+                //    if (refreshList)
+                //    {
+                //        this.front.RefreshSearchList();
+                //    }
+                //})
+                //.AddTo(this.Disposables);
 
             //破棄時に設定を保存
             Disposable.Create(() => core.Save()).AddTo(this.Disposables);
@@ -467,6 +446,66 @@ namespace ShibugakiViewer.Models
             this.History.Current.Type = PageType.Search;
 
             this.viewerImageChangeGate = true;
+        }
+
+        /// <summary>
+        /// ページ・状態変更時処理
+        /// </summary>
+        /// <param name="state"></param>
+        private void OnStateChanged(ViewState state)
+        {
+            this.IsStateChangingSubject.OnNext(true);
+
+            var refreshList = false;
+
+            if (state.Type != PageType.Search)
+            {
+                if (state.GroupKey != null)
+                {
+                    if (this.lastGroup != null && this.lastGroup.Id.Equals(state.GroupKey))
+                    {
+                        this.front.SetGroupSearch(this.lastGroup);
+                        this.lastGroup = null;
+                    }
+                    else
+                    {
+                        this.front.SetGroupSearchAsync(state.GroupKey).FireAndForget();
+                    }
+                }
+                else
+                {
+                    this.front.SetSearch(state.Search, false);
+                    refreshList = true;
+                }
+            }
+
+            if (state.Type == PageType.Viewer)
+            {
+                this.ChangeToViewerSubject.OnNext(state.ViewerIndex);
+                this.ViewerIndex.Value = state.ViewerIndex;
+            }
+
+            this.CatalogIndex.Value = state.CatalogIndex;
+
+            if (state.GroupKey != null || state.Search != null)
+            {
+                core.ImageBuffer.ClearThumbNailRequests();
+                core.ImageBuffer.ClearRequests();
+
+                var direction = (state.CatalogIndex == 0) ? 1 : 0;
+                this.front.GetRecords(state.CatalogIndex, this.PageSize.Value * 2, direction, true);
+            }
+
+            if (state.Type != PageType.None)
+            {
+                this.PageChangeRequestSubject.OnNext(state.Type);
+            }
+            if (refreshList)
+            {
+                this.front.RefreshSearchList();
+            }
+
+            this.IsStateChangingSubject.OnNext(false);
         }
 
         /// <summary>
@@ -489,6 +528,13 @@ namespace ShibugakiViewer.Models
         /// <param name="search"></param>
         public void SetNewSearch(SearchInformation search)
         {
+            if (this.front.FeaturedGroup == null
+                && this.front.SearchInformation != null
+                && this.front.SearchInformation.SettingEquals(search))
+            {
+                return;
+            }
+
             //if (this.History.Current != null
             //    && this.History.Current.GroupKey == null
             //    && this.History.Current.Search != null
@@ -556,14 +602,6 @@ namespace ShibugakiViewer.Models
         /// <returns></returns>
         public SortSetting[] GetSort() => this.front.GetSort();
 
-        ///// <summary>
-        ///// 現在の条件での検索結果のうち指定した範囲内のレコードを取得
-        ///// </summary>
-        ///// <param name="offset"></param>
-        ///// <param name="takes"></param>
-        ///// <returns></returns>
-        //public Record[] GetRecords(long offset, int takes)
-        //    => this.front.GetRecords(offset, takes, false);
 
         /// <summary>
         /// 指定レコードの現在の検索条件でのインデックスをデータベースに問い合わせ
@@ -734,56 +772,28 @@ namespace ShibugakiViewer.Models
             if (order.HasFlag(ListOrderFlags.Current))
             {
                 //現在選択されている画像をロード
-                var record = this.front[index];
-
-                if (record != null)
-                {
-                    this.core.ImageBuffer.RequestLoading
-                        (record, option, Observer.Create<int>(_ => { }),
-                        true, default(CancellationToken));
-                }
-
+                this.core.ImageBuffer.RequestLoading
+                    (this.front[index], option, null, true, default(CancellationToken));
             }
 
             if (order.HasFlag(ListOrderFlags.Next) && length > 1)
             {
                 //次の画像をロード
-
                 var nextIndex = (index < length - 1) ? index + 1 : 0;
 
-                var record = this.front[nextIndex];
-
-                if (record != null)
-                {
-                    this.core.ImageBuffer.RequestLoading
-                        (record, option, Observer.Create<int>(_ => { }),
-                        false, default(CancellationToken));
-
-
-                    //Debug.WriteLine($"Load Next Image At({nextIndex}), {quality}, {order}");
-                }
+                this.core.ImageBuffer.RequestLoading
+                    (this.front[nextIndex], option, null, false, default(CancellationToken));
             }
 
             if (order.HasFlag(ListOrderFlags.Previous) && length > 1)
             {
                 //前の画像をロード
-
                 var prevIndex = (index > 0) ? index - 1 : length - 1;
 
-                var record = this.front[prevIndex];
-
-                if (record != null)
-                {
-                    this.core.ImageBuffer.RequestLoading
-                        (record, option, Observer.Create<int>(_ => { }),
-                        false, default(CancellationToken));
-
-
-                    //Debug.WriteLine($"Load Prev Image At({prevIndex}), {quality}, {order}");
-                }
+                this.core.ImageBuffer.RequestLoading
+                    (this.front[prevIndex], option, null, false, default(CancellationToken));
 
             }
-
         }
 
 
@@ -795,7 +805,7 @@ namespace ShibugakiViewer.Models
         {
             var index = this.ViewerIndex.Value;
 
-            var result = this.front.GetRecords(index, 1, 0, false);// this.GetRecords(index, 1);
+            var result = this.front.GetRecords(index, 1, 0, false);
 
             if (result.Length > 0)
             {

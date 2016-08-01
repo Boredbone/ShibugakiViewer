@@ -41,7 +41,8 @@ namespace ImageLibrary.Viewer
 
         private ConcurrentDictionary<long, Record> Cache { get; }
 
-        private SearchInformation SearchInformation { get; set; }
+        public SearchInformation SearchInformation { get; private set; }
+
         public Record FeaturedGroup
         {
             get { return _fieldFeaturedGroup; }

@@ -31,7 +31,7 @@ namespace ShibugakiViewer.Views.Windows
 
             this.app = (App)Application.Current;
 
-            this.app.Core.SystemNotification.Subscribe(x =>
+            this.app.Core.SystemNotification?.Subscribe(x =>
             {
                 this.notifyIcon.ShowBalloonTip(this.app.Core.AppName, x,
                     Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info);

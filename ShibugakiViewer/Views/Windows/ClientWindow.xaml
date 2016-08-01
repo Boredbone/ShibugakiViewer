@@ -199,14 +199,14 @@
                                      Background="Transparent">
                                 <infoPane:NoInformationPage
                                     Background="{StaticResource OptionPaneColor}"
-                                    BorderThickness="1"
+                                    BorderThickness="0"
                                     BorderBrush="Gray"/>
                             </TabItem>
 
                             <TabItem Header="File" Style="{StaticResource noHeaderTabItemStyle}">
                                 <infoPane:FileInformationPage
                                     Background="{StaticResource OptionPaneColor}"
-                                    BorderThickness="1"
+                                    BorderThickness="0"
                                     BorderBrush="Gray"
                                     Source="{Binding SelectedRecord.Value,Mode=OneWay}"
                                     SelectedPath="{Binding PaneSelectedPath.Value,Mode=OneWayToSource}"
@@ -216,7 +216,7 @@
                             <TabItem Header="Selected" Style="{StaticResource noHeaderTabItemStyle}">
                                 <infoPane:SelectedItemsPage
                                     Background="{StaticResource OptionPaneColor}"
-                                    BorderThickness="1"
+                                    BorderThickness="0"
                                     BorderBrush="Gray"
                                     Source="{Binding SelectedItems,Mode=OneWay}"
                                     SelectedTag="{Binding PaneSelectedTag.Value,Mode=OneWayToSource}"/>
@@ -226,7 +226,7 @@
                                      Background="Transparent">
                                 <infoPane:ToolsPage
                                     Background="{StaticResource OptionPaneColor}"
-                                    BorderThickness="1"
+                                    BorderThickness="0"
                                     BorderBrush="Gray"/>
                             </TabItem>
 
@@ -234,7 +234,7 @@
                                      Background="Transparent">
                                 <infoPane:KeyBindPage
                                     Background="{StaticResource OptionPaneColor}"
-                                    BorderThickness="1"
+                                    BorderThickness="0"
                                     BorderBrush="Gray"/>
                             </TabItem>
                             

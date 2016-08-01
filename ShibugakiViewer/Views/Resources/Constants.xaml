@@ -203,7 +203,9 @@
     <system:Double x:Key="ToolButtonWidth">68.0</system:Double>
 
     <system:Double x:Key="IconFontSize">24</system:Double>
-    <system:Double x:Key="NormalTextSize">18</system:Double>
+    <system:Double x:Key="NormalTextSize">16</system:Double>
+    <system:Double x:Key="TitleTextSize">18</system:Double>
+    <system:Double x:Key="SubTitleTextSize">14</system:Double>
     <system:Double x:Key="ContextMenuTextSize">16</system:Double>
 
     <SolidColorBrush x:Key="BasicBackColor" Color="White"/>
@@ -240,8 +242,9 @@
 
     <SolidColorBrush x:Key="ControlColor" Color="DarkOliveGreen"/>
 
-    <SolidColorBrush x:Key="TagItemColor" Color="#FFf6ad49"/>
-    <SolidColorBrush x:Key="PathItemColor" Color="#FFb9d08b"/>
+    <SolidColorBrush x:Key="TagItemColor" Color="#ffcc80"/>
+    <!--#FFf6ad49#FFb9d08b-->
+    <SolidColorBrush x:Key="PathItemColor" Color="#c5e1a5"/>
 
     <SolidColorBrush x:Key="TagTextColor" Color="Black"/>
 

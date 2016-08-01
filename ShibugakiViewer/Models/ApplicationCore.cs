@@ -55,7 +55,20 @@ namespace ShibugakiViewer.Models
         public ReactiveCollection<LibraryUpdateHistoryItem> LibraryUpdateHistory { get; private set; }
         
 
-        public string AppName { get; private set; }
+        //public string AppName { get; private set; }
+        public string AppName
+        {
+            get
+            {
+                if (this._fieldAppName == null)
+                {
+                    this._fieldAppName = Application.Current.Resources["AppName"].ToString();
+                }
+                return _fieldAppName;
+            }
+        }
+        private string _fieldAppName;
+
 
         public bool IsSVOLanguage { get; private set; }
 
@@ -551,7 +564,7 @@ namespace ShibugakiViewer.Models
             }
         }
 
-        public void InitializeResourceString()
+        private void InitializeResourceString()
         {
 
             FilePropertyManager.InitializeLabels(x => this.GetResourceString(x));
@@ -577,7 +590,7 @@ namespace ShibugakiViewer.Models
             App.Current.Resources["WidthLabel"] = this.GetResourceString("Width");
             App.Current.Resources["HeightLabel"] = this.GetResourceString("Height");
             
-            this.AppName = Application.Current.Resources["AppName"].ToString();
+            //this.AppName = Application.Current.Resources["AppName"].ToString();
         }
 
 

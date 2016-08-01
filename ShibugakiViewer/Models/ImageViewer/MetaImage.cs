@@ -81,6 +81,10 @@ namespace ShibugakiViewer.Models.ImageViewer
 
         public ImageSource DecodeImage(double? zoomFactor, double? width, double? height)
         {
+            if (this.Source == null)
+            {
+                return null;
+            }
             try
             {
 

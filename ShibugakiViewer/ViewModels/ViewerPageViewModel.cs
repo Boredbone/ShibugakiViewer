@@ -251,7 +251,8 @@ namespace ShibugakiViewer.ViewModels
                     if (e.Count == 1
                         && parent.Core.IsOpenNavigationWithSingleTapEnabled
                         && e.HolizontalRate >= edgeTapThreshold
-                        && e.HolizontalRate <= (1.0 - edgeTapThreshold))
+                        && e.HolizontalRate <= (1.0 - edgeTapThreshold)
+                        && (!this.IsTopBarFixed.Value || !this.IsTopBarOpen.Value))
                     {
                         this.IsTopBarOpen.Toggle();
                     }
@@ -350,6 +351,10 @@ namespace ShibugakiViewer.ViewModels
             this.RegisterKeyReceiver(parent);
         }
 
+        /// <summary>
+        /// カーソルキーによる画像移動の速度
+        /// </summary>
+        /// <returns></returns>
         private int CheckKeyboardScrollModifier()
         {
             var modifier = Keyboard.Modifiers;

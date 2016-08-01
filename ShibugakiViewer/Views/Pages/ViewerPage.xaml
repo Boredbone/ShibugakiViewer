@@ -119,11 +119,11 @@
                     AutoToolTipPlacement="BottomRight"/>
 
 
+                    <!--
                 <StackPanel Orientation="Horizontal" Grid.Row="1"
                         VerticalAlignment="Top">
 
 
-                    <!--
                     <TextBlock Text="{Binding ZoomFactor.Value,Mode=OneWay,
                         Converter={StaticResource MultiplyConverter},
                         ConverterParameter=100,StringFormat={}{0:F1}}"
@@ -139,7 +139,7 @@
                     <TextBlock Text="%"/>
                     
                     <Button Content="&lt;" Command="{Binding MoveLeftCommand}" Width="30"/>
-                    <Button Content="&gt;" Command="{Binding MoveRightCommand}" Width="30"/>-->
+                    <Button Content="&gt;" Command="{Binding MoveRightCommand}" Width="30"/>
 
                     <TextBlock
                         HorizontalAlignment="Right" Margin="4"
@@ -147,7 +147,7 @@
                         <Run Text="{Binding Record.Value.FullPath,Mode=OneWay}"/>
                     </TextBlock>
 
-                </StackPanel>
+                </StackPanel>-->
 
 
                 <TextBlock

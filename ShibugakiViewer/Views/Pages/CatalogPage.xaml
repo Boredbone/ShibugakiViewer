@@ -480,7 +480,8 @@
             Background="Transparent"
             HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
             ItemTemplate="{StaticResource thumbnailTemplate}"
-            ItemSize="{Binding ThumbnailViewSize.Value,Mode=OneWay}">
+            ItemSize="{Binding ThumbnailViewSize.Value,Mode=OneWay}"
+            IsRefreshEnabled="{Binding IsRefreshEnabled.Value,Mode=OneWay}">
 
             <!--
             behaviors:ScrollHelperBehavior.ScrollSpeed="12.0"

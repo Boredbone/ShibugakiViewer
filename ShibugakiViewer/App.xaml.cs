@@ -47,6 +47,9 @@ namespace ShibugakiViewer
 
         internal ApplicationCore Core { get; }
 
+        private bool isLaunched = false;
+
+
 
         public App()
         {
@@ -69,6 +72,23 @@ namespace ShibugakiViewer
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+
+            //多重起動防止
+            using (var mutex = new Mutex(false, mutexId))
+            {
+                if (!mutex.WaitOne(0, false))
+                {
+                    //すでに起動していると判断して終了
+                    MessageBox.Show($"{this.Core.AppName} is already launched.");
+                    this.Shutdown();
+                    return;
+                }
+                mutex.ReleaseMutex();
+                mutex.Close();
+            }
+
+            this.isLaunched = true;
 
             //Thread.CurrentThread.CurrentCulture = new CultureInfo("");
             //Thread.CurrentThread.CurrentUICulture = new CultureInfo("");
@@ -161,6 +181,11 @@ namespace ShibugakiViewer
         protected override void OnExit(ExitEventArgs e)
         {
             base.OnExit(e);
+
+            if (!this.isLaunched)
+            {
+                return;
+            }
 
             this.Core.Save();
             this.WindowPlacement.Save();

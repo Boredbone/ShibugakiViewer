@@ -33,7 +33,7 @@
             <Style TargetType="TextBlock" x:Key="propertyName" >
                 <!--
                                BasedOn="{StaticResource BodyTextBlockStyle}"-->
-                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="FontSize" Value="{StaticResource SubTitleTextSize}"/>
                 <Setter Property="TextWrapping" Value="Wrap" />
                 <Setter Property="Margin" Value="4,8,4,4"/>
             </Style>
@@ -55,7 +55,7 @@
 
                         <TextBlock 
                             Text="{x:Static properties:Resources.FilePropertyText_Text}"
-                            Margin="8" FontSize="20"/>
+                            Margin="8" FontSize="{StaticResource NormalTextSize}"/>
 
                         <TextBlock Style="{StaticResource propertyName}" >
                             <Run Text="{StaticResource FileNameLabel}"/>

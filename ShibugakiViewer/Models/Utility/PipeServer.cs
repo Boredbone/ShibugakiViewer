@@ -36,7 +36,7 @@ namespace ShibugakiViewer.Models.Utility
             var tokenSource = new CancellationTokenSource();
             var t = RunAsync(mutexId, pipeId, tokenSource).ContinueWith(y =>
             {
-                if (y.Exception != null)
+                if (y.Exception != null && this.LineReceivedSubject.HasObservers)
                 {
                     this.LineReceivedSubject.OnError(y.Exception);
                 }
@@ -45,6 +45,13 @@ namespace ShibugakiViewer.Models.Utility
             Disposable.Create(() =>
             {
                 tokenSource.Cancel();
+
+
+                using (var pipeClient =
+                    new NamedPipeClientStream(".", pipeId, PipeDirection.Out))
+                {
+                    pipeClient.Connect(100);
+                }
                 //if (mutexDictionary.ContainsKey(mutexId))
                 //{
                 //    Mutex m;
@@ -66,7 +73,9 @@ namespace ShibugakiViewer.Models.Utility
                         //ミューテックスの所有権を要求する
                         if (!mutex.WaitOne(0, false))
                         {
+                            this.LineReceivedSubject.OnError(new Exception("Already launched"));
                             //すでに起動していると判断して終了
+                            //Mutexを取得できなかったので解放の必要はない
                             return;
                         }
 
@@ -85,6 +94,7 @@ namespace ShibugakiViewer.Models.Utility
                                     // Wait for a client to connect
                                     //await pipeServer.WaitForConnectionAsync(cancellationToken);
                                     pipeServer.WaitForConnection();
+                                    //cancellationToken.ThrowIfCancellationRequested();
 
                                     try
                                     {
@@ -92,12 +102,13 @@ namespace ShibugakiViewer.Models.Utility
                                         {
                                             while (pipeServer.IsConnected)
                                             {
+                                                cancellationToken.ThrowIfCancellationRequested();
+
                                                 var text = sr.ReadLine();
                                                 if (text != null)
                                                 {
                                                     this.LineReceivedSubject.OnNext(text);
                                                 }
-                                                cancellationToken.ThrowIfCancellationRequested();
                                             }
                                         }
                                     }
@@ -118,7 +129,10 @@ namespace ShibugakiViewer.Models.Utility
                 }
                 catch (Exception e)
                 {
-                    this.LineReceivedSubject.OnError(e);
+                    if (this.LineReceivedSubject.HasObservers)
+                    {
+                        this.LineReceivedSubject.OnError(e);
+                    }
                 }
             }, cancellationToken);
         }

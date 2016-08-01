@@ -306,7 +306,7 @@
 
     <!-- Tag Name -->
     <Style TargetType="TextBlock" x:Key="tagNameButtonTextStyle">
-        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontSize" Value="{StaticResource NormalTextSize}"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
         <Setter Property="HorizontalAlignment" Value="Left"/>
         <Setter Property="Foreground" Value="{StaticResource TagTextColor}"/>
