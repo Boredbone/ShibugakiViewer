@@ -669,9 +669,6 @@
   <data name="FullscreenText_Text" xml:space="preserve">
     <value>Show at Full-screen</value>
   </data>
-  <data name="CommonTagsText_Text" xml:space="preserve">
-    <value>Common Tags</value>
-  </data>
   <data name="ImageSelectedTaxt_Text" xml:space="preserve">
     <value> Images Selected</value>
   </data>
@@ -746,5 +743,11 @@
   </data>
   <data name="LibraryUpdateStatus" xml:space="preserve">
     <value>Library Update Status</value>
+  </data>
+  <data name="CommonRating" xml:space="preserve">
+    <value>Common Rating</value>
+  </data>
+  <data name="CommonTag" xml:space="preserve">
+    <value>Common Tags</value>
   </data>
 </root>

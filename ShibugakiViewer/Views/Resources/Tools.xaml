@@ -19,5 +19,6 @@
     <sc:ComplexSearchModeConverter x:Key="ComplexSearchModeConverter" />
     <sc:SizeConverter x:Key="FileSizeConverter" />
     <sc:BoolIntConverter x:Key="BoolIntConverter" />
+    <sc:RatingConverter x:Key="RatingConverter" />
 
 </ResourceDictionary>

@@ -127,6 +127,100 @@
                     </i:Interaction.Behaviors>
                 </cc:FlatButton>
             </Grid>
+
+            <!-- Rating -->
+            <TextBlock FontSize="{StaticResource NormalTextSize}" 
+                       Margin="12,4,4,8">
+                <Run Text="{x:Static properties:Resources.CommonRating}"/>
+                <Run Text=" :"/>
+            </TextBlock>
+
+            <Grid HorizontalAlignment="Left" Width="Auto"
+                  DataContext="{Binding Source,ElementName=pageRoot,Mode=OneWay}">
+                <Grid.Resources>
+                    <Style TargetType="TextBlock" x:Key="ratingCoverTextStyle"
+                           BasedOn="{StaticResource symbolTextStyle}">
+                        <Setter Property="FontSize" Value="{StaticResource RatingSymbolTextSize}"/>
+                        <Setter Property="Margin" Value="2"/>
+                    </Style>
+
+                    <SolidColorBrush x:Key="RatingCoverBorderColor" Color="#FFB8B8B8"/>
+                    <SolidColorBrush x:Key="RatingCoverColor" Color="#FFD8D8D8"/>
+                </Grid.Resources>
+
+                <cc:Rating
+                    x:Name="ratingControl"
+                    HorizontalAlignment="Left"
+                    Value="{Binding CommonRating.Value,Mode=TwoWay,
+                    Converter={StaticResource RatingConverter}}"/>
+
+                <Grid
+                    HorizontalAlignment="Left"
+                    Margin="{Binding ElementName=ratingControl,Path=ItemsMargin,Mode=OneWay}"
+                    IsHitTestVisible="False"
+                    Visibility="{Binding IsRatingUnknown.Value,Mode=OneWay,
+                    Converter={StaticResource TrueToVisibleConverter}}">
+
+                    <StackPanel Orientation="Horizontal" >
+                        <TextBlock 
+                            Text="{StaticResource StarSymbol}"
+                            Foreground="{StaticResource RatingCoverColor}"
+                            Style="{StaticResource ratingCoverTextStyle}"/>
+                        <TextBlock 
+                            Text="{StaticResource StarSymbol}"
+                            Foreground="{StaticResource RatingCoverColor}"
+                            Style="{StaticResource ratingCoverTextStyle}"/>
+                        <TextBlock 
+                            Text="{StaticResource StarSymbol}"
+                            Foreground="{StaticResource RatingCoverColor}"
+                            Style="{StaticResource ratingCoverTextStyle}"/>
+                        <TextBlock 
+                            Text="{StaticResource StarSymbol}"
+                            Foreground="{StaticResource RatingCoverColor}"
+                            Style="{StaticResource ratingCoverTextStyle}"/>
+                        <TextBlock 
+                            Text="{StaticResource StarSymbol}"
+                            Foreground="{StaticResource RatingCoverColor}"
+                            Style="{StaticResource ratingCoverTextStyle}"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock 
+                            Text="{StaticResource StarBorderSymbol}"
+                            Foreground="{StaticResource RatingCoverBorderColor}"
+                            Style="{StaticResource ratingCoverTextStyle}"/>
+                        <TextBlock 
+                            Text="{StaticResource StarBorderSymbol}"
+                            Foreground="{StaticResource RatingCoverBorderColor}"
+                            Style="{StaticResource ratingCoverTextStyle}"/>
+                        <TextBlock 
+                            Text="{StaticResource StarBorderSymbol}"
+                            Foreground="{StaticResource RatingCoverBorderColor}"
+                            Style="{StaticResource ratingCoverTextStyle}"/>
+                        <TextBlock 
+                            Text="{StaticResource StarBorderSymbol}"
+                            Foreground="{StaticResource RatingCoverBorderColor}"
+                            Style="{StaticResource ratingCoverTextStyle}"/>
+                        <TextBlock 
+                            Text="{StaticResource StarBorderSymbol}"
+                            Foreground="{StaticResource RatingCoverBorderColor}"
+                            Style="{StaticResource ratingCoverTextStyle}"/>
+                    </StackPanel>
+
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        Text="?"
+                        FontSize="24"/>
+                </Grid>
+
+            </Grid>
+
+            <!-- Tag -->
+            <TextBlock FontSize="{StaticResource NormalTextSize}" 
+                       Margin="12,4,4,8">
+                    <Run Text="{x:Static properties:Resources.CommonTag}"/>
+                    <Run Text=" :"/>
+            </TextBlock>
             
             <Grid Style="{StaticResource informationPaneButtonGridStyle}">
                 <cc:FlatButton

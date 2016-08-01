@@ -214,11 +214,20 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
+        ///   Common Rating に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string CommonRating {
+            get {
+                return ResourceManager.GetString("CommonRating", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Common Tags に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string CommonTagsText_Text {
+        public static string CommonTag {
             get {
-                return ResourceManager.GetString("CommonTagsText_Text", resourceCulture);
+                return ResourceManager.GetString("CommonTag", resourceCulture);
             }
         }
         

@@ -16,7 +16,6 @@
 
         <!--<local:TagNameConverter x:Key="tagNameConverter" />-->
         <converter:PathConverter x:Key="pathConverter" />
-        <converter:RatingConverter x:Key="ratingConverter" />
 
     </UserControl.Resources>
 
@@ -209,7 +208,7 @@
                 </TextBlock>
                 <cc:Rating HorizontalAlignment="Left"
                            Value="{Binding Rating,Mode=TwoWay,
-                    Converter={StaticResource ratingConverter}}"/>
+                    Converter={StaticResource RatingConverter}}"/>
 
 
                 <!--<Slider Maximum="5.49"
@@ -411,7 +410,7 @@
 
                 <TextBlock>
                     <Run Text="Rating = "/>
-                    <Run Text="{Binding Rating,Mode=OneWay,Converter={StaticResource ratingConverter}}"/>
+                    <Run Text="{Binding Rating,Mode=OneWay,Converter={StaticResource RatingConverter}}"/>
                 </TextBlock>
 
                 <TextBlock>

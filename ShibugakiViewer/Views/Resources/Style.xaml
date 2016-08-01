@@ -364,13 +364,13 @@
                             </Grid.Resources>
 
                             <TextBlock
-                                FontSize="28"
+                                FontSize="{StaticResource RatingSymbolTextSize}"
                                 Foreground="#FF606060"
                                 Style="{StaticResource ratingTextStyle}"/>
 
                             <TextBlock
                                 Style="{StaticResource symbolTextStyle}"
-                                FontSize="28"
+                                FontSize="{StaticResource RatingSymbolTextSize}"
                                 Text="{StaticResource StarBorderSymbol}"/>
                         </Grid>
                     </Border>

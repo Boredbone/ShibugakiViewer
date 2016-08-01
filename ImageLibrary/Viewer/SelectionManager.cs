@@ -19,6 +19,7 @@ using ImageLibrary.Tag;
 using System.Windows;
 using System.Windows.Threading;
 using Boredbone.Utility.Notification;
+using Reactive.Bindings;
 
 namespace ImageLibrary.Viewer
 {
@@ -46,6 +47,9 @@ namespace ImageLibrary.Viewer
 
         public ObservableCollection<TagInformation> CommonTags { get; }
 
+        public ReactiveProperty<int> CommonRating { get; }
+        public ReadOnlyReactiveProperty<bool> IsRatingUnknown { get; }
+
         //public event NotifyCollectionChangedEventHandler CollectionChanged;
 
         private readonly Library library;
@@ -72,6 +76,10 @@ namespace ImageLibrary.Viewer
                 .Merge(this.ClearedSubject)
                 .Subscribe(_ => this.RefreshCommonTagsAsync().FireAndForget())
                 .AddTo(this.Disposables);
+
+            this.CommonRating = new ReactiveProperty<int>(-1).AddTo(this.Disposables);
+            this.IsRatingUnknown = this.CommonRating.Select(x => x <= 0)//TODO x<0
+                .ToReadOnlyReactiveProperty().AddTo(this.Disposables);
         }
 
 

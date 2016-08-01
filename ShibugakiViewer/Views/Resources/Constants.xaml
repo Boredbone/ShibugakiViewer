@@ -207,6 +207,7 @@
     <system:Double x:Key="TitleTextSize">18</system:Double>
     <system:Double x:Key="SubTitleTextSize">14</system:Double>
     <system:Double x:Key="ContextMenuTextSize">16</system:Double>
+    <system:Double x:Key="RatingSymbolTextSize">28</system:Double>
 
     <SolidColorBrush x:Key="BasicBackColor" Color="White"/>
 
