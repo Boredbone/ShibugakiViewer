@@ -50,6 +50,21 @@ namespace ImageLibrary.Viewer
         public ReactiveProperty<int> CommonRating { get; }
         public ReadOnlyReactiveProperty<bool> IsRatingUnknown { get; }
 
+        private int CommonRatingInner
+        {
+            get { return _fieldCommonRatingInner; }
+            set
+            {
+                if (_fieldCommonRatingInner != value)
+                {
+                    _fieldCommonRatingInner = value;
+                    this.CommonRating.Value = value;
+                }
+            }
+        }
+        private int _fieldCommonRatingInner = -1;
+
+
         //public event NotifyCollectionChangedEventHandler CollectionChanged;
 
         private readonly Library library;
@@ -74,12 +89,25 @@ namespace ImageLibrary.Viewer
             this.AddedSubject.Select(_ => Unit.Default)
                 .Merge(this.RemovedSubject.Select(_ => Unit.Default))
                 .Merge(this.ClearedSubject)
-                .Subscribe(_ => this.RefreshCommonTagsAsync().FireAndForget())
+                .Subscribe(_ => this.RefreshCommonInformationAsync().FireAndForget())
                 .AddTo(this.Disposables);
 
-            this.CommonRating = new ReactiveProperty<int>(-1).AddTo(this.Disposables);
-            this.IsRatingUnknown = this.CommonRating.Select(x => x <= 0)//TODO x<0
+            this.CommonRating = new ReactiveProperty<int>(this.CommonRatingInner).AddTo(this.Disposables);
+            this.IsRatingUnknown = this.CommonRating.Select(x => x < 0)
                 .ToReadOnlyReactiveProperty().AddTo(this.Disposables);
+
+            this.CommonRating.Subscribe(x =>
+            {
+                if (this.CommonRatingInner != x)
+                {
+                    this.CommonRatingInner = x;
+                    if (x >= 0)
+                    {
+                        this.UpdateRating(x);
+                    }
+                }
+            })
+            .AddTo(this.Disposables);
         }
 
 
@@ -370,7 +398,7 @@ namespace ImageLibrary.Viewer
             var keys = this.ItemsSet.Select(x => x.Key).ToArray();
             keys.ForEach(x => this.ItemsSet[x] = null);
 
-            this.RefreshCommonTagsAsync().FireAndForget();
+            this.RefreshCommonInformationAsync().FireAndForget();
         }
 
         public bool Contains(Record item)
@@ -414,17 +442,31 @@ namespace ImageLibrary.Viewer
             => this.library.QueryHelper.RemoveTagAsync(this.ItemsSet.Select(x => x.Key), tag).FireAndForget();
 
 
-        private async Task RefreshCommonTagsAsync()
+        private async Task RefreshCommonInformationAsync()
         {
             IEnumerable<int> tags;
+            string[] ids;
 
             tags = this.GetCommonTagsFromCache();
-            if (tags == null)
+
+            int rating;
+            var ratingResult = this.GetCommonRatingFromCache(out rating);
+
+            if (tags == null || !ratingResult)
             {
-                var ids = this.ItemsSet.Select(x => x.Key).ToArray();
-                tags = await Task.Run(async () =>
-                    await this.library.QueryHelper.GetCommonTagsAsync(ids));
+                ids = this.ItemsSet.Select(x => x.Key).ToArray();
+
+                if (tags == null)
+                {
+                    tags = await Task.Run(async () =>
+                        await this.library.QueryHelper.GetCommonTagsAsync(ids));
+                }
+                if (!ratingResult)
+                {
+                    rating = await this.library.QueryHelper.GetCommonRatingAsync(ids);
+                }
             }
+            
 
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -432,6 +474,8 @@ namespace ImageLibrary.Viewer
                 tags.Select(x => this.library.Tags.GetTagValue(x))
                     .OrderBy(x => x.Name)
                     .ForEach(x => this.CommonTags.Add(x));
+
+                this.CommonRatingInner = rating;
 
             }, DispatcherPriority.Background);
         }
@@ -452,6 +496,31 @@ namespace ImageLibrary.Viewer
             return record.TagSet.Read()
                 .Where(tag => this.ItemsSet.All(x => x.Value != null && x.Value.TagSet.Contains(tag)))
                 .ToArray();
+        }
+
+        private bool GetCommonRatingFromCache(out int rating)
+        {
+            if (this.ItemsSet.Count <= 0)
+            {
+                rating = -1;
+                return true;
+            }
+            if (this.ItemsSet.Any(x => x.Value == null))
+            {
+                rating = -1;
+                return false;
+            }
+
+            var values = this.ItemsSet.Select(x => x.Value.Rating).Distinct().Take(2).ToArray();
+
+            if (values.Length == 1)
+            {
+                rating = values[0];
+                return true;
+            }
+
+            rating = -1;
+            return true;
         }
 
 

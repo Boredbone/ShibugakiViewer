@@ -22,6 +22,7 @@ using Boredbone.Utility.Extensions;
 using Boredbone.Utility.Tools;
 using XamlAnimatedGif;
 using System.IO;
+using System.Diagnostics;
 
 namespace ShibugakiViewer.Views.Behaviors
 {
@@ -388,6 +389,7 @@ namespace ShibugakiViewer.Views.Behaviors
 
             if (core.MetaImageExtention.Contains(System.IO.Path.GetExtension(path).ToLower()))
             {
+                //Debug.WriteLine(path);
                 this.ChangeToMetaImage(record, path, width, height).FireAndForget();
                 return;
             }

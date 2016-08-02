@@ -144,8 +144,8 @@
                         <Setter Property="Margin" Value="2"/>
                     </Style>
 
-                    <SolidColorBrush x:Key="RatingCoverBorderColor" Color="#FFB8B8B8"/>
-                    <SolidColorBrush x:Key="RatingCoverColor" Color="#FFD8D8D8"/>
+                    <SolidColorBrush x:Key="RatingCoverBorderColor" Color="#FFC0C0C0"/>
+                    <SolidColorBrush x:Key="RatingCoverColor" Color="#FFE0E0E0"/>
                 </Grid.Resources>
 
                 <cc:Rating
@@ -153,13 +153,51 @@
                     HorizontalAlignment="Left"
                     Value="{Binding CommonRating.Value,Mode=TwoWay,
                     Converter={StaticResource RatingConverter}}"/>
-
-                <Grid
+                 <Grid
                     HorizontalAlignment="Left"
                     Margin="{Binding ElementName=ratingControl,Path=ItemsMargin,Mode=OneWay}"
                     IsHitTestVisible="False"
                     Visibility="{Binding IsRatingUnknown.Value,Mode=OneWay,
                     Converter={StaticResource TrueToVisibleConverter}}">
+
+                    <!--<ItemsControl 
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                        ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                        HorizontalAlignment="Left"
+                        Margin="0">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="2">
+                                    <TextBlock 
+                                    Text="{StaticResource StarSymbol}"
+                                    Foreground="{StaticResource RatingCoverColor}"
+                                    Style="{StaticResource ratingCoverTextStyle}"/>
+                                    <TextBlock 
+                                    Text="{StaticResource StarBorderSymbol}"
+                                    Foreground="{StaticResource RatingCoverBorderColor}"
+                                    Style="{StaticResource ratingCoverTextStyle}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemsSource>
+                            <x:Array xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                     xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                                     Type="sys:Int16">
+                                <sys:Int16>1</sys:Int16>
+                                <sys:Int16>2</sys:Int16>
+                                <sys:Int16>3</sys:Int16>
+                                <sys:Int16>4</sys:Int16>
+                                <sys:Int16>5</sys:Int16>
+                            </x:Array>
+                        </ItemsControl.ItemsSource>
+                    </ItemsControl>-->
+
+
 
                     <StackPanel Orientation="Horizontal" >
                         <TextBlock 
@@ -209,8 +247,9 @@
 
                     <TextBlock
                         HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
                         Text="?"
-                        FontSize="24"/>
+                        FontSize="20"/>
                 </Grid>
 
             </Grid>

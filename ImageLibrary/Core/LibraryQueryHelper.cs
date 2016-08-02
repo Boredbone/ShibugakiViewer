@@ -17,7 +17,7 @@ using Reactive.Bindings.Extensions;
 
 namespace ImageLibrary.Core
 {
-    public class LibraryQueryHelper: DisposableBase
+    public class LibraryQueryHelper : DisposableBase
     {
         public TypedTable<Record, string> Table { get; }
         public Library Library { get; }
@@ -34,7 +34,12 @@ namespace ImageLibrary.Core
             this.UpdatedSubject = new Subject<DatabaseUpdatedEventArgs>().AddTo(this.Disposables);
         }
 
-
+        /// <summary>
+        /// 複数アイテムに同じ評価を設定
+        /// </summary>
+        /// <param name="items"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public async Task UpdateRatingAsync(IEnumerable<string> items, int value)
         {
 
@@ -48,6 +53,12 @@ namespace ImageLibrary.Core
 
         }
 
+        /// <summary>
+        /// 複数アイテムからタグを削除
+        /// </summary>
+        /// <param name="items"></param>
+        /// <param name="tag"></param>
+        /// <returns></returns>
         public async Task RemoveTagAsync(IEnumerable<string> items, TagInformation tag)
         {
             var key = tag.Id;
@@ -63,6 +74,12 @@ namespace ImageLibrary.Core
 
         }
 
+        /// <summary>
+        /// 複数アイテムにタグを設定
+        /// </summary>
+        /// <param name="items"></param>
+        /// <param name="tag"></param>
+        /// <returns></returns>
         public async Task AddTagAsync(IEnumerable<string> items, TagInformation tag)
         {
             tag.LastUsed = DateTimeOffset.Now;
@@ -80,7 +97,12 @@ namespace ImageLibrary.Core
 
         }
 
-
+        /// <summary>
+        /// 複数アイテムに対する操作
+        /// </summary>
+        /// <param name="items"></param>
+        /// <param name="sql"></param>
+        /// <returns></returns>
         private async Task RequestWithBufferedArrayAsync(IEnumerable<string> items, string sql)
         {
 
@@ -101,7 +123,12 @@ namespace ImageLibrary.Core
             }
         }
 
-        
+
+        /// <summary>
+        /// 共通のタグを取得
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
         public async Task<HashSet<int>> GetCommonTagsAsync(string[] ids)
         {
             //var ids = items.ToArray();
@@ -112,7 +139,7 @@ namespace ImageLibrary.Core
             sqlBuilder.Append($" WHERE {filter} LIMIT 1");
 
             var tags = new HashSet<int>();
-            
+
             using (var connection = this.Table.Parent.ConnectAsThreadSafe())
             {
                 var tagEntry = await this.Table.ExecuteScalarAsync<string>
@@ -121,7 +148,7 @@ namespace ImageLibrary.Core
 
                 var tagSet = new TagManager(tagEntry);
 
-                
+
                 foreach (var tag in tagSet.Read())
                 {
                     var f = DatabaseFunction.And
@@ -135,19 +162,26 @@ namespace ImageLibrary.Core
             }
 
             return tags;
-
-
         }
 
+
+        /// <summary>
+        /// 指定タグを含まないアイテムをカウント
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <param name="items"></param>
+        /// <param name="bufferLength"></param>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         private async Task<long> CountItemsWithoutTag
-            (IDbConnection connection, IEnumerable<string> items,int bufferLength,string filter)
+            (IDbConnection connection, IEnumerable<string> items, int bufferLength, string filter)
         {
 
             foreach (var ids in items.Buffer(bufferLength))
             {
                 var param = new Tuple<string[]>(ids.ToArray());
 
-                var woTag = await this.Table.CountAsync(connection, filter,param);
+                var woTag = await this.Table.CountAsync(connection, filter, param);
                 if (woTag > 0)
                 {
                     return woTag;
@@ -155,5 +189,40 @@ namespace ImageLibrary.Core
             }
             return 0;
         }
+
+        /// <summary>
+        /// 共通の評価を取得
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        public async Task<int> GetCommonRatingAsync(string[] ids)
+        {
+            var filter = DatabaseFunction.In(nameof(Record.Id), $"@{nameof(Tuple<object>.Item1)}");
+
+            var sqlBuilder = new StringBuilder();
+            sqlBuilder.Append($"SELECT DISTINCT {nameof(Record.Rating)} FROM {this.Table.Name}");
+            sqlBuilder.Append($" WHERE {filter} LIMIT 2");
+
+            var values = new HashSet<int>();
+
+            using (var connection = this.Table.Parent.ConnectAsThreadSafe())
+            {
+                foreach (var items in ids.Buffer(64))
+                {
+                    var results = await this.Table.QueryAsync<int>
+                        (connection.Value, sqlBuilder.ToString(), new Tuple<string[]>(items.ToArray()));
+
+                    results.ForEach(x => values.Add(x));
+
+                    if (values.Count > 1)
+                    {
+                        return -1;
+                    }
+                }
+            }
+
+            return (values.Count == 1) ? values.First() : -1;
+        }
+
     }
 }

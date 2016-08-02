@@ -247,6 +247,9 @@ namespace ImageLibrary.Core
 
                 tags = this.TagDatabase.GetAll(connection);
                 folders = this.FolderDatabase.GetAll(connection);
+
+                //loading test
+                this.Records.AsQueryable(connection).FirstOrDefault();
             }
 
             tags.ForEach(tag => this.TagTracker.Track(tag));
