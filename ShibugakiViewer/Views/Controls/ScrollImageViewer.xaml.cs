@@ -766,7 +766,33 @@ namespace ShibugakiViewer.Views.Controls
         public static readonly DependencyProperty IsChangingProperty =
             DependencyProperty.Register(nameof(IsChanging), typeof(bool),
                 typeof(ScrollImageViewer), new PropertyMetadata(false));
-        
+
+        #endregion
+
+        #region IsGifAnimationEnabled
+
+        public bool IsGifAnimationEnabled
+        {
+            get { return (bool)GetValue(IsGifAnimationEnabledProperty); }
+            set { SetValue(IsGifAnimationEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsGifAnimationEnabledProperty =
+            DependencyProperty.Register(nameof(IsGifAnimationEnabled), typeof(bool), typeof(ScrollImageViewer),
+            new PropertyMetadata(true, new PropertyChangedCallback(OnIsGifAnimationEnabledChanged)));
+
+        private static void OnIsGifAnimationEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as ScrollImageViewer;
+            var value = e.NewValue as bool?;
+
+            if (thisInstance != null && value != null)
+            {
+                thisInstance.gifBehabior.IsGifAnimationEnabled = value.Value;
+            }
+
+        }
+
         #endregion
 
 

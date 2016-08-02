@@ -75,6 +75,8 @@ namespace ShibugakiViewer.ViewModels
         public ReactiveProperty<bool> IsScrollRequested { get; }
         public ReactiveProperty<int> Orientation { get; }
 
+        public ReactiveProperty<bool> IsGifAnimationEnabled { get; }
+
         public Func<int> CheckHorizontalScrollRequestFunction { get; }
         public Func<int> CheckVerticalScrollRequestFunction { get; }
 
@@ -137,6 +139,9 @@ namespace ShibugakiViewer.ViewModels
                 .ToReactiveProperty(Visibility.Collapsed)
                 .AddTo(this.Disposables);
 
+            this.IsGifAnimationEnabled = parent.Core
+                .ToReactivePropertyAsSynchronized(x => x.IsAnimatedGifEnabled)
+                .AddTo(this.Disposables);
 
             //client.StateChanged
             //    .Do(_ =>

@@ -43,6 +43,7 @@
                 IsScrollRequested="{Binding IsScrollRequested.Value,Mode=TwoWay}"
                 CheckHorizontalScrollRequestFunction="{Binding CheckHorizontalScrollRequestFunction}"
                 CheckVerticalScrollRequestFunction="{Binding CheckVerticalScrollRequestFunction}"
+                IsGifAnimationEnabled="{Binding IsGifAnimationEnabled.Value,Mode=OneWay}"
                 >
                 <!--
                 ActualOffset="{Binding LimitedDesiredOffset.Value,Mode=TwoWay}"

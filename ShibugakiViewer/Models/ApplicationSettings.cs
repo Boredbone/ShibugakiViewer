@@ -75,8 +75,8 @@ namespace ShibugakiViewer.Models
         {
             this.IsOpenNavigationWithSingleTapEnabled = true;
             this.UseExtendedMouseButtonsToSwitchImage = true;
-            this.IsViewerPageLeftBarFixed = false;
-            this.IsViewerPageTopBarFixed = false;
+            this.IsViewerPageLeftBarFixed = true;
+            this.IsViewerPageTopBarFixed = true;
             this.ThumbNailSize = 200;
             this.RefreshLibraryOnLaunched = true;
             this.IsLibraryRefreshStatusVisible = true;
