@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
+# Visual Studio Express 14 for Windows Desktop
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShibugakiViewer", "ShibugakiViewer\ShibugakiViewer.csproj", "{023518F5-440E-49AB-889A-1EE00ED61993}"
@@ -20,6 +20,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsCommon", "CsCommon\CsCommon.csproj", "{84DAD39A-811D-4C38-9A03-99DAAF96F191}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfTools", "WpfTools\WpfTools.csproj", "{DE06A2D5-B092-4788-8050-59D253676D1F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShibugakiViewer.Backup", "ShibugakiViewer.Backup\ShibugakiViewer.Backup.csproj", "{145EB2E1-13B1-46D1-8B29-B3D546D41590}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{DE06A2D5-B092-4788-8050-59D253676D1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE06A2D5-B092-4788-8050-59D253676D1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE06A2D5-B092-4788-8050-59D253676D1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{145EB2E1-13B1-46D1-8B29-B3D546D41590}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{145EB2E1-13B1-46D1-8B29-B3D546D41590}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{145EB2E1-13B1-46D1-8B29-B3D546D41590}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{145EB2E1-13B1-46D1-8B29-B3D546D41590}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

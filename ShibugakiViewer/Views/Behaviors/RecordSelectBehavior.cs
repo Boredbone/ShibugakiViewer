@@ -19,6 +19,7 @@ using Boredbone.Utility.Tools;
 using ImageLibrary.File;
 using System.Collections.Specialized;
 using ImageLibrary.Viewer;
+using System.Windows.Media;
 
 namespace ShibugakiViewer.Views.Behaviors
 {
@@ -80,6 +81,12 @@ namespace ShibugakiViewer.Views.Behaviors
 
         private void SubscribeEvents(SelectionManager manager)
         {
+            manager.SubscribeCollectionChanged(
+                () => this.AssociatedObject.IsChecked ?? false,
+                x => this.AssociatedObject.IsChecked = x,
+                () => (this.AssociatedObject.DataContext as Record)?.Id)
+                .AddTo(this.Disposables, "Selection");
+            /*
             manager.Added.Subscribe(x =>
             {
                 if (this.AssociatedObject.IsChecked == true)
@@ -132,7 +139,7 @@ namespace ShibugakiViewer.Views.Behaviors
 
                 this.AssociatedObject.IsChecked = this.Manager.Contains(key);
             })
-            .AddTo(this.Disposables, "Cleared");
+            .AddTo(this.Disposables, "Cleared");*/
         }
 
 
@@ -228,6 +235,140 @@ namespace ShibugakiViewer.Views.Behaviors
             }
         }*/
 
+        public void Dispose()
+        {
+            this.Disposables.ForEach(y => y.Value.Dispose());
+            this.Disposables.Clear();
+        }
+    }
+
+
+    class RemoveFromGroupBehavior : Behavior<Panel>, IDisposable
+    {
+        private Dictionary<string, IDisposable> Disposables { get; } = new Dictionary<string, IDisposable>();
+
+        #region Manager
+
+        public SelectionManager Manager
+        {
+            get { return (SelectionManager)GetValue(ManagerProperty); }
+            set { SetValue(ManagerProperty, value); }
+        }
+
+        public static readonly DependencyProperty ManagerProperty =
+            DependencyProperty.Register(nameof(Manager), typeof(SelectionManager), typeof(RemoveFromGroupBehavior),
+            new PropertyMetadata(null, new PropertyChangedCallback(OnManagerChanged)));
+
+        private static void OnManagerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as RemoveFromGroupBehavior;
+            var manager = e.NewValue as SelectionManager;
+
+            if (manager != null)
+            {
+                thisInstance.SubscribeEvents(manager);
+            }
+
+            thisInstance?.Refresh(null);
+        }
+
+        #endregion
+
+        #region IsSelected
+
+        public bool IsSelected
+        {
+            get { return (bool)GetValue(IsSelectedProperty); }
+            set { SetValue(IsSelectedProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsSelectedProperty =
+            DependencyProperty.Register(nameof(IsSelected), typeof(bool), typeof(RemoveFromGroupBehavior),
+            new PropertyMetadata(false, new PropertyChangedCallback(OnIsSelectedChanged)));
+
+        private static void OnIsSelectedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as RemoveFromGroupBehavior;
+            var value = e.NewValue as bool?;
+
+            if (thisInstance != null || value.HasValue)
+            {
+                thisInstance.AssociatedObject.Background =
+                    (value.Value) ? thisInstance.SelectedBrush : new SolidColorBrush(Colors.Transparent);
+            }
+
+        }
+
+        #endregion
+
+        #region SelectedBrush
+
+        public Brush SelectedBrush
+        {
+            get { return (Brush)GetValue(SelectedBrushProperty); }
+            set { SetValue(SelectedBrushProperty, value); }
+        }
+
+        public static readonly DependencyProperty SelectedBrushProperty =
+            DependencyProperty.Register(nameof(SelectedBrush), typeof(Brush),
+                typeof(RemoveFromGroupBehavior), new PropertyMetadata(null));
+
+        #endregion
+
+
+
+
+
+        /// <summary>
+        /// アタッチ時の初期化処理
+        /// </summary>
+        protected override void OnAttached()
+        {
+            base.OnAttached();
+
+            var target = this.AssociatedObject;
+            if (target == null)
+            {
+                return;
+            }
+
+            target.DataContextChanged += (o, e) => this.Refresh(e.NewValue as Record);
+
+        }
+
+        private void SubscribeEvents(SelectionManager manager)
+        {
+            manager.SubscribeCollectionChanged(
+                () => this.IsSelected,
+                x => this.IsSelected = x,
+                () => (this.AssociatedObject.DataContext as Record)?.Id)
+                .AddTo(this.Disposables, "Selection");
+        }
+
+
+        private void Refresh(Record record)
+        {
+            if (this.AssociatedObject == null)
+            {
+                return;
+            }
+
+            if (record == null)
+            {
+                record = this.AssociatedObject.DataContext as Record;
+            }
+
+            if (this.Manager == null || record == null)
+            {
+                this.IsSelected = false;
+                return;
+            }
+
+            this.IsSelected = this.Manager.Contains(record);
+
+        }
+
+        
         public void Dispose()
         {
             this.Disposables.ForEach(y => y.Value.Dispose());

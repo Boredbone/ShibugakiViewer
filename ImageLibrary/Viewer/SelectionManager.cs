@@ -20,6 +20,7 @@ using System.Windows;
 using System.Windows.Threading;
 using Boredbone.Utility.Notification;
 using Reactive.Bindings;
+using System.Reactive.Disposables;
 
 namespace ImageLibrary.Viewer
 {
@@ -521,6 +522,57 @@ namespace ImageLibrary.Viewer
 
             rating = -1;
             return true;
+        }
+
+
+        public IDisposable SubscribeCollectionChanged
+            (Func<bool> valueGetter, Action<bool> valueSetter, Func<string> keyGetter)
+        {
+            var subscription = new CompositeDisposable();
+
+            this.Added.Subscribe(x =>
+            {
+                if (!valueGetter())
+                {
+                    var key = keyGetter();
+                    if (key != null)
+                    {
+                        if (x.ContainsKey(key))
+                        {
+                            valueSetter(true);
+                        }
+                    }
+                }
+            })
+            .AddTo(subscription);
+
+            this.Removed.Subscribe(x =>
+            {
+                if (valueGetter())
+                {
+                    var key = keyGetter();
+                    if (key != null)
+                    {
+                        if (x.ContainsKey(key))
+                        {
+                            valueSetter(false);
+                        }
+                    }
+                }
+            })
+            .AddTo(subscription);
+
+            this.Cleared.Subscribe(x =>
+            {
+                var key = keyGetter();
+                if (key != null)
+                {
+                    valueSetter(this.Contains(key));
+                }
+            })
+            .AddTo(subscription);
+
+            return subscription;
         }
 
 

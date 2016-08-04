@@ -39,7 +39,7 @@ namespace ShibugakiViewer
 
         private const string mutexId = "79509481-1f8d-44b0-a581-d0dd4fa23710";
         private const string pipeId = "1af9b56b-4195-4b99-9893-1edfb2f84cbe";
-        private const string endMark = "?";
+        private const string commandMarker = "?";
         private PipeServer server;
 
         private readonly CompositeDisposable disposables;
@@ -132,9 +132,9 @@ namespace ShibugakiViewer
                 this.server = new PipeServer().AddTo(this.disposables);
 
                 this.server.LineReceived
-                    .Buffer(this.server.LineReceived.Where(x => x.Equals(endMark)))
+                    .Buffer(this.server.LineReceived.Where(x => x.StartsWith(commandMarker)))
                     .ObserveOnUIDispatcher()
-                    .Subscribe(files => this.ShowClientWindow(files.Where(x => !x.Equals(endMark))), ex =>
+                    .Subscribe(x => this.ExecutePipeCommand(x), ex =>
                     {
                         MessageBox.Show(ex.ToString());
                         this.Shutdown();
@@ -143,6 +143,27 @@ namespace ShibugakiViewer
 
                 this.server.Activate(mutexId, pipeId);
 
+            }
+        }
+
+
+        private void ExecutePipeCommand(IList<string> args)
+        {
+            if (args == null || args.Count <= 0)
+            {
+                return;
+            }
+
+            var command = args[args.Count - 1];
+
+            switch (command)
+            {
+                case "?exit":
+                    this.ExitAll();
+                    break;
+                default:
+                    this.ShowClientWindow(args.Where(x => !x.Equals(commandMarker)));
+                    break;
             }
         }
 
