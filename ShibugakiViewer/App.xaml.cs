@@ -49,6 +49,7 @@ namespace ShibugakiViewer
 
         private bool isLaunched = false;
 
+        private System.Windows.Forms.NotifyIcon notifyIcon;
 
 
         public App()
@@ -115,6 +116,9 @@ namespace ShibugakiViewer
 
             this.Core.Initialize(saveDirectory);
 
+
+            this.ShowNotifyIcon()?.AddTo(this.disposables);
+            
 
             var args = e.Args;
 
@@ -219,6 +223,7 @@ namespace ShibugakiViewer
             {
                 window.Close();
             }
+            this.Shutdown();
         }
 
 
@@ -252,6 +257,65 @@ namespace ShibugakiViewer
             MessageBox.Show(exception.ToString(), "UnhandledException",
                 MessageBoxButton.OK, MessageBoxImage.Stop);
             Environment.Exit(0);
+        }
+
+
+        private IDisposable ShowNotifyIcon()
+        {
+            const string iconUri = "pack://application:,,,/ShibugakiViewer;Component/Assets/Icons/Folder(special-open)_5844.ico";
+
+            Uri uri;
+            if (!Uri.TryCreate(iconUri, UriKind.Absolute, out uri))
+            {
+                return null;
+            }
+
+            var streamResourceInfo = GetResourceStream(uri);
+            if (streamResourceInfo == null)
+            {
+                return null;
+            }
+
+            var subscription = new CompositeDisposable();
+
+            var menus = new List<System.Windows.Forms.MenuItem>();
+            menus.Add(new System.Windows.Forms.MenuItem(this.Core.GetResourceString("OpenNewWindow"),
+                //."&Settings (S)",
+                (sender, args) => this.ShowClientWindow(null)));
+
+            menus.Add(new System.Windows.Forms.MenuItem(this.Core.GetResourceString("Exit"),
+                (sender, args) => this.ExitAll()));
+
+            System.Drawing.Icon icon;
+
+            using (var stream = streamResourceInfo.Stream)
+            {
+                icon = new System.Drawing.Icon(stream, new System.Drawing.Size(16, 16));
+            }
+
+
+            this.notifyIcon = new System.Windows.Forms.NotifyIcon
+            {
+                Text = this.Core.AppName,
+                Icon = icon,
+                Visible = true,
+                ContextMenu = new System.Windows.Forms.ContextMenu(menus.ToArray()),
+            }.AddTo(subscription);
+
+
+            this.Core.SystemNotification.Subscribe(x =>
+            {
+                this.notifyIcon.ShowBalloonTip(3000, this.Core.AppName,
+                    x, System.Windows.Forms.ToolTipIcon.Info);
+
+            })
+            .AddTo(subscription);
+
+            this.notifyIcon.DoubleClick += (o, e) => this.ShowClientWindow(null);
+            this.notifyIcon.BalloonTipClicked += (o, e) => this.ShowLibraryUpdateStatusWindow();
+
+            return subscription;
+
         }
     }
 }

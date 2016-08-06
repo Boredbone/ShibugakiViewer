@@ -8,7 +8,7 @@
              xmlns:tool="clr-namespace:WpfTools;assembly=WpfTools"
              xmlns:cc="clr-namespace:WpfTools.Controls;assembly=WpfTools"
              xmlns:sc="clr-namespace:ShibugakiViewer.Views.Converters"
-             StartupUri="Views/Windows/NotifyWindow.xaml" ShutdownMode="OnLastWindowClose">
+             ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
         
         <ResourceDictionary>
