@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -48,6 +49,9 @@ namespace ShibugakiViewer.ViewModels
         public ReactiveProperty<long> DisplayIndex { get; }
         public ReadOnlyReactiveProperty<long> Length { get; }
 
+        public ReactiveProperty<bool> IsRandom { get; }
+        private readonly RandomNumber randomNumber;
+
         //public ReactiveCommand MouseExButtonLeftCommand { get; }
         //public ReactiveCommand MouseExButtonRightCommand { get; }
         public ReactiveCommand TapCommand { get; }
@@ -76,6 +80,9 @@ namespace ShibugakiViewer.ViewModels
         public ReactiveProperty<int> Orientation { get; }
 
         public ReactiveProperty<bool> IsGifAnimationEnabled { get; }
+
+        public ReadOnlyReactiveProperty<bool> IsFill { get; }
+        public ReadOnlyReactiveProperty<bool> IsZoomoutOnly { get; }
 
         public Func<int> CheckHorizontalScrollRequestFunction { get; }
         public Func<int> CheckVerticalScrollRequestFunction { get; }
@@ -114,6 +121,57 @@ namespace ShibugakiViewer.ViewModels
             //this.Record = new ReactiveProperty<Record>();//.AddTo(this.Disposables);
 
             this.Length = client.Length.ToReadOnlyReactiveProperty().AddTo(this.Disposables);
+
+            this.randomNumber = new RandomNumber();
+            this.IsRandom = parent.Core
+                .ToReactivePropertyAsSynchronized(x => x.IsSlideshowRandom).AddTo(this.Disposables);
+
+            //this.Length.Subscribe(x => this.randomNumber.Length = (int)x).AddTo(this.Disposables);
+
+            this.IsRandom.Select(_ => Unit.Default)
+                .Merge(this.Length.Select(_ => Unit.Default))
+                .Subscribe(x =>
+                {
+                    if (this.IsRandom.Value && this.Length.Value > 0)
+                    {
+                        this.randomNumber.Length = (int)this.Length.Value;
+                        this.randomNumber.Clear();
+                        this.client.PrepareNext(this.randomNumber.GetNext());
+                    }
+                })
+                .AddTo(this.Disposables);
+
+            this.client.ViewerCacheClearedTrigger
+                .Subscribe(x =>
+                {
+                    if (this.IsRandom.Value && this.Length.Value > 0)
+                    {
+                        this.client.PrepareNext(this.randomNumber.GetNext());
+                    }
+                })
+                .AddTo(this.Disposables);
+
+            //client.SelectedPage.Subscribe(x =>
+            //{
+            //    this.IsRandom.Value = false;
+            //    if (x == PageType.Viewer && parent.Core.IsSlideshowRandom)
+            //    {
+            //        this.IsRandom.Value = true;
+            //    }
+            //})
+            //.AddTo(this.Disposables);
+            //client.SearchChanged.Subscribe(_ => this.randomNumber.Clear()).AddTo(this.Disposables);
+
+            //client.Length.Subscribe(x =>
+            //{
+            //    if (x > 0 && this.IsRandom.Value)
+            //    {
+            //        this.randomNumber.Clear();
+            //        this.client.PrepareNext(this.randomNumber.GetNext());
+            //    }
+            //})
+            //.AddTo(this.Disposables);
+
 
             this.ZoomFactor = new ReactiveProperty<double>().AddTo(this.Disposables);
             this.DesiredZoomFactor = new ReactiveProperty<double>(0.0).AddTo(this.Disposables);
@@ -161,6 +219,17 @@ namespace ShibugakiViewer.ViewModels
             //        var result = client.GetRecords(index, 1);
             //    })
             //    .AddTo(this.Disposables);
+
+            this.IsFill = parent.Core
+                .ObserveProperty(x => x.IsSlideshowResizeToFill)
+                .ToReadOnlyReactiveProperty()
+                .AddTo(this.Disposables);
+
+            this.IsZoomoutOnly = parent.Core
+                .ObserveProperty(x => x.IsSlideshowResizingAlways)
+                .Select(x => !x)
+                .ToReadOnlyReactiveProperty()
+                .AddTo(this.Disposables);
 
             parent.MouseExButtonPressed
                 .Subscribe(x =>
@@ -529,6 +598,12 @@ namespace ShibugakiViewer.ViewModels
         /// </summary>
         private void MovePrev()
         {
+            if (this.IsRandom.Value)
+            {
+                this.client.ViewerIndex.Value = this.randomNumber.MovePrev();
+                return;
+            }
+
             if (this.client.ViewerIndex.Value > 0)
             {
                 this.client.ViewerIndex.Value--;
@@ -544,6 +619,13 @@ namespace ShibugakiViewer.ViewModels
         /// </summary>
         private void MoveNext()
         {
+            if (this.IsRandom.Value)
+            {
+                this.randomNumber.ReplaceIfDifferent((int)this.client.ViewerIndex.Value);
+                this.client.ViewerIndex.Value = this.randomNumber.MoveNext();
+                this.client.PrepareNext(this.randomNumber.GetNext());
+                return;
+            }
 
             if (this.client.ViewerIndex.Value < this.Length.Value - 1)
             {
@@ -714,8 +796,11 @@ namespace ShibugakiViewer.ViewModels
 
 
 
+            keyReceiver.Register(Key.S, (t, key) => this.IsRandom.Toggle(),
+                cursorFilter, modifier: ModifierKeys.Control);
 
-            keyReceiver.Register(Key.S, (t, key) =>
+
+            keyReceiver.Register(Key.L, (t, key) =>
             {
                 SharePathOperation.OpenExplorer(this.Record.Value?.FullPath);
             }, cursorFilter, modifier: ModifierKeys.Control);

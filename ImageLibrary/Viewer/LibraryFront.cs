@@ -219,7 +219,7 @@ namespace ImageLibrary.Viewer
         /// 検索
         /// </summary>
         /// <returns></returns>
-        private async Task StartSearchAsync(long offset, int takes, bool wait)
+        public async Task SearchAsync(long offset, int takes, bool wait)
         {
             if (this.asyncLock.IsLocked && !wait)
             {
@@ -456,7 +456,7 @@ namespace ImageLibrary.Viewer
                     searchLength += margin;
                 }
 
-                this.StartSearchAsync(startSearch, searchLength, wait).FireAndForget();
+                this.SearchAsync(startSearch, searchLength, wait).FireAndForget();
             }
 
             return result.Result.Where(x => x != dummyRecord).ToArray();
@@ -547,7 +547,7 @@ namespace ImageLibrary.Viewer
             {
                 //Debug.WriteLine(action);
                 this.isReset = true;
-                this.StartSearchAsync(0, 0, true).FireAndForget();
+                this.SearchAsync(0, 0, true).FireAndForget();
             }
 
             //if (action != CacheClearAction.DatabaseUpdated)

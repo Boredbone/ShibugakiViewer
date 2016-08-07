@@ -36,31 +36,45 @@
             </Style.Setters>
         </Style>
     </UserControl.Resources>
-    
+
     <Grid Background="{DynamicResource BasicBackColor}">
         <Grid x:Name="imageGrid" SizeChanged="imageGrid_SizeChanged"
                   HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
             <Viewbox StretchDirection="DownOnly">
                 <Grid>
-            <Image x:Name="currentImage"
+                    <Image x:Name="currentImage"
                    Canvas.ZIndex="0"
                    Stretch="Uniform"
                    DataContext="{Binding CurrentImage}"
                     Height="{Binding Height,Mode=OneWay}"
                     Width="{Binding Width,Mode=OneWay}" 
                    HorizontalAlignment="Center" VerticalAlignment="Center">
-                <i:Interaction.Behaviors>
-                    <behaviors:ImageBehavior
+                        <i:Interaction.Behaviors>
+                            <behaviors:ImageBehavior
                         Record="{Binding}"
                         DecodeHeight="512"
                         DecodeWidth="512"
                         Quality="Resized"
+                        IsGifAnimationEnabled="False"
                         />
-                </i:Interaction.Behaviors>
-            </Image>
+                        </i:Interaction.Behaviors>
+                    </Image>
 
-            <!--
+                    <!--<Image
+                        x:Name="animationImage"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Stretch="Uniform"
+                        Margin="0">
+
+                        <i:Interaction.Behaviors>
+                            <behaviors:AnimatedGifbehavior
+                                x:Name="gifBehabior"
+                                Record="{Binding ElementName=currentImage,Path=DataContext}"/>
+                        </i:Interaction.Behaviors>
+                    </Image>
+                    
             <Image x:Name="animationImage" Canvas.ZIndex="1"
                     Height="{Binding Height,Mode=OneWay}"
                     Width="{Binding Width,Mode=OneWay}" 
@@ -71,22 +85,22 @@
             </Viewbox>
             <Viewbox StretchDirection="DownOnly">
                 <Grid>
-            <Image x:Name="nextImage"
+                    <Image x:Name="nextImage"
                    Canvas.ZIndex="2" Opacity="0"
                    Stretch="Uniform"
                    DataContext="{Binding NextImage}"
                     Height="{Binding Height,Mode=OneWay}"
                     Width="{Binding Width,Mode=OneWay}" 
                    HorizontalAlignment="Center" VerticalAlignment="Center">
-                <i:Interaction.Behaviors>
-                    <behaviors:ImageBehavior
+                        <i:Interaction.Behaviors>
+                            <behaviors:ImageBehavior
                         Record="{Binding}"
                         DecodeHeight="512"
                         DecodeWidth="512"
                         Quality="Resized"
                         />
-                </i:Interaction.Behaviors>
-            </Image>
+                        </i:Interaction.Behaviors>
+                    </Image>
                 </Grid>
             </Viewbox>
         </Grid>
@@ -180,7 +194,7 @@
                     Content="{StaticResource SettingSymbol}"
                     Style="{StaticResource toolButtonStyle}"
                     ToolTip="{x:Static properties:Resources.SlideshowSetting_Text}">
-                    
+
                     <i:Interaction.Behaviors>
                         <behaviors:PopupDialogBehavior
                             IsHorizontalOverlay="True"
@@ -209,7 +223,7 @@
                                             <ComboBoxItem
                                                 Content="{x:Static properties:Resources.FillText_Content}"/>
                                         </ComboBox>
-                                        
+
                                         <CheckBox
                                             IsChecked="{Binding IsResizingAlways.Value,Mode=TwoWay}"
                                             Content="{x:Static properties:Resources.ResizeSmallImageText_Text}"/>
@@ -244,7 +258,7 @@
                                                 AutoToolTipPrecision="2"
                                                 >
                                         </Slider>
-                                        
+
                                         <cc:FlatButton
                                             Style="{StaticResource contextMenuButtonStyle}">
                                             <TextBlock 

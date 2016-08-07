@@ -127,7 +127,23 @@
                     <ComboBoxItem
                             Content="{x:Static properties:Resources.CursorKeyToMoveHelp_Content}"/>
                 </ComboBox>
-                
+
+                <TextBlock TextWrapping="Wrap"
+                           Text="{x:Static properties:Resources.ResizeMethodText_Text}"/>
+                <ComboBox Margin="0,7,0,0" HorizontalAlignment="Left"
+                          MinWidth="170"
+                          SelectedIndex="{Binding IsFill.Value,Mode=TwoWay,
+                    Converter={StaticResource BoolIntConverter}}">
+                    <ComboBoxItem
+                        Content="{x:Static properties:Resources.FitText_Content}"/>
+                    <ComboBoxItem
+                        Content="{x:Static properties:Resources.FillText_Content}"/>
+                </ComboBox>
+
+                <CheckBox
+                    IsChecked="{Binding IsResizingAlways.Value,Mode=TwoWay}"
+                    Content="{x:Static properties:Resources.ResizeSmallImageText_Text}"/>
+
             </StackPanel>
         </ScrollViewer>
     </Grid>

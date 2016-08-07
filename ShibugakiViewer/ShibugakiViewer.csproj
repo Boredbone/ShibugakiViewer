@@ -36,6 +36,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Assets\Icons\Folder%28special-open%29_5844.ico</ApplicationIcon>
@@ -142,6 +143,7 @@
     <Compile Include="Models\ImageViewer\FlipDirection.cs" />
     <Compile Include="Models\SharePathOperation.cs" />
     <Compile Include="Models\Utility\KeyReceiver.cs" />
+    <Compile Include="Models\Utility\RandomNumber.cs" />
     <Compile Include="ViewModels\SettingPages\FolderSettingPageViewModel.cs" />
     <Compile Include="ViewModels\SettingPages\LibraryCreationPageViewModel.cs" />
     <Compile Include="ViewModels\SettingPages\SlideshowSettingPageViewModel.cs" />

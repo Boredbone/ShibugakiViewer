@@ -554,10 +554,9 @@ namespace ShibugakiViewer.Views.Behaviors
             this.SourceChanged?.Invoke(new OldNewPair<string>(this.previousPath, path));
             this.previousPath = path;
 
-            //画像設定
-            element.Source = source;
 
             this.StopGifAnimation();
+
             ////前にGifアニメを再生していたら破棄
             //var prevStream = AnimationBehavior.GetSourceStream(element);
             //if (prevStream != null)
@@ -566,9 +565,9 @@ namespace ShibugakiViewer.Views.Behaviors
             //    prevStream.Dispose();
             //}
 
-            //Gifアニメのストリームを設定
             if (this.IsGifAnimationEnabled && isGifAnimation && pathChanged && path != null)
             {
+                //Gifアニメのストリームを設定
                 Stream stream = null;
                 try
                 {
@@ -580,6 +579,12 @@ namespace ShibugakiViewer.Views.Behaviors
                 {
                     stream?.Dispose();
                 }
+
+            }
+            else
+            {
+                //画像設定
+                element.Source = source;
 
             }
             //else

@@ -94,6 +94,8 @@ namespace ShibugakiViewer.Models
         private ReactiveProperty<Record> ViewerDisplayingInner { get; }
         public ReadOnlyReactiveProperty<Record> ViewerDisplaying { get; }
 
+        private Subject<long> PrepareNextSubject { get; }
+
         public Record FeaturedGroup => this.front.FeaturedGroup;
         public ReactiveProperty<bool> IsGroupMode => this.front.IsGroupMode;
         public IObservable<Record> FeaturedGroupChanged => this.front.FeaturedGroupChanged;
@@ -101,6 +103,9 @@ namespace ShibugakiViewer.Models
 
         private Subject<bool> IsStateChangingSubject { get; }
         public IObservable<bool> IsStateChanging => this.IsStateChangingSubject.AsObservable();
+
+        public IObservable<CacheClearedEventArgs> ViewerCacheClearedTrigger { get; }
+
 
         public ReadOnlyReactiveProperty<PageType> SelectedPage { get; }
         private Subject<PageType> PageChangeRequestSubject { get; }
@@ -206,6 +211,8 @@ namespace ShibugakiViewer.Models
                 .AddTo(this.Disposables);
 
 
+            //this.SearchChanged= this.front.CacheCleared
+            //    .Where(x => x.Action == CacheClearAction.SearchChanged);
 
 
             this.SearchCompleted
@@ -304,14 +311,15 @@ namespace ShibugakiViewer.Models
                 .AddTo(this.Disposables);
             viewerImage.Subscribe(viewerImageLast).AddTo(this.Disposables);
 
-            var viewerCacheClearedTrigger = this.front.CacheCleared
+            this.ViewerCacheClearedTrigger = this.front.CacheCleared
                 .Where(x => x.Action != CacheClearAction.SearchChanged
-                    && this.SelectedPage.Value == PageType.Viewer);
+                    && this.SelectedPage.Value == PageType.Viewer)
+                .Publish().RefCount();
             //.Select(_ => Unit.Default);
             //.Merge(this.SelectedPage.Where(x => x == PageType.Viewer).Select(_ => Unit.Default));
 
 
-            viewerCacheClearedTrigger
+            this.ViewerCacheClearedTrigger
                 .Select(_ => viewerImageLast.Value)
                 //viewerImage
                 //.Sample(viewerCacheClearedTrigger)
@@ -379,6 +387,16 @@ namespace ShibugakiViewer.Models
                 .AddTo(this.Disposables);//前後の画像は最高画質ロードしない
 
 
+            this.PrepareNextSubject = new Subject<long>().AddTo(this.Disposables);
+            this.PrepareNextSubject
+                .Throttle(TimeSpan.FromMilliseconds(resizedImageLoadDelayMillisec))
+                .ObserveOn(SynchronizationContext.Current)
+                .Subscribe(async x =>
+                {
+                    await this.front.SearchAsync(x, 1, true);
+                    LoadImagesMain(x, ImageQuality.Resized, ListOrderFlags.Current);
+                })
+                .AddTo(this.Disposables);
 
             //検索条件が変化したらライブラリに設定して最初の方を読み込む
             this.History.StateChanged
@@ -841,6 +859,13 @@ namespace ShibugakiViewer.Models
             }
 
         }
+
+        /// <summary>
+        /// 次のレコードを先読み(ランダム用)
+        /// </summary>
+        /// <param name="index"></param>
+        public void PrepareNext(long index) => this.PrepareNextSubject.OnNext(index);
+
 
         public void MoveToPage(PageType type, bool force = false)
         {

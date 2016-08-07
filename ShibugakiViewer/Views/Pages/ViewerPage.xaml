@@ -44,6 +44,8 @@
                 CheckHorizontalScrollRequestFunction="{Binding CheckHorizontalScrollRequestFunction}"
                 CheckVerticalScrollRequestFunction="{Binding CheckVerticalScrollRequestFunction}"
                 IsGifAnimationEnabled="{Binding IsGifAnimationEnabled.Value,Mode=OneWay}"
+                IsZoomoutOnly="{Binding IsZoomoutOnly.Value,Mode=OneWay}"
+                IsFill="{Binding IsFill.Value,Mode=OneWay}"
                 >
                 <!--
                 ActualOffset="{Binding LimitedDesiredOffset.Value,Mode=TwoWay}"
@@ -167,6 +169,15 @@
             <StackPanel Orientation="Horizontal" Grid.Column="2"
                         VerticalAlignment="Stretch">
 
+                <cc:FlatToggleButton
+                    Content="{StaticResource ShuffleSymbol}"
+                    Style="{StaticResource themeSymbolFlatToggleButtonStyle}"
+                    VerticalAlignment="Top"
+                    IsChecked="{Binding IsRandom.Value,Mode=TwoWay}"
+                    Width="{StaticResource ToolButtonWidth}"
+                    Height="{StaticResource ToolButtonWidth}"
+                    ToolTip="{x:Static properties:Resources.ShuffleButton_Label}"
+                    />
 
                 <cc:FlatButton 
                     VerticalAlignment="Top"

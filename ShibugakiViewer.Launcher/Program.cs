@@ -17,6 +17,7 @@ namespace ShibugakiViewer.Launcher
         private const string mutexId = "79509481-1f8d-44b0-a581-d0dd4fa23710";
         private const string pipeId = "1af9b56b-4195-4b99-9893-1edfb2f84cbe";
         private const string serverPath = @"ShibugakiViewer.exe";
+        private static readonly string[] folderCandidates = new[] { "bin", "Debug", "Release" };
         private const string endMark = "?";
 
         static void Main(string[] args)
@@ -51,17 +52,30 @@ namespace ShibugakiViewer.Launcher
                 if (!isServerRunning)
                 {
                     var dir = System.AppDomain.CurrentDomain.BaseDirectory;
-                    var path = Path.Combine(dir, serverPath);
 
-                    var psi = new ProcessStartInfo()
+                    foreach (var folder in folderCandidates)
                     {
-                        FileName = path,
-                        WorkingDirectory = dir,
-                        Arguments = (args != null) ? string.Join(" ", args.Select(x => $"\"{x}\"")) : "",
-                    };
+                        try
+                        {
+                            var workingDirectory = Path.Combine(dir, folder);
+                            var path = Path.Combine(workingDirectory, serverPath);
 
-                    var p = System.Diagnostics.Process.Start(psi);
+                            var psi = new ProcessStartInfo()
+                            {
+                                FileName = path,
+                                WorkingDirectory = workingDirectory,
+                                Arguments = (args != null) ? string.Join(" ", args.Select(x => $"\"{x}\"")) : "",
+                            };
 
+                            var p = System.Diagnostics.Process.Start(psi);
+
+                            return;
+                        }
+                        catch(System.ComponentModel.Win32Exception e)
+                        {
+                            //var tx = e.ToString();
+                        }
+                    }
                     return;
                 }
 

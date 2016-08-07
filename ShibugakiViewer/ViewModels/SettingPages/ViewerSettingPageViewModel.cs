@@ -39,6 +39,9 @@ namespace ShibugakiViewer.ViewModels.SettingPages
         public ReactiveProperty<bool> IsLibraryRefreshStatusVisible { get; }
         public ReactiveProperty<bool> IsFolderUpdatedNotificationVisible { get; }
 
+        public ReactiveProperty<bool> IsFill { get; }
+        public ReactiveProperty<bool> IsResizingAlways { get; }
+
         public ReactiveProperty<Color> BackColor { get; }
 
 
@@ -95,6 +98,17 @@ namespace ShibugakiViewer.ViewModels.SettingPages
             this.IsFolderUpdatedNotificationVisible = core
                 .ToReactivePropertyAsSynchronized(x => x.IsFolderUpdatedNotificationVisible)
                 .AddTo(this.Disposables);
+
+
+            this.IsFill = core
+                .ToReactivePropertyAsSynchronized(x => x.IsSlideshowResizeToFill)
+                .AddTo(this.Disposables);
+
+            this.IsResizingAlways = core
+                .ToReactivePropertyAsSynchronized(x => x.IsSlideshowResizingAlways)
+                .AddTo(this.Disposables);
+
+
 
             this.CursorKeyBind = core
                 .ToReactivePropertyAsSynchronized(x => x.CursorKeyBind).AddTo(this.Disposables);
