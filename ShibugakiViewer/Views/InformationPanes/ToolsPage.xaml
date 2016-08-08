@@ -54,7 +54,7 @@
                 <cc:FlatToggleButton
                     Style="{StaticResource flatToggleButtonStretchStyle}">
                     <cc:LabeledIcon
-                        IconText="{StaticResource KeyboardSymbol}"
+                        IconText="{StaticResource ImportSymbol}"
                         Text="{x:Static properties:Resources.ExportImport}"
                         ToolTip="{x:Static properties:Resources.ExportImportLibrary}"/>
 

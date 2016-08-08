@@ -105,6 +105,8 @@ namespace ShibugakiViewer.Models.ImageViewer
 
             var asThumbNail = (thumbNailSize > 0);
 
+
+            //return false;
             //return await Task.Run(() =>
             {
 

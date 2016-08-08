@@ -166,6 +166,7 @@
     <system:String x:Key="TurnCcwSymbol">&#xE042;</system:String>
     <system:String x:Key="FlipHorizontalSymbol">&#xE8D4;</system:String>
     <system:String x:Key="ZoomSymbol">&#xE8B6;</system:String>
+    <system:String x:Key="ImportSymbol">&#xE890;</system:String>
 
 
     <!--
