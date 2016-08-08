@@ -179,10 +179,10 @@
                     ToolTip="{x:Static properties:Resources.ShuffleButton_Label}"
                     />
 
-                <cc:FlatButton 
+                <cc:FlatToggleButton 
                     VerticalAlignment="Top"
                     Content="{StaticResource RotateSymbol}"
-                    Style="{StaticResource themeSymbolFlatButtonStyle}"
+                    Style="{StaticResource themeSymbolFlatToggleButtonStyle}"
                     Width="{StaticResource ToolButtonWidth}"
                     Height="{StaticResource ToolButtonWidth}"
                     ToolTip="{x:Static properties:Resources.RotateButton_Label}">
@@ -374,7 +374,7 @@
                             </b:PopupDialogBehavior.Content>
                         </b:PopupDialogBehavior>
                     </i:Interaction.Behaviors>
-                </cc:FlatButton>
+                </cc:FlatToggleButton>
 
                 <cc:FlatButton 
                     VerticalAlignment="Top"

@@ -39,8 +39,8 @@ namespace ImageLibrary.Core
         private const double trackIntervalTime = 500.0;
         
 
-        private const string databaseFileName = "library.db";
-        private const string librarySettingFileName = "libsettings.config";
+        public const string databaseFileName = "library.db";
+        public const string librarySettingFileName = "libsettings.config";
         private XmlSettingManager<LibrarySettings> librarySettingXml;
 
 
@@ -780,6 +780,12 @@ namespace ImageLibrary.Core
         }
 
         /// <summary>
+        /// 外部から更新をロック
+        /// </summary>
+        /// <returns></returns>
+        public Task<IDisposable> LockAsync() => this.asyncLock.LockAsync();
+
+        /// <summary>
         /// 指定フォルダ内のファイルを使って起動
         /// </summary>
         /// <param name="path"></param>
@@ -803,7 +809,7 @@ namespace ImageLibrary.Core
         /// データベースにレコードが登録されているか確認
         /// </summary>
         /// <returns></returns>
-        public async Task<bool> HasItems()
+        public async Task<bool> HasItemsAsync()
         {
             using (var connection = this.Database.Connect())
             {

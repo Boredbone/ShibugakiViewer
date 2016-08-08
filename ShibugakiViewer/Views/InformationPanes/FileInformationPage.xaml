@@ -403,6 +403,7 @@
 
 
                 <!-- Debug -->
+                <!--
                 <TextBlock>
                     <Run Text="IsGroup = "/>
                     <Run Text="{Binding IsGroup,Mode=OneWay}"/>
@@ -416,7 +417,7 @@
                 <TextBlock>
                     <Run Text="FlipDirection = "/>
                     <Run Text="{Binding FlipDirection}"/>
-                </TextBlock>
+                </TextBlock>-->
 
             </StackPanel>
         </ScrollViewer>

@@ -66,10 +66,24 @@ namespace ShibugakiViewer.Views.Behaviors
         }
 
         public static readonly DependencyProperty ContentProperty =
-            DependencyProperty.Register(nameof(Content), typeof(FrameworkElement),
-                typeof(PopupDialogBehavior), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Content), typeof(FrameworkElement), typeof(PopupDialogBehavior),
+            new PropertyMetadata(null, new PropertyChangedCallback(OnContentChanged)));
+
+        private static void OnContentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as PopupDialogBehavior;
+            var value = e.NewValue as FrameworkElement;
+
+            if (thisInstance != null && value != null)
+            {
+                thisInstance.SubscriveToggle(value);
+            }
+
+        }
 
         #endregion
+
+
 
         #region Position
 
@@ -125,17 +139,16 @@ namespace ShibugakiViewer.Views.Behaviors
         public static readonly DependencyProperty IsMaskVisibleProperty =
             DependencyProperty.Register(nameof(IsMaskVisible), typeof(bool),
                 typeof(PopupDialogBehavior), new PropertyMetadata(false));
-        
+
         #endregion
 
 
 
-
+        public event Action<object, EventArgs> Opening;
 
 
 
         private IPopupDialogOwner parent;
-
 
 
         /// <summary>
@@ -146,6 +159,7 @@ namespace ShibugakiViewer.Views.Behaviors
             base.OnAttached();
 
             this.AssociatedObject.Click += (o, e) => this.Open();
+            this.SubscriveToggle(this.Content);
         }
 
 
@@ -162,6 +176,8 @@ namespace ShibugakiViewer.Views.Behaviors
             {
                 return;
             }
+
+            this.Opening?.Invoke(this, new EventArgs());
 
             var left = (this.HorizontalContentAlignment == HorizontalAlignment.Right && this.IsHorizontalOverlay)
                 ? double.NaN : this.Position.Left;
@@ -185,5 +201,17 @@ namespace ShibugakiViewer.Views.Behaviors
                 this.AssociatedObject, this.IsMaskVisible);
         }
 
+        private void SubscriveToggle(FrameworkElement content)
+        {
+            var toggleButton = this.AssociatedObject as ToggleButton;
+            if (toggleButton != null && content != null)
+            {
+                content.IsEnabledChanged += (o, ea) =>
+                {
+                    toggleButton.IsChecked = content.IsEnabled;
+                };
+            }
+
+        }
     }
 }

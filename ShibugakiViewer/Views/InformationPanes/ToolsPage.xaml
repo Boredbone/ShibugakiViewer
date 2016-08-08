@@ -8,6 +8,8 @@
              xmlns:properties="clr-namespace:ShibugakiViewer.Properties"
              xmlns:tb="clr-namespace:WpfTools.Behaviors;assembly=WpfTools"
              xmlns:cc="clr-namespace:WpfTools.Controls;assembly=WpfTools"
+             xmlns:b="clr-namespace:ShibugakiViewer.Views.Behaviors"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 
@@ -48,6 +50,64 @@
                         IconText="{StaticResource KeyboardSymbol}"
                         Text="{x:Static properties:Resources.KeyBindHelp_Text}"/>
                 </cc:FlatButton>
+                
+                <cc:FlatToggleButton
+                    Style="{StaticResource flatToggleButtonStretchStyle}">
+                    <cc:LabeledIcon
+                        IconText="{StaticResource KeyboardSymbol}"
+                        Text="{x:Static properties:Resources.ExportImport}"
+                        ToolTip="{x:Static properties:Resources.ExportImportLibrary}"/>
+
+                    <i:Interaction.Behaviors>
+                        <b:PopupDialogBehavior
+                            IsHorizontalOverlay="False"
+                            IsVerticalOverlay="True"
+                            HorizontalContentAlignment="Right"
+                            VerticalContentAlignment="Top"
+                            Position="0,0,0,4"
+                            IsMaskVisible="False"
+                            Opening="PopupDialogBehavior_Opening">
+                            <b:PopupDialogBehavior.Content>
+                                <Border
+                                    Background="{StaticResource OptionPaneColor}"
+                                    Width="Auto"
+                                    BorderBrush="Gray"
+                                    BorderThickness="1">
+                                    <StackPanel Margin="0,8" Background="Transparent">
+                                        <cc:FlatButton
+                                            Style="{StaticResource contextMenuButtonStyle}"
+                                            Click="FlatButton_Click_3">
+                                            <TextBlock 
+                                                Style="{StaticResource contextMenuTextStyle}"
+                                                Margin="16,0"
+                                                Text="{x:Static properties:Resources.ExportLibrary}"/>
+                                        </cc:FlatButton>
+
+                                        <cc:FlatButton
+                                            Style="{StaticResource contextMenuButtonStyle}"
+                                            Click="FlatButton_Click_4">
+                                            <TextBlock 
+                                                Style="{StaticResource contextMenuTextStyle}"
+                                                Margin="16,0"
+                                                Text="{x:Static properties:Resources.ImportLibrary}"/>
+                                        </cc:FlatButton>
+                                        
+                                        <cc:FlatButton
+                                            x:Name="mikanImportButton"
+                                            Style="{StaticResource contextMenuButtonStyle}"
+                                            Click="mikanImportButton_Click">
+                                            <TextBlock 
+                                                Style="{StaticResource contextMenuTextStyle}"
+                                                Margin="16,0"
+                                                Text="{x:Static properties:Resources.ImportMikanViewer}"/>
+                                        </cc:FlatButton>
+                                        
+                                    </StackPanel>
+                                </Border>
+                            </b:PopupDialogBehavior.Content>
+                        </b:PopupDialogBehavior>
+                    </i:Interaction.Behaviors>
+                </cc:FlatToggleButton>
 
                 <cc:FlatButton
                     Style="{StaticResource flatButtonStretchStyle}"

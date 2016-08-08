@@ -28,7 +28,7 @@ namespace ShibugakiViewer.Models
 {
     public class ApplicationCore : NotificationBase
     {
-        private const string settingsFileName = "appsettings.config";
+        public const string settingsFileName = "appsettings.config";
 
         public string[] FileTypeFilter { get; }
             = new[] { ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".wmf", ".emf", ".bhf", ".tif", ".tiff" };
@@ -593,25 +593,41 @@ namespace ShibugakiViewer.Models
             //this.AppName = Application.Current.Resources["AppName"].ToString();
         }
 
-
-        public async Task ConvertOldLibrary()
+        private string GetOldLibraryDirectory()
         {
-
             var dir = System.Environment.GetFolderPath
                 (Environment.SpecialFolder.LocalApplicationData);
 
             var saveDirectory =
                 Path.Combine(dir, @"Packages\60037Boredbone.MikanViewer_8weh06aq8rfkj\LocalState");
 
-
-            var converter = new LibraryConverter.Compat.Converter();
-            await converter.Start1(saveDirectory, this.Settings);
-
-            var data = this.Library.GetDataForConvert();
-            await converter.Start2(data.Item1, data.Item2, data.Item3);
-
+            return saveDirectory;
         }
 
+        public async Task ConvertOldLibraryAsync()
+        {
+            using (var locking = await this.Library.LockAsync())
+            {
+                var saveDirectory = this.GetOldLibraryDirectory();
+
+                var converter = new LibraryConverter.Compat.Converter();
+                await converter.Start1(saveDirectory, this.Settings);
+
+                var data = this.Library.GetDataForConvert();
+                await converter.Start2(data.Item1, data.Item2, data.Item3);
+            }
+        }
+
+        public async Task<bool> IsOldConvertableAsync()
+        {
+            var saveDirectory = this.GetOldLibraryDirectory();
+
+            if (!System.IO.Directory.Exists(saveDirectory))
+            {
+                return false;
+            }
+            return !(await this.Library.HasItemsAsync());
+        }
 
         private string ShowLibraryResult(LibraryLoadResult result)
         {

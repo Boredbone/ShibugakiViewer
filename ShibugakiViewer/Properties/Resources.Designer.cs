@@ -340,7 +340,16 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
-        ///   Folder Path に類似しているローカライズされた文字列を検索します。
+        ///   Directory に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Directory {
+            get {
+                return ResourceManager.GetString("Directory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Directory Path に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string DirectoryPath {
             get {
@@ -444,6 +453,42 @@ namespace ShibugakiViewer.Properties {
         public static string ExitApp {
             get {
                 return ResourceManager.GetString("ExitApp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Export/Import に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ExportImport {
+            get {
+                return ResourceManager.GetString("ExportImport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Export/Import Library に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ExportImportLibrary {
+            get {
+                return ResourceManager.GetString("ExportImportLibrary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   To export/import the library, the application&apos;s windows will be closed. Do you want to continue? に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ExportImportLibraryMessage {
+            get {
+                return ResourceManager.GetString("ExportImportLibraryMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Export Library に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ExportLibrary {
+            get {
+                return ResourceManager.GetString("ExportLibrary", resourceCulture);
             }
         }
         
@@ -786,6 +831,24 @@ namespace ShibugakiViewer.Properties {
         public static string ImageUnitLabel_Text {
             get {
                 return ResourceManager.GetString("ImageUnitLabel_Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Import Library に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ImportLibrary {
+            get {
+                return ResourceManager.GetString("ImportLibrary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Import from MikanViewer に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ImportMikanViewer {
+            get {
+                return ResourceManager.GetString("ImportMikanViewer", resourceCulture);
             }
         }
         

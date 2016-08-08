@@ -750,4 +750,25 @@
   <data name="CommonTag" xml:space="preserve">
     <value>共通のタグ</value>
   </data>
+  <data name="ExportImport" xml:space="preserve">
+    <value>エクスポート/インポート</value>
+  </data>
+  <data name="ExportImportLibrary" xml:space="preserve">
+    <value>ライブラリのエクスポート/インポート</value>
+  </data>
+  <data name="ExportImportLibraryMessage" xml:space="preserve">
+    <value>ライブラリのエクスポート/インポートを行うために、アプリケーションのウィンドウを閉じます。よろしいですか？</value>
+  </data>
+  <data name="ExportLibrary" xml:space="preserve">
+    <value>ライブラリのエクスポート</value>
+  </data>
+  <data name="ImportLibrary" xml:space="preserve">
+    <value>ライブラリのインポート</value>
+  </data>
+  <data name="ImportMikanViewer" xml:space="preserve">
+    <value>MikanViewerからインポート</value>
+  </data>
+  <data name="Directory" xml:space="preserve">
+    <value>ファイルの場所</value>
+  </data>
 </root>

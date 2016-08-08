@@ -21,6 +21,9 @@ using System.Windows.Input;
 using System.Reactive.Linq;
 using ShibugakiViewer.ViewModels;
 using System.Threading;
+using System.Diagnostics;
+using System.Text;
+using Boredbone.Utility.Extensions;
 
 namespace ShibugakiViewer
 {
@@ -41,6 +44,8 @@ namespace ShibugakiViewer
         private const string pipeId = "1af9b56b-4195-4b99-9893-1edfb2f84cbe";
         private const string commandMarker = "?";
         private PipeServer server;
+
+        private string SaveDirectory;
 
         private readonly CompositeDisposable disposables;
         private ResourceDictionary themeResourceDictionary;
@@ -109,6 +114,8 @@ namespace ShibugakiViewer
             {
                 System.IO.Directory.CreateDirectory(saveDirectory);
             }
+
+            this.SaveDirectory = saveDirectory;
 
 
             //ウィンドウ配置
@@ -241,7 +248,11 @@ namespace ShibugakiViewer
             this.themeResourceDictionary.Source = new Uri(themeUri);
         }
 
-
+        /// <summary>
+        /// 例外
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var exception = e.ExceptionObject as Exception;
@@ -259,7 +270,10 @@ namespace ShibugakiViewer
             Environment.Exit(0);
         }
 
-
+        /// <summary>
+        /// 通知アイコン表示
+        /// </summary>
+        /// <returns></returns>
         private IDisposable ShowNotifyIcon()
         {
             const string iconUri = "pack://application:,,,/ShibugakiViewer;Component/Assets/Icons/Folder(special-open)_5844.ico";
@@ -315,6 +329,54 @@ namespace ShibugakiViewer
             this.notifyIcon.BalloonTipClicked += (o, e) => this.ShowLibraryUpdateStatusWindow();
 
             return subscription;
+
+        }
+
+        public void ImportOrExportLibrary(bool isImport)
+        {
+            var result = MessageBox.Show(this.Core.GetResourceString("ExportImportLibraryMessage"),
+                this.Core.AppName, MessageBoxButton.OKCancel, MessageBoxImage.Question);
+
+            if(result!=MessageBoxResult.OK && result != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            var myAssembly = Assembly.GetEntryAssembly();
+            var path = myAssembly.Location;
+            var dir = Path.GetDirectoryName(path);
+
+            var args = new[] {
+                (isImport ? "/r" : "/w"),
+                path,
+                this.SaveDirectory,
+                mutexId,
+                pipeId,
+                ImageLibrary.Core.Library.databaseFileName,
+                ImageLibrary.Core.Library.librarySettingFileName,
+                ApplicationCore.settingsFileName,
+            };
+
+            try
+            {
+
+                //var path = serverFullPath;// Path.Combine(dir, serverPath);
+
+                //アプリ起動
+                var psi = new ProcessStartInfo()
+                {
+                    FileName = Path.Combine(dir, "ShibugakiViewer.Backup.exe"),
+                    WorkingDirectory = dir,
+                    UseShellExecute = false,
+                    Arguments = args.Join(" "),
+                };
+
+                System.Diagnostics.Process.Start(psi);
+            }
+            catch (Exception e)
+            {
+                var tx = e.ToString();
+            }
 
         }
     }

@@ -125,7 +125,7 @@ namespace ShibugakiViewer.ViewModels.SettingPages
         {
             try
             {
-                await core.ConvertOldLibrary();
+                await core.ConvertOldLibraryAsync();
                 this.Text.Value = "converted";
             }
             catch

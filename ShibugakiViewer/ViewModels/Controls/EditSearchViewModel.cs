@@ -260,7 +260,7 @@ namespace ShibugakiViewer.ViewModels.Controls
             //    (source == null ? -1 : this.PropertyList.FindIndex(x => x.Value.Property == source.Property)).AddTo(this.unsubscribers);
 
             this.CompareOperatorSelectedIndex = new ReactiveProperty<int>
-                (source == null ? 0 : this.CompareOperator.FindIndex(x => x.Value == source.Mode)).AddTo(this.unsubscribers);
+                (this.CompareOperator.FindIndex(x => x.Value == ((source?.Mode)??CompareMode.Equal))).AddTo(this.unsubscribers);
 
             this.EqualitySelectedIndex = new ReactiveProperty<int>
                 (source == null ? 0 : this.equalitySelectorIndex(!source.Mode.ContainsEqual()));

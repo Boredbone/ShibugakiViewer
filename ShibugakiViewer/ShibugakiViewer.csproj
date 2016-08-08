@@ -340,10 +340,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Windows\MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -361,7 +357,6 @@
     <Compile Include="ViewModels\CatalogPageViewModel.cs" />
     <Compile Include="ViewModels\ClientWindowViewModel.cs" />
     <Compile Include="ViewModels\Controls\EditSearchViewModel.cs" />
-    <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\SearchPageViewModel.cs" />
     <Compile Include="ViewModels\ViewerPageViewModel.cs" />
     <Compile Include="Views\Behaviors\FileDropAttachedBehavior.cs" />
@@ -377,10 +372,6 @@
     </Compile>
     <Compile Include="Views\Windows\ClientWindow.xaml.cs">
       <DependentUpon>ClientWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Windows\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\Windows\SettingWindow.xaml">
       <SubType>Designer</SubType>

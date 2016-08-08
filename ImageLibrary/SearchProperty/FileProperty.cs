@@ -351,7 +351,7 @@ namespace ImageLibrary.SearchProperty
             Labels = new Dictionary<FileProperty, ResourceString>(){
                 {FileProperty.Id,new ResourceString("FullPath",getString)},
                 {FileProperty.DirectoryPath,new ResourceString("DirectoryPath",getString)},
-                {FileProperty.DirectoryPathStartsWith,new ResourceString("Path",getString)},
+                {FileProperty.DirectoryPathStartsWith,new ResourceString("Directory",getString)},
                 {FileProperty.DirectoryPathContains,new ResourceString("DirectoryPathContains",getString)},
                 {FileProperty.FullPath,new ResourceString("FullPath",getString)},
                 {FileProperty.FileName,new ResourceString("FileName",getString)},

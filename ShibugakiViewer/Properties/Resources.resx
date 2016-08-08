@@ -694,7 +694,7 @@
     <value>Search Criteria</value>
   </data>
   <data name="DirectoryPath" xml:space="preserve">
-    <value>Folder Path</value>
+    <value>Directory Path</value>
   </data>
   <data name="FullPath" xml:space="preserve">
     <value>File Path</value>
@@ -749,5 +749,26 @@
   </data>
   <data name="CommonTag" xml:space="preserve">
     <value>Common Tags</value>
+  </data>
+  <data name="Directory" xml:space="preserve">
+    <value>Directory</value>
+  </data>
+  <data name="ExportImport" xml:space="preserve">
+    <value>Export/Import</value>
+  </data>
+  <data name="ExportImportLibrary" xml:space="preserve">
+    <value>Export/Import Library</value>
+  </data>
+  <data name="ExportImportLibraryMessage" xml:space="preserve">
+    <value>To export/import the library, the application's windows will be closed. Do you want to continue?</value>
+  </data>
+  <data name="ExportLibrary" xml:space="preserve">
+    <value>Export Library</value>
+  </data>
+  <data name="ImportLibrary" xml:space="preserve">
+    <value>Import Library</value>
+  </data>
+  <data name="ImportMikanViewer" xml:space="preserve">
+    <value>Import from MikanViewer</value>
   </data>
 </root>

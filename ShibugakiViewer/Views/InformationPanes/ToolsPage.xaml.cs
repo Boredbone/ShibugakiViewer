@@ -20,6 +20,7 @@ using Reactive.Bindings;
 using ShibugakiViewer.Models;
 using ShibugakiViewer.ViewModels;
 using ShibugakiViewer.Views.Windows;
+using WpfTools;
 
 namespace ShibugakiViewer.Views.InformationPanes
 {
@@ -28,6 +29,7 @@ namespace ShibugakiViewer.Views.InformationPanes
     /// </summary>
     public partial class ToolsPage : UserControl
     {
+        private readonly App application;
         private readonly ApplicationCore core;
         private readonly CompositeDisposable disposables;
 
@@ -35,12 +37,13 @@ namespace ShibugakiViewer.Views.InformationPanes
         {
             InitializeComponent();
 
-            this.core = ((App)Application.Current).Core;
+            this.application = (App)Application.Current;
+            this.core = this.application.Core;
             var library = core.Library;
 
             this.disposables = new CompositeDisposable();
 
-            this.refreshButton.Command= library.IsCreating
+            this.refreshButton.Command = library.IsCreating
                 .Select(x => !x)
                 .ToReactiveCommand()
                 .WithSubscribe(_ =>
@@ -51,7 +54,7 @@ namespace ShibugakiViewer.Views.InformationPanes
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            ((App)Application.Current).ShowSettingWindow();
+            this.application.ShowSettingWindow();
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -73,16 +76,37 @@ namespace ShibugakiViewer.Views.InformationPanes
 
         private void FlatButton_Click_1(object sender, RoutedEventArgs e)
         {
-            ((App)Application.Current).ExitAll();
+            this.application.ExitAll();
         }
 
         private void FlatButton_Click_2(object sender, RoutedEventArgs e)
         {
-            ((App)Application.Current).ShowLibraryUpdateStatusWindow();
+            this.application.ShowLibraryUpdateStatusWindow();
             //new LibraryUpdateStatusWindow()
             //{
             //    Owner = Window.GetWindow(this),
             //}.Show();
+        }
+
+        private async void PopupDialogBehavior_Opening(object arg1, EventArgs arg2)
+        {
+            var convertable = await this.core.IsOldConvertableAsync();
+            this.mikanImportButton.Visibility = VisibilityHelper.Set(convertable);
+        }
+
+        private void FlatButton_Click_3(object sender, RoutedEventArgs e)
+        {
+            this.application.ImportOrExportLibrary(false);
+        }
+
+        private void FlatButton_Click_4(object sender, RoutedEventArgs e)
+        {
+            this.application.ImportOrExportLibrary(true);
+        }
+
+        private void mikanImportButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.core.ConvertOldLibraryAsync().FireAndForget();
         }
     }
 }
