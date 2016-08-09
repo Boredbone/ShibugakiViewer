@@ -75,7 +75,7 @@ namespace ShibugakiViewer.Models.Utility
 
             while (true)
             {
-                while (this.Index >= this.RandomSequence.Count)
+                while (this.Index + 1 >= this.RandomSequence.Count)
                 {
                     this.ExpandBack();
                 }
