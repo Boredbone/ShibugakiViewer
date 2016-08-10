@@ -495,7 +495,7 @@ namespace ImageLibrary.Creation
                 {
                     item.Value.DateRegistered = dateNow;
                 }
-                await this.Records.AddRangeBufferedAsync(connection.Value, addedFiles.Select(x => x.Value));
+                await this.Records.AddRangeBufferedAsync(connection.Value, addedFiles.Select(x => x.Value), false);
 
                 //削除
                 this.Records.RemoveRangeBuffered(connection.Value, removedFiles.Select(x => x.Value));

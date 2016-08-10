@@ -1627,6 +1627,15 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
+        ///   Set to Thumbnail に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SetThumbnail {
+            get {
+                return ResourceManager.GetString("SetThumbnail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Settings に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Settings_Text {

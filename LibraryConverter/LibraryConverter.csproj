@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converter.cs" />
     <Compile Include="SparkImageViewer\FilePropertyConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SparkImageViewer\ApplicationData.cs" />
@@ -87,6 +88,10 @@
     <ProjectReference Include="..\ImageLibrary\ImageLibrary.csproj">
       <Project>{930b09f8-a4e1-44c7-b78f-09b185a754a7}</Project>
       <Name>ImageLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ShibugakiViewer.Settings\ShibugakiViewer.Settings.csproj">
+      <Project>{e6dcfbec-0739-4214-9067-f29708eb528b}</Project>
+      <Name>ShibugakiViewer.Settings</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

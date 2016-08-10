@@ -372,7 +372,7 @@ namespace ShibugakiViewer.ViewModels
                 .AddTo(this.Disposables);
 
             this.SlideshowCommand = new ReactiveCommand()
-                .WithSubscribe(_ => parent.StartSlideshow(), this.Disposables);
+                .WithSubscribe(_ => this.StartSlideShow(), this.Disposables);
 
 
             // Transform Dialog
@@ -467,7 +467,7 @@ namespace ShibugakiViewer.ViewModels
 
         private void StartSlideShow()
         {
-
+            this.parent.IsFullScreen.Value = true;
         }
 
         private void SetRating(bool up)
@@ -735,7 +735,14 @@ namespace ShibugakiViewer.ViewModels
 
             keyReceiver.Register(Key.Escape, (t, key) =>
             {
-                this.IsTopBarOpen.Value = false;
+                if (!this.IsTopBarOpen.Value && !this.parent.IsPaneOpen.Value)
+                {
+                    this.parent.IsFullScreen.Value = false;
+                }
+                else
+                {
+                    this.IsTopBarOpen.Value = false;
+                }
             }, cursorFilter);
 
 

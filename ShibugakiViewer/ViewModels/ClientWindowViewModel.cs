@@ -122,6 +122,7 @@ namespace ShibugakiViewer.ViewModels
         public ReactiveProperty<Visibility> PaneFixButtonVisibility { get; }
 
         public ReactiveProperty<bool> IsPopupOpen { get; }
+        public ReactiveProperty<bool> IsFullScreen { get; }
 
         public ReadOnlyReactiveProperty<Record> SelectedRecord => this.Client.SelectedRecord;
         public ReadOnlyReactiveProperty<string> WindowTitle { get; }
@@ -335,7 +336,7 @@ namespace ShibugakiViewer.ViewModels
 
             this.FrameWidth = new ReactiveProperty<double>(300).AddTo(this.Disposables);
 
-
+            this.IsFullScreen = client.SelectedPage.Select(_ => false).ToReactiveProperty().AddTo(this.Disposables);
 
             this.PageChangedSubject = new Subject<SplitViewDisplayMode>().AddTo(this.Disposables);
 

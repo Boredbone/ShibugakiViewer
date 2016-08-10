@@ -1,4 +1,4 @@
-﻿/*using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +13,7 @@ using ImageLibrary.File;
 using ImageLibrary.Search;
 using ImageLibrary.SearchProperty;
 using ImageLibrary.Tag;
-//using ShibugakiViewer.Models;
+using ShibugakiViewer.Models;
 
 namespace LibraryConverter.Compat
 {
@@ -73,10 +73,10 @@ namespace LibraryConverter.Compat
             this.ConvertLibraryData(library);
 
             var tagMax = this.Tags.Max(x => x.Key);
-            for(int i = 1; i <= tagMax; i++)
+            for (int i = 1; i <= tagMax; i++)
             {
                 TagInformation tag;
-                if(!this.Tags.TryGetValue(i,out tag))
+                if (!this.Tags.TryGetValue(i, out tag))
                 {
                     tag = new TagInformation()
                     {
@@ -117,7 +117,7 @@ namespace LibraryConverter.Compat
             target.IsSlideshowRandom = this.oldSettings.IsSlideshowRandom;
             target.IsSlideshowFullScreen = this.oldSettings.IsSlideshowFullScreen;
             //target.IsAutoInformationPaneDisabled = false;
-            
+
         }
 
 
@@ -402,7 +402,7 @@ namespace LibraryConverter.Compat
                     Mode = (CompareMode)source.Mode,
                     Property = property,
                     Reference = source.StringListReference?
-                    .Select(x => (x == null) ? "" : x.Replace("\n","")).Join()
+                    .Select(x => (x == null) ? "" : x.Replace("\n", "")).Join()
                     ?? this.ConvertReference(source.SingleReference),
                 };
 
@@ -448,4 +448,3 @@ namespace LibraryConverter.Compat
         }
     }
 }
-*/

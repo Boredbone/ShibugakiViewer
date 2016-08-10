@@ -183,19 +183,20 @@ namespace Database.Table
                 informations[0].Version = this.Version;
             }
 
-            this.RequestTransaction(async context =>
+            this.RequestThreadSafeTransaction(async context =>
             {
-                foreach (var info in informations)
-                {
-                    if (!oldInformations.Any(x => x.Id == info.Id))
-                    {
-                        await this.informationTable.AddAsync(info, context);
-                    }
-                    else
-                    {
-                        await this.informationTable.UpdateAsync(info, context);
-                    }
-                }
+                await this.informationTable.ReplaceRangeAsync(informations, context);
+                //foreach (var info in informations)
+                //{
+                //    if (!oldInformations.Any(x => x.Id == info.Id))
+                //    {
+                //        await this.informationTable.AddAsync(info, context);
+                //    }
+                //    else
+                //    {
+                //        await this.informationTable.UpdateAsync(info, context);
+                //    }
+                //}
             });
         }
 

@@ -127,14 +127,14 @@
                         
                         <!-- Material Icons -->
                         <TextBlock Style="{StaticResource titleTextStyle}">
-                            <Hyperlink NavigateUri="https://design.google.com/icons/"
+                            <Hyperlink NavigateUri="https://materialdesignicons.com/"
                                        tb:HyperlinkBehavior.NavigateByClick="True">
-                                <Run Text="Material Icons" FontWeight="Bold"/>
+                                <Run Text="Material Design Icons" FontWeight="Bold"/>
                             </Hyperlink>
                             <Run Text=" "/>
-                            <Hyperlink NavigateUri="https://creativecommons.org/licenses/by/4.0/legalcode"
+                            <Hyperlink NavigateUri="https://github.com/Templarian/MaterialDesign/blob/master/license.txt"
                                        tb:HyperlinkBehavior.NavigateByClick="True">
-                                <Run Text="Attribution 4.0 International"/>
+                                <Run Text="SIL OPEN FONT LICENSE Version 1.1"/>
                             </Hyperlink>
                         </TextBlock>
 

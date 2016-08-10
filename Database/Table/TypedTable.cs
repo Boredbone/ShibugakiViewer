@@ -405,7 +405,7 @@ namespace Database.Table
         {
             return connection.ExecuteScalarAsync<T>(sql, param, transaction);
         }
-        
+
 
         /// <summary>
         /// Add a record
@@ -413,7 +413,7 @@ namespace Database.Table
         /// <param name="item"></param>
         /// <param name="context"></param>
         public Task AddAsync(TRecord item, DatabaseFront.TransactionContext context)
-            => this.AddMainAsync(item, context.Connection, context.Transaction);
+            => this.AddMainAsync(item, context.Connection, context.Transaction, false);
 
         /// <summary>
         /// Add a record
@@ -422,7 +422,7 @@ namespace Database.Table
         /// <param name="connection"></param>
         /// <param name="transaction"></param>
         public Task AddAsync(TRecord item, IDbConnection connection, IDbTransaction transaction)
-            => this.AddMainAsync(item, connection, transaction);
+            => this.AddMainAsync(item, connection, transaction, false);
 
         /// <summary>
         /// Add records
@@ -441,13 +441,13 @@ namespace Database.Table
         /// <param name="transaction"></param>
         public Task AddRangeAsync(IEnumerable<TRecord> items,
             DisposableThreadLocal<IDbConnection> connection, IDbTransaction transaction)
-            => this.AddMainAsync(items, connection.Value, transaction);
+            => this.AddMainAsync(items, connection.Value, transaction, false);
 
         /// <summary>
         /// Add a lot of records
         /// </summary>
         /// <param name="items"></param>
-        public async Task AddRangeBufferedAsync(IDbConnection connection, IEnumerable<TRecord> items)
+        public async Task AddRangeBufferedAsync(IDbConnection connection, IEnumerable<TRecord> items, bool replace)
         {
 
             foreach (var buffer in items.Buffer(this.BufferSize))
@@ -456,7 +456,7 @@ namespace Database.Table
                 {
                     try
                     {
-                        await this.AddMainAsync(buffer, connection, transaction);
+                        await this.AddMainAsync(buffer, connection, transaction, replace);
 
                         transaction.Commit();
                     }
@@ -473,10 +473,33 @@ namespace Database.Table
         {
             using (var connection = this.Parent.ConnectAsThreadSafe())
             {
-                await this.AddRangeBufferedAsync(connection.Value, items);
+                await this.AddRangeBufferedAsync(connection.Value, items, false);
             }
         }
 
+
+
+        public Task ReplaceAsync(TRecord item, DatabaseFront.TransactionContext context)
+            => this.AddMainAsync(item, context.Connection, context.Transaction, true);
+
+        public Task ReplaceAsync(TRecord item, IDbConnection connection, IDbTransaction transaction)
+            => this.AddMainAsync(item, connection, transaction, true);
+
+        public Task ReplaceRangeAsync(IEnumerable<TRecord> items,
+            DatabaseFront.ThreadSafeTransactionContext context)
+            => this.ReplaceRangeAsync(items, context.Connection, context.Transaction);
+
+        public Task ReplaceRangeAsync(IEnumerable<TRecord> items,
+            DisposableThreadLocal<IDbConnection> connection, IDbTransaction transaction)
+            => this.AddMainAsync(items, connection.Value, transaction, true);
+
+        public async Task ReplaceRangeBufferedAsync(IEnumerable<TRecord> items)
+        {
+            using (var connection = this.Parent.ConnectAsThreadSafe())
+            {
+                await this.AddRangeBufferedAsync(connection.Value, items, true);
+            }
+        }
 
         /// <summary>
         /// Add
@@ -484,18 +507,19 @@ namespace Database.Table
         /// <param name="param"></param>
         /// <param name="connection"></param>
         /// <param name="transaction"></param>
-        private Task AddMainAsync(object param, IDbConnection connection, IDbTransaction transaction)
+        private Task AddMainAsync(object param, IDbConnection connection, IDbTransaction transaction, bool replace)
         {
+            var command = replace ? "REPLACE" : "INSERT";
             if (this.IsIdAuto)
             {
                 return connection.ExecuteAsync
-                    ($"INSERT INTO {this.Name}({this.targets.Value}) VALUES (@{this.values.Value})",
+                    ($"{command} INTO {this.Name}({this.targets.Value}) VALUES (@{this.values.Value})",
                     param, transaction);
             }
             else
             {
                 return connection.ExecuteAsync
-                    ($"INSERT INTO {this.Name} VALUES (@Id, @{this.columnOrderedValues})",
+                    ($"{command} INTO {this.Name} VALUES (@Id, @{this.columnOrderedValues})",
                     param, transaction);
             }
         }
@@ -512,7 +536,7 @@ namespace Database.Table
         public Task UpdateAsync
             (TRecord target, DatabaseFront.TransactionContext context, params string[] properties)
             => this.UpdateAsync(target, context.Connection, context.Transaction, properties);
-        
+
 
         /// <summary>
         /// Update
@@ -910,7 +934,7 @@ namespace Database.Table
                     {
                         Debug.WriteLine(e.ToString());
                         transaction.Rollback();
-                        succeeded= false;
+                        succeeded = false;
                     }
                 }
             }

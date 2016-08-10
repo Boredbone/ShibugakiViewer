@@ -4,17 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{145EB2E1-13B1-46D1-8B29-B3D546D41590}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <ProjectGuid>{E6DCFBEC-0739-4214-9067-F29708EB528B}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ShibugakiViewer.Backup</RootNamespace>
-    <AssemblyName>ShibugakiViewer.Backup</AssemblyName>
+    <RootNamespace>ShibugakiViewer.Settings</RootNamespace>
+    <AssemblyName>ShibugakiViewer.Settings</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +23,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -33,15 +31,10 @@
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -50,40 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Compat.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="ApplicationSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CsCommon\CsCommon.csproj">
-      <Project>{84dad39a-811d-4c38-9a03-99daaf96f191}</Project>
-      <Name>CsCommon</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Database\Database.csproj">
-      <Project>{a3c50f5f-b23c-4298-a14b-eec5913418f8}</Project>
-      <Name>Database</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ImageLibrary\ImageLibrary.csproj">
-      <Project>{930B09F8-A4E1-44C7-B78F-09B185A754A7}</Project>
-      <Name>ImageLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LibraryConverter\LibraryConverter.csproj">
-      <Project>{8ca0c8c2-f7ec-4ed7-9db6-d3fa208ebf93}</Project>
-      <Name>LibraryConverter</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ShibugakiViewer.Settings\ShibugakiViewer.Settings.csproj">
-      <Project>{e6dcfbec-0739-4214-9067-f29708eb528b}</Project>
-      <Name>ShibugakiViewer.Settings</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>xcopy /y "$(TargetPath)" "..\..\..\ShibugakiViewer\bin\Debug\"
-xcopy /y "$(TargetPath)" "..\..\..\ShibugakiViewer\bin\Release\"</PostBuildEvent>
-  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

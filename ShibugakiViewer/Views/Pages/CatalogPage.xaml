@@ -439,7 +439,8 @@
                     <cc:LabeledIcon
                         IconText="{StaticResource ThumbnailSymbol}"
                         Style="{StaticResource verticalLabeledIconStyle}"
-                        Text="{x:Static properties:Resources.SetGroupThumbnail}"/>
+                        Text="{x:Static properties:Resources.SetThumbnail}"
+                        ToolTip="{x:Static properties:Resources.SetGroupThumbnail}"/>
                 </cc:FlatButton>
                 
                 <Border Margin="4,8" Width="1" VerticalAlignment="Stretch"

@@ -771,4 +771,7 @@
   <data name="ImportMikanViewer" xml:space="preserve">
     <value>Import from MikanViewer</value>
   </data>
+  <data name="SetThumbnail" xml:space="preserve">
+    <value>Set to Thumbnail</value>
+  </data>
 </root>

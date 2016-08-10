@@ -771,4 +771,7 @@
   <data name="Directory" xml:space="preserve">
     <value>ファイルの場所</value>
   </data>
+  <data name="SetThumbnail" xml:space="preserve">
+    <value>サムネイルに設定</value>
+  </data>
 </root>

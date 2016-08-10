@@ -603,7 +603,7 @@ namespace ShibugakiViewer.Models
 
             return saveDirectory;
         }
-
+        /*
         public async Task ConvertOldLibraryAsync()
         {
             using (var locking = await this.Library.LockAsync())
@@ -616,7 +616,7 @@ namespace ShibugakiViewer.Models
                 var data = this.Library.GetDataForConvert();
                 await converter.Start2(data.Item1, data.Item2, data.Item3);
             }
-        }
+        }*/
 
         public async Task<bool> IsOldConvertableAsync()
         {

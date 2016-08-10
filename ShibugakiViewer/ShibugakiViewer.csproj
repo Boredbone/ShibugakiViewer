@@ -151,6 +151,7 @@
     <Compile Include="ViewModels\SlideshowPageViewModel.cs" />
     <Compile Include="Views\Behaviors\AnimatedGifbehavior.cs" />
     <Compile Include="Views\Behaviors\ExtendedMouseBinding.cs" />
+    <Compile Include="Views\Behaviors\FullScreenBehavior.cs" />
     <Compile Include="Views\Behaviors\HoverControlBehavior.cs" />
     <Compile Include="Views\Behaviors\HoverGridBehavior.cs" />
     <Compile Include="Views\Behaviors\ImageBehavior.cs" />
@@ -408,7 +409,6 @@
     <EmbeddedResource Include="Properties\Resources.ja-JP.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Resource Include="Assets\Fonts\MaterialIcons-Regular.ttf" />
     <Resource Include="Assets\Fonts\materialdesignicons-webfont.ttf" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -435,9 +435,9 @@
       <Project>{930B09F8-A4E1-44C7-B78F-09B185A754A7}</Project>
       <Name>ImageLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LibraryConverter\LibraryConverter.csproj">
-      <Project>{8ca0c8c2-f7ec-4ed7-9db6-d3fa208ebf93}</Project>
-      <Name>LibraryConverter</Name>
+    <ProjectReference Include="..\ShibugakiViewer.Settings\ShibugakiViewer.Settings.csproj">
+      <Project>{e6dcfbec-0739-4214-9067-f29708eb528b}</Project>
+      <Name>ShibugakiViewer.Settings</Name>
     </ProjectReference>
     <ProjectReference Include="..\WpfTools\WpfTools.csproj">
       <Project>{de06a2d5-b092-4788-8050-59d253676d1f}</Project>

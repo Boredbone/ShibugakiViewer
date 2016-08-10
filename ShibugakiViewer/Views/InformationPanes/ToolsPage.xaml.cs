@@ -106,7 +106,7 @@ namespace ShibugakiViewer.Views.InformationPanes
 
         private void mikanImportButton_Click(object sender, RoutedEventArgs e)
         {
-            this.core.ConvertOldLibraryAsync().FireAndForget();
+            //this.core.ConvertOldLibraryAsync().FireAndForget();
         }
     }
 }
