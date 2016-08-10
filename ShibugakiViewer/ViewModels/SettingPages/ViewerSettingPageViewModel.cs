@@ -17,8 +17,8 @@ namespace ShibugakiViewer.ViewModels.SettingPages
 {
     class ViewerSettingPageViewModel : DisposableBase
     {
-        public ReactiveCommand GenerateNewClientCommand { get; }
-        public ReactiveCommand ConvertCommand { get; }
+        //public ReactiveCommand GenerateNewClientCommand { get; }
+        //public ReactiveCommand ConvertCommand { get; }
         
         public ReactiveProperty<string> Text { get; }
 
@@ -41,6 +41,10 @@ namespace ShibugakiViewer.ViewModels.SettingPages
 
         public ReactiveProperty<bool> IsFill { get; }
         public ReactiveProperty<bool> IsResizingAlways { get; }
+        public ReactiveProperty<bool> IsSlideshowFullScreen { get; }
+
+        public ReactiveProperty<double> AnimationTimeSec { get; }
+        public ReactiveProperty<int> FlipTimeSec { get; }
 
         public ReactiveProperty<Color> BackColor { get; }
 
@@ -108,30 +112,29 @@ namespace ShibugakiViewer.ViewModels.SettingPages
                 .ToReactivePropertyAsSynchronized(x => x.IsSlideshowResizingAlways)
                 .AddTo(this.Disposables);
 
+            this.IsSlideshowFullScreen = core
+                .ToReactivePropertyAsSynchronized(x => x.IsSlideshowFullScreen)
+                .AddTo(this.Disposables);
 
+
+            this.AnimationTimeSec = core.ToReactivePropertyAsSynchronized
+                (x => x.SlideshowAnimationTimeMillisec, x => x / 1000.0, x => (int)(x * 1000.0))
+                .AddTo(this.Disposables);
+
+
+            this.FlipTimeSec = core.ToReactivePropertyAsSynchronized
+                (x => x.SlideshowFlipTimeMillisec, x => x / 1000, x => x * 1000).AddTo(this.Disposables);
 
             this.CursorKeyBind = core
                 .ToReactivePropertyAsSynchronized(x => x.CursorKeyBind).AddTo(this.Disposables);
 
 
-            this.GenerateNewClientCommand = new ReactiveCommand()
-                .WithSubscribe(_ => core.ShowNewClient(null), this.Disposables);
-
-            this.ConvertCommand = new ReactiveCommand()
-                .WithSubscribe(_ => this.Convert(core).FireAndForget(), this.Disposables);
+            //this.GenerateNewClientCommand = new ReactiveCommand()
+            //    .WithSubscribe(_ => core.ShowNewClient(null), this.Disposables);
+            //
+            //this.ConvertCommand = new ReactiveCommand()
+            //    .WithSubscribe(_ => this.Convert(core).FireAndForget(), this.Disposables);
         }
-
-        private async Task Convert(ApplicationCore core)
-        {
-            try
-            {
-                //await core.ConvertOldLibraryAsync();
-                this.Text.Value = "converted";
-            }
-            catch
-            {
-
-            }
-        }
+        
     }
 }

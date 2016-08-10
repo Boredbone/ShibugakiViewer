@@ -667,7 +667,7 @@
     <value>アスペクト比 (幅/高さ)</value>
   </data>
   <data name="FullscreenText_Text" xml:space="preserve">
-    <value>フルスクリーンで表示</value>
+    <value>スライドショーをフルスクリーンで表示</value>
   </data>
   <data name="ImageSelectedTaxt_Text" xml:space="preserve">
     <value> 個の画像を選択</value>
@@ -773,5 +773,8 @@
   </data>
   <data name="SetThumbnail" xml:space="preserve">
     <value>サムネイルに設定</value>
+  </data>
+  <data name="StopSlideshow" xml:space="preserve">
+    <value>スライドショーの停止</value>
   </data>
 </root>

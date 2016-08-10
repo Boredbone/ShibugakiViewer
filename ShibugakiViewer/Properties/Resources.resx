@@ -667,7 +667,7 @@
     <value>Aspect Ratio (W/H)</value>
   </data>
   <data name="FullscreenText_Text" xml:space="preserve">
-    <value>Show at Full-screen</value>
+    <value>Full-screen Slideshow</value>
   </data>
   <data name="ImageSelectedTaxt_Text" xml:space="preserve">
     <value> Images Selected</value>
@@ -773,5 +773,8 @@
   </data>
   <data name="SetThumbnail" xml:space="preserve">
     <value>Set to Thumbnail</value>
+  </data>
+  <data name="StopSlideshow" xml:space="preserve">
+    <value>Stop Slideshow</value>
   </data>
 </root>

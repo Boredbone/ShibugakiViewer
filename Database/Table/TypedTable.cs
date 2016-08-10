@@ -424,14 +424,14 @@ namespace Database.Table
         public Task AddAsync(TRecord item, IDbConnection connection, IDbTransaction transaction)
             => this.AddMainAsync(item, connection, transaction, false);
 
-        /// <summary>
-        /// Add records
-        /// </summary>
-        /// <param name="items"></param>
-        /// <param name="context"></param>
-        public Task AddRangeAsync(IEnumerable<TRecord> items,
-            DatabaseFront.ThreadSafeTransactionContext context)
-            => this.AddRangeAsync(items, context.Connection, context.Transaction);
+        ///// <summary>
+        ///// Add records
+        ///// </summary>
+        ///// <param name="items"></param>
+        ///// <param name="context"></param>
+        //public Task AddRangeAsync(IEnumerable<TRecord> items,
+        //    DatabaseFront.ThreadSafeTransactionContext context)
+        //    => this.AddRangeAsync(items, context.Connection, context.Transaction);
 
         /// <summary>
         /// Add records
@@ -492,6 +492,10 @@ namespace Database.Table
         public Task ReplaceRangeAsync(IEnumerable<TRecord> items,
             DisposableThreadLocal<IDbConnection> connection, IDbTransaction transaction)
             => this.AddMainAsync(items, connection.Value, transaction, true);
+
+        public Task ReplaceRangeAsync(IEnumerable<TRecord> items,
+            IDbConnection connection, IDbTransaction transaction)
+            => this.AddMainAsync(items, connection, transaction, true);
 
         public async Task ReplaceRangeBufferedAsync(IEnumerable<TRecord> items)
         {

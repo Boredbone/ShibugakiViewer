@@ -30,10 +30,6 @@
             <StackPanel HorizontalAlignment="Left" Grid.Row="0">
                 <TextBlock Text="{Binding Text.Value}"/>
 
-                <Button Content="Convert" Width="200" HorizontalAlignment="Right"
-                    Command="{Binding ConvertCommand}"/>
-
-                <Button Content="Client" Command="{Binding GenerateNewClientCommand}"/>
 
                 <TextBlock Text="{x:Static properties:Resources.ThumbSizeSelector_Header}"/>
                 <TextBox Width="200" 
@@ -144,6 +140,38 @@
                     IsChecked="{Binding IsResizingAlways.Value,Mode=TwoWay}"
                     Content="{x:Static properties:Resources.ResizeSmallImageText_Text}"/>
 
+                <CheckBox
+                    IsChecked="{Binding IsSlideshowFullScreen.Value,Mode=TwoWay}"
+                    Content="{x:Static properties:Resources.FullscreenText_Text}"/>
+
+
+                
+                
+                <TextBlock Text="{x:Static properties:Resources.DurationText_Text}"/>
+
+                <TextBlock>
+                    <Run Text="{Binding FlipTimeSec.Value}"/>
+                    <Run Text=" "/>
+                    <Run Text="{x:Static properties:Resources.SecondsText_Text}"/>
+                </TextBlock>
+
+                <Slider Minimum="1" Maximum="60" SmallChange="1" LargeChange="5"
+                        Value="{Binding FlipTimeSec.Value,Mode=TwoWay}"
+                        tb:SliderBehavior.IsReceivePreviewMouseWheel="True"/>
+
+                <!--<TextBlock Text="{x:Static properties:Resources.TransitionTimeText_Text}"/>
+
+                <TextBlock>
+                    <Run Text="{Binding AnimationTimeSec.Value,StringFormat={}{0:0.##}}"/>
+                    <Run Text=" "/>
+                    <Run Text="{x:Static properties:Resources.SecondsText_Text}"/>
+                </TextBlock>
+
+                <Slider Minimum="0" Maximum="1" SmallChange="0.1" LargeChange="0.2"
+                        Value="{Binding AnimationTimeSec.Value,Mode=TwoWay}"
+                        tb:SliderBehavior.IsReceiveMouseWheel="True"
+                        AutoToolTipPrecision="2">
+                </Slider>-->
             </StackPanel>
         </ScrollViewer>
     </Grid>

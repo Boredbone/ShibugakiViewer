@@ -138,8 +138,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Models\ApplicationSettings.cs" />
-    <Compile Include="Models\Compat\Converter.cs" />
     <Compile Include="Models\ImageViewer\FlipDirection.cs" />
     <Compile Include="Models\SharePathOperation.cs" />
     <Compile Include="Models\Utility\KeyReceiver.cs" />

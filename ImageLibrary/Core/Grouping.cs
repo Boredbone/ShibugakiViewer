@@ -230,14 +230,15 @@ namespace ImageLibrary.Core
                 {
                     try
                     {
-                        if (isNewGroupGenerated)
-                        {
-                            await this.Table.AddAsync(group, connection.Value, transaction);
-                        }
-                        else
-                        {
-                            await this.Table.UpdateAsync(group, connection.Value, transaction);
-                        }
+                        await this.Table.ReplaceAsync(group, connection.Value, transaction);
+                        //if (isNewGroupGenerated)
+                        //{
+                        //    await this.Table.AddAsync(group, connection.Value, transaction);
+                        //}
+                        //else
+                        //{
+                        //    await this.Table.UpdateAsync(group, connection.Value, transaction);
+                        //}
 
                         transaction.Commit();
                     }

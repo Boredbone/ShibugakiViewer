@@ -204,7 +204,7 @@ namespace LibraryConverter.Compat
             this.ConvertFiles();
             ConvertGroups(library);
 
-            await records.AddRangeBufferedAsync(this.Files.Select(x => x.Value));
+            await records.ReplaceRangeBufferedAsync(this.Files.Select(x => x.Value));
             //return this.Files.Select(x => x.Value);
         }
 

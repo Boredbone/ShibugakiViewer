@@ -709,7 +709,7 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
-        ///   Show at Full-screen に類似しているローカライズされた文字列を検索します。
+        ///   Full-screen Slideshow に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string FullscreenText_Text {
             get {
@@ -1713,6 +1713,15 @@ namespace ShibugakiViewer.Properties {
         public static string StartButton_Content {
             get {
                 return ResourceManager.GetString("StartButton_Content", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Stop Slideshow に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string StopSlideshow {
+            get {
+                return ResourceManager.GetString("StopSlideshow", resourceCulture);
             }
         }
         

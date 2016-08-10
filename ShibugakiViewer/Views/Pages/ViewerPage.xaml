@@ -376,14 +376,27 @@
                     </i:Interaction.Behaviors>
                 </cc:FlatToggleButton>
 
-                <cc:FlatButton 
+                <cc:FlatToggleButton 
                     VerticalAlignment="Top"
-                    Content="{StaticResource PlaySymbol}"
-                    Style="{StaticResource themeSymbolFlatButtonStyle}"
                     Width="{StaticResource ToolButtonWidth}"
                     Height="{StaticResource ToolButtonWidth}"
-                    ToolTip="{x:Static properties:Resources.Slideshow}"
-                    Command="{Binding SlideshowCommand}"/>
+                    IsChecked="{Binding IsSlideshowPlaying.Value,Mode=TwoWay}">
+                    <cc:FlatToggleButton.Style>
+                        <Style TargetType="cc:FlatToggleButton"
+                               BasedOn="{StaticResource themeSymbolFlatToggleButtonStyle}">
+                            <Setter Property="Content" Value="{StaticResource PlaySymbol}"/>
+                            <Setter Property="ToolTip" Value="{x:Static properties:Resources.PlaySlideShow}"/>
+                            <Style.Triggers>
+                                <DataTrigger 
+                                    Binding="{Binding RelativeSource={RelativeSource Self},Path=IsChecked}"
+                                    Value="True">
+                                    <Setter Property="Content" Value="{StaticResource PauseSymbol}"/>
+                                    <Setter Property="ToolTip" Value="{x:Static properties:Resources.StopSlideshow}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </cc:FlatToggleButton.Style>
+                </cc:FlatToggleButton>
 
                 <cc:FlatToggleButton
                     Content="{StaticResource PinSymbol}"

@@ -84,6 +84,9 @@ namespace ShibugakiViewer.ViewModels
         public ReadOnlyReactiveProperty<bool> IsFill { get; }
         public ReadOnlyReactiveProperty<bool> IsZoomoutOnly { get; }
 
+        public ReactiveProperty<bool> IsSlideshowPlaying { get; }
+        private Subject<Unit> SlideshowSubject { get; }
+
         public Func<int> CheckHorizontalScrollRequestFunction { get; }
         public Func<int> CheckVerticalScrollRequestFunction { get; }
 
@@ -371,6 +374,51 @@ namespace ShibugakiViewer.ViewModels
                 .ToReactiveProperty()
                 .AddTo(this.Disposables);
 
+            this.IsSlideshowPlaying = this.client.SelectedPage
+                .Select(_ => false)
+                .ToReactiveProperty(false)
+                .AddTo(this.Disposables);
+
+            this.IsSlideshowPlaying.Subscribe(x =>
+            {
+                if (x)
+                {
+                    this.StartSlideShow();
+                }
+                else
+                {
+                    this.parent.IsFullScreen.Value = false;
+                }
+            })
+            .AddTo(this.Disposables);
+
+            this.SlideshowSubject = new Subject<Unit>().AddTo(this.Disposables);
+
+            var slideshowSubscription = new SerialDisposable().AddTo(this.Disposables);
+
+            this.parent.Core.ObserveProperty(x => x.SlideshowFlipTimeMillisec)
+                .Subscribe(x =>
+                {
+                    slideshowSubscription.Disposable = this.SlideshowSubject
+                        .Throttle(TimeSpan.FromMilliseconds(x))
+                        .Where(_ => this.IsSlideshowPlaying.Value)
+                        .ObserveOnUIDispatcher()
+                        .Subscribe(y =>
+                        {
+                            if (this.IsSlideshowPlaying.Value)
+                            {
+                                this.MoveNext();
+                            }
+                        });
+
+                    if (this.IsSlideshowPlaying.Value)
+                    {
+                        this.SlideshowSubject.OnNext(Unit.Default);
+                    }
+
+                })
+                .AddTo(this.Disposables);
+
             this.SlideshowCommand = new ReactiveCommand()
                 .WithSubscribe(_ => this.StartSlideShow(), this.Disposables);
 
@@ -467,7 +515,13 @@ namespace ShibugakiViewer.ViewModels
 
         private void StartSlideShow()
         {
-            this.parent.IsFullScreen.Value = true;
+            if (this.parent.Core.IsSlideshowFullScreen)
+            {
+                this.parent.IsFullScreen.Value = true;
+            }
+
+            this.IsSlideshowPlaying.Value = true;
+            this.SlideshowSubject.OnNext(Unit.Default);
         }
 
         private void SetRating(bool up)
@@ -601,16 +655,22 @@ namespace ShibugakiViewer.ViewModels
             if (this.IsRandom.Value)
             {
                 this.client.ViewerIndex.Value = this.randomNumber.MovePrev();
-                return;
-            }
-
-            if (this.client.ViewerIndex.Value > 0)
-            {
-                this.client.ViewerIndex.Value--;
             }
             else
             {
-                this.client.ViewerIndex.Value = this.Length.Value - 1;
+                if (this.client.ViewerIndex.Value > 0)
+                {
+                    this.client.ViewerIndex.Value--;
+                }
+                else
+                {
+                    this.client.ViewerIndex.Value = this.Length.Value - 1;
+                }
+            }
+
+            if (this.IsSlideshowPlaying.Value)
+            {
+                this.SlideshowSubject.OnNext(Unit.Default);
             }
         }
 
@@ -624,16 +684,22 @@ namespace ShibugakiViewer.ViewModels
                 this.randomNumber.ReplaceIfDifferent((int)this.client.ViewerIndex.Value);
                 this.client.ViewerIndex.Value = this.randomNumber.MoveNext();
                 this.client.PrepareNext(this.randomNumber.GetNext());
-                return;
-            }
-
-            if (this.client.ViewerIndex.Value < this.Length.Value - 1)
-            {
-                this.client.ViewerIndex.Value++;
             }
             else
             {
-                this.client.ViewerIndex.Value = 0;
+                if (this.client.ViewerIndex.Value < this.Length.Value - 1)
+                {
+                    this.client.ViewerIndex.Value++;
+                }
+                else
+                {
+                    this.client.ViewerIndex.Value = 0;
+                }
+            }
+
+            if (this.IsSlideshowPlaying.Value)
+            {
+                this.SlideshowSubject.OnNext(Unit.Default);
             }
         }
 

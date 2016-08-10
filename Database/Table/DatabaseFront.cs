@@ -48,6 +48,7 @@ namespace Database.Table
             {
                 IsIdAuto = true,
             };
+            this.informationTable.AddColumnOption(nameof(TableInformation.TableName), "UNIQUE");
         }
 
         internal void Add(ITypedTable table)
@@ -183,20 +184,20 @@ namespace Database.Table
                 informations[0].Version = this.Version;
             }
 
-            this.RequestThreadSafeTransaction(async context =>
+            this.RequestTransaction(async context =>
             {
-                await this.informationTable.ReplaceRangeAsync(informations, context);
-                //foreach (var info in informations)
-                //{
-                //    if (!oldInformations.Any(x => x.Id == info.Id))
-                //    {
-                //        await this.informationTable.AddAsync(info, context);
-                //    }
-                //    else
-                //    {
-                //        await this.informationTable.UpdateAsync(info, context);
-                //    }
-                //}
+                //await this.informationTable.ReplaceRangeAsync(informations, context.Connection,context.Transaction);
+                foreach (var info in informations)
+                {
+                    if (!oldInformations.Any(x => x.Id == info.Id))
+                    {
+                        await this.informationTable.AddAsync(info, context);
+                    }
+                    else
+                    {
+                        await this.informationTable.UpdateAsync(info, context);
+                    }
+                }
             });
         }
 

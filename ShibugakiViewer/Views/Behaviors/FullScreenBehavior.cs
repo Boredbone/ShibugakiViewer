@@ -35,9 +35,10 @@ namespace ShibugakiViewer.Views.Behaviors
             {
                 if (value.Value)
                 {
-                    element.WindowState = WindowState.Maximized;
-                    element.Topmost = true;
                     element.WindowStyle = WindowStyle.None;
+                    element.Topmost = true;
+                    element.WindowState = WindowState.Maximized;
+                    //element.Activate();
                 }
                 else
                 {
