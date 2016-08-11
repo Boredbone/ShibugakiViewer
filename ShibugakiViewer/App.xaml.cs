@@ -276,7 +276,7 @@ namespace ShibugakiViewer
         /// <returns></returns>
         private IDisposable ShowNotifyIcon()
         {
-            const string iconUri = "pack://application:,,,/ShibugakiViewer;Component/Assets/Icons/Folder(special-open)_5844.ico";
+            const string iconUri = "pack://application:,,,/ShibugakiViewer;Component/Assets/Icons/appicon.ico";
 
             Uri uri;
             if (!Uri.TryCreate(iconUri, UriKind.Absolute, out uri))

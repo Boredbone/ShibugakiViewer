@@ -6,6 +6,7 @@ using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Boredbone.Utility.Extensions;
 using Boredbone.Utility.Notification;
@@ -261,11 +262,7 @@ namespace ShibugakiViewer.ViewModels
                     : PaneMode.AlwaysVisible)
                 .ToReactiveProperty(PaneMode.AlwaysVisible)
                 .AddTo(this.Disposables);
-
-            //var compactPaneWidth = 48.0;// (double)Application.Current.Resources["CompactPaneWidth"];
-            //var openPaneWidth = 320.0;// (double)Application.Current.Resources["OpenPaneWidth"];
-
-
+            
 
 
             this.IsOptionPageOpen = this.SelectedInformationPage
@@ -547,6 +544,21 @@ namespace ShibugakiViewer.ViewModels
                 }, this.Disposables);
 
             //Keyboard
+            this.RegisterKeyReceiver(client);
+
+            this.Catalog = new CatalogPageViewModel(this).AddTo(this.Disposables);
+            this.Viewer = new ViewerPageViewModel(this).AddTo(this.Disposables);
+            this.Search = new SearchPageViewModel(this).AddTo(this.Disposables);
+            //this.Slideshow = new SlideshowPageViewModel(this).AddTo(this.Disposables);
+        }
+
+
+        /// <summary>
+        /// キーボード操作を登録
+        /// </summary>
+        private void RegisterKeyReceiver(Client client)
+        {
+            var cursorFilter = this.KeyReceiver.AddPreFilter(x => !(x.FocusedControl is TextBox));
 
             //検索ページに移動
             this.KeyReceiver.Register(Key.F,
@@ -555,17 +567,14 @@ namespace ShibugakiViewer.ViewModels
 
 
             //戻る・進む
-            this.KeyReceiver.Register(Key.Left,
-                (_, __) => client.Back(),
+            this.KeyReceiver.Register(Key.Left, (_, __) => client.Back(),
                 0, modifier: ModifierKeys.Alt);
-            this.KeyReceiver.Register(Key.Right,
-                (_, __) => client.Forward(),
+            this.KeyReceiver.Register(Key.Right, (_, __) => client.Forward(),
                 0, modifier: ModifierKeys.Alt);
 
-            this.KeyReceiver.Register(new[] { Key.Back, Key.BrowserBack },
-                (_, __) => client.Back(), 0);
-            this.KeyReceiver.Register(Key.BrowserForward,
-                (_, __) => client.Forward(), 0);
+            this.KeyReceiver.Register(Key.Back, (_, __) => client.Back(), cursorFilter);
+            this.KeyReceiver.Register(Key.BrowserBack, (_, __) => client.Back(), 0);
+            this.KeyReceiver.Register(Key.BrowserForward, (_, __) => client.Forward(), 0);
 
 
             //ポップアップメニュー・ダイアログが開いているとき
@@ -588,14 +597,7 @@ namespace ShibugakiViewer.ViewModels
                 (_, __) => { },
                 0);//, modifier: ModifierKeys.Shift);
 
-
-            this.Catalog = new CatalogPageViewModel(this).AddTo(this.Disposables);
-            this.Viewer = new ViewerPageViewModel(this).AddTo(this.Disposables);
-            this.Search = new SearchPageViewModel(this).AddTo(this.Disposables);
-            //this.Slideshow = new SlideshowPageViewModel(this).AddTo(this.Disposables);
         }
-
-
 
         private void ShowInformationPane(bool open = false)
         {

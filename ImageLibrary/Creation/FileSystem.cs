@@ -81,69 +81,6 @@ namespace ImageLibrary.Creation
             return null;
 
         }
-        /*
-        public static ImageFileInformation GetImageInformation(string fullPath, PropertiesLevel level)
-        {
-            try
-            {
-                var name = System.IO.Path.GetFileName(fullPath);
-
-
-                var width = 0;
-                var height = 0;
-                var length = 0L;
-
-                //画像ファイルのヘッダからサイズを抽出
-                if (level >= PropertiesLevel.Size)
-                {
-                    var graphicInfo = new GraphicInformation(fullPath);
-
-                    width = graphicInfo.GraphicSize.Width;
-                    height = graphicInfo.GraphicSize.Height;
-                    length = graphicInfo.FileSize;
-
-                }
-
-                var creationTime = defaultDateTime;
-                var lastWriteTime = defaultDateTime;
-
-                //日付情報
-                if (level >= PropertiesLevel.Basic)
-                {
-                    try
-                    {
-                        var info = new System.IO.FileInfo(fullPath);
-
-                        creationTime = ImageFileUtility.ConvertDateTime(info.CreationTime);
-                        lastWriteTime = ImageFileUtility.ConvertDateTime(info.LastWriteTime);
-                    }
-                    catch
-                    {
-                        //No operation
-                    }
-                }
-
-
-                var image = new ImageFileInformation()
-                {
-                    DateCreated = creationTime,
-                    DateModified = lastWriteTime,
-                    Name = name,
-                    Path = fullPath,
-                    Height = height,
-                    Width = width,
-                    Size = length,
-                    Rating = 0,
-                    Keywords = null,
-                };
-
-                return image;
-            }
-            catch
-            {
-                return null;
-            }
-        }*/
 
         /// <summary>
         /// 画像ファイルの情報を取得
@@ -153,8 +90,6 @@ namespace ImageLibrary.Creation
         /// <returns></returns>
         public ImageFileInformation GetImage(string fullPath, PropertiesLevel level)
         {
-
-
             ImageFileInformation image = null;
 
             try
@@ -218,43 +153,6 @@ namespace ImageLibrary.Creation
             {
                 return null;
             }
-            /*
-            var name = System.IO.Path.GetFileName(fullPath);
-
-
-            var width = 0;
-            var height = 0;
-            var length = 0L;
-
-            //画像ファイルのヘッダからサイズを抽出
-            if (level >= PropertiesLevel.Size)
-            {
-                var graphicInfo = new GraphicInformation(fullPath);
-
-                width = graphicInfo.GraphicSize.Width;
-                height = graphicInfo.GraphicSize.Height;
-                length = graphicInfo.FileSize;
-
-            }
-
-            var creationTime = defaultDateTime;
-            var lastWriteTime = defaultDateTime;
-
-            //日付情報
-            if (level >= PropertiesLevel.Basic)
-            {
-                try
-                {
-                    var info = new System.IO.FileInfo(fullPath);
-
-                    creationTime = ImageFileUtility.ConvertDateTime(info.CreationTime);
-                    lastWriteTime = ImageFileUtility.ConvertDateTime(info.LastWriteTime);
-                }
-                catch
-                {
-                    //No operation
-                }
-            }*/
 
 
             if (image == null)
@@ -305,22 +203,6 @@ namespace ImageLibrary.Creation
             image.Keywords = tags;
 
             return image;
-
-            /*
-            var image = new ImageFileInformation()
-            {
-                DateCreated = creationTime,
-                DateModified = lastWriteTime,
-                Name = name,
-                Path = fullPath,
-                Height = height,
-                Width = width,
-                Size = length,
-                Rating = rating,
-                Keywords = tags,
-            };
-
-            return image;*/
         }
 
         /// <summary>

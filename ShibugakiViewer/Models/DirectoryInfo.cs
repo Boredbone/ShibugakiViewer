@@ -29,7 +29,6 @@ namespace ShibugakiViewer.Models
 
         public string GetSelectedLabel()
         {
-
             if (this.SelectedIndex.Value < 0 || this.SelectedIndex.Value >= this.Children.Count)
             {
                 return null;
@@ -38,9 +37,6 @@ namespace ShibugakiViewer.Models
             var str = this.Children[this.SelectedIndex.Value].Key;
 
             return str.Length > 0 ? str : null;
-
-            //return (this.SelectedIndex >= 0 && this.SelectedIndex < this.Children.Count)
-            //? this.Children[this.SelectedIndex].Key : null;
         }
 
         public void Choice(string key)

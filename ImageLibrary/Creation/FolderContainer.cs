@@ -70,33 +70,16 @@ namespace ImageLibrary.Creation
             CancellationToken cancellationToken = default(CancellationToken), 
             bool configureAwait = false)
         {
-            /*
-            var dirInfo = new DirectoryInfo(this.Path);
-            this.FilesFullpath =
-                dirInfo.EnumerateFiles("*.*",
-                containsChildren ? System.IO.SearchOption.AllDirectories : System.IO.SearchOption.TopDirectoryOnly)
-                .AsParallel()
-                .Where(x => this.fileTypeFilter.Contains(x.Extension.ToLower()))
-                .Select(x => x.FullName)
-                .ToArray();*/
-
-
             this.FilesFullpath = System.IO.Directory.EnumerateFiles
                 (this.Path, "*.*",
                 containsChildren ? System.IO.SearchOption.AllDirectories : System.IO.SearchOption.TopDirectoryOnly)
                 .AsParallel()
                 .Where(x => this.fileTypeFilter.Contains(System.IO.Path.GetExtension(x).ToLower()))
-                //.Select((x, c) =>
-                //{
-                //    OnFileEnumerated?.Invoke(c);
-                //    return x;
-                //})
                 .ToArray();
 
             OnFileEnumerated?.Invoke(this.FilesFullpath.Length);
 
             return this.FilesFullpath.LongLength;
-
         }
 
 #pragma warning restore 1998
@@ -112,12 +95,6 @@ namespace ImageLibrary.Creation
         public async Task<IEnumerable<T>> DoForAllFilesAsync<T>(Func<string, T> action,
             CancellationToken cancellationToken = default(CancellationToken), bool configureAwait = false)
         {
-            //var res= await this.FilesFullpath
-            //    .SelectAsync(path =>
-            //        Task.Run(() => action(path)), this.Concurrency, default(CancellationToken), false);
-            //
-            //return res.ToArray();
-
             return (await this.FilesFullpath
                 .SelectAsync(path =>
                     Task.Run(() => action(path)), this.Concurrency, default(CancellationToken), false)).ToArray();

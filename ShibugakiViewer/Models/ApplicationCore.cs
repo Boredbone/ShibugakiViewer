@@ -54,8 +54,7 @@ namespace ShibugakiViewer.Models
 
         public ReactiveCollection<LibraryUpdateHistoryItem> LibraryUpdateHistory { get; private set; }
         
-
-        //public string AppName { get; private set; }
+        
         public string AppName
         {
             get
@@ -409,16 +408,7 @@ namespace ShibugakiViewer.Models
             // Set the user interface to display in the same culture as that set in Control Panel.
             System.Threading.Thread.CurrentThread.CurrentUICulture =
                 System.Threading.Thread.CurrentThread.CurrentCulture;
-            /*
-            //現在実行しているAssemblyを取得する
-            var asm = this.GetType().Assembly;
-
-            //ResourceManagerオブジェクトの作成
-            //リソースファイル名が"Resource1.resources"だとする
-            this.ResourceManager = new ResourceManager
-                (asm.GetName().Name + ".Resource1", asm);
-                */
-
+            
             //ストレージに保存する設定
             this.SettingsXml = new XmlSettingManager<ApplicationSettings>(settingsFileName);
 
@@ -590,7 +580,6 @@ namespace ShibugakiViewer.Models
             App.Current.Resources["WidthLabel"] = this.GetResourceString("Width");
             App.Current.Resources["HeightLabel"] = this.GetResourceString("Height");
             
-            //this.AppName = Application.Current.Resources["AppName"].ToString();
         }
 
         private string GetOldLibraryDirectory()
@@ -662,9 +651,6 @@ namespace ShibugakiViewer.Models
 
             return resultText;
         }
-
-        public void RegisterDisposable(IDisposable disposable) => disposable.AddTo(this.Disposables);
-
 
         public void ShowNewClient(IEnumerable<string> files)
         {

@@ -210,11 +210,7 @@ namespace ShibugakiViewer.Models
             this.ViewerIndex = this.ToReactivePropertyAsSynchronized(x => x.ViewerIndexInner)
                 .AddTo(this.Disposables);
 
-
-            //this.SearchChanged= this.front.CacheCleared
-            //    .Where(x => x.Action == CacheClearAction.SearchChanged);
-
-
+            
             this.SearchCompleted
                 .Where(x => (this.SelectedPage.Value == PageType.Viewer && x.Takes > 0))
                 .ObserveOnUIDispatcher()
@@ -245,36 +241,41 @@ namespace ShibugakiViewer.Models
             this.PageSize
                 .Subscribe(x => core.ImageBuffer.ThumbnailRequestCapacity = Math.Max(x * 2, 32))
                 .AddTo(this.Disposables);
-            
 
-            //TODO 移動方向アイテムを多めに先読み
-            //var databaseUpdated = front.SearchCompleted
-            //    .Where(x => this.SelectedPage.Value == PageType.Catalog);
-            this.CatalogIndex
-                .Restrict(TimeSpan.FromMilliseconds(100))
-                .Merge(this.front.CacheCleared
+            //データベース更新
+            var databaseUpdatedForCatalog = this.front.CacheCleared
+                    .Where(x => x.Action == CacheClearAction.DatabaseUpdated)
+                    .Buffer(this.SelectedPage.Where(x => x == PageType.Catalog))
+                    .Where(x => x.Count > 0)
+                    .Select(_ => this.CatalogIndex.Value);
+
+            //キャッシュクリア
+            var catalogReset = this.front.CacheCleared
                     .Where(x => x.Action != CacheClearAction.SearchChanged
                         && this.SelectedPage.Value == PageType.Catalog)
-                    .Select(_ => this.CatalogIndex.Value))
+                    .Select(_ => this.CatalogIndex.Value);
+
+
+            //Catalog用DB問い合わせ
+            this.CatalogIndex
+                .Restrict(TimeSpan.FromMilliseconds(100))
+                .Merge(catalogReset)
+                .Merge(databaseUpdatedForCatalog)
                 .Pairwise(0)
                 .CombineLatest(this.PageSize, (Index, ViewSize) => new { ViewSize, Index })
                 .Subscribe(x =>
                 {
-                    if (x.ViewSize <= 0)
+                    if (x.ViewSize > 0)
                     {
-                        return;
+                        var offset = Math.Max(x.Index.NewItem - (x.ViewSize / 2), 0);
+                        var takes = x.ViewSize * 2;
+                        var direction = (x.Index.NewItem == 0) ? 1 : (int)(x.Index.NewItem - x.Index.OldItem);
+
+                        this.front.GetRecords(offset, takes, direction, true);
                     }
-
-                    var offset = Math.Max(x.Index.NewItem - (x.ViewSize / 2), 0);
-                    var takes = x.ViewSize * 2;
-                    var direction = (x.Index.NewItem == 0) ? 1 : (int)(x.Index.NewItem - x.Index.OldItem);
-
-                    this.front.GetRecords(offset, takes, direction, true);
                 })
                 .AddTo(this.Disposables);
             
-            //TODO 余裕があれば離れたところも読み込むようにキューイング
-            //TODO 移動方向アイテムを多めに先読み
 
             //Viewerインデックス変更時のデータベース問い合わせ
             var viewerImage = this.ViewerIndex
@@ -295,14 +296,8 @@ namespace ShibugakiViewer.Models
                 .AddTo(this.Disposables);
 
             viewerImage
-                //.Restrict(TimeSpan.FromMilliseconds(200))
                 .Throttle(TimeSpan.FromMilliseconds(200))
-                .Subscribe(x =>
-                {
-                    this.SearchForViewer(x, true);
-                    //this.front.GetRecords(x - 1, 3, true);
-                    //this.SetRecord(false);
-                })
+                .Subscribe(x => this.SearchForViewer(x, true))
                 .AddTo(this.Disposables);
 
             //キャッシュクリア時のViewer再読み込み
@@ -315,14 +310,9 @@ namespace ShibugakiViewer.Models
                 .Where(x => x.Action != CacheClearAction.SearchChanged
                     && this.SelectedPage.Value == PageType.Viewer)
                 .Publish().RefCount();
-            //.Select(_ => Unit.Default);
-            //.Merge(this.SelectedPage.Where(x => x == PageType.Viewer).Select(_ => Unit.Default));
-
 
             this.ViewerCacheClearedTrigger
                 .Select(_ => viewerImageLast.Value)
-                //viewerImage
-                //.Sample(viewerCacheClearedTrigger)
                 .Subscribe(x =>
                 {
                     this.SearchForViewer(x, true);
@@ -330,10 +320,8 @@ namespace ShibugakiViewer.Models
                 .AddTo(this.Disposables);
 
             front.DatabaseAddedOrRemoved
-                //.ObserveOnUIDispatcher()
                 .Subscribe(async _ =>
                 {
-                    //return;
                     var criteria = front.GetActiveSearch();
                     var record = this.ViewerDisplayingInner.Value;
                     if (criteria != null && record != null)
@@ -378,13 +366,14 @@ namespace ShibugakiViewer.Models
                 .Subscribe(x => LoadImagesMain(x, ImageQuality.Resized,
                     ListOrderFlags.Current | ListOrderFlags.Next | ListOrderFlags.Previous))
                 .AddTo(this.Disposables);
-
+            
+            //表示中の画像のみ最高画質ロード
             viewerIndexChanged
                 .Throttle(TimeSpan.FromMilliseconds(originalImageLoadDelayMillisec))
                 .ObserveOn(SynchronizationContext.Current)
                 .Subscribe(x => LoadImagesMain(x, ImageQuality.OriginalSize,
                     ListOrderFlags.Current))
-                .AddTo(this.Disposables);//前後の画像は最高画質ロードしない
+                .AddTo(this.Disposables);
 
 
             this.PrepareNextSubject = new Subject<long>().AddTo(this.Disposables);
@@ -403,58 +392,6 @@ namespace ShibugakiViewer.Models
                 .Where(x => x != null)
                 .Subscribe(this.OnStateChanged)
                 .AddTo(this.Disposables);
-                //.Subscribe(state =>
-                //{
-                //    var refreshList = false;
-
-                //    if (state.Type != PageType.Search)
-                //    {
-                //        if (state.GroupKey != null)
-                //        {
-                //            if (this.lastGroup != null && this.lastGroup.Id.Equals(state.GroupKey))
-                //            {
-                //                this.front.SetGroupSearch(this.lastGroup);
-                //                this.lastGroup = null;
-                //            }
-                //            else
-                //            {
-                //                this.front.SetGroupSearchAsync(state.GroupKey).FireAndForget();
-                //            }
-                //        }
-                //        else
-                //        {
-                //            this.front.SetSearch(state.Search, false);
-                //            refreshList = true;
-                //        }
-                //    }
-
-                //    if (state.Type == PageType.Viewer)
-                //    {
-                //        this.ChangeToViewerSubject.OnNext(state.ViewerIndex);
-                //        this.ViewerIndex.Value = state.ViewerIndex;
-                //    }
-
-                //    this.CatalogIndex.Value = state.CatalogIndex;
-
-                //    if (state.GroupKey != null || state.Search != null)
-                //    {
-                //        core.ImageBuffer.ClearThumbNailRequests();
-                //        core.ImageBuffer.ClearRequests();
-
-                //        var direction = (state.CatalogIndex == 0) ? 1 : 0;
-                //        this.front.GetRecords(state.CatalogIndex, this.PageSize.Value * 2, direction, true);
-                //    }
-
-                //    if (state.Type != PageType.None)
-                //    {
-                //        this.PageChangeRequestSubject.OnNext(state.Type);
-                //    }
-                //    if (refreshList)
-                //    {
-                //        this.front.RefreshSearchList();
-                //    }
-                //})
-                //.AddTo(this.Disposables);
 
             //破棄時に設定を保存
             Disposable.Create(() => core.Save()).AddTo(this.Disposables);
@@ -553,14 +490,6 @@ namespace ShibugakiViewer.Models
                 return;
             }
 
-            //if (this.History.Current != null
-            //    && this.History.Current.GroupKey == null
-            //    && this.History.Current.Search != null
-            //    && this.History.Current.Search.SettingEquals(search))
-            //{
-            //    return;
-            //}
-
             this.History.MoveNew(new ViewState()
             {
                 Search = search,
@@ -610,8 +539,6 @@ namespace ShibugakiViewer.Models
         public void SetSort(IEnumerable<SortSetting> sort)
         {
             this.front.SetSort(sort);
-            //this.History.Current.ViewerIndex = 0;
-            //this.History.Current.CatalogIndex = 0;
         }
 
         /// <summary>
@@ -729,10 +656,6 @@ namespace ShibugakiViewer.Models
 
             if (key >= 0)
             {
-                //var oldIndex = this.ViewerIndex.Value;
-
-                //this.ChangeToViewerSubject.OnNext(key);
-
                 this.ViewerIndex.Value = key;
                 core.ImageBuffer.ClearThumbNailRequests();
                 this.ChangePage(PageType.Viewer);
@@ -755,7 +678,6 @@ namespace ShibugakiViewer.Models
 
             this.SetNewGroupSearch(record);
             this.ViewerIndex.Value = index;
-            //core.ImageBuffer.ClearThumbNailRequests();
             this.ChangePage(PageType.Viewer);
         }
 
@@ -775,8 +697,7 @@ namespace ShibugakiViewer.Models
             {
                 return;
             }
-
-            //Debug.WriteLine($"Load Image At({index}), {quality}, {order}");
+            
 
             var option = new ImageLoadingOptions()
             {
@@ -827,8 +748,6 @@ namespace ShibugakiViewer.Models
 
             if (result.Length > 0)
             {
-                //this.ViewerDisplayingInner.Value = result[0];
-
                 var current = this.ViewerDisplayingInner.Value;
 
                 if (!ignoreIfDifferent
@@ -940,10 +859,8 @@ namespace ShibugakiViewer.Models
 
             if (records.Length == 1)
             {
-                //return;
                 Task.Run(async () =>
                 {
-                    //await Task.Delay(3000);
                     var record = records[0];
                     await this.front.ActivateFolderAsync(record.FullPath);
 
@@ -956,16 +873,7 @@ namespace ShibugakiViewer.Models
                     });
 
                     var index = await core.Library.FindIndexAsync(search, record);
-
-                    //this.History.InsertToBack(new ViewState()
-                    //{
-                    //    Search = search,
-                    //    GroupKey = null,
-                    //    CatalogIndex = 0,
-                    //    ViewerIndex = 0,
-                    //    Type = PageType.Catalog,
-                    //});
-
+                    
                     this.front.Length
                         .Where(x => x > index)
                         .Take(1)
@@ -979,12 +887,8 @@ namespace ShibugakiViewer.Models
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         this.front.SetSearch(search, true);
-                        //this.viewerImageChangeGate = false;
-                        //this.ViewerIndexInner = index;
-                        //this.viewerImageChangeGate = true;
                     });
-
-                    //this.SetNewSearch(search);
+                    
                 })
                 .FireAndForget();
             }

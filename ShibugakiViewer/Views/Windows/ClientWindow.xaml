@@ -25,7 +25,7 @@
         b:KeyReceiverBehavior.Receiver="{Binding KeyReceiver,Mode=OneWay}"
         b:FullScreenBehavior.IsFullScreen="{Binding IsFullScreen.Value,Mode=OneWay}"
         Title="{Binding WindowTitle.Value}"
-        Icon="/ShibugakiViewer;component/Assets/Icons/Folder(special-open)_5844.ico">
+        Icon="/ShibugakiViewer;component/Assets/Icons/appicon.ico">
     <Window.DataContext>
         <viewModels:ClientWindowViewModel/>
     </Window.DataContext>

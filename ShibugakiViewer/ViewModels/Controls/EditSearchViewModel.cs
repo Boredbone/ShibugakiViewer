@@ -324,17 +324,6 @@ namespace ShibugakiViewer.ViewModels.Controls
         
 
 
-
-
-
-
-
-
-
-
-
-
-
         private void AddHierarchy(TreeNode<string> source, int index)
         {
             while (this.DirectoryList.Count > index)
@@ -385,21 +374,6 @@ namespace ShibugakiViewer.ViewModels.Controls
                 }
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         public void Commit()

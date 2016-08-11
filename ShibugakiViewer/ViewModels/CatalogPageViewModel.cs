@@ -53,8 +53,7 @@ namespace ShibugakiViewer.ViewModels
         public ReactiveProperty<Visibility> ImagePropertiesVisibility { get; }
         public ReadOnlyReactiveProperty<bool> IsInSelecting { get; }
         public ReadOnlyReactiveProperty<bool> IsRefreshEnabled { get; }
-
-        //public ReactiveProperty<KeyValuePair<int, double>> ScrollOffset { get; }
+        
         public Action<Vector> RequestScrollAction { get; set; }
 
         public bool RefreshTrigger
@@ -70,9 +69,7 @@ namespace ShibugakiViewer.ViewModels
             }
         }
         private bool _fieldRefreshTrigger;
-
-        //public ReactiveProperty<bool> RefreshTrigger { get; }
-
+        
         public ISearchResult SearchResult => this.client.SearchResult;
         public SelectionManager SelectedItems => this.client.SelectedItems;
 
@@ -108,11 +105,7 @@ namespace ShibugakiViewer.ViewModels
 
             this.DisplayIndex = this.StartIndex.Select(x => x + 1).ToReactiveProperty().AddTo(this.Disposables);
             this.DisplayIndex.Subscribe(x => this.StartIndex.Value = x - 1).AddTo(this.Disposables);
-
-            //this.RefreshTrigger = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
-
-            //this.ScrollOffset = new ReactiveProperty<KeyValuePair<int, double>>().AddTo(this.Disposables);
-
+            
             this.ThumbnailSize = core.ObserveProperty(x => x.ThumbNailSize)
                 .Select(x => (double)x)
                 .ToReactiveProperty().AddTo(this.Disposables);
@@ -125,18 +118,9 @@ namespace ShibugakiViewer.ViewModels
             this.ImagePropertiesVisibility = this.ThumbnailSize
                 .Select(x => VisibilityHelper.Set(x > 128)).ToReactiveProperty().AddTo(this.Disposables);
 
-            this.ThumbnailMargin = this.ThumbnailSize.Select(x =>
-            {
-                if (x < 128)
-                {
-                    return new Thickness(1);
-                }
-                if (x < 256)
-                {
-                    return new Thickness(2);
-                }
-                return new Thickness(4);
-            }).ToReactiveProperty().AddTo(this.Disposables);
+            this.ThumbnailMargin = this.ThumbnailSize
+                .Select(x => new Thickness((x < 128) ? 1 : (x < 256) ? 2 : 4))
+                .ToReactiveProperty().AddTo(this.Disposables);
 
             this.IsRefreshEnabled = this.client.IsStateChanging
                 .Select(x => !x)
@@ -152,32 +136,14 @@ namespace ShibugakiViewer.ViewModels
                 .Where(x => x)
                 .Subscribe(_ => this.RefreshTrigger = !this.RefreshTrigger)
                 .AddTo(this.Disposables);
-
-            //TODO
-            //client.StateChanged
-            //    //.Delay(TimeSpan.FromMilliseconds(100))
-            //    //.ObserveOnUIDispatcher()
-            //    .Subscribe(_ => this.RefreshTrigger = !this.RefreshTrigger)
-            //    .AddTo(this.Disposables);
-            
+                        
             client.CacheUpdated
                  .SkipUntil(client.StateChanged)
                  .Take(1)
                  .Repeat()
                  .Subscribe(_ => this.RefreshTrigger = !this.RefreshTrigger)
                  .AddTo(this.Disposables);
-
-
-            /*
-            client.SelectedPage
-                .Pairwise()
-                .Where(x => x.OldItem == PageType.Viewer && x.NewItem == PageType.Catalog)
-                .Subscribe(x =>
-                {
-                    this.RefreshTrigger = !this.RefreshTrigger;
-                    //this.RefreshTrigger = false;
-                })
-                .AddTo(this.Disposables);*/
+            
 
             //スクロールが落ち着いたら再読み込み
             this.StartIndex
@@ -188,57 +154,31 @@ namespace ShibugakiViewer.ViewModels
 
             //サムネイルクリック
             this.ItemClickCommand = new ReactiveCommand()
-                .WithSubscribe(item =>
+                .WithSubscribeOfType<Record>(record =>
                 {
-                    var record = item as Record;
-                    if (item != null && record == null)
-                    {
-                        MessageBox.Show(item.ToString());
-                        return;
-                    }
-
                     if (this.IsInSelecting.Value)
                     {
                         this.SelectItem(record);
-                        //this.SelectedItems.Toggle(record);
                     }
                     else
                     {
                         client.MoveToViewerOrGroupDetail(record);
                     }
-
                 }, this.Disposables);
 
             //選択
             this.ItemSelectCommand = new ReactiveCommand()
-                .WithSubscribe(item =>
-                {
-                    var record = item as Record;
-                    this.SelectItem(record);
-                    //this.SelectedItems.Toggle(record);
-
-                }, this.Disposables);
+                .WithSubscribeOfType<Record>(record => this.SelectItem(record), this.Disposables);
 
             //ソート条件編集
             this.EditSortCommand = new ReactiveCommand()
                 .WithSubscribe(x =>
                 {
                     var control = x as FrameworkElement;
-                    //if (control == null)
-                    //{
-                    //    return;
-                    //}
-                    //var window = Window.GetWindow(control) as IPopupDialogOwner;
-                    //if (window == null)
-                    //{
-                    //    return;
-                    //}
-
-                    var sort = this.client.GetSort();
-
+                    
                     var content = new SortEditor()
                     {
-                        ItemsSource = sort,
+                        ItemsSource = this.client.GetSort(),
                     };
 
                     content.IsEnabledChanged += (o, e) =>

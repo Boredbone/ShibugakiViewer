@@ -59,8 +59,7 @@ namespace ShibugakiViewer.ViewModels
         public ReactiveCommand OpenPaneCommand { get; }
         public ReactiveCommand TogglePaneCommand { get; }
         public ReactiveCommand BackCommand { get; }
-
-        public ReactiveCommand SlideshowCommand { get; }
+        
 
 
         public ReactiveCommand HorizontalMirrorCommand { get; }
@@ -418,9 +417,7 @@ namespace ShibugakiViewer.ViewModels
 
                 })
                 .AddTo(this.Disposables);
-
-            this.SlideshowCommand = new ReactiveCommand()
-                .WithSubscribe(_ => this.StartSlideShow(), this.Disposables);
+            
 
 
             // Transform Dialog
@@ -794,9 +791,9 @@ namespace ShibugakiViewer.ViewModels
 
 
             keyReceiver.Register(Key.Home, (t, key) => this.client.ViewerIndex.Value = 0,
-                pageFilter, isPreview: true);
+                cursorFilter, isPreview: true);
             keyReceiver.Register(Key.End, (t, key) => this.client.ViewerIndex.Value = this.Length.Value - 1,
-                pageFilter, isPreview: true);
+                cursorFilter, isPreview: true);
 
 
             keyReceiver.Register(Key.Escape, (t, key) =>
@@ -824,10 +821,10 @@ namespace ShibugakiViewer.ViewModels
 
 
             keyReceiver.Register(new[] { Key.Space, Key.Enter },
-                (t, key) => this.StartSlideShow(), buttonFilter, modifier: ModifierKeys.Control);
+                (t, key) => this.IsSlideshowPlaying.Toggle(), buttonFilter, modifier: ModifierKeys.Control);
 
-            keyReceiver.Register(new[] { Key.Decimal, Key.OemPeriod }, (t, key) => this.StartSlideShow(),
-                cursorFilter, modifier: ModifierKeys.Control);
+            keyReceiver.Register(new[] { Key.Decimal, Key.OemPeriod },
+                (t, key) => this.IsSlideshowPlaying.Toggle(), cursorFilter, modifier: ModifierKeys.Control);
             //keyReceiver.Register(k => (int)k == 190, (t, key) => this.StartSlideShow(),
             //    pageFilter, false, ModifierKeys.Control);
 

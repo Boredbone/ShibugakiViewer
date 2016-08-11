@@ -41,7 +41,6 @@ namespace ImageLibrary.Creation
             this.Config = config;
 
             this.AddedFiles = new ConcurrentDictionary<string, Record>();
-            //this.RemovedFiles = new ConcurrentDictionary<string, Record>();
             this.DetectedFiles = new ConcurrentBag<string>();
             this.UpdatedFiles = new ConcurrentDictionary<string, Record>();
             this.SkippedFiles = new ConcurrentBag<string>();
@@ -99,17 +98,12 @@ namespace ImageLibrary.Creation
             var count = await folder.EnumerateFilesAsync
                 (x => this.FileEnumerated?.Invoke(x),
                 options.ContainsChildren, default(CancellationToken), false);
-
-            //this.FileEnumerated?.Invoke((int)count);
+            
 
             await this.DoForAllFilesAsync(folder, options, relatedFiles, prospectedTags);
 
             this.FileLoaded?.Invoke((int)count);
-
-            //await this
-            //    .ListupRelativePathsAsync(relatedFiles, prospectedTags, options)
-            //    .ConfigureAwait(false);
-
+            
 
             //旧ライブラリに存在するのに検査して見つからなかったファイルを
             //削除された(可能性のある)ファイルとしてリストアップしておく
@@ -122,54 +116,11 @@ namespace ImageLibrary.Creation
                 .ToDictionary(x => x.Key, x => x.Value);
             
 
-
             information.RefreshEnable = false;
             return true;
         }
 
-
-        //private async Task ListupRelativePathsAsync(
-        //    IReadOnlyDictionary<string, Record> library,
-        //    ConcurrentDictionary<string, ConcurrentBag<TagManager>> prospectedTags,
-        //    LoadingOptions options)
-        //{
-
-        //    if (!(await this.Config.IsFolderExistsAsync(this.Path)))
-        //    {
-        //        return;
-        //    }
-
-        //    this.ChildFolderLoaded?.Invoke(this.Path);
-        //    this.FileLoaded?.Invoke(0);
-            
-        //    var folder = this.Config.GetFolderContainer(this.Path);
-
-        //    var count = await folder.EnumerateFilesAsync
-        //        (x => this.FileEnumerated?.Invoke(x),
-        //        options.ContainsChildren,
-        //        default(CancellationToken),
-        //        false);
-
-        //    await this.DoForAllFilesAsync(folder, options, library, prospectedTags);
-
-        //    /*
-        //    var loadCount = 0;
-
-        //    //TODO 完了ファイル数を画面に表示
-        //    await folder.DoForAllFilesAsync(path =>
-        //    {
-        //        if (options.LightMode && library.ContainsKey(path))
-        //        {
-        //            this.DetectedFiles.Add(path);
-        //        }
-        //        else
-        //        {
-        //            this.CheckImage(folder.GetImage(path, options.Level), library, prospectedTags);
-        //        }
-        //        this.FileLoaded?.Invoke(++loadCount);
-        //        return true;
-        //    });*/
-        //}
+        
 
         /// <summary>
         /// 指定されたファイルについて検査
@@ -201,6 +152,14 @@ namespace ImageLibrary.Creation
 
             await this.DoForAllFilesAsync(folder, options, relatedFiles, prospectedTags);
 
+            var detected = new HashSet<string>(this.DetectedFiles);
+
+            this.RemovedFiles = relatedFiles
+                .AsParallel()
+                .Where(x => !detected.Contains(x.Key))
+                .ToDictionary(x => x.Key, x => x.Value);
+
+            /*
             this.RemovedFiles = new Dictionary<string, Record>();
             foreach (var item in relatedFiles)
             {
@@ -211,7 +170,7 @@ namespace ImageLibrary.Creation
                 {
                     this.RemovedFiles.Add(item.Key, item.Value);
                 }
-            }
+            }*/
 
             return true;
         }
@@ -259,8 +218,7 @@ namespace ImageLibrary.Creation
             {
                 return;
             }
-
-            //Record newItem;
+            
             var newItemId = file.Path;
 
             this.DetectedFiles.Add(newItemId);
@@ -305,6 +263,8 @@ namespace ImageLibrary.Creation
                     newItem.CopyAdditionalInformation(existingItem);
                     //更新
                     this.UpdatedFiles[newItemId] = newItem;
+
+                    Debug.WriteLine($"updated : {newItemId}");
                 }
             }
             else

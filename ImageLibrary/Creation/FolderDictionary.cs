@@ -51,12 +51,9 @@ namespace ImageLibrary.Creation
 
             this.FolderWatcher.FolderChanged
                 .Where(x => x.ChangeType != WatcherChangeTypes.Changed)
-                //.Where(x => config.FileTypeFilter.Contains(System.IO.Path.GetExtension(x.FullPath)))
                 .BufferUntilThrottle(2000, true)
-                //.ObserveOnUIDispatcher()
                 .Subscribe(x => this.CheckFolderUpdate(x))
                 .AddTo(this.Disposables);
-            //MessageBox.Show(x.Select(y => $"{y.FullPath},{y.OldFullPath},{y.ChangeType}").Join("\n"));
         }
 
         public void SetSource(IEnumerable<FolderInformation> source)
@@ -208,12 +205,6 @@ namespace ImageLibrary.Creation
                 RemovedFiles = removed.Distinct().ToArray(),
                 Folders = folders.Distinct().ToArray()
             });
-
-            //this.CheckFolderUpdateAsync(
-            //        added.Distinct().ToArray(), removed.Distinct().ToArray(), folders.Distinct().ToArray())
-            //    .FireAndForget();
-
-
         }
 
         public IEnumerator<FolderInformation> GetEnumerator()

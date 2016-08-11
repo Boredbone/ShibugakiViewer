@@ -61,9 +61,7 @@ namespace ImageLibrary.Viewer
         public IObservable<Record> FeaturedGroupChanged => this.FeaturedGroupChangedSubject.AsObservable();
 
         public ReactiveProperty<bool> IsGroupMode { get; }
-
-        //private Subject<long> DatabaseUpdatesIndexSubject { get; }
-        //public IObservable<long> DatabaseUpdatesIndex => this.DatabaseUpdatesIndexSubject.AsObservable();
+        
         public IObservable<LibraryLoadResult> DatabaseAddedOrRemoved => this.library.Loaded;
 
         private bool isReset = false;
@@ -153,7 +151,6 @@ namespace ImageLibrary.Viewer
                 {
                     this.RefreshSearchList();
                 }
-                //this.SearchInformation = criteria;
             }
 
             if (clearFlag)
@@ -278,7 +275,7 @@ namespace ImageLibrary.Viewer
             if (this.isReset)
             {
                 length = await criteria.CountAsync(library).ConfigureAwait(false);
-
+                
                 this.Length.Value = length;
                 this.isReset = false;
             }
@@ -287,16 +284,7 @@ namespace ImageLibrary.Viewer
             {
                 return;
             }
-
-            //await Task.Delay(2000);
-
-            if (length <= 0)
-            {
-                //条件に合うレコード無し
-                //return;
-            }
-
-            //var offset = this.Offset;
+            
             if (offset < 0)
             {
                 if (takes < length)
@@ -371,16 +359,9 @@ namespace ImageLibrary.Viewer
             {
                 throw new ArgumentException();
             }
-
-            //await Task.Delay(1500);
-
+            
             var result = await criteria.SearchAsync(library, offset, takes);
-
-            //if (result == null || result.Length <= 0)
-            //{
-            //    throw new ArgumentException();
-            //}
-
+            
             for (int i = 0; i < takes; i++)
             {
                 if (i < result.Length)
@@ -415,9 +396,7 @@ namespace ImageLibrary.Viewer
                     Length = result.Length,
                 });
             }
-
-            //this.SearchCompletedSubject.OnNext(Unit.Default);
-
+            
             return result;
         }
 
@@ -587,11 +566,6 @@ namespace ImageLibrary.Viewer
                 .Find(x => x.Value?.Id != null && x.Value.Id.Equals(value.Id));
 
             return (item.Value != null) ? item.Key : -1;
-
-            //var item = this.Cache
-            //    .Where(x => x.Value?.Id != null)
-            //    .FirstOrNull(x => x.Value.Id.Equals(value.Id));
-            //return (item != null) ? item.Value.Key : -1;
         }
 
 
@@ -606,8 +580,6 @@ namespace ImageLibrary.Viewer
 
         public Record[] ActivateFiles(string[] files)
         {
-            //return;
-
             this.Cache.Clear();
             var recors = files.Select((x, c) =>
             {
@@ -619,18 +591,13 @@ namespace ImageLibrary.Viewer
             this.SetSearch(null, false);
 
             this.Length.Value = this.Cache.Count;
-            
 
             return recors;
         }
 
         public async Task ActivateFolderAsync(string file)
         {
-            //await Task.Delay(3000);
-            //return;
             await this.library.ActivateFolderAsync(file);
-            //this.SetSearch()
-
         }
 
 
@@ -652,7 +619,6 @@ namespace ImageLibrary.Viewer
                     }
 
                     return await this.library.GetAllIdsAsync(criteria);
-                    //return await criteria.GetAllIdsAsync(this.library);
                 }
             });
         }
@@ -749,8 +715,6 @@ namespace ImageLibrary.Viewer
         /// <returns></returns>
         private Record GetItemFromIndex(long index, bool acceptDummy = false)
         {
-            //return this.Cache.Select(x => x.Value).FirstOrDefault();
-
             if (index < 0)
             {
                 index = index + this.Length.Value;
@@ -759,11 +723,9 @@ namespace ImageLibrary.Viewer
             Record value;
             if (this.Cache.TryGetValue(index, out value) && (acceptDummy || value != dummyRecord))
             {
-                //return this.Cache.Select(x => x.Value).FirstOrDefault();
                 return value;
             }
-
-            //return this.Cache.Select(x => x.Value).FirstOrDefault();
+            
             return null;
         }
 

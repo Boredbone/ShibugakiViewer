@@ -173,17 +173,7 @@ namespace ImageLibrary.Creation
         
 
         public bool IsLoaded { get; set; }
-
-        //public string PathWithSeparator
-        //{
-        //    get
-        //    {
-        //        var pathSeparator = System.IO.Path.DirectorySeparatorChar.ToString();
-        //        return this.Path.EndsWith(pathSeparator) ? this.Path : (this.Path + pathSeparator);
-        //    }
-        //}
-
-
+        
 
         public FolderInformation()
         {
@@ -191,13 +181,11 @@ namespace ImageLibrary.Creation
 
         public FolderInformation(string path)
         {
-            //this.FolderName = name;
             this.Path = path;
             this.Ignored = false;
 
             this.RefreshEnable = true;
             this.AutoRefreshEnable = true;
-            //this.RefreshMode = ThreeState.None;
             this.WatchChange = true;
         }
 
@@ -216,13 +204,9 @@ namespace ImageLibrary.Creation
                 return new FolderInformation(path)
                 {
                     AutoRefreshEnable = true,
-                    //DisplayName = folder.DisplayType + "\\" + folder.DisplayName,
-                    //FolderName = folder.DisplayName,
                     Ignored = false,
                     RefreshEnable = true,
-                    //RefreshMode = ThreeState.None,
                     RefreshTrigger = false,
-                    //KnownFolderKey = knownfolder.Key,
                 };
             })
             .Where(x => x.Path != null && x.Path.Length > 0);

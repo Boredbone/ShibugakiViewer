@@ -29,14 +29,12 @@ namespace ImageLibrary.Core
 
         public TypedTable<Record, string> Table { get; }
         public Library Library { get; }
-        //Tracker<Record, string> RecordTracker { get; }
 
         public Grouping
-            (TypedTable<Record, string> table, Library library)//, Tracker<Record, string> recordTracker)
+            (TypedTable<Record, string> table, Library library)
         {
             this.Table = table;
             this.Library = library;
-            //this.RecordTracker = recordTracker;
         }
 
 
@@ -46,7 +44,7 @@ namespace ImageLibrary.Core
             {
                 throw new ArgumentException();
             }
-            
+
 
             //以前に設定されていたグループ
             var oldGroupsList = new List<string[]>();
@@ -100,7 +98,6 @@ namespace ImageLibrary.Core
                         .Distinct()
                         .ToArrayAsync();
 
-                    //var m = await this.Table.QueryAsync<string>(connection, sql);
                     groupMembersList.Add(members);
                 }
 
@@ -119,30 +116,15 @@ namespace ImageLibrary.Core
                 .ToArray();
 
 
-            //var uniqueGroups = items
-            //    .Select(x => x.IsGroup ? x.Id : x.GroupKey)
-            //    .Where(x => x != null)
-            //    .Distinct()
-            //    .ToArray();
 
             string groupKey = null;
             Record group = null;
-            //Record leader = null;
 
             if (uniqueGroups.Length == 1)
             {
                 //関係するグループが一種類ならそれが新しいグループ
                 groupKey = uniqueGroups[0];
             }
-            //else
-            //{
-            //    //グループがないor複数なら新規グループを作る
-            //    groupKey = this.GenerateNewGroupKey();
-            //
-            //    //group = Record.GenerateAsGroup(groupKey);
-            //
-            //    //group.SetName(this.GenerateGroupName());
-            //}
 
 
             using (var connection = this.Table.Parent.ConnectAsThreadSafe())
@@ -151,7 +133,7 @@ namespace ImageLibrary.Core
 
                 group = (groupKey != null)
                     ? await this.Table.GetRecordFromKeyAsync(connection.Value, groupKey) : null;
-                
+
 
                 if (group == null || !group.IsGroup)
                 {
@@ -161,40 +143,11 @@ namespace ImageLibrary.Core
                     group.SetName(this.GenerateGroupName(connection.Value));
                     isNewGroupGenerated = true;
                 }
-                
+
 
                 //新しいグループを設定
                 await this.SetGroupAsync(connection.Value, groupKey, items.Union(groupMembers));
-                
 
-                /*
-                var newGroupSql = $"UPDATE {this.Table.Name} SET {nameof(Record.GroupKey)} = @Item1"
-                    + $" WHERE ({nameof(Record.IsGroup)} == 0 AND {nameof(Record.Id)} IN @Item2)";
-
-                foreach (var ids in items.Union(groupMembers).Buffer(128))
-                {
-                    var param = new Tuple<string, string[]>(groupKey, ids.ToArray());
-
-                    using (var transaction = connection.Value.BeginTransaction())
-                    {
-                        try
-                        {
-                            await this.Table.ExecuteAsync
-                                (connection.Value, newGroupSql, param, transaction);
-
-                            transaction.Commit();
-                        }
-                        catch
-                        {
-                            transaction.Rollback();
-                        }
-                    }
-                }*/
-
-                //if (group.GroupKey != null)
-                //{
-                //    leader = await this.Table.GetRecordFromKeyAsync(connection.Value, group.GroupKey);
-                //}
                 if (isNewGroupGenerated)
                 {
                     var filter = this.Library.GroupQuery.GetGroupFilterString(groupKey);
@@ -231,14 +184,6 @@ namespace ImageLibrary.Core
                     try
                     {
                         await this.Table.ReplaceAsync(group, connection.Value, transaction);
-                        //if (isNewGroupGenerated)
-                        //{
-                        //    await this.Table.AddAsync(group, connection.Value, transaction);
-                        //}
-                        //else
-                        //{
-                        //    await this.Table.UpdateAsync(group, connection.Value, transaction);
-                        //}
 
                         transaction.Commit();
                     }
@@ -247,41 +192,13 @@ namespace ImageLibrary.Core
                         transaction.Rollback();
                     }
                 }
-                
+
                 //グループの情報を更新
                 await this.RefreshGroupPropertiesAsync
                     (connection.Value, uniqueGroups.Append(group.Id).Distinct().ToArray());
             }
 
             return groupKey;
-
-            ////リーダーを設定
-            //var properties = new HashSet<string>();
-            //group.PropertyChanged += (o, e) => properties.Add(e.PropertyName);
-            //group.SetGroupLeader(leader);
-            //
-            //
-            //using (var connection = this.Table.Parent.ConnectAsThreadSafe())
-            //{
-            //    using (var transaction = connection.Value.BeginTransaction())
-            //    {
-            //
-            //        try
-            //        {
-            //            //日付を設定
-            //
-            //            //リーダー設定で更新されたプロパティを保存
-            //
-            //            //メンバーが0のグループは削除
-            //
-            //            transaction.Commit();
-            //        }
-            //        catch
-            //        {
-            //            transaction.Rollback();
-            //        }
-            //    }
-            //}
         }
 
         public async Task RefreshGroupPropertiesAsync(params string[] groups)
@@ -327,28 +244,9 @@ namespace ImageLibrary.Core
                         var groupReference = DatabaseFunction.ToEqualsString(group);
 
 
-                        //var gk = await this.Table.QueryAsync<string>(connection,
-                        //    $"select GroupKey from {this.Table.Name}  WHERE {nameof(Record.Id)} == {groupReference}");
-                        //
-                        //var gka = gk?.ToArray();
-                        //
-                        //if (gka == null || gka.Length <= 0)
-                        //{
-                        //    Debug.WriteLine("not found");
-                        //
-                        //}else
-                        //{
-                        //    foreach(var g in gka)
-                        //    {
-                        //        Debug.WriteLine($"leader:{g}");
-                        //
-                        //    }
-                        //}
-
-
                         //リーダーを探す
                         var findLeaderSqlBuilder = new StringBuilder();
-                        
+
 
                         findLeaderSqlBuilder.Append($"SELECT {GroupInfo.LeaderSchema} FROM {this.Table.Name}");
                         findLeaderSqlBuilder.Append($" WHERE ({nameof(Record.Id)} ==");
@@ -408,30 +306,10 @@ namespace ImageLibrary.Core
 
                         groupInfo.TargetGroupId = group;
 
-                        ////リーダーを設定
-                        //var groupSqlBuilder = new StringBuilder();
-                        //
-                        //groupSqlBuilder.Append($@"UPDATE {this.Table.Name} SET");
-                        //
-                        //groupSqlBuilder.Append($@" {nameof(Record.GroupKey)} = @{nameof(GroupInfo.Id)},");
-                        //groupSqlBuilder.Append($@" {nameof(Record.Width)} = @{nameof(GroupInfo.Width)},");
-                        //groupSqlBuilder.Append($@" {nameof(Record.Height)} = @{nameof(GroupInfo.Height)},");
-                        //groupSqlBuilder.Append($@" {nameof(Record.Size)} = @{nameof(GroupInfo.Size)},");
-                        //groupSqlBuilder.Append($@" {nameof(Record.Directory)} = @{nameof(GroupInfo.Directory)}");
-                        //
-                        //groupSqlBuilder.Append
-                        //    ($@" {nameof(Record.DateCreated)} = @{nameof(GroupInfo.DateCreated)},");
-                        //groupSqlBuilder.Append
-                        //    ($@" {nameof(Record.DateModified)} = @{nameof(GroupInfo.DateModified)},");
-                        //groupSqlBuilder.Append
-                        //    ($@" {nameof(Record.DateRegistered)} = @{nameof(GroupInfo.DateRegistered)}");
-                        //
-                        //groupSqlBuilder.Append($@" WHERE {nameof(Record.Id)} == @{nameof(GroupInfo.TargetGroupId)}");
-
                         var groupSql = groupInfo.GetUpdateSchema(this.Table.Name);
 
                         await this.Table.ExecuteAsync(connection, groupSql, groupInfo);
-                        
+
                     }
                     transaction.Commit();
                 }
@@ -536,177 +414,8 @@ namespace ImageLibrary.Core
 
             await this.Table.RequestWithBufferedArrayAsync(connection, ids, newGroupSql,
                 x => new Tuple<string, string[]>(groupKey, x));
-
-            /*
-            foreach (var items in ids.Buffer(128))
-            {
-                var param = new Tuple<string, string[]>(groupKey, items.ToArray());
-                
-
-                using (var transaction = connection.BeginTransaction())
-                {
-                    try
-                    {
-                        await this.Table.ExecuteAsync
-                            (connection, newGroupSql, param, transaction);
-
-                        transaction.Commit();
-                    }
-                    catch
-                    {
-                        transaction.Rollback();
-                    }
-                }
-            }*/
         }
 
-        /*
-        /// <summary>
-        /// ファイルをグループ化
-        /// </summary>
-        /// <param name="source">グループ化するファイルのコレクション</param>
-        public async Task<Record> GroupAsync(IEnumerable<Record> source)
-        {
-            var items = source.ToArray();
-            //グループ取得
-            var group = await GetGroupAsync(items);
-            //group.IsLoaded = false;
-
-            //全てのファイルに新しいグループを登録
-            foreach (var item in items)
-            {
-                group.AddToGroup(item);
-            }
-
-            //共通のタグを設定
-            var first = items.FirstOrDefault();
-            if (first != null)
-            {
-                var buf = new HashSet<int>();
-
-                foreach (var tag in first.TagSet.Read())
-                {
-                    if (items.All(x => x.TagSet.Contains(tag)))
-                    {
-                        buf.Add(tag);
-                    }
-                }
-
-                foreach (var tag in buf)
-                {
-                    group.TagSet.Add(tag);
-                }
-
-            }
-
-            //メンバーの評価の最大値
-            var rating = items.Max(x => x.Rating);
-            group.Rating = rating;
-
-
-            //設定を保存
-
-            this.Table.RequestTransaction(context =>
-            {
-                if (group.IsLoaded)
-                {
-                    this.Table.Update(group, context);
-                }
-                else
-                {
-                    this.Table.Add(group, context);
-                    this.RecordTracker.Track(group);
-                }
-            });
-
-            return group;
-        }
-
-        /// <summary>
-        /// ファイルのコレクションから設定するべきグループを調べる
-        /// </summary>
-        /// <param name="items"></param>
-        /// <returns></returns>
-        private async Task<Record> GetGroupAsync(IEnumerable<Record> items)
-        {
-            //渡されたコレクションから設定されているグループを列挙
-            var uniqueGroups = items
-                .Select(x => x.IsGroup ? x.Id : x.GroupKey)
-                .Where(x => x != null)
-                .Distinct()
-                .ToArray();
-
-
-            if (uniqueGroups.Length == 1)
-            {
-                //設定されているグループが一種類ならそれが新しいグループ
-
-                var key = uniqueGroups[0];
-
-                var group = items.Where(x => x.Id.Equals(key)).FirstOrDefault();
-
-                if (group == null)
-                {
-                    using (var connection = this.Table.Parent.Connect())
-                    {
-                        group = await this.Table.GetRecordFromKeyAsync(connection, key);
-                        this.RecordTracker.Track(group);
-                    }
-                }
-
-                return group;
-            }
-            else
-            {
-                string key;
-                using (var connection = this.Table.Parent.Connect())
-                {
-                    //グループがないor複数なら新規グループを作る
-                    key = this.GenerateNewGroupKey(connection);
-                }
-
-                var leader = items
-                    .Where(x => !x.IsGroup)
-                    .OrderBy(x => x.FileName)
-                    .FirstOrDefault();
-
-                if (leader != null)
-                {
-                    leader.IsLoaded = false;
-                }
-                var group = Record.GenerateAsGroup(key, leader);
-                if (leader != null)
-                {
-                    leader.IsLoaded = true;
-                }
-                using (var connection = this.Table.Parent.Connect())
-                {
-                    group.SetName(this.GenerateGroupName(connection));
-                }
-
-                return group;
-            }
-        }
-        */
-
-
-        ///// <summary>
-        ///// グループのレコードをデータベースから削除
-        ///// </summary>
-        ///// <param name="item"></param>
-        ///// <returns></returns>
-        //public async Task RemoveGroupAsync(Record item)
-        //{
-        //    if (!item.IsGroup)
-        //    {
-        //        throw new InvalidOperationException();
-        //    }
-        //
-        //    await this.Table.RequestTransactionAsync(context =>
-        //    {
-        //        this.Table.Remove(item, context);
-        //    });
-        //}
 
         /// <summary>
         /// グループのIDを生成
@@ -716,30 +425,21 @@ namespace ImageLibrary.Core
         {
             string key;
 
-            //using (var connection = this.Table.Parent.Connect())
+            for (int i = 0; i < 99; i++)
             {
-                for (int i = 0; i < 99; i++)
+                key = Guid.NewGuid().ToString();
+
+                var existingId = await this.Table
+                    .GetColumnsFromKeyAsync<string>(connection, key, nameof(Record.Id));
+
+                if (existingId == null)
                 {
-                    key = Guid.NewGuid().ToString();
-
-                    var existingId = await this.Table
-                        .GetColumnsFromKeyAsync<string>(connection, key, nameof(Record.Id));
-                    //.AsQueryable(connection)
-                    //.Where(DatabaseFunction.AreEqual(nameof(Record.Id),key))
-                    //.Select<string>($"{nameof(Record.Id)}")
-                    //.Take(1)
-                    //.FirstOrDefault();
-
-                    if (existingId == null)
-                    {
-                        return key;
-                    }
+                    return key;
                 }
             }
 
             throw new Exception("Guid Generation Error");
 
-            //return key;
         }
 
         private static Regex regexRight = new Regex(@"\d+", RegexOptions.RightToLeft);
@@ -794,28 +494,6 @@ namespace ImageLibrary.Core
             var name = baseName + (count + 1).ToString();
 
             return name;
-
-            ////using (var connection = this.Table.Parent.Connect())
-            //{
-            //    for (int i = 0; i < 1024; i++)
-            //    {
-            //        var name = this.Library.Searcher.GroupName + i.ToString();
-            //
-            //        var existingName = this.Table
-            //            .AsQueryable(connection)
-            //            .Where(DatabaseFunction.Match(nameof(Record.FileName), name))
-            //            .Select<string>(nameof(Record.FileName))
-            //            .Take(1)
-            //            .FirstOrDefault();
-            //
-            //        if (existingName == null)
-            //        {
-            //            return name;
-            //        }
-            //    }
-            //}
-
-            //return this.Library.Searcher.GroupName;
         }
 
     }

@@ -51,7 +51,6 @@ namespace ImageLibrary.Creation
         public string[] IgnoredFolders { get; set; }
         public bool Completely { get; set; }
         public PropertiesLevel Level { get; set; } = PropertiesLevel.Basic;
-        //public Func<Record, string> GetGroupFilter { get; set; }
         public Action CompletingTask { get; set; }
 
         private readonly Library library;
@@ -75,9 +74,6 @@ namespace ImageLibrary.Creation
         public async Task RefreshLibraryAsync(LibraryLoadAction action,
             string[] addedFiles = null, string[] removedFiles = null)
         {
-
-
-
             this.LoadingSubject.OnNext("");
 
 #if TEST_BUILD
@@ -116,19 +112,8 @@ namespace ImageLibrary.Creation
             this.removedFilesResult = null;
             this.updatedFilesResult = null;
 
-
-            await Task.Factory.StartNew(async () =>
-            {
-                //if (addedFiles != null && removedFiles != null)
-                //{
-                //    await this.CheckFilesAsync();
-                //}
-                //else
-                //{
-                await this.RefreshLibraryMainAsync(addedFiles, removedFiles);
-                //}
-            }, cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
-
+            await Task.Factory.StartNew(() => this.RefreshLibraryMainAsync(addedFiles, removedFiles),
+                cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
 
             await Task.Delay(100);
 
@@ -149,9 +134,6 @@ namespace ImageLibrary.Creation
 
         private async Task RefreshLibraryMainAsync(string[] added, string[] removed)
         {
-
-
-
             //登録解除されたフォルダ内のファイルは削除扱い
 
             var folderIgnoredRecords = new Dictionary<string, Record>();
@@ -226,22 +208,16 @@ namespace ImageLibrary.Creation
                     (folder, relatedFiles, this.Completely, this.Level, prospectedTags)
                     .ConfigureAwait(false);
 
-
-                //if (result)
-                {
-                    //見つかったファイルを登録，重複していたら上書き
-                    tf.AddedFiles.ForEach(x => addedFiles[x.Key] = x.Value);
-                    tf.RemovedFiles.ForEach(x => removedFiles[x.Key] = x.Value);
-                    tf.UpdatedFiles.ForEach(x => updatedFiles[x.Key] = x.Value);
-                    tf.SkippedFiles.ForEach(x => skippedFiles.Add(x));
-                }
+                //見つかったファイルを登録，重複していたら上書き
+                tf.AddedFiles.ForEach(x => addedFiles[x.Key] = x.Value);
+                tf.RemovedFiles.ForEach(x => removedFiles[x.Key] = x.Value);
+                tf.UpdatedFiles.ForEach(x => updatedFiles[x.Key] = x.Value);
+                tf.SkippedFiles.ForEach(x => skippedFiles.Add(x));
 
             }
 
             this.LoadingSubject.OnNext("");
-
-
-            //lab2:
+            
 
             //画像を読み込めなかったファイルも削除
             using (var connection = this.Records.Parent.Connect())
@@ -267,26 +243,7 @@ namespace ImageLibrary.Creation
                 .Select(x => x.Path)
                 .OrderBy(x => x)
                 .ToArray();
-
-            /*
-            await this.UpdateDatabaseAsync(
-                prospectedTags,
-                addedFiles,
-                removedFiles,
-                updatedFiles,
-                topPathList,
-                folderIgnoredRecords);
-
-        }
-
-        private async Task CheckFilesAsync(string[] added, string[] removed)
-        {
-            var addedFiles = new Dictionary<string, Record>();
-            var removedFiles = new Dictionary<string, Record>();
-            var updatedFiles = new Dictionary<string, Record>();
-            var skippedFiles = new HashSet<string>();
-            var prospectedTags = new ConcurrentDictionary<string, ConcurrentBag<TagManager>>();
-            */
+            
             if (added != null && removed != null)
             {
 
@@ -316,32 +273,14 @@ namespace ImageLibrary.Creation
 
                 var result = await tf.CheckFolderUpdateAsync(added, relatedFiles, prospectedTags)
                     .ConfigureAwait(false);
-
-
-                //if (result)
-                {
+                
                     //見つかったファイルを登録，重複していたら上書き
                     tf.AddedFiles.ForEach(x => addedFiles[x.Key] = x.Value);
                     tf.RemovedFiles.ForEach(x => removedFiles[x.Key] = x.Value);
                     tf.UpdatedFiles.ForEach(x => updatedFiles[x.Key] = x.Value);
                     tf.SkippedFiles.ForEach(x => skippedFiles.Add(x));
-                }
+                
             }
-            /*
-            await this.UpdateDatabaseAsync(prospectedTags,
-                addedFiles, removedFiles,
-                new Dictionary<string, Record>(), null, new Dictionary<string, Record>());
-        }
-
-        private async Task UpdateDatabaseAsync(
-            ConcurrentDictionary<string, ConcurrentBag<TagManager>> prospectedTags,
-            Dictionary<string, Record> addedFiles,
-            Dictionary<string, Record> removedFiles,
-            Dictionary<string, Record> updatedFiles,
-            string[] topPathList,
-            Dictionary<string, Record> folderIgnoredRecords)
-        {
-        */
 
             //ファイルにキーワードが設定されていたらタグとして設定
             foreach (var item in prospectedTags)
@@ -354,11 +293,8 @@ namespace ImageLibrary.Creation
             addedFilesResult = new Dictionary<string, Record>(addedFiles);
             removedFilesResult = new Dictionary<string, Record>(removedFiles);
             updatedFilesResult = new Dictionary<string, Record>(updatedFiles);
-
-
-            //goto lab1;
+            
             var missLoadedItems = new HashSet<string>();
-
 
 
             //旧ライブラリにあって新ライブラリに無いファイル=削除された可能性のあるファイル
@@ -430,75 +366,41 @@ namespace ImageLibrary.Creation
                 removedFiles.Remove(key);
             }
 
-
-            ////削除されるファイルをグループから退去
-            //
-            //var grouped = removedFiles
-            //    .Where(x => x.Value.GroupKey != null)
-            //    .GroupBy(x => x.Value.GroupKey)
-            //    .ToArray();
-            //
-            //foreach (var group in grouped)
-            //{
-            //    using (var connection = this.Records.Parent.Connect())
-            //    {
-            //        var groupRecord = this.Records.GetRecordFromKey(connection, group.Key);
-            //
-            //        var groupMember = await this.Records
-            //            .AsQueryable(connection)
-            //            .Where(GetGroupFilter(groupRecord))
-            //            .ToArrayAsync();
-            //
-            //        await groupRecord.RemoveFromGroupAsync(group.Select(x => x.Value), groupMember);
-            //    }
-            //}
-
+            
 
             //データベース更新
 
-
             using (var connection = this.Records.Parent.ConnectAsThreadSafe())
             {
-                using (var transaction = connection.Value.BeginTransaction())
-                {
-                    try
-                    {
-                        //更新
-                        //Parallel.ForEach(updatedFiles, item =>
-                        //{
-                        //    records.Update
-                        //        (item.Value, connection.Value, transaction);
-                        //    
-                        //});
+                //削除
+                this.Records.RemoveRangeBuffered(connection.Value, removedFiles.Select(x => x.Value));
 
-                        //updatedFiles.ForEach(item =>
-                        foreach (var item in updatedFiles)
-                        {
-                            await this.Records.UpdateAsync
-                                (item.Value, connection.Value, transaction);
+                //using (var transaction = connection.Value.BeginTransaction())
+                //{
+                //    try
+                //    {
+                //        foreach (var item in updatedFiles)
+                //        {
+                //            await this.Records.UpdateAsync
+                //                (item.Value, connection.Value, transaction);
+                //        }
+                //
+                //        transaction.Commit();
+                //    }
+                //    catch
+                //    {
+                //        transaction.Rollback();
+                //    }
+                //}
 
-                        }//);
-
-                        transaction.Commit();
-                    }
-                    catch
-                    {
-                        transaction.Rollback();
-                    }
-                }
-
-
-
-                //追加
+                //追加・更新
                 var dateNow = DateTimeOffset.Now;
                 foreach (var item in addedFiles)
                 {
                     item.Value.DateRegistered = dateNow;
                 }
-                await this.Records.AddRangeBufferedAsync(connection.Value, addedFiles.Select(x => x.Value), false);
-
-                //削除
-                this.Records.RemoveRangeBuffered(connection.Value, removedFiles.Select(x => x.Value));
+                await this.Records.AddRangeBufferedAsync(connection.Value,
+                    addedFiles.Select(x => x.Value).Concat(updatedFiles.Select(x => x.Value)), true);
 
 
                 //関連するグループの情報を更新
@@ -509,31 +411,21 @@ namespace ImageLibrary.Creation
 
                 await library.Grouping.RefreshGroupPropertiesAsync(connection.Value, groups);
             }
-
-            //addedFilesResult = new Dictionary<string, Record>(addedFiles);
-            //removedFilesResult = new Dictionary<string, Record>(removedFiles);
-            //updatedFilesResult = new Dictionary<string, Record>(updatedFiles);
-
-            //lab1:
-
-            //await CompletingTask;// this.MakeDirectoryTreeAsync();
+            
             this.CompletingTask();
 
             this.LoadingSubject.OnNext(null);
-
-
         }
 
 
         private void MarkAsUpdated
             (KeyValuePair<string, Record> oldFile, KeyValuePair<string, Record> newFile)
         {
-            //var movedFile = filesWithSameName[0];
             newFile.Value.CopyAdditionalInformation(newFile.Value);
 
-            removedFilesResult.Remove(oldFile.Key);
-            addedFilesResult.Remove(newFile.Key);
-            updatedFilesResult[newFile.Key] = newFile.Value;
+            this.removedFilesResult.Remove(oldFile.Key);
+            this.addedFilesResult.Remove(newFile.Key);
+            this.updatedFilesResult[newFile.Key] = newFile.Value;
         }
     }
 }
