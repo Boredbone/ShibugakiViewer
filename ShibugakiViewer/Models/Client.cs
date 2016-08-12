@@ -198,6 +198,7 @@ namespace ShibugakiViewer.Models
                 if (x.Action != CacheClearAction.SortChanged)
                 {
                     this.SelectedItems.ClearCache();
+                    //Debug.WriteLine("clear");
                 }
             })
             .AddTo(this.Disposables);
@@ -231,12 +232,17 @@ namespace ShibugakiViewer.Models
                 .Where(x => x.Key != null)
                 .Publish().RefCount();
 
+            //selectedChangedTrigger.Subscribe(x => Debug.WriteLine(x.Value?.Id??"trigger null"));
+
             //DBに問い合わせ
             var selectedChanged = selectedChangedTrigger
                 .Where(x => x.Value == null)
                 .SelectMany(x => core.Library.GetRecordAsync(x.Key))
                 //.SelectMany(x => Observable.FromAsync(() => core.Library.GetRecordAsync(x.Key)))
                 .Merge(selectedChangedTrigger.Where(x => x.Value != null).Select(x => x.Value));
+
+
+            //this.SelectedItems.SelectedItemChanged.Subscribe(x => Debug.WriteLine(x?.Id ?? "selected null"));
 
             //Catalogで選択中のRecord
             var catalogDisplaying = this.SelectedItems.SelectedItemChanged

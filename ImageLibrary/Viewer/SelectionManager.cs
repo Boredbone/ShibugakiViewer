@@ -247,34 +247,37 @@ namespace ImageLibrary.Viewer
 
         public bool Remove(Record item)
         {
-            this.LastSelectedItem = null;
+            var id = item.Id;
+            return this.Remove(id);
 
-            if (this.ItemsSet.ContainsKey(item.Id))
-            {
-                var removed = this.ItemsSet.First(x => x.Key == item.Id);
-                this.ItemsSet.Remove(item.Id);
-
-                if (this.SelectedItemSubject.Value == item)
-                {
-                    this.SelectedItemSubject.OnNext(this.ItemsSet.Select(x => x.Value).FirstOrDefault());
-                }
-
-                this.NotifyCountChanged();
-
-                var dic = new Dictionary<string, Record>()
-                {
-                    [item.Id] = item
-                };
-                this.Ids.Remove(item.Id);
-                this.RemovedSubject.OnNext(dic);
-                //this.CollectionChanged?.Invoke(this,
-                //    new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, dic.ToList(),-1));
-
-
-                return true;
-
-            }
-            return false;
+            //this.LastSelectedItem = null;
+            //
+            //if (this.ItemsSet.ContainsKey(id))
+            //{
+            //    //var removed = this.ItemsSet.First(x => x.Key == item.Id);
+            //    this.ItemsSet.Remove(id);
+            //
+            //    if (this.SelectedItemSubject.Value?.Id == id)
+            //    {
+            //        this.SelectedItemSubject.OnNext(this.ItemsSet.Select(x => x.Value).FirstOrDefault());
+            //    }
+            //
+            //    this.NotifyCountChanged();
+            //
+            //    var dic = new Dictionary<string, Record>()
+            //    {
+            //        [id] = item
+            //    };
+            //    this.Ids.Remove(id);
+            //    this.RemovedSubject.OnNext(dic);
+            //    //this.CollectionChanged?.Invoke(this,
+            //    //    new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, dic.ToList(),-1));
+            //
+            //
+            //    return true;
+            //
+            //}
+            //return false;
         }
 
         public bool Remove(string id)
@@ -398,6 +401,11 @@ namespace ImageLibrary.Viewer
         {
             var keys = this.ItemsSet.Select(x => x.Key).ToArray();
             keys.ForEach(x => this.ItemsSet[x] = null);
+
+            if (this.ItemsSet.Count > 1)
+            {
+                this.SelectedItemSubject.OnNext(null);
+            }
 
             this.RefreshCommonInformationAsync().FireAndForget();
         }
