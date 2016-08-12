@@ -353,18 +353,11 @@ namespace SparkImageViewer.DataModel
             this.IsCoreSettingsLoaded = false;
             this.IsLibrarySettingsLoaded = false;
 
-            settingXml
-                = new XmlSettingManager<ApplicationSettings>(settingFileName)
-                {
-                    Directory = directory,
-                };
+            settingXml = new XmlSettingManager<ApplicationSettings>
+                (System.IO.Path.Combine(directory, settingFileName));
 
-
-            librarySettingXml
-                = new XmlSettingManager<LibrarySettings>(librarySettingFileName)
-                {
-                    Directory = directory,
-                };
+            librarySettingXml = new XmlSettingManager<LibrarySettings>
+                (System.IO.Path.Combine(directory, librarySettingFileName));
 
             this.coreSettings = new ApplicationSettings();
 

@@ -129,6 +129,7 @@ namespace ShibugakiViewer.ViewModels
         public ReadOnlyReactiveProperty<string> WindowTitle { get; }
 
         public double TagSelectorScrollOffset { get; set; }
+        public TagInformation TagSelectorLaseSelected { get; set; }
 
         public KeyReceiver<object> KeyReceiver { get; }
 
@@ -666,6 +667,19 @@ namespace ShibugakiViewer.ViewModels
                 this.IsPaneOpen.Value = false;
             }
         }
+
+        public void ToggleInformationPane()
+        {
+            if (this.IsPaneOpen.Value && !this.IsPaneFixed.Value)
+            {
+                this.SelectedInformationPage.Value = OptionPaneType.None;
+                this.IsPaneOpen.Value = false;
+            }
+            else
+            {
+                this.ShowInformationPane(true);
+            }
+        }
         
 
         private void ClosePopupOrMenu()
@@ -697,6 +711,56 @@ namespace ShibugakiViewer.ViewModels
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
             };
             window.Show();
+        }
+
+        /// <summary>
+        /// タグ選択ダイアログ表示
+        /// </summary>
+        /// <param name="relativeControl"></param>
+        public void ShowTagSelector(FrameworkElement relativeControl)
+        {
+            switch (this.Client.SelectedPage.Value)
+            {
+                case PageType.Catalog:
+                    if (this.SelectedItems.Count <= 0  && this.SelectedRecord.Value == null)
+                    {
+                        return;
+                    }
+                    break;
+                case PageType.Viewer:
+                    if (this.SelectedRecord.Value == null)
+                    {
+                        return;
+                    }
+                    break;
+                default:
+                    return;
+            }
+
+            var left
+                = (relativeControl != null) ? 10.0 
+                : this.IsPaneOpen.Value ? (openPaneWidth + 10.0)
+                : 10.0;
+
+            var content = new TagSelector();
+
+            if (this.Client.SelectedPage.Value == PageType.Catalog && this.SelectedItems.Count > 1)
+            {
+                content.TagSelectedCallBack += x => this.SelectedItems.AddTag(x);
+            }
+            else if (this.SelectedRecord.Value != null)
+            {
+                content.Target = this.SelectedRecord.Value;
+            }
+            else
+            {
+                return;
+            }
+
+            this.PopupOwner.PopupDialog.Show(content,
+                new Thickness(left, double.NaN, double.NaN, double.NaN),
+                relativeControl == null ? HorizontalAlignment.Left : HorizontalAlignment.Right,
+                VerticalAlignment.Center, relativeControl);
         }
     }
 

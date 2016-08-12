@@ -88,6 +88,21 @@ namespace ImageLibrary.Tag
         }
         private DateTimeOffset _fieldLastUsed;
 
+        public bool IsOpen
+        {
+            get { return _fieldIsOpen; }
+            set
+            {
+                if (_fieldIsOpen != value)
+                {
+                    _fieldIsOpen = value;
+                    RaisePropertyChanged(nameof(IsOpen));
+                }
+            }
+        }
+        private bool _fieldIsOpen;
+
+
 
         public bool IsLoaded { get; set; } = false;
 

@@ -217,20 +217,40 @@ namespace ShibugakiViewer.Models
                 .Subscribe(_ => this.SetRecord(true))
                 .AddTo(this.Disposables);
 
-
+            //Viewerで表示中のRecord
             var viewerDisplaying = this.ViewerDisplayingInner
                 .CombineLatest(this.SelectedPage, (r, p) => p == PageType.Viewer ? r : null)
                 .Where(x => x != null);
 
+            //Catalogで選択数が1になったとき、Recordの実体がわからない
+            var selectedChangedTrigger = this.SelectedItemsCount
+                .Pairwise()
+                .Where(x => x.OldItem > 1 && x.NewItem == 1 && this.SelectedRecord.Value == null
+                    && this.SelectedPage.Value == PageType.Catalog)
+                .Select(_ => this.SelectedItems.GetAll().FirstOrDefault())
+                .Where(x => x.Key != null)
+                .Publish().RefCount();
+
+            //DBに問い合わせ
+            var selectedChanged = selectedChangedTrigger
+                .Where(x => x.Value == null)
+                .SelectMany(x => core.Library.GetRecordAsync(x.Key))
+                //.SelectMany(x => Observable.FromAsync(() => core.Library.GetRecordAsync(x.Key)))
+                .Merge(selectedChangedTrigger.Where(x => x.Value != null).Select(x => x.Value));
+
+            //Catalogで選択中のRecord
             var catalogDisplaying = this.SelectedItems.SelectedItemChanged
                 .CombineLatest(this.front.FeaturedGroupChanged, (s, g) => s ?? g)
+                .Merge(selectedChanged)
                 .Where(_ => this.SelectedPage.Value == PageType.Catalog)
                 .CombineLatest(this.SelectedPage.Where(x => x == PageType.Catalog), (x, p) => x);
 
+            //情報を表示すべきRecord
             this.SelectedRecord = viewerDisplaying
                 .Merge(catalogDisplaying)
                 .ToReadOnlyReactiveProperty()
                 .AddTo(this.Disposables);
+
 
 
             this.PageSize = this.ColumnLength.Where(x => x > 0)

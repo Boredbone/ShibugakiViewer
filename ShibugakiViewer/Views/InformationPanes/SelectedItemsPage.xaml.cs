@@ -75,20 +75,26 @@ namespace ShibugakiViewer.Views.InformationPanes
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var window = Window.GetWindow(this) as IPopupDialogOwner;
+            var clientViewModel = this.DataContext as ClientWindowViewModel;
             var control = sender as FrameworkElement;
 
-            if (window != null && control != null)
-            {
-                var content = new TagSelector()
-                {
-                    TagSelectedCallBack = x => this.Source.AddTag(x),
-                };
+            clientViewModel.ShowTagSelector(control);
 
-                window.PopupDialog.Show(content,
-                    new Thickness(10.0, 10.0, double.NaN, double.NaN),
-                    HorizontalAlignment.Right, VerticalAlignment.Center, control);
-            }
+
+            //var window = Window.GetWindow(this) as IPopupDialogOwner;
+            //var control = sender as FrameworkElement;
+            //
+            //if (window != null && control != null)
+            //{
+            //    var content = new TagSelector()
+            //    {
+            //        TagSelectedCallBack = x => this.Source.AddTag(x),
+            //    };
+            //
+            //    window.PopupDialog.Show(content,
+            //        new Thickness(10.0, 10.0, double.NaN, double.NaN),
+            //        HorizontalAlignment.Right, VerticalAlignment.Center, control);
+            //}
         }
 
         private void pathRemoveButton_Click(object sender, RoutedEventArgs e)

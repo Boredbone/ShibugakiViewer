@@ -126,8 +126,8 @@ namespace ImageLibrary.Core
         {
             this.config = config;
 
-            this.librarySettingXml = new XmlSettingManager<LibrarySettings>(librarySettingFileName);
-            this.librarySettingXml.Directory = config.SaveDirectory;
+            this.librarySettingXml = new XmlSettingManager<LibrarySettings>
+                (System.IO.Path.Combine(config.SaveDirectory, librarySettingFileName));
 
 
 

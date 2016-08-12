@@ -35,19 +35,17 @@ namespace SparkImageViewer.DataModel
 
         private string directory;
 
-        public ImageLibrary(SearchSortManager searcher,string directory)
+        public ImageLibrary(SearchSortManager searcher, string directory)
         {
             this.searcher = searcher;
             this.directory = directory;
 
-            libraryListXml
-                = new XmlSettingManager<SavedLibraryList>(libraryListFileName);
-            libraryListXml.Directory = directory;
+            libraryListXml = new XmlSettingManager<SavedLibraryList>
+                (System.IO.Path.Combine(directory, libraryListFileName));
 
-            libraryDiffXml
-                = new XmlSettingManager<List<KeyValuePair<string, FileInformation>>>(libraryDiffFileName);
-            libraryDiffXml.Directory = directory;
-    }
+            libraryDiffXml = new XmlSettingManager<List<KeyValuePair<string, FileInformation>>>
+                ((System.IO.Path.Combine(directory, libraryDiffFileName)));
+        }
 
         private void SendMessage(string text)
         {
@@ -80,10 +78,8 @@ namespace SparkImageViewer.DataModel
 
                         //リストに記載されたファイルからライブラリデータ本体を読み込み
                         var libraries = await list
-                            .Select(x => new XmlSettingManager<List<KeyValuePair<string, FileInformation>>>(x)
-                            {
-                                Directory = directory,
-                            })
+                            .Select(x => new XmlSettingManager<List<KeyValuePair<string, FileInformation>>>
+                                (System.IO.Path.Combine(directory, x)))
                             .Select(async x => await x.LoadXmlAsync(XmlLoadingOptions.ThrowAll))
                             .WhenAll();
 
@@ -118,10 +114,8 @@ namespace SparkImageViewer.DataModel
 
                         //リストに記載されたファイルからライブラリデータ本体を読み込み
                         var libraries = list
-                            .Select(x => new XmlSettingManager<List<KeyValuePair<string, FileInformation>>>(x)
-                            {
-                                Directory = directory,
-                            })
+                            .Select(x => new XmlSettingManager<List<KeyValuePair<string, FileInformation>>>
+                                (System.IO.Path.Combine(directory, x)))
                             .Select(x => x.LoadBackupXml(XmlLoadingOptions.IgnoreNotFound))
                             .ToArray();
 
@@ -146,11 +140,9 @@ namespace SparkImageViewer.DataModel
                 {
                     //ライブラリリストが読み込めなかった
                     //旧フォーマットのライブラリがあるかチェック
-                    var result = await (new XmlSettingManager<Dictionary<string, FileInformation>>("lib.xml")
-                    {
-                        Directory = directory,
-                    })
-                        .LoadXmlAsync( XmlLoadingOptions.IgnoreNotFound);
+                    var result = await (new XmlSettingManager<Dictionary<string, FileInformation>>
+                                (System.IO.Path.Combine(directory, "lib.xml")))
+                        .LoadXmlAsync(XmlLoadingOptions.IgnoreNotFound);
 
                     if (result != null && result.Value.Count > 0)
                     {
@@ -284,7 +276,7 @@ namespace SparkImageViewer.DataModel
         }
 
 
-        
+
 
     }
 }

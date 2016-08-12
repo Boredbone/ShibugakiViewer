@@ -36,9 +36,8 @@ namespace ShibugakiViewer.Backup
 
 
             //ストレージに保存する設定
-            this.SettingsXml = new XmlSettingManager<ApplicationSettings>(settingsFileName);
-
-            this.SettingsXml.Directory = xmlSaveDirectory;
+            this.SettingsXml = new XmlSettingManager<ApplicationSettings>
+                (System.IO.Path.Combine(xmlSaveDirectory, settingsFileName));
 
             this.Settings = SettingsXml
                 .LoadXml(XmlLoadingOptions.IgnoreAllException | XmlLoadingOptions.UseBackup)

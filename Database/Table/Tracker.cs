@@ -27,10 +27,7 @@ namespace Database.Table
 
         private readonly Subject<PropertyChangedContainer<TRecord>> updateSubject;
         public IObservable<PropertyChangedContainer<TRecord>> PropertyChanged => this.updateSubject.AsObservable();
-
-        //private readonly Subject<TRecord> savingSubject;
-        //public IObservable<TRecord> Saving => this.savingSubject.AsObservable();
-
+        
 
         public Tracker(ITypedTable<TRecord> table)
         {
@@ -38,15 +35,16 @@ namespace Database.Table
 
             this.UpdatedSubject = new Subject<DatabaseUpdatedEventArgs>().AddTo(this.Disposables);
             this.updateSubject = new Subject<PropertyChangedContainer<TRecord>>().AddTo(this.Disposables);
-            //this.savingSubject = new Subject<TRecord>().AddTo(this.Disposables);
 
-            this.updateSubject
+            var update = this.updateSubject
                 .Where(x => this.IsAutoSaving && this.table.TargetProperties.ContainsKey(x.PropertyName))
-                .Buffer(this.updateSubject.Throttle(TimeSpan.FromMilliseconds(this.AutoSaveTimeMilliseconds)))
+                .Publish().RefCount();
+
+            update
+                .Buffer(update.Throttle(TimeSpan.FromMilliseconds(this.AutoSaveTimeMilliseconds)))
                 .Where(x => x.Count > 0)
                 .Subscribe(updatedItems =>
                 {
-                    //Debug.WriteLine(updatedItems.Count);
 
                     Task.Run(async () =>
                     {
@@ -57,27 +55,6 @@ namespace Database.Table
                             {
                                 try
                                 {
-                                    //Parallel.ForEach(updatedItems.GroupBy(x => x.Source.Id), x =>
-                                    //{
-                                    //    
-                                    //    x.ForEach(item =>
-                                    //    {
-                                    //        this.table.Update
-                                    //            (item.Source, connection, transaction, item.PropertyName);
-                                    //
-                                    //    });
-                                    //});
-
-                                    //Debug.WriteLine(updatedItems.Select(y=>y.PropertyName).Join(","));
-
-                                    //updatedItems.ForEach(item =>
-                                    //{
-                                    //    this.table.Update
-                                    //        (item.Source, connection, transaction, item.PropertyName);
-                                    //
-                                    //});
-
-                                    //updatedItems.GroupBy(x => x.Source).ForEach(item =>
                                     foreach(var item in updatedItems.GroupBy(x => x.Source))
                                     {
                                         var properties = item.Select(x => x.PropertyName).Distinct().ToArray();
@@ -87,7 +64,7 @@ namespace Database.Table
 
                                         Debug.WriteLine(item.Key.Id.ToString() + " update " + properties.Join(","));
 
-                                    }//);
+                                    }
 
                                     transaction.Commit();
                                     succeeded = true;
@@ -107,55 +84,8 @@ namespace Database.Table
                                 Action = DatabaseAction.Update,
                             });
                         }
-                        //using (var connection = this.table.Parent.ConnectAsThreadSafe())
-                        //{
-                        //    using (var transaction = connection.Value.BeginTransaction())
-                        //    {
-                        //        try
-                        //        {
-                        //            updatedItems.AsParallel().ForAll(item =>
-                        //            {
-                        //                this.table.Update
-                        //                    (item.Source, connection.Value, transaction, item.PropertyName);
-                        //
-                        //            });
-                        //
-                        //            transaction.Commit();
-                        //        }
-                        //        catch
-                        //        {
-                        //            transaction.Rollback();
-                        //        }
-                        //    }
-                        //}
                     });
-
-                    //await this.table.RequestTransactionAsync(context =>
-                    //{
-                    //    foreach (var item in updatedItems)
-                    //    {
-                    //        this.table.Update
-                    //            (item.Source, context.Connection, context.Transaction, item.PropertyName);
-                    //
-                    //    }
-                    //});
-
-
-                    //var groups = updatedItems.GroupBy(x => x.Source.Id);
-                    //
-                    //this.table.RequestTransaction(context =>
-                    //{
-                    //    foreach (var group in groups)
-                    //    {
-                    //        var target = group.Last().Source;
-                    //        var properties = group.Select(x => x.PropertyName).Distinct().ToArray();
-                    //
-                    //        this.table.Update
-                    //            (target, context.Connection, context.Transaction, properties);
-                    //
-                    //        //this.savingSubject.OnNext(target);
-                    //    }
-                    //});
+                    
                 })
                 .AddTo(this.Disposables);
         }
@@ -165,14 +95,6 @@ namespace Database.Table
             target.PropertyChanged += (o, e)
                 => this.RequestSaving(new PropertyChangedContainer<TRecord>((TRecord)o, e.PropertyName));
             target.IsLoaded = true;
-            /*
-            target.PropertyChanged += (o, e) =>
-            {
-                this.table.RequestTransaction(context =>
-                {
-                    this.table.Update((T)o, context.Connection, context.Transaction, e.PropertyName);
-                });
-            };*/
         }
 
 

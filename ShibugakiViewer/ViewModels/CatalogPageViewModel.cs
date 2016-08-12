@@ -244,6 +244,31 @@ namespace ShibugakiViewer.ViewModels
             }
         }
 
+        /// <summary>
+        /// 選択されたアイテムにタグを設定
+        /// </summary>
+        /// <param name="code"></param>
+        private void SetTag(string code)
+        {
+            var res = this.library.Tags.GetTag(code).Value;
+
+            if (res != null)
+            {
+                if (this.SelectedItems.Count <= 0)
+                {
+                    return;
+                }
+                else if (this.SelectedItems.Count == 1 && this.client.SelectedRecord.Value != null)
+                {
+                    this.client.SelectedRecord.Value.TagSet.Toggle(res);
+                }
+                else
+                {
+                    this.SelectedItems.AddTag(res);
+                }
+            }
+        }
+
 
         /// <summary>
         /// キーボード操作を登録
@@ -311,9 +336,29 @@ namespace ShibugakiViewer.ViewModels
                 }
             }, pageFilter, modifier: ModifierKeys.Control);
 
+
+            keyReceiver.Register(Key.N, (t, key) => this.SelectedItems.Clear(),
+                pageFilter, modifier: ModifierKeys.Control);
+
             keyReceiver.Register(Key.C,
                 (t, key) => this.parent.Core.CopySelectedItemsPath(this.SelectedItems),
                 pageFilter, modifier: ModifierKeys.Control);
+
+            keyReceiver.Register(Key.T, (t, key) => this.parent.ShowTagSelector(null),
+                cursorFilter, modifier: ModifierKeys.Control);
+
+
+            keyReceiver.Register(Key.Apps, (t, key) =>
+            {
+                if (!parent.IsPaneFixed.Value)
+                {
+                    parent.ToggleInformationPane();
+                }
+            }, cursorFilter);
+
+            keyReceiver.Register(k => k >= Key.A && k <= Key.Z,
+                (t, key) => this.SetTag(((char)(key - Key.A + 'a')).ToString()),
+                cursorFilter);
         }
     }
 }

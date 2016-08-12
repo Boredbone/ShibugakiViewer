@@ -550,7 +550,7 @@ namespace ShibugakiViewer.ViewModels
 
             if (res != null)
             {
-                ToggleTag(res);
+                this.ToggleTag(res);
             }
         }
 
@@ -718,7 +718,7 @@ namespace ShibugakiViewer.ViewModels
             }
             if (!parent.IsPaneFixed.Value)
             {
-                parent.TogglePane(OptionPaneType.ItemInfo);
+                parent.ToggleInformationPane();
             }
         }
 
@@ -851,10 +851,8 @@ namespace ShibugakiViewer.ViewModels
             keyReceiver.Register(Key.R, (t, key) => this.Rotate(1),
                 cursorFilter, modifier: ModifierKeys.Control);
 
-            keyReceiver.Register(Key.T, (t, key) =>
-           {
-               //this.tagSelectorFlyout.IsOpen = true;
-           }, cursorFilter, modifier: ModifierKeys.Control);
+            keyReceiver.Register(Key.T, (t, key) => this.parent.ShowTagSelector(null),
+                cursorFilter, modifier: ModifierKeys.Control);
 
             keyReceiver.Register(Key.P, (t, key) =>
             {

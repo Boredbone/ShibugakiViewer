@@ -408,11 +408,10 @@ namespace ShibugakiViewer.Models
             // Set the user interface to display in the same culture as that set in Control Panel.
             System.Threading.Thread.CurrentThread.CurrentUICulture =
                 System.Threading.Thread.CurrentThread.CurrentCulture;
-            
-            //ストレージに保存する設定
-            this.SettingsXml = new XmlSettingManager<ApplicationSettings>(settingsFileName);
 
-            this.SettingsXml.Directory = saveDirectory;
+            //ストレージに保存する設定
+            this.SettingsXml = new XmlSettingManager<ApplicationSettings>
+                (Path.Combine(saveDirectory, settingsFileName));
 
             this.Settings = SettingsXml
                 .LoadXml(XmlLoadingOptions.IgnoreAllException | XmlLoadingOptions.UseBackup)

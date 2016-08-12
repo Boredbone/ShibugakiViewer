@@ -11,7 +11,8 @@
              xmlns:cc="clr-namespace:WpfTools.Controls;assembly=WpfTools"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" IsEnabledChanged="UserControl_IsEnabledChanged">
+             d:DesignHeight="300" d:DesignWidth="300" IsEnabledChanged="UserControl_IsEnabledChanged"
+             PreviewKeyUp="UserControl_PreviewKeyUp">
 
     <UserControl.Resources>
         <converter:ComboBoxPlaceHolderVisibilityConverter x:Key="ComboBoxPlaceHolderVisibilityConverter" />
@@ -48,7 +49,6 @@
                   SelectionMode="Single"
                   VirtualizingPanel.ScrollUnit="Pixel"
                   Grid.Row="1" VerticalAlignment="Stretch"
-                  SelectionChanged="list_SelectionChanged"
                   Loaded="list_Loaded"
                   TabIndex="0">
             <ListView.Resources>
@@ -138,11 +138,7 @@
 
                     <DataTemplate.Triggers>
                         <DataTrigger
-                            Binding="{Binding
-                            RelativeSource={RelativeSource
-                            Mode=FindAncestor,
-                            AncestorType={x:Type ListBoxItem}},
-                            Path=IsSelected}"
+                            Binding="{Binding IsOpen,Mode=OneWay}"
                             Value="True">
                             <Setter
                                 TargetName="editField"
