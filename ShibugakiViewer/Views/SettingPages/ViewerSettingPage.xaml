@@ -40,7 +40,7 @@
                       IsChecked="{Binding IsAutoInformationPaneEnabled.Value,Mode=TwoWay}"/>
 
 
-                <CheckBox Content="Theme" IsChecked="{Binding IsDarkTheme.Value,Mode=TwoWay}"/>
+                <!--<CheckBox Content="Theme" IsChecked="{Binding IsDarkTheme.Value,Mode=TwoWay}"/>-->
 
                 <TextBlock Text="{x:Static properties:Resources.ThemeSelectorHeader_Text}"/>
                 <ComboBox 
@@ -61,9 +61,9 @@
                 <CheckBox 
                 Content="{x:Static properties:Resources.GroupingSwitch_Header}" 
                 IsChecked="{Binding IsGroupingEnabled.Value,Mode=TwoWay}"/>
-                <CheckBox 
+                <!--<CheckBox 
                 Content="{x:Static properties:Resources.LibRefreshModeHelp_Header}" 
-                IsChecked="{Binding RefreshLibraryCompletely.Value,Mode=TwoWay}"/>
+                IsChecked="{Binding RefreshLibraryCompletely.Value,Mode=TwoWay}"/>-->
 
                 <TextBlock Text="{x:Static properties:Resources.LibRefreshModeHelp_Header}"/>
                 <ComboBox 
@@ -78,9 +78,9 @@
                 </ComboBox>
 
 
-                <CheckBox 
+                <!--<CheckBox 
                 Content="{x:Static properties:Resources.PageTurning}" 
-                IsChecked="{Binding IsFlipReversed.Value,Mode=TwoWay}"/>
+                IsChecked="{Binding IsFlipReversed.Value,Mode=TwoWay}"/>-->
 
                 <TextBlock Text="{x:Static properties:Resources.PageTurning}"/>
                 <ComboBox 

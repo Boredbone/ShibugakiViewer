@@ -59,7 +59,8 @@ namespace ShibugakiViewer.ViewModels
         public ReactiveCommand OpenPaneCommand { get; }
         public ReactiveCommand TogglePaneCommand { get; }
         public ReactiveCommand BackCommand { get; }
-        
+
+        public ReactiveCommand MoveToGroupCommand { get; }
 
 
         public ReactiveCommand HorizontalMirrorCommand { get; }
@@ -433,7 +434,8 @@ namespace ShibugakiViewer.ViewModels
             this.RotateCcwCommand = new ReactiveCommand()
                 .WithSubscribe(_ => { this.Rotate(-1); this.HidePopup(); }, this.Disposables);
 
-
+            this.MoveToGroupCommand = this.Record.Select(x => x?.IsGroup ?? false).ToReactiveCommand()
+                .WithSubscribe(_ => this.client.DisplayGroup(0), this.Disposables);
 
             this.CheckHorizontalScrollRequestFunction = () =>
             {

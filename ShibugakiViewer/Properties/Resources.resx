@@ -777,4 +777,7 @@
   <data name="StopSlideshow" xml:space="preserve">
     <value>Stop Slideshow</value>
   </data>
+  <data name="GroupDisplay" xml:space="preserve">
+    <value>Display Group Contents (Ctrl + G)</value>
+  </data>
 </root>

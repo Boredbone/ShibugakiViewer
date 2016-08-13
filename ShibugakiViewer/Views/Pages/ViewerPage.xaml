@@ -64,11 +64,35 @@
             </Grid>
         </Grid>
 
+        <!-- Group -->
         <Border Background="{StaticResource ThumbnailGroupBorderColor}"
-                Width="50" Height="50"
-                HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                Width="Auto" Height="Auto"
+                HorizontalAlignment="Center" VerticalAlignment="Bottom"
                 Visibility="{Binding Record.Value.IsGroup,Mode=OneWay,
-            Converter={StaticResource TrueToVisibleConverter},FallbackValue=Collapsed}"/>
+            Converter={StaticResource TrueToVisibleConverter},FallbackValue=Collapsed}">
+
+            <cc:FlatButton
+                    Command="{Binding MoveToGroupCommand}"
+                    Style="{StaticResource flatButtonStretchStyle}"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                Height="Auto">
+
+                <StackPanel>
+                    <TextBlock
+                        Text="{Binding Record.Value.FileName,Mode=OneWay}"
+                        FontSize="{StaticResource NormalTextSize}"
+                        Margin="4"
+                        HorizontalAlignment="Center"/>
+                    <cc:LabeledIcon
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        IconText="{StaticResource GroupingSymbol}"
+                        Text="{x:Static properties:Resources.GroupDisplay}"
+                    Margin="8,2,16,8"/>
+                </StackPanel>
+            </cc:FlatButton>
+        </Border>
 
         <!-- Top Bar -->
         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top"
@@ -121,36 +145,6 @@
                     Margin="4,8,4,4"
                     AutoToolTipPlacement="BottomRight"/>
 
-
-                    <!--
-                <StackPanel Orientation="Horizontal" Grid.Row="1"
-                        VerticalAlignment="Top">
-
-
-                    <TextBlock Text="{Binding ZoomFactor.Value,Mode=OneWay,
-                        Converter={StaticResource MultiplyConverter},
-                        ConverterParameter=100,StringFormat={}{0:F1}}"
-                               HorizontalAlignment="Right"
-                               Width="100" Margin="0"/>
-                    <TextBlock Text="%"/>
-
-                    <TextBox Text="{Binding DisplayZoomFactor.Value,Mode=TwoWay,
-                        StringFormat={}{0:F1},UpdateSourceTrigger=Explicit}"
-                             HorizontalAlignment="Right"
-                             Width="100" Margin="0"
-                             b:TextBoxBehavior.UpdateByReturn="True"/>
-                    <TextBlock Text="%"/>
-                    
-                    <Button Content="&lt;" Command="{Binding MoveLeftCommand}" Width="30"/>
-                    <Button Content="&gt;" Command="{Binding MoveRightCommand}" Width="30"/>
-
-                    <TextBlock
-                        HorizontalAlignment="Right" Margin="4"
-                        Foreground="{DynamicResource ThemeTextColor}">
-                        <Run Text="{Binding Record.Value.FullPath,Mode=OneWay}"/>
-                    </TextBlock>
-
-                </StackPanel>-->
 
 
                 <TextBlock

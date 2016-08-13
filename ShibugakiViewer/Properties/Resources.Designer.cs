@@ -736,6 +736,15 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
+        ///   Display Group Contents (Ctrl + G) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string GroupDisplay {
+            get {
+                return ResourceManager.GetString("GroupDisplay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Grouping に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string GroupingButton_Label {

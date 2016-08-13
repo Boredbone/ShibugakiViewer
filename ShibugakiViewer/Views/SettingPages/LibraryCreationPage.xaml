@@ -51,7 +51,9 @@
                   ItemsSource="{Binding Source={StaticResource collectionSource}}"
                   CanUserAddRows="False"
                   AutoGenerateColumns="False"
-                  SelectedIndex="-1">
+                  SelectedIndex="-1"
+                  ScrollViewer.CanContentScroll="True"
+                  VirtualizingPanel.IsVirtualizingWhenGrouping="True">
             <DataGrid.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.ContainerStyle>
