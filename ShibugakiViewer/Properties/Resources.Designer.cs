@@ -367,6 +367,15 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
+        ///   Use transparent buttons to change image に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string DisableMoveButton {
+            get {
+                return ResourceManager.GetString("DisableMoveButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Display and Navigation に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string DispAndNaviHelp_Text {
@@ -736,7 +745,7 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
-        ///   Display Group Contents (Ctrl + G) に類似しているローカライズされた文字列を検索します。
+        ///   Display Group Contents に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string GroupDisplay {
             get {

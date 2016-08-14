@@ -6,6 +6,7 @@
     <SolidColorBrush x:Key="ThemeNegatedTextColor" Color="LightGray"/>
     <SolidColorBrush x:Key="ThemeBackColor" Color="Black"/>
     <SolidColorBrush x:Key="TopBarBackColor" Color="#A0000000"/>
+    <SolidColorBrush x:Key="ThemeMaskColor" Color="#20FFFFFF"/>
     
     <SolidColorBrush x:Key="ThemeFlatButtonHoverBackground" Color="#40FFFFFF"/>
     <SolidColorBrush x:Key="ThemeFlatButtonPressedBackground" Color="#80FFFFFF"/>

@@ -298,7 +298,7 @@
                                 <StackPanel>
                                     <TextBlock Text="Ctrl + Space"/>
                                     <TextBlock Text="Ctrl + Enter"/>
-                                    <!--<TextBlock Text="Ctrl + &quot;.&quot;"/>-->
+                                    <TextBlock Text="Ctrl + &quot;.&quot;"/>
                                 </StackPanel>
                             </Border>
 
@@ -363,7 +363,7 @@
                             <Border Grid.Column="0" Grid.Row="13">
                                 <StackPanel>
                                     <TextBlock
-                                        Text="{x:Static properties:Resources.RotateRightHelp_Text}"/>
+                                        Text="{x:Static properties:Resources.RotateLeftHelp_Text}"/>
                                 </StackPanel>
                             </Border>
 
@@ -397,14 +397,26 @@
                             </Border>
 
 
-
                             <Border Grid.Column="1" Grid.Row="16">
+                                <StackPanel>
+                                    <TextBlock Text="Ctrl + &quot;G&quot;"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="0" Grid.Row="16">
+                                <StackPanel>
+                                    <TextBlock 
+                                        Text="{x:Static properties:Resources.GroupDisplay}"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="1" Grid.Row="17">
                                 <StackPanel>
                                     <TextBlock Text="Ctrl + &quot;P&quot;"/>
                                 </StackPanel>
                             </Border>
 
-                            <Border Grid.Column="0" Grid.Row="16">
+                            <Border Grid.Column="0" Grid.Row="17">
                                 <StackPanel>
                                     <TextBlock 
                                         Text="{x:Static properties:Resources.DispPropHelp_Text}"/>
@@ -412,39 +424,39 @@
                             </Border>
 
 
-                            <Border Grid.Column="1" Grid.Row="17">
+                            <Border Grid.Column="1" Grid.Row="18">
                                 <StackPanel>
                                     <TextBlock Text="Ctrl + &quot;F&quot;"/>
                                 </StackPanel>
                             </Border>
 
-                            <Border Grid.Column="0" Grid.Row="17">
+                            <Border Grid.Column="0" Grid.Row="18">
                                 <StackPanel>
                                     <TextBlock Text="{StaticResource SearchLabel}"/>
                                 </StackPanel>
                             </Border>
 
 
-                            <Border Grid.Column="1" Grid.Row="18">
+                            <Border Grid.Column="1" Grid.Row="19">
                                 <StackPanel>
                                     <TextBlock Text="Ctrl + &quot;L&quot;"/>
                                 </StackPanel>
                             </Border>
 
-                            <Border Grid.Column="0" Grid.Row="18">
+                            <Border Grid.Column="0" Grid.Row="19">
                                 <StackPanel>
                                     <TextBlock Text="{x:Static properties:Resources.OpenFileLocation}"/>
                                 </StackPanel>
                             </Border>
 
 
-                            <Border Grid.Column="1" Grid.Row="19">
+                            <Border Grid.Column="1" Grid.Row="20">
                                 <StackPanel>
                                     <TextBlock Text="Ctrl + &quot;C&quot;"/>
                                 </StackPanel>
                             </Border>
 
-                            <Border Grid.Column="0" Grid.Row="19">
+                            <Border Grid.Column="0" Grid.Row="20">
                                 <StackPanel>
                                     <TextBlock
                                         Text="{x:Static properties:Resources.CopyPath}"/>
@@ -452,7 +464,7 @@
                             </Border>
 
 
-                            <Border Grid.Column="1" Grid.Row="20">
+                            <Border Grid.Column="1" Grid.Row="21">
                                 <StackPanel>
                                     <TextBlock>
                                 <Run Text="Alt + "/>
@@ -461,20 +473,20 @@
                                 </StackPanel>
                             </Border>
 
-                            <Border Grid.Column="0" Grid.Row="20">
+                            <Border Grid.Column="0" Grid.Row="21">
                                 <StackPanel>
                                     <TextBlock 
                                         Text="{x:Static properties:Resources.BackHelp_Text}"/>
                                 </StackPanel>
                             </Border>
 
-                            <Border Grid.Column="1" Grid.Row="21">
+                            <Border Grid.Column="1" Grid.Row="22">
                                 <StackPanel>
                                     <TextBlock Text="Alt + &quot;Q&quot;"/>
                                 </StackPanel>
                             </Border>
 
-                            <Border Grid.Column="0" Grid.Row="21">
+                            <Border Grid.Column="0" Grid.Row="22">
                                 <StackPanel>
                                     <TextBlock 
                                         Text="{x:Static properties:Resources.ExitApp}"/>

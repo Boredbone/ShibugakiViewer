@@ -113,6 +113,10 @@
                 Content="IsFolderUpdatedNotificationVisible" 
                 IsChecked="{Binding IsFolderUpdatedNotificationVisible.Value,Mode=TwoWay}"/>
 
+                <CheckBox 
+                Content="{x:Static properties:Resources.DisableMoveButton}" 
+                IsChecked="{Binding IsViewerMoveButtonDisabled.Value,Mode=TwoWay}"/>
+                
                 <TextBlock
                         Text="{x:Static properties:Resources.CursorKeyFuncHelp_Header}"/>
 

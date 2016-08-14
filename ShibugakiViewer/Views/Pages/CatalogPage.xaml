@@ -405,7 +405,8 @@
                     <cc:LabeledIcon
                         IconText="{StaticResource ClearSelectionSymbol}"
                         Style="{StaticResource verticalLabeledIconStyle}"
-                        Text="{x:Static properties:Resources.ClearSelectionButton_Label}"/>
+                        Text="{x:Static properties:Resources.ClearSelectionButton_Label}"
+                        Shortcut="Ctrl + N"/>
                 </cc:FlatButton>
                 <cc:FlatButton 
                     Style="{StaticResource toolButton}"
@@ -413,7 +414,8 @@
                     <cc:LabeledIcon
                         IconText="{StaticResource SelectAllSymbol}"
                         Style="{StaticResource verticalLabeledIconStyle}"
-                        Text="{x:Static properties:Resources.SelectAllButton_Label}"/>
+                        Text="{x:Static properties:Resources.SelectAllButton_Label}"
+                        Shortcut="Ctrl + A"/>
                 </cc:FlatButton>
                 <cc:FlatButton 
                     Style="{StaticResource toolButton}"

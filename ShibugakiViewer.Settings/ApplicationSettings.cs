@@ -67,6 +67,9 @@ namespace ShibugakiViewer.Models
         public bool IsAutoInformationPaneDisabled { get; set; }
 
         [DataMember]
+        public bool IsViewerMoveButtonDisabled{ get; set; }
+
+        [DataMember]
         public uint BackgroundColor { get; set; }
         [DataMember]
         public bool IsDarkTheme { get; set; }
@@ -95,6 +98,7 @@ namespace ShibugakiViewer.Models
 
             this.IsSlideshowFullScreen = true;
             this.IsAutoInformationPaneDisabled = false;
+            this.IsViewerMoveButtonDisabled = false;
 
             this.BackgroundColor = ~(uint)0;
             this.IsDarkTheme = false;

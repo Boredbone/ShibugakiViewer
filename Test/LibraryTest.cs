@@ -264,6 +264,16 @@ namespace Test
                 await Task.Delay(300);
 
                 var group1 = await library.GetRecordAsync(group1Id);
+
+                group1.SetSort(new[]
+                {
+                    new SortSetting() {Property=FileProperty.FileNameSequenceNumRight,IsDescending=false },
+                    new SortSetting() {Property=FileProperty.AspectRatio,IsDescending=true },
+                    new SortSetting() {Property=FileProperty.DateTimeRegistered,IsDescending=false },
+                });
+
+                await Task.Delay(350);
+
                 var member = await library.GroupQuery.SearchAsync(group1, 0, 1000);
 
                 await this.IsGroupEquals(group1, leader1, member);
@@ -301,6 +311,10 @@ namespace Test
 
             await this.IsGroupEquals(group1b, leader2, group1bMember);
 
+
+            await this.IsFileOptionsEquals(group1a, group1b);
+
+            //return;
 
             var members2 = group1bMember.ToList();
 

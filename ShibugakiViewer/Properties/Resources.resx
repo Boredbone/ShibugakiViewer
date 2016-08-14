@@ -778,6 +778,9 @@
     <value>Stop Slideshow</value>
   </data>
   <data name="GroupDisplay" xml:space="preserve">
-    <value>Display Group Contents (Ctrl + G)</value>
+    <value>Display Group Contents</value>
+  </data>
+  <data name="DisableMoveButton" xml:space="preserve">
+    <value>Use transparent buttons to change image</value>
   </data>
 </root>

@@ -24,7 +24,11 @@
 
 
         <Grid x:Name="imageGrid"
-                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+              HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+              b:ManipulationCommandBehavior.PreviewMouseMoveAction="{Binding PointerMoveAction,Mode=OneWay}"
+              b:ManipulationCommandBehavior.PreviewMouseLeftDownAction="{Binding PointerDownAction,Mode=OneWay}"
+              b:ManipulationCommandBehavior.PreviewMouseLeftUpAction="{Binding PointerUpAction,Mode=OneWay}"
+              b:ManipulationCommandBehavior.MouseLeaveAction="{Binding PointerLeaveAction,Mode=OneWay}">
             <control:ScrollImageViewer 
                 x:Name="scrollImageViewer"
                 Source="{Binding Record.Value,Mode=OneWay}"
@@ -84,16 +88,39 @@
                         FontSize="{StaticResource NormalTextSize}"
                         Margin="4"
                         HorizontalAlignment="Center"/>
-                    <cc:LabeledIcon
+                    <cc:LabeledIcon                        
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         IconText="{StaticResource GroupingSymbol}"
-                        Text="{x:Static properties:Resources.GroupDisplay}"
-                    Margin="8,2,16,8"/>
+                        Text="{Binding Source={x:Static properties:Resources.GroupDisplay},
+                        StringFormat='{}{0} (Ctrl + G)'}"
+                        Margin="8,2,16,8"/>
                 </StackPanel>
             </cc:FlatButton>
         </Border>
 
+        <Grid IsHitTestVisible="False" Visibility="{Binding MoveButtonVisibility.Value,Mode=OneWay}">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <control:PageMoveMarker
+                IsRight="False" Grid.Column="0"
+                IsPointerMove="{Binding ElementName=scrollImageViewer,
+                Path=IsPointerMoving,Mode=OneWay}"
+                IsPointerEnter="{Binding IsLeftButtonEnter.Value,Mode=OneWay}"
+                IsPointerDown="{Binding IsLeftButtonPressed.Value,Mode=OneWay}"/>
+            <control:PageMoveMarker
+                IsRight="True" Grid.Column="2"
+                IsPointerMove="{Binding ElementName=scrollImageViewer,
+                Path=IsPointerMoving,Mode=OneWay}"
+                IsPointerEnter="{Binding IsRightButtonEnter.Value,Mode=OneWay}"
+                IsPointerDown="{Binding IsRightButtonPressed.Value,Mode=OneWay}"/>
+        </Grid>
+        
         <!-- Top Bar -->
         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top"
               Background="{DynamicResource TopBarBackColor}"
@@ -169,9 +196,14 @@
                     VerticalAlignment="Top"
                     IsChecked="{Binding IsRandom.Value,Mode=TwoWay}"
                     Width="{StaticResource ToolButtonWidth}"
-                    Height="{StaticResource ToolButtonWidth}"
-                    ToolTip="{x:Static properties:Resources.ShuffleButton_Label}"
-                    />
+                    Height="{StaticResource ToolButtonWidth}">
+                    <cc:FlatToggleButton.ToolTip>
+                        <TextBlock>
+                            <Run Text="{x:Static properties:Resources.ShuffleButton_Label}"/>
+                            <Run Text=" (Ctrl + S)"/>
+                        </TextBlock>
+                    </cc:FlatToggleButton.ToolTip>
+                </cc:FlatToggleButton>
 
                 <cc:FlatToggleButton 
                     VerticalAlignment="Top"
@@ -201,6 +233,13 @@
                                         <cc:FlatButton
                                             Style="{StaticResource contextMenuButtonStyle}"
                                             Command="{Binding RotateCwCommand}">
+                                            <cc:FlatButton.ToolTip>
+                                                <TextBlock>
+                                                    <Run
+                                                        Text="{x:Static properties:Resources.RotateCwText_Text}"/>
+                                                    <Run Text=" (Ctrl + R)"/>
+                                                </TextBlock>
+                                            </cc:FlatButton.ToolTip>
 
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
@@ -232,6 +271,13 @@
                                         <cc:FlatButton
                                             Style="{StaticResource contextMenuButtonStyle}"
                                             Command="{Binding RotateCcwCommand}">
+                                            <cc:FlatButton.ToolTip>
+                                                <TextBlock>
+                                                    <Run
+                                                        Text="{x:Static properties:Resources.RotateCcwText_Text}"/>
+                                                    <Run Text=" (Ctrl + E)"/>
+                                                </TextBlock>
+                                            </cc:FlatButton.ToolTip>
 
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
@@ -264,6 +310,13 @@
                                         <cc:FlatButton
                                             Style="{StaticResource contextMenuButtonStyle}"
                                             Command="{Binding HorizontalMirrorCommand}">
+                                            <cc:FlatButton.ToolTip>
+                                                <TextBlock>
+                                                    <Run
+                                                        Text="{x:Static properties:Resources.FlipHorizontalHelp_Text}"/>
+                                                    <Run Text=" (Ctrl + H)"/>
+                                                </TextBlock>
+                                            </cc:FlatButton.ToolTip>
 
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
@@ -287,6 +340,13 @@
                                         <cc:FlatButton
                                             Style="{StaticResource contextMenuButtonStyle}"
                                             Command="{Binding VerticalMirrorCommand}">
+                                            <cc:FlatButton.ToolTip>
+                                                <TextBlock>
+                                                    <Run
+                                                        Text="{x:Static properties:Resources.FlipVerticalHelp_Text}"/>
+                                                    <Run Text=" (Ctrl + V)"/>
+                                                </TextBlock>
+                                            </cc:FlatButton.ToolTip>
 
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
@@ -379,13 +439,28 @@
                         <Style TargetType="cc:FlatToggleButton"
                                BasedOn="{StaticResource themeSymbolFlatToggleButtonStyle}">
                             <Setter Property="Content" Value="{StaticResource PlaySymbol}"/>
-                            <Setter Property="ToolTip" Value="{x:Static properties:Resources.PlaySlideShow}"/>
+                            <Setter Property="ToolTip">
+                                <Setter.Value>
+                                    <TextBlock>
+                                        <Run Text="{x:Static properties:Resources.PlaySlideShow}"/>
+                                        <Run Text=" (Ctrl + .)"/>
+                                    </TextBlock>
+                                </Setter.Value>
+                            </Setter>
+                                    
                             <Style.Triggers>
                                 <DataTrigger 
                                     Binding="{Binding RelativeSource={RelativeSource Self},Path=IsChecked}"
                                     Value="True">
                                     <Setter Property="Content" Value="{StaticResource PauseSymbol}"/>
-                                    <Setter Property="ToolTip" Value="{x:Static properties:Resources.StopSlideshow}"/>
+                                    <Setter Property="ToolTip">
+                                        <Setter.Value>
+                                            <TextBlock>
+                                                <Run Text="{x:Static properties:Resources.StopSlideshow}"/>
+                                                <Run Text=" (Ctrl + .)"/>
+                                            </TextBlock>
+                                        </Setter.Value>
+                                    </Setter>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>

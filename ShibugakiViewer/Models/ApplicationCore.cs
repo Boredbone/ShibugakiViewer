@@ -381,6 +381,20 @@ namespace ShibugakiViewer.Models
             }
         }
 
+        public bool IsViewerMoveButtonDisabled
+        {
+            get { return this.Settings.IsViewerMoveButtonDisabled; }
+            set
+            {
+                if (this.Settings.IsViewerMoveButtonDisabled != value)
+                {
+                    this.Settings.IsViewerMoveButtonDisabled = value;
+                    RaisePropertyChanged(nameof(IsViewerMoveButtonDisabled));
+                }
+            }
+        }
+
+
         public bool IsSettingsLoaded { get; set; }
         public bool IsLibrarySettingsLoaded { get; set; }
 

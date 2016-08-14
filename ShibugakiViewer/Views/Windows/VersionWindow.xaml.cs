@@ -39,7 +39,11 @@ namespace ShibugakiViewer.Views.Windows
             buildDateTime = buildDateTime.AddSeconds(ver.Revision * 2);
             this.buildDate.Text = buildDateTime.ToString();
         }
-        
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
     
 }

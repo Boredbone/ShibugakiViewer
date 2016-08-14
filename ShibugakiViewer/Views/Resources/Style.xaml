@@ -426,17 +426,17 @@
         <!--<Setter Property="Template" Value="{StaticResource flatButton5}"/>-->
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
-        <Setter Property="Background" Value="#FFE0E0E0"/>
+        <Setter Property="Background" Value="{StaticResource ButtonBackground}"/>
         <Setter Property="BorderBrush" Value="Gray"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Margin" Value="0" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
 
-        <Setter Property="PointerHoverBackground" Value="#FFD0D0D0"/>
+        <Setter Property="PointerHoverBackground" Value="{StaticResource ButtonHoverBackground}"/>
         <Setter Property="PointerHoverBorderBrush" Value="#FF606060"/>
 
-        <Setter Property="PressedBackground" Value="#FF808080"/>
+        <Setter Property="PressedBackground" Value="{StaticResource ButtonPressedBackground}"/>
         <Setter Property="PressedBorderBrush" Value="#FF606060"/>
         <Setter Property="PressedBorderThickness" Value="2"/>
 

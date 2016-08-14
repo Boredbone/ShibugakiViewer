@@ -165,6 +165,9 @@
     <Compile Include="Views\Behaviors\TextBoxBehavior.cs" />
     <Compile Include="Views\Behaviors\SizeBehavior.cs" />
     <Compile Include="Views\Behaviors\VisualStateBehavior.cs" />
+    <Compile Include="Views\Controls\PageMoveMarker.xaml.cs">
+      <DependentUpon>PageMoveMarker.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Controls\PopupDialog.xaml.cs">
       <DependentUpon>PopupDialog.xaml</DependentUpon>
     </Compile>
@@ -230,6 +233,10 @@
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Controls\PageMoveMarker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Controls\PopupDialog.xaml">
       <SubType>Designer</SubType>

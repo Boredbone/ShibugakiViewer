@@ -92,6 +92,18 @@ namespace ShibugakiViewer.ViewModels
 
         public Action<object, MouseWheelEventArgs> TopBarWheelAction { get; }
 
+        public Action<object, MouseEventArgs> PointerMoveAction { get; }
+        public Action<object, MouseEventArgs> PointerLeaveAction { get; }
+        public Action<object, MouseEventArgs> PointerDownAction { get; }
+        public Action<object, MouseEventArgs> PointerUpAction { get; }
+
+        //public ReactiveProperty<bool> IsPointerMoving { get; }
+        public ReactiveProperty<bool> IsLeftButtonEnter { get; }
+        public ReactiveProperty<bool> IsRightButtonEnter { get; }
+        public ReactiveProperty<bool> IsLeftButtonPressed { get; }
+        public ReactiveProperty<bool> IsRightButtonPressed { get; }
+
+        public ReadOnlyReactiveProperty<Visibility> MoveButtonVisibility { get; }
 
         private readonly ClientWindowViewModel parent;
         private readonly Client client;
@@ -418,7 +430,7 @@ namespace ShibugakiViewer.ViewModels
 
                 })
                 .AddTo(this.Disposables);
-            
+
 
 
             // Transform Dialog
@@ -468,7 +480,74 @@ namespace ShibugakiViewer.ViewModels
             };
 
 
+            //画像変更ボタン
+            this.MoveButtonVisibility = parent.Core
+                .ObserveProperty(x => x.IsViewerMoveButtonDisabled)
+                .Select(x => VisibilityHelper.Set(!x))
+                .ToReadOnlyReactiveProperty()
+                .AddTo(this.Disposables);
 
+
+            //this.IsPointerMoving = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
+            this.IsLeftButtonEnter = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
+            this.IsRightButtonEnter = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
+            this.IsLeftButtonPressed = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
+            this.IsRightButtonPressed = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
+
+            this.PointerMoveAction = (o, e) =>
+            {
+                var element = o as FrameworkElement;
+                if (element == null)
+                {
+                    return;
+                }
+                var point = (Vector)e.GetPosition(element) / element.ActualWidth;
+
+                if (point.X < edgeTapThreshold)
+                {
+                    this.IsLeftButtonEnter.Value = true;
+                }
+                else
+                {
+                    this.IsLeftButtonEnter.Value = false;
+                    this.IsLeftButtonPressed.Value = false;
+                }
+                if (point.X > (1.0 - edgeTapThreshold))
+                {
+                    this.IsRightButtonEnter.Value = true;
+                }
+                else
+                {
+                    this.IsRightButtonEnter.Value = false;
+                    this.IsRightButtonPressed.Value = false;
+                }
+            };
+            this.PointerLeaveAction = (o, e) =>
+            {
+                this.IsLeftButtonEnter.Value = false;
+                this.IsRightButtonEnter.Value = false;
+                this.IsLeftButtonPressed.Value = false;
+                this.IsRightButtonPressed.Value = false;
+            };
+            this.PointerDownAction = (o, e) =>
+            {
+                var element = o as FrameworkElement;
+                if (element == null)
+                {
+                    return;
+                }
+                var point = (Vector)e.GetPosition(element) / element.ActualWidth;
+
+                this.IsLeftButtonPressed.Value = point.X < edgeTapThreshold;
+                this.IsRightButtonPressed.Value = point.X > (1.0 - edgeTapThreshold);
+            };
+            this.PointerUpAction = (o, e) =>
+            {
+                this.IsLeftButtonPressed.Value = false;
+                this.IsRightButtonPressed.Value = false;
+            };
+
+            //キーボード操作
             this.RegisterKeyReceiver(parent);
         }
 

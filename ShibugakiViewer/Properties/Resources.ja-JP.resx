@@ -778,6 +778,9 @@
     <value>スライドショーの停止</value>
   </data>
   <data name="GroupDisplay" xml:space="preserve">
-    <value>グループの内容を表示 (Ctrl + G)</value>
+    <value>グループの内容を表示</value>
+  </data>
+  <data name="DisableMoveButton" xml:space="preserve">
+    <value>画像変更ボタンを透明にする</value>
   </data>
 </root>

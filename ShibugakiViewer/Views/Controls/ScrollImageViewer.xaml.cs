@@ -674,6 +674,23 @@ namespace ShibugakiViewer.Views.Controls
         #endregion
 
 
+        #region IsPointerMoving
+
+        public bool IsPointerMoving
+        {
+            get { return (bool)GetValue(IsPointerMovingProperty); }
+            set { SetValue(IsPointerMovingProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsPointerMovingProperty =
+            DependencyProperty.Register(nameof(IsPointerMoving), typeof(bool),
+                typeof(ScrollImageViewer), new PropertyMetadata(false));
+
+        #endregion
+
+
+
+
 
         #region TapCommand
 
@@ -894,8 +911,8 @@ namespace ShibugakiViewer.Views.Controls
 
             var mouseMoving = Observable.FromEvent<MouseEventHandler, MouseEventArgs>
                 (h => (sender, e) => h(e),
-                h => this.image.MouseMove += h,
-                h => this.image.MouseMove -= h)
+                h => this.scrollViewer.MouseMove += h,
+                h => this.scrollViewer.MouseMove -= h)
                 .Select(_ => Unit.Default);
 
             var scrollBarEvent = scrollChanged
@@ -904,9 +921,12 @@ namespace ShibugakiViewer.Views.Controls
 
             scrollBarEvent.Throttle(TimeSpan.FromMilliseconds(1000)).Select(_ => false)
                 .Merge(scrollBarEvent.Select(_ => true))
-                .Select(x => VisibilityHelper.Set(x))
                 .ObserveOnUIDispatcher()
-                .Subscribe(x => this.ScrollBarVisibility = x)
+                .Subscribe(x =>
+                {
+                    this.IsPointerMoving = x;
+                    this.ScrollBarVisibility = VisibilityHelper.Set(x);
+                })
                 .AddTo(this.dispsables);
 
             this.MetaImageZoomFactorSubject = new Subject<double>().AddTo(this.dispsables);

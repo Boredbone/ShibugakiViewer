@@ -38,6 +38,7 @@ namespace ShibugakiViewer.ViewModels.SettingPages
         public ReactiveProperty<bool> RefreshLibraryOnLaunched { get; }
         public ReactiveProperty<bool> IsLibraryRefreshStatusVisible { get; }
         public ReactiveProperty<bool> IsFolderUpdatedNotificationVisible { get; }
+        public ReactiveProperty<bool> IsViewerMoveButtonDisabled { get; }
 
         public ReactiveProperty<bool> IsFill { get; }
         public ReactiveProperty<bool> IsResizingAlways { get; }
@@ -103,6 +104,9 @@ namespace ShibugakiViewer.ViewModels.SettingPages
                 .ToReactivePropertyAsSynchronized(x => x.IsFolderUpdatedNotificationVisible)
                 .AddTo(this.Disposables);
 
+            this.IsViewerMoveButtonDisabled = core
+                .ToReactivePropertyAsSynchronized(x => x.IsViewerMoveButtonDisabled)
+                .AddTo(this.Disposables);
 
             this.IsFill = core
                 .ToReactivePropertyAsSynchronized(x => x.IsSlideshowResizeToFill)

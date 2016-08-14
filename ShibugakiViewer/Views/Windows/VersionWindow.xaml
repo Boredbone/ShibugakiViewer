@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ShibugakiViewer.Views.Windows"
         xmlns:tb="clr-namespace:WpfTools.Behaviors;assembly=WpfTools"
+        xmlns:properties="clr-namespace:ShibugakiViewer.Properties"
         mc:Ignorable="d"
         Style="{StaticResource DefaultWindowStyle}"
         ShowActivated="True" WindowStartupLocation="CenterOwner"
@@ -25,6 +26,11 @@
         </Style>
     </Window.Resources>
     <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
         <ScrollViewer x:Name="scroller"
                       VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
                       HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto"
@@ -42,6 +48,11 @@
                     
                     <StackPanel Grid.Row="0">
 
+
+                        <TextBlock Style="{StaticResource titleTextStyle}">
+                            <Run Text="{StaticResource AppName}"/>
+                        </TextBlock>
+
                         <TextBlock Style="{StaticResource titleTextStyle}">
                             <Run Text="Version "/>
                             <Run Name="versionText" Text="1.0"/>
@@ -51,6 +62,14 @@
                             <Run Text="Date "/>
                             <Run Name="buildDate" Text="1.0"/>
                         </TextBlock>
+
+                        <TextBlock Style="{StaticResource titleTextStyle}">
+                            <Hyperlink NavigateUri="https://github.com/Boredbone/ShibugakiViewer"
+                                       tb:HyperlinkBehavior.NavigateByClick="True">
+                                <Run Text="Project Home"/>
+                            </Hyperlink>
+                        </TextBlock>
+
 
                         <TextBlock x:Name="description" Style="{StaticResource smallTextStyle}"
                                    Text="This software is built using these libraries:"/>
@@ -144,5 +163,10 @@
                 </Grid>
             </Grid>
         </ScrollViewer>
+        <Button
+            Content="{x:Static properties:Resources.OkButton_Content}"
+            Grid.Row="1" Margin="8" HorizontalAlignment="Right"
+            Width="86" Height="30"
+            Click="Button_Click"/>
     </Grid>
 </Window>

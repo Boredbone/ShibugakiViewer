@@ -121,6 +121,8 @@
 
     <system:String x:Key="UpSymbol">&#xf143;</system:String>
     <system:String x:Key="DownSymbol">&#xf140;</system:String>
+    <system:String x:Key="LeftSymbol">&#xf141;</system:String>
+    <system:String x:Key="RightSymbol">&#xf142;</system:String>
 
     <system:String x:Key="UpArSymbol">&#xf05d;</system:String>
     <system:String x:Key="DownArSymbol">&#xf045;</system:String>
@@ -245,8 +247,8 @@
 
     <SolidColorBrush x:Key="ControlColor" Color="DarkOliveGreen"/>
 
+    <!-- #FFf6ad49#FFb9d08b -->
     <SolidColorBrush x:Key="TagItemColor" Color="#ffcc80"/>
-    <!--#FFf6ad49#FFb9d08b-->
     <SolidColorBrush x:Key="PathItemColor" Color="#c5e1a5"/>
 
     <SolidColorBrush x:Key="TagTextColor" Color="Black"/>
@@ -288,6 +290,9 @@
 
     <SolidColorBrush x:Key="MenuBackgroundColor" Color="#FFFAD3AF"/>
 
+    <SolidColorBrush x:Key="ButtonBackground" Color="#FFE0E0E0"/>
+    <SolidColorBrush x:Key="ButtonHoverBackground" Color="#FFD0D0D0"/>
+    <SolidColorBrush x:Key="ButtonPressedBackground" Color="#FF808080"/>
 
     <SolidColorBrush x:Key="FlatButtonHoverBackground" Color="#20000000"/>
     <SolidColorBrush x:Key="FlatButtonPressedBackground" Color="#40000000"/>

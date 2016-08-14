@@ -146,6 +146,194 @@ namespace ShibugakiViewer.Views.Behaviors
 
         #endregion
 
+        #region PreviewMouseMoveAction
+
+        public static Action<object, MouseEventArgs> GetPreviewMouseMoveAction(DependencyObject obj)
+        {
+            return (Action<object, MouseEventArgs>)obj.GetValue(PreviewMouseMoveActionProperty);
+        }
+
+        public static void SetPreviewMouseMoveAction(DependencyObject obj, Action<object, MouseEventArgs> value)
+        {
+            obj.SetValue(PreviewMouseMoveActionProperty, value);
+        }
+
+        public static readonly DependencyProperty PreviewMouseMoveActionProperty =
+            DependencyProperty.RegisterAttached("PreviewMouseMoveAction",
+                typeof(Action<object, MouseEventArgs>), typeof(ManipulationCommandBehavior),
+                new PropertyMetadata(null, new PropertyChangedCallback(OnPreviewMouseMoveActionChanged)));
+
+        private static void OnPreviewMouseMoveActionChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            var element = sender as FrameworkElement;
+            var value = e.NewValue as Action<object, MouseEventArgs>;
+
+            if (element != null && value != null)
+            {
+                element.PreviewMouseMove += (o, ea) => value?.Invoke(o, ea);
+            }
+        }
+
+        #endregion
+
+
+
+
+        #region MouseLeftDownAction
+
+        public static Action<object, MouseEventArgs> GetMouseLeftDownAction(DependencyObject obj)
+        {
+            return (Action<object, MouseEventArgs>)obj.GetValue(MouseLeftDownActionProperty);
+        }
+
+        public static void SetMouseLeftDownAction(DependencyObject obj, Action<object, MouseEventArgs> value)
+        {
+            obj.SetValue(MouseLeftDownActionProperty, value);
+        }
+
+        public static readonly DependencyProperty MouseLeftDownActionProperty =
+            DependencyProperty.RegisterAttached("MouseLeftDownAction",
+                typeof(Action<object, MouseEventArgs>), typeof(ManipulationCommandBehavior),
+                new PropertyMetadata(null, new PropertyChangedCallback(OnMouseLeftDownActionChanged)));
+
+        private static void OnMouseLeftDownActionChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            var element = sender as FrameworkElement;
+            var value = e.NewValue as Action<object, MouseEventArgs>;
+
+            if (element != null && value != null)
+            {
+                element.MouseLeftButtonDown += (o, ea) => value?.Invoke(o, ea);
+            }
+        }
+
+        #endregion
+
+        #region MouseLeftUpAction
+
+        public static Action<object, MouseEventArgs> GetMouseLeftUpAction(DependencyObject obj)
+        {
+            return (Action<object, MouseEventArgs>)obj.GetValue(MouseLeftUpActionProperty);
+        }
+
+        public static void SetMouseLeftUpAction(DependencyObject obj, Action<object, MouseEventArgs> value)
+        {
+            obj.SetValue(MouseLeftUpActionProperty, value);
+        }
+
+        public static readonly DependencyProperty MouseLeftUpActionProperty =
+            DependencyProperty.RegisterAttached("MouseLeftUpAction",
+                typeof(Action<object, MouseEventArgs>), typeof(ManipulationCommandBehavior),
+                new PropertyMetadata(null, new PropertyChangedCallback(OnMouseLeftUpActionChanged)));
+
+        private static void OnMouseLeftUpActionChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            var element = sender as FrameworkElement;
+            var value = e.NewValue as Action<object, MouseEventArgs>;
+
+            if (element != null && value != null)
+            {
+                element.MouseLeftButtonUp += (o, ea) => value?.Invoke(o, ea);
+            }
+        }
+
+        #endregion
+
+        #region PreviewMouseLeftDownAction
+
+        public static Action<object, MouseEventArgs> GetPreviewMouseLeftDownAction(DependencyObject obj)
+        {
+            return (Action<object, MouseEventArgs>)obj.GetValue(PreviewMouseLeftDownActionProperty);
+        }
+
+        public static void SetPreviewMouseLeftDownAction(DependencyObject obj, Action<object, MouseEventArgs> value)
+        {
+            obj.SetValue(PreviewMouseLeftDownActionProperty, value);
+        }
+
+        public static readonly DependencyProperty PreviewMouseLeftDownActionProperty =
+            DependencyProperty.RegisterAttached("PreviewMouseLeftDownAction",
+                typeof(Action<object, MouseEventArgs>), typeof(ManipulationCommandBehavior),
+                new PropertyMetadata(null, new PropertyChangedCallback(OnPreviewMouseLeftDownActionChanged)));
+
+        private static void OnPreviewMouseLeftDownActionChanged
+            (DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            var element = sender as FrameworkElement;
+            var value = e.NewValue as Action<object, MouseEventArgs>;
+
+            if (element != null && value != null)
+            {
+                element.PreviewMouseLeftButtonDown += (o, ea) => value?.Invoke(o, ea);
+            }
+        }
+
+        #endregion
+
+        #region PreviewMouseLeftUpAction
+
+        public static Action<object, MouseEventArgs> GetPreviewMouseLeftUpAction(DependencyObject obj)
+        {
+            return (Action<object, MouseEventArgs>)obj.GetValue(PreviewMouseLeftUpActionProperty);
+        }
+
+        public static void SetPreviewMouseLeftUpAction(DependencyObject obj, Action<object, MouseEventArgs> value)
+        {
+            obj.SetValue(PreviewMouseLeftUpActionProperty, value);
+        }
+
+        public static readonly DependencyProperty PreviewMouseLeftUpActionProperty =
+            DependencyProperty.RegisterAttached("PreviewMouseLeftUpAction",
+                typeof(Action<object, MouseEventArgs>), typeof(ManipulationCommandBehavior),
+                new PropertyMetadata(null, new PropertyChangedCallback(OnPreviewMouseLeftUpActionChanged)));
+
+        private static void OnPreviewMouseLeftUpActionChanged
+            (DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            var element = sender as FrameworkElement;
+            var value = e.NewValue as Action<object, MouseEventArgs>;
+
+            if (element != null && value != null)
+            {
+                element.PreviewMouseLeftButtonUp += (o, ea) => value?.Invoke(o, ea);
+            }
+        }
+
+        #endregion
+
+        #region MouseLeaveAction
+
+        public static Action<object, MouseEventArgs> GetMouseLeaveAction(DependencyObject obj)
+        {
+            return (Action<object, MouseEventArgs>)obj.GetValue(MouseLeaveActionProperty);
+        }
+
+        public static void SetMouseLeaveAction(DependencyObject obj, Action<object, MouseEventArgs> value)
+        {
+            obj.SetValue(MouseLeaveActionProperty, value);
+        }
+
+        public static readonly DependencyProperty MouseLeaveActionProperty =
+            DependencyProperty.RegisterAttached("MouseLeaveAction",
+                typeof(Action<object, MouseEventArgs>), typeof(ManipulationCommandBehavior),
+                new PropertyMetadata(null, new PropertyChangedCallback(OnMouseLeaveActionChanged)));
+
+        private static void OnMouseLeaveActionChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            var element = sender as FrameworkElement;
+            var value = e.NewValue as Action<object, MouseEventArgs>;
+
+            if (element != null && value != null)
+            {
+                element.MouseLeave += (o, ea) => value?.Invoke(o, ea);
+            }
+        }
+
+        #endregion
+
+
+
+
         #region WheelChangedAction
 
         public static Action<object, MouseWheelEventArgs> GetWheelChangedAction(DependencyObject obj)
