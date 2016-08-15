@@ -286,6 +286,15 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
+        ///   Library Tools に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string DatabaseTool {
+            get {
+                return ResourceManager.GetString("DatabaseTool", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Created Date に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string DateCreated {
@@ -804,6 +813,15 @@ namespace ShibugakiViewer.Properties {
         public static string Height {
             get {
                 return ResourceManager.GetString("Height", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Help に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Help {
+            get {
+                return ResourceManager.GetString("Help", resourceCulture);
             }
         }
         

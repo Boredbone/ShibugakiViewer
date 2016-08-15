@@ -170,18 +170,36 @@ namespace ShibugakiViewer
             }
         }
 
-        public void ShowSettingWindow()
+        public void ShowSettingWindow(int index)
         {
-            var window = this.Windows.OfType<SettingWindow>().FirstOrDefault() ?? new SettingWindow();
-            //window.ShowActivated = true;
+            if (index > 0)
+            {
+                this.Core.SettingPageIndex = index;
+            }
+
+            var window = this.Windows.OfType<SettingWindow>().FirstOrDefault()
+                ?? new SettingWindow();
             window.Show();
             window.Activate();
         }
 
-        public void ShowLibraryUpdateStatusWindow()
+        public void ShowToolWindow(int index)
         {
-            var window = this.Windows.OfType<LibraryUpdateStatusWindow>().FirstOrDefault()
-                ?? new LibraryUpdateStatusWindow();
+            if (index > 0)
+            {
+                this.Core.ToolPageIndex = index;
+            }
+
+            var window = this.Windows.OfType<ToolWindow>().FirstOrDefault()
+                ?? new ToolWindow();
+            window.Show();
+            window.Activate();
+        }
+
+        public void ShowFolderWindow()
+        {
+            var window = this.Windows.OfType<FolderWindow>().FirstOrDefault()
+                ?? new FolderWindow();
             window.Show();
             window.Activate();
         }
@@ -346,7 +364,7 @@ namespace ShibugakiViewer
                 .AddTo(subscription);
 
             this.notifyIcon.DoubleClick += (o, e) => this.ShowClientWindow(null);
-            this.notifyIcon.BalloonTipClicked += (o, e) => this.ShowLibraryUpdateStatusWindow();
+            this.notifyIcon.BalloonTipClicked += (o, e) => this.ShowToolWindow(0);
 
             return subscription;
 

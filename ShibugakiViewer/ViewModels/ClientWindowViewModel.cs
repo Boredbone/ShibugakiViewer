@@ -88,6 +88,7 @@ namespace ShibugakiViewer.ViewModels
         public ReactiveCommand OpenSettingPaneCommand { get; }
         public ReactiveCommand OpenSettingWindowCommand { get; }
         public ReactiveCommand FileDropCommand { get; }
+        public ReactiveCommand OpenHelpPaneCommand { get; }
 
         public ReactiveCommand MouseExButtonLeftCommand { get; }
         public ReactiveCommand MouseExButtonRightCommand { get; }
@@ -103,6 +104,7 @@ namespace ShibugakiViewer.ViewModels
         public ReactiveProperty<bool> IsInformationPaneOpen { get; }
         public ReactiveProperty<bool> IsPaneFixed { get; }
         public ReactiveProperty<bool> IsSettingPaneOpen { get; }
+        public ReactiveProperty<bool> IsHelpPaneOpen { get; }
 
         public ReactiveProperty<double> FrameWidth { get; }
 
@@ -322,8 +324,31 @@ namespace ShibugakiViewer.ViewModels
                         }
                     }
                 }, this.Disposables);
-            
 
+
+
+            //ヘルプ
+            this.IsHelpPaneOpen = this.SelectedInformationPage
+                .Select(x => x == OptionPaneType.Help)
+                .ToReactiveProperty(false)
+                .AddTo(this.Disposables);
+
+            this.OpenHelpPaneCommand = new ReactiveCommand()
+                .WithSubscribe(_ =>
+                {
+                    if (this.IsHelpPaneOpen.Value)
+                    {
+                        this.SelectedInformationPage.Value = OptionPaneType.Help;
+                        this.IsPaneOpen.Value = true;
+                    }
+                    else
+                    {
+                        if (this.SelectedInformationPage.Value == OptionPaneType.Help)
+                        {
+                            this.SelectedInformationPage.Value = OptionPaneType.None;
+                        }
+                    }
+                }, this.Disposables);
 
 
 
@@ -389,7 +414,7 @@ namespace ShibugakiViewer.ViewModels
 
 
             this.OpenSettingWindowCommand = new ReactiveCommand()
-                .WithSubscribe(_ => ((App)Application.Current).ShowSettingWindow(), this.Disposables);
+                .WithSubscribe(_ => ((App)Application.Current).ShowSettingWindow(-1), this.Disposables);
 
             this.OptionPageCommand = new ReactiveCommand<string>().AddTo(this.Disposables);
             
@@ -769,6 +794,7 @@ namespace ShibugakiViewer.ViewModels
         SelectedItems = 3,
         Setting = 4,
         KeyBind = 5,
+        Help = 6,
     }
 
     public enum KeyReceiverMode

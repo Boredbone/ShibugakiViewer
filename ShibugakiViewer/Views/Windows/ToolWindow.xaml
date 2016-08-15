@@ -1,0 +1,81 @@
+﻿<Window x:Class="ShibugakiViewer.Views.Windows.ToolWindow"
+        x:Name="controlRoot"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ShibugakiViewer.Views.Windows"
+        xmlns:viewModels="clr-namespace:ShibugakiViewer.ViewModels.SettingPages"
+        xmlns:pages="clr-namespace:ShibugakiViewer.Views.SettingPages"
+        xmlns:properties="clr-namespace:ShibugakiViewer.Properties"
+        xmlns:converter="clr-namespace:ShibugakiViewer.Views.Converters"
+        xmlns:tb="clr-namespace:WpfTools.Behaviors;assembly=WpfTools"
+        xmlns:cc="clr-namespace:WpfTools.Controls;assembly=WpfTools"
+        xmlns:b="clr-namespace:ShibugakiViewer.Views.Behaviors"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        mc:Ignorable="d"
+        Title="{x:Static properties:Resources.DatabaseTool}"
+        Height="720" Width="640"
+        Style="{StaticResource DefaultWindowStyle}"
+        ResizeMode="CanResizeWithGrip"
+        Closed="Window_Closed">
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TabControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    Padding="0"
+                    Grid.Row="0"
+                    SelectedIndex="{Binding ElementName=controlRoot,Path=Core.ToolPageIndex,Mode=TwoWay}">
+
+            <TabItem Header="{x:Static properties:Resources.LibraryUpdateStatus}">
+                <pages:LibraryCreationPage x:Name="libraryCreation"/>
+            </TabItem>
+
+            <TabItem Header="{x:Static properties:Resources.ExportImport}">
+                <StackPanel Margin="0,8" Background="Transparent">
+                    <cc:FlatButton
+                                            Style="{StaticResource contextMenuButtonStyle}"
+                                            Click="FlatButton_Click_3">
+                        <TextBlock 
+                                                Style="{StaticResource contextMenuTextStyle}"
+                                                Margin="16,0"
+                                                Text="{x:Static properties:Resources.ExportLibrary}"/>
+                    </cc:FlatButton>
+
+                    <cc:FlatButton
+                                            Style="{StaticResource contextMenuButtonStyle}"
+                                            Click="FlatButton_Click_4">
+                        <TextBlock 
+                                                Style="{StaticResource contextMenuTextStyle}"
+                                                Margin="16,0"
+                                                Text="{x:Static properties:Resources.ImportLibrary}"/>
+                    </cc:FlatButton>
+
+                    <cc:FlatButton
+                                            x:Name="mikanImportButton"
+                                            Style="{StaticResource contextMenuButtonStyle}"
+                                            Click="mikanImportButton_Click">
+                        <TextBlock 
+                                                Style="{StaticResource contextMenuTextStyle}"
+                                                Margin="16,0"
+                                                Text="{x:Static properties:Resources.ImportMikanViewer}"/>
+                    </cc:FlatButton>
+
+                </StackPanel>
+            </TabItem>
+
+        </TabControl>
+
+
+        <Button
+            Content="{x:Static properties:Resources.OkButton_Content}"
+            Grid.Row="1" Margin="8,8,32,16" HorizontalAlignment="Right"
+            Width="86" Height="30"
+            Click="Button_Click"/>
+    </Grid>
+</Window>

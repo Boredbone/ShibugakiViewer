@@ -40,23 +40,6 @@ namespace ShibugakiViewer.Views.Windows
 
             this.catalogPage.AddTo(this.disposables);
             this.viewerPage.AddTo(this.disposables);
-            //this.slideshowPage.AddTo(this.disposables);
-
-            /*
-            this.LoadedAsObservable()
-                .Take(1)
-                .Subscribe(_ =>
-                {
-                    var command = this.backButton.Command;
-                    if (command != null)
-                    {
-                        command
-                            .CanExecuteChangedAsObservable()
-                            .Where(x => command.CanExecute(null))
-                            .Take(1)
-                            .Subscribe(__ => this.backButton.IsEnabled = true);
-                    }
-                });*/
         }
 
         public void Dispose()
@@ -89,24 +72,5 @@ namespace ShibugakiViewer.Views.Windows
                 this.backButton.IsEnabled = true;
             }
         }
-
-        //public void OpenPopup
-        //    (FrameworkElement content, Thickness position,
-        //    HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment,
-        //    FrameworkElement dock = null, bool isMaskVisible = true)
-        //{
-        //    this.popupDialog.IsMasked = isMaskVisible;
-        //    this.popupDialog.DockControl = dock;
-        //    this.popupDialog.HorizontalDialogAlignment = horizontalAlignment;
-        //    this.popupDialog.VerticalDialogAlignment = verticalAlignment;
-        //    this.popupDialog.Position = position;
-        //    this.popupDialog.DialogContent = content;
-        //    this.popupDialog.IsOpen = true;
-        //}
-        //
-        //public void ClosePopup()
-        //{
-        //    this.popupDialog.IsOpen = false;
-        //}
     }
 }

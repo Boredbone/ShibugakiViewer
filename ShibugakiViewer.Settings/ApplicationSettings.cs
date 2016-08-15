@@ -74,6 +74,12 @@ namespace ShibugakiViewer.Models
         [DataMember]
         public bool IsDarkTheme { get; set; }
 
+
+        [DataMember]
+        public int SettingPageIndex { get; set; }
+        [DataMember]
+        public int ToolPageIndex { get; set; }
+
         public ApplicationSettings()
         {
             this.IsOpenNavigationWithSingleTapEnabled = true;

@@ -786,4 +786,10 @@
   <data name="RefreshMode" xml:space="preserve">
     <value>Update Mode</value>
   </data>
+  <data name="DatabaseTool" xml:space="preserve">
+    <value>Library Tools</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>Help</value>
+  </data>
 </root>

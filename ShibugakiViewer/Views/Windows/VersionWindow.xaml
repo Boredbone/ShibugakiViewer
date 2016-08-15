@@ -165,7 +165,7 @@
         </ScrollViewer>
         <Button
             Content="{x:Static properties:Resources.OkButton_Content}"
-            Grid.Row="1" Margin="8" HorizontalAlignment="Right"
+            Grid.Row="1" Margin="8,8,32,16" HorizontalAlignment="Right"
             Width="86" Height="30"
             Click="Button_Click"/>
     </Grid>

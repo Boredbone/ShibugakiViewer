@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Reactive.Bindings.Extensions;
+using ShibugakiViewer.Models;
 
 namespace ShibugakiViewer.Views.Windows
 {
@@ -22,17 +23,17 @@ namespace ShibugakiViewer.Views.Windows
     public partial class SettingWindow : Window, IDisposable
     {
         private CompositeDisposable disposables = new CompositeDisposable();
+        public ApplicationCore Core { get; }
 
         public SettingWindow()
         {
+            var app = (App)Application.Current;
+            this.Core = app.Core;
+
             InitializeComponent();
 
-            ((App)Application.Current).WindowPlacement
-                .Register(this, "SettingWindow");
-
-            //this.viewerSetting.AddTo(this.disposables);
-            //this.libraryCreation.AddTo(this.disposables);
-            this.folderSetting.AddTo(this.disposables);
+            app.WindowPlacement.Register(this, "SettingWindow");
+            
         }
 
         public void Dispose()

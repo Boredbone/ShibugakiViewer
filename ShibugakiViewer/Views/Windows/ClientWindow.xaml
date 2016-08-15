@@ -161,6 +161,15 @@
                                 Text="{x:Static properties:Resources.Tools}"/>
                         </cc:FlatToggleButton>
 
+                        <cc:FlatToggleButton
+                            Style="{StaticResource menuFlatToggleButtonStretchStyle}"
+                            IsChecked="{Binding IsHelpPaneOpen.Value,Mode=TwoWay}"
+                            Command="{Binding OpenHelpPaneCommand}">
+                            <cc:LabeledIcon
+                                IconText="{StaticResource QuestionSymbol}"
+                                Text="{x:Static properties:Resources.Help}"/>
+                        </cc:FlatToggleButton>
+                        
                         <!--<cc:FlatButton
                             Style="{StaticResource menuFlatButtonStretchStyle}"
                             Command="{Binding OpenSettingWindowCommand}">
@@ -234,6 +243,14 @@
                             <TabItem Header="KeyBind" Style="{StaticResource noHeaderTabItemStyle}"
                                      Background="Transparent">
                                 <infoPane:KeyBindPage
+                                    Background="{StaticResource OptionPaneColor}"
+                                    BorderThickness="0"
+                                    BorderBrush="Gray"/>
+                            </TabItem>
+
+                            <TabItem Header="Help" Style="{StaticResource noHeaderTabItemStyle}"
+                                     Background="Transparent">
+                                <infoPane:HelpPage
                                     Background="{StaticResource OptionPaneColor}"
                                     BorderThickness="0"
                                     BorderBrush="Gray"/>

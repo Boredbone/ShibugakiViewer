@@ -25,51 +25,39 @@ using WpfTools;
 namespace ShibugakiViewer.Views.InformationPanes
 {
     /// <summary>
-    /// ToolsPage.xaml の相互作用ロジック
+    /// HelpPage.xaml の相互作用ロジック
     /// </summary>
-    public partial class ToolsPage : UserControl
+    public partial class HelpPage : UserControl
     {
         private readonly App application;
         private readonly ApplicationCore core;
-        private readonly CompositeDisposable disposables;
 
-        public ToolsPage()
+        public HelpPage()
         {
             InitializeComponent();
 
             this.application = (App)Application.Current;
             this.core = this.application.Core;
-            var library = core.Library;
-
-            this.disposables = new CompositeDisposable();
-
-            this.refreshButton.Command = library.IsCreating
-                .Select(x => !x)
-                .ToReactiveCommand()
-                .WithSubscribe(_ =>
-                {
-                    library.StartRefreshLibrary();
-                }, this.disposables);
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            this.application.ShowSettingWindow(-1);
         }
         
-        private void FlatButton_Click_1(object sender, RoutedEventArgs e)
-        {
-            this.application.ExitAll();
-        }
 
-        private void FlatButton_Click_2(object sender, RoutedEventArgs e)
+        private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            this.application.ShowToolWindow(-1);
+            new VersionWindow()
+            {
+                Owner = Window.GetWindow(this),
+            }.Show();
         }
 
         private void FlatButton_Click(object sender, RoutedEventArgs e)
         {
-            this.application.ShowFolderWindow();
+            var vm = this.DataContext as ClientWindowViewModel;
+            if (vm != null)
+            {
+                vm.SelectedInformationPage.Value = OptionPaneType.KeyBind;
+            }
         }
+        
+        
     }
 }

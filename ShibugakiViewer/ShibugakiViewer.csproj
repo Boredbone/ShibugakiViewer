@@ -190,6 +190,9 @@
     <Compile Include="Views\InformationPanes\FileInformationPage.xaml.cs">
       <DependentUpon>FileInformationPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\InformationPanes\HelpPage.xaml.cs">
+      <DependentUpon>HelpPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\InformationPanes\KeyBindPage.xaml.cs">
       <DependentUpon>KeyBindPage.xaml</DependentUpon>
     </Compile>
@@ -215,11 +218,14 @@
     <Compile Include="Views\SettingPages\ViewerSettingPage.xaml.cs">
       <DependentUpon>ViewerSettingPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Windows\LibraryUpdateStatusWindow.xaml.cs">
-      <DependentUpon>LibraryUpdateStatusWindow.xaml</DependentUpon>
+    <Compile Include="Views\Windows\FolderWindow.xaml.cs">
+      <DependentUpon>FolderWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Windows\SettingWindow.xaml.cs">
       <DependentUpon>SettingWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Windows\ToolWindow.xaml.cs">
+      <DependentUpon>ToolWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Windows\VersionWindow.xaml.cs">
       <DependentUpon>VersionWindow.xaml</DependentUpon>
@@ -261,6 +267,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\InformationPanes\FileInformationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\InformationPanes\HelpPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -336,10 +346,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Windows\LibraryUpdateStatusWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -373,7 +379,15 @@
     <Compile Include="Views\Windows\ClientWindow.xaml.cs">
       <DependentUpon>ClientWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="Views\Windows\FolderWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Windows\SettingWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Windows\ToolWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -786,4 +786,10 @@
   <data name="RefreshMode" xml:space="preserve">
     <value>更新方法</value>
   </data>
+  <data name="DatabaseTool" xml:space="preserve">
+    <value>ライブラリ ツール</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>ヘルプ</value>
+  </data>
 </root>

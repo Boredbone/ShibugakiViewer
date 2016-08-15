@@ -394,6 +394,32 @@ namespace ShibugakiViewer.Models
             }
         }
 
+        public int SettingPageIndex
+        {
+            get { return this.Settings.SettingPageIndex; }
+            set
+            {
+                if (this.Settings.SettingPageIndex != value)
+                {
+                    this.Settings.SettingPageIndex = value;
+                    RaisePropertyChanged(nameof(SettingPageIndex));
+                }
+            }
+        }
+
+        public int ToolPageIndex
+        {
+            get { return this.Settings.ToolPageIndex; }
+            set
+            {
+                if (this.Settings.ToolPageIndex != value)
+                {
+                    this.Settings.ToolPageIndex = value;
+                    RaisePropertyChanged(nameof(ToolPageIndex));
+                }
+            }
+        }
+
 
         public bool IsSettingsLoaded { get; set; }
         public bool IsLibrarySettingsLoaded { get; set; }
