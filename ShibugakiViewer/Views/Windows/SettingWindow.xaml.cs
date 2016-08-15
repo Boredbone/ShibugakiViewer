@@ -30,7 +30,7 @@ namespace ShibugakiViewer.Views.Windows
             ((App)Application.Current).WindowPlacement
                 .Register(this, "SettingWindow");
 
-            this.viewerSetting.AddTo(this.disposables);
+            //this.viewerSetting.AddTo(this.disposables);
             //this.libraryCreation.AddTo(this.disposables);
             this.folderSetting.AddTo(this.disposables);
         }

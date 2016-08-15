@@ -22,9 +22,6 @@ namespace Database.Table
 
         [RecordMember]
         public DateTimeOffset Modified { get; set; }
-
-
-        //Dictionary<int, TableColumnDefinition> TableColumnDefinitions;
-
+        
     }
 }

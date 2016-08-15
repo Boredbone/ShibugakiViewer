@@ -20,5 +20,7 @@
     <sc:SizeConverter x:Key="FileSizeConverter" />
     <sc:BoolIntConverter x:Key="BoolIntConverter" />
     <sc:RatingConverter x:Key="RatingConverter" />
+    <converters:ColorToBrushConverter x:Key="ColorToBrushConverter" />
+    <converters:NullToVisibilityConverter x:Key="NullToVisibleConverter" />
 
 </ResourceDictionary>

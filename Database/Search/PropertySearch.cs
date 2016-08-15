@@ -10,7 +10,7 @@ using Boredbone.Utility.Extensions;
 namespace Database.Search
 {
     /// <summary>
-    /// クラスのプロパティでデータベース内を検索するための情報を定義する
+    /// Define informations to search a database with a property of the class
     /// </summary>
     public class PropertySearch
     {
@@ -37,7 +37,7 @@ namespace Database.Search
         }
 
         /// <summary>
-        /// 検索用のSQL文字列を取得
+        /// Get SQL string to search
         /// </summary>
         /// <param name="mode"></param>
         /// <param name="reference"></param>
@@ -79,7 +79,7 @@ namespace Database.Search
                     case CompareMode.Equal:
                     case CompareMode.LessEqual:
                     case CompareMode.GreatEqual:
-                        return $"({DatabaseFunction.AreEqual(this.selector,reference)})";
+                        return $"({DatabaseFunction.AreEqual(this.selector, reference)})";
 
                     case CompareMode.NotEqual:
                     case CompareMode.Less:

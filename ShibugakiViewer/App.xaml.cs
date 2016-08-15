@@ -121,23 +121,16 @@ namespace ShibugakiViewer
             //ウィンドウ配置
             this.WindowPlacement = new WindowPlace(Path.Combine(saveDirectory, placementFileName));
 
+            //Model初期化
             this.Core.Initialize(saveDirectory);
 
-
+            //通知アイコン
             this.ShowNotifyIcon()?.AddTo(this.disposables);
-            
 
-            var args = e.Args;
+            //ウィンドウ
+            this.ShowClientWindow((e.Args.IsNullOrEmpty()) ? null : e.Args);
 
-            if (args != null && args.Length > 0)
-            {
-                this.ShowClientWindow(args);
-            }
-            else
-            {
-                this.ShowClientWindow(null);
-            }
-
+            //パイプサーバ
             if (this.server == null)
             {
                 this.server = new PipeServer().AddTo(this.disposables);
@@ -153,7 +146,6 @@ namespace ShibugakiViewer
                     .AddTo(this.disposables);
 
                 this.server.Activate(mutexId, pipeId);
-
             }
         }
 
@@ -210,6 +202,10 @@ namespace ShibugakiViewer
             window.Show();
         }
 
+        /// <summary>
+        /// アプリケーション終了時処理
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnExit(ExitEventArgs e)
         {
             base.OnExit(e);
@@ -224,6 +220,9 @@ namespace ShibugakiViewer
             this.disposables.Dispose();
         }
 
+        /// <summary>
+        /// 全てのウィンドウを閉じてアプリケーションを終了させる
+        /// </summary>
         public void ExitAll()
         {
             foreach (var window in this.Windows.OfType<Window>())
@@ -233,7 +232,10 @@ namespace ShibugakiViewer
             this.Shutdown();
         }
 
-
+        /// <summary>
+        /// Viewのテーマを変更
+        /// </summary>
+        /// <param name="themeName"></param>
         public void ChangeTheme(string themeName)
         {
             if (this.themeResourceDictionary == null)
@@ -271,59 +273,77 @@ namespace ShibugakiViewer
         }
 
         /// <summary>
+        /// アイコンを生成
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        private System.Drawing.Icon CreateIcon(string path)
+        {
+            try
+            {
+                const string iconUri = "pack://application:,,,/Assets/Icons/appicon.ico";
+
+                Uri uri;
+                if (!Uri.TryCreate(iconUri, UriKind.Absolute, out uri))
+                {
+                    return null;
+                }
+
+                var streamResourceInfo = GetResourceStream(uri);
+                if (streamResourceInfo == null)
+                {
+                    return null;
+                }
+
+                System.Drawing.Icon icon;
+
+                using (var stream = streamResourceInfo.Stream)
+                {
+                    icon = new System.Drawing.Icon(stream, new System.Drawing.Size(16, 16));
+                }
+
+                return icon;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
         /// 通知アイコン表示
         /// </summary>
         /// <returns></returns>
         private IDisposable ShowNotifyIcon()
         {
-            const string iconUri = "pack://application:,,,/ShibugakiViewer;Component/Assets/Icons/appicon.ico";
-
-            Uri uri;
-            if (!Uri.TryCreate(iconUri, UriKind.Absolute, out uri))
+            var icon = this.CreateIcon("pack://application:,,,/Assets/Icons/appicon.ico");
+            if (icon == null)
             {
                 return null;
             }
 
-            var streamResourceInfo = GetResourceStream(uri);
-            if (streamResourceInfo == null)
+            var menu = new[]
             {
-                return null;
-            }
-
+                new System.Windows.Forms.MenuItem(this.Core.GetResourceString("OpenNewWindow"),//."&Settings (S)",
+                    (o, e) => this.ShowClientWindow(null)),
+                new System.Windows.Forms.MenuItem(this.Core.GetResourceString("Exit"),
+                    (o, e) => this.ExitAll())
+            };
+            
             var subscription = new CompositeDisposable();
-
-            var menus = new List<System.Windows.Forms.MenuItem>();
-            menus.Add(new System.Windows.Forms.MenuItem(this.Core.GetResourceString("OpenNewWindow"),
-                //."&Settings (S)",
-                (sender, args) => this.ShowClientWindow(null)));
-
-            menus.Add(new System.Windows.Forms.MenuItem(this.Core.GetResourceString("Exit"),
-                (sender, args) => this.ExitAll()));
-
-            System.Drawing.Icon icon;
-
-            using (var stream = streamResourceInfo.Stream)
-            {
-                icon = new System.Drawing.Icon(stream, new System.Drawing.Size(16, 16));
-            }
-
 
             this.notifyIcon = new System.Windows.Forms.NotifyIcon
             {
                 Text = this.Core.AppName,
                 Icon = icon,
                 Visible = true,
-                ContextMenu = new System.Windows.Forms.ContextMenu(menus.ToArray()),
+                ContextMenu = new System.Windows.Forms.ContextMenu(menu),
             }.AddTo(subscription);
 
-
-            this.Core.SystemNotification.Subscribe(x =>
-            {
-                this.notifyIcon.ShowBalloonTip(3000, this.Core.AppName,
-                    x, System.Windows.Forms.ToolTipIcon.Info);
-
-            })
-            .AddTo(subscription);
+            this.Core.SystemNotification
+                .Subscribe(x => this.notifyIcon.ShowBalloonTip
+                    (3000, this.Core.AppName, x, System.Windows.Forms.ToolTipIcon.Info))
+                .AddTo(subscription);
 
             this.notifyIcon.DoubleClick += (o, e) => this.ShowClientWindow(null);
             this.notifyIcon.BalloonTipClicked += (o, e) => this.ShowLibraryUpdateStatusWindow();
@@ -332,6 +352,10 @@ namespace ShibugakiViewer
 
         }
 
+        /// <summary>
+        /// 保存データのインポート・エクスポート
+        /// </summary>
+        /// <param name="isImport"></param>
         public void ImportOrExportLibrary(bool isImport)
         {
             var result = MessageBox.Show(this.Core.GetResourceString("ExportImportLibraryMessage"),

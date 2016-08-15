@@ -136,9 +136,8 @@ namespace Database.Table
             {
                 connection.Execute($"DROP TABLE {this.Name}");
             }
-            catch// (Exception e)
+            catch
             {
-                //Debug.WriteLine(e);
             }
         }
 
@@ -179,7 +178,6 @@ namespace Database.Table
             catch (SQLiteException e)
             {
                 Debug.WriteLine(e);
-                //isExisting = false;
             }
 
             if (!isExisting)
@@ -220,7 +218,7 @@ namespace Database.Table
             }
 
 
-            //新しいプロパティ
+            // New properties
             var addedProperties = this.properties.Value
                 .ToDictionary(x => x.Key, x => x.Value);
             foreach (var column in existingColumns)
@@ -231,12 +229,12 @@ namespace Database.Table
                 }
             }
 
-            //消えたプロパティ
+            // Removed properties
             var removerProperties = existingColumns
                 .Where(x => !this.properties.Value.ContainsKey(x.Name))
                 .ToArray();
 
-            //カラム追加
+            // Add columns
             if (addedProperties.Count > 0)
             {
                 using (var transaction = connection.BeginTransaction())
@@ -267,14 +265,15 @@ namespace Database.Table
                 }
             }
 
-            //カラム削除
+            // Remove columns
             if (removerProperties.Length > 0)
             {
                 using (var transaction = connection.BeginTransaction())
                 {
                     try
                     {
-                        //カラムの削除はできないので、テーブル複製
+                        // Removing columns is not suppoted in SQLite
+                        // Clone table
 
                         var tmpName = $"tmp_{this.Name}";
 
@@ -423,15 +422,7 @@ namespace Database.Table
         /// <param name="transaction"></param>
         public Task AddAsync(TRecord item, IDbConnection connection, IDbTransaction transaction)
             => this.AddMainAsync(item, connection, transaction, false);
-
-        ///// <summary>
-        ///// Add records
-        ///// </summary>
-        ///// <param name="items"></param>
-        ///// <param name="context"></param>
-        //public Task AddRangeAsync(IEnumerable<TRecord> items,
-        //    DatabaseFront.ThreadSafeTransactionContext context)
-        //    => this.AddRangeAsync(items, context.Connection, context.Transaction);
+        
 
         /// <summary>
         /// Add records
@@ -567,55 +558,13 @@ namespace Database.Table
             if (text.Length <= 0)
             {
                 return;
-
-                //Debug.WriteLine(text.Length);
-                //foreach (var p in channnels)
-                //{
-                //    Debug.WriteLine(p);
-                //}
-                //
-                //Debug.WriteLine(text);
-                //
-                //foreach (var p in this.properties.Value)
-                //{
-                //    Debug.WriteLine(p.Key);
-                //}
             }
-
-
-            //Debug.WriteLine($"UPDATE {this.Name} SET {text} WHERE Id = @Id");
-            //Debug.WriteLine(target.ToString());
-
+            
             await connection.ExecuteAsync
-                ($"UPDATE {this.Name} SET {text} WHERE Id = @Id",// LIMIT 1",
+                ($"UPDATE {this.Name} SET {text} WHERE Id = @Id",
                 target, transaction);
         }
-
-
-
-
-        ///// <summary>
-        ///// Remove a record
-        ///// </summary>
-        ///// <param name="item"></param>
-        ///// <param name="context"></param>
-        //public void Remove(TRecord item, DatabaseFront.TransactionContext context)
-        //{
-        //    this.Remove(item, context.Connection, context.Transaction);
-        //}
-        //
-        ///// <summary>
-        ///// Remove a record
-        ///// </summary>
-        ///// <param name="item"></param>
-        ///// <param name="connection"></param>
-        ///// <param name="transaction"></param>
-        //public void Remove(TRecord item, IDbConnection connection, IDbTransaction transaction)
-        //{
-        //    connection.Execute
-        //        ($"DELETE FROM {this.Name} WHERE Id = @Id",// LIMIT 1",
-        //        item, transaction);
-        //}
+        
 
         /// <summary>
         /// Remove a record
@@ -677,20 +626,6 @@ namespace Database.Table
                     ($"DELETE FROM {this.Name} WHERE Id = @Id",
                     item, transaction);
             });
-
-            //Parallel.ForEach(items.Distinct(x => x.Id), item =>
-            //{
-            //    connection.Value.Execute
-            //        ($"DELETE FROM {this.Name} WHERE Id = @Id",
-            //        item, transaction);
-            //});
-
-            //.AsParallel().ForAll(item =>
-            //{
-            //    connection.Value.Execute
-            //        ($"DELETE FROM {this.Name} WHERE Id = @Id",// LIMIT 1",
-            //        item, transaction);
-            //});
         }
 
         /// <summary>
@@ -852,22 +787,7 @@ namespace Database.Table
         /// <returns></returns>
         public async Task<TRecord[]> GetAllAsync(IDbConnection connection)
             => await this.AsQueryable(connection).ToArrayAsync();
-
-        ///// <summary>
-        ///// Get a record from ID
-        ///// </summary>
-        ///// <param name="connection"></param>
-        ///// <param name="key"></param>
-        ///// <returns></returns>
-        //public TRecord GetRecordFromKey(IDbConnection connection, TKey key)
-        //{
-        //    //Debug.WriteLine($@"SELECT * FROM {this.Name} WHERE Id = {this.GetKeyString(key)} LIMIT 1");
-        //    //($@"SELECT * FROM {this.Name} WHERE Id = {this.GetKeyString(key)} LIMIT 1")
-        //    return connection
-        //        .Query<TRecord>
-        //            ($@"SELECT * FROM {this.Name} WHERE Id = @Id LIMIT 1", new IdContainer(key))
-        //        .FirstOrDefault();
-        //}
+        
 
         /// <summary>
         /// Get a record from ID
@@ -882,14 +802,7 @@ namespace Database.Table
                     ($@"SELECT * FROM {this.Name} WHERE Id = @Id LIMIT 1", new IdContainer(key)))
                 .FirstOrDefault();
         }
-
-        //public T GetColumnsFromKey<T>(IDbConnection connection, TKey key, params string[] columns)
-        //{
-        //    var selectText = columns.Join(", ");
-        //    return connection
-        //        .ExecuteScalar<T>
-        //            ($@"SELECT {selectText} FROM {this.Name} WHERE Id = @Id LIMIT 1", new IdContainer(key));
-        //}
+        
         public async Task<T> GetColumnsFromKeyAsync<T>(IDbConnection connection, TKey key, params string[] columns)
         {
             var selectText = columns.Join(", ");
@@ -910,7 +823,6 @@ namespace Database.Table
                 .Query<TRecord>
                     ($@"SELECT Id FROM {this.Name} WHERE Id = @Id LIMIT 1", new IdContainer(key))
                 .FirstOrDefault() != null;
-            //($@"SELECT Id FROM {this.Name} WHERE Id = {this.GetKeyString(key)} LIMIT 1")
         }
 
 
@@ -918,13 +830,11 @@ namespace Database.Table
             (IDbConnection connection, IEnumerable<string> items,
             string sql, Func<string[], object> parameterGenerator)
         {
-            //using (var connection = this.Connect())
-            //{
             var succeeded = true;
 
             foreach (var ids in items.Buffer(this.ArrayParameterMaxLength))
             {
-                var param = parameterGenerator(ids.ToArray());//new Tuple<string[]>(ids.ToArray());
+                var param = parameterGenerator(ids.ToArray());
 
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -943,7 +853,6 @@ namespace Database.Table
                 }
             }
             return succeeded;
-            //}
         }
 
         /// <summary>
@@ -972,10 +881,7 @@ namespace Database.Table
         {
             await Task.Run(() => this.Parent.RequestTransaction(action));
         }
-
-        //public void InConnection(Action<IDbConnection> action)
-        //    => this.parent.InConnection(action);
-
+        
 
         public Task<IEnumerable<T>> QueryAsync<T>
             (IDbConnection connection, string sql, object param = null, IDbTransaction transaction = null)
@@ -1003,7 +909,6 @@ namespace Database.Table
                 dbArgs.Add(pair.Key, pair.Value);
             }
             return dbArgs;
-            //return await connection.QueryAsync(sql, param, transaction);
         }
 
 

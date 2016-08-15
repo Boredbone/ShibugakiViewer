@@ -8,13 +8,10 @@ using Boredbone.Utility.Extensions;
 namespace Database.Search
 {
     /// <summary>
-    /// SQLite用のSQL構文
+    /// SQL function for SQLite
     /// </summary>
     public static class DatabaseFunction
     {
-        //private static string escapeChar = "|";
-        //public static string EscapePhrase => $"Escape '{escapeChar}'";
-
         public static string DateTimeOffsetToString(DateTimeOffset datetime)
             => datetime.ToString("yyyy-MM-dd HH:mm:ss zzz");
 
@@ -29,11 +26,6 @@ namespace Database.Search
 
         public static string ToEqualsString(object obj)
             => $"'{ToEscapedString(obj)}'";
-        //
-        //public static string ToEscapedLikeString(object obj)
-        //    => ToEscapedString(obj)
-        //    .Replace("_", escapeChar + "_")
-        //    .Replace("%", escapeChar + "%");
 
         public static string AreEqualWithEscape(string column, string reference)
             => $"{column} == '{ToEscapedString(reference)}'";
@@ -67,12 +59,8 @@ namespace Database.Search
         public static string EndsWith(string reference)
             => $"GLOB '*{ToGlobReference(reference)}'";
 
-
-
         public static string Contains(string reference)
             => $"GLOB '*{ToGlobReference(reference)}*'";
-        //=> $"LIKE '%{reference}%'";
-
 
         public static string DateOffsetReference(DateTimeOffset dateTime)
             => $"'{DateToString(dateTime.Date)}'";
@@ -100,9 +88,6 @@ namespace Database.Search
         public static string Not(string sql)
             => $"NOT {sql}";
 
-        //public static string Equals(string column, string reference)
-        //    => $"{column} == {reference}";
-
 
         public static string IsTrue(string column)
             => $"{column} != 0";
@@ -117,7 +102,7 @@ namespace Database.Search
             => $"{column} IS NOT NULL";
 
 
-        public static string In(string column,string array)
+        public static string In(string column, string array)
             => $"{column} IN {array}";
 
     }

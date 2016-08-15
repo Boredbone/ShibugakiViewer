@@ -1375,6 +1375,15 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
+        ///   Update Mode に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RefreshMode {
+            get {
+                return ResourceManager.GetString("RefreshMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Use Default Setting に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string RefreshModeDefault {
@@ -1951,7 +1960,7 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
-        ///   Always Up-To-Date に類似しているローカライズされた文字列を検索します。
+        ///   Join Mass Update に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string UpdateEnabledCheckBox_Content {
             get {

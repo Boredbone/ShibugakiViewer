@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Database.Search
 {
     /// <summary>
-    /// 比較演算子
+    /// Operators to compare
     /// </summary>
     public enum CompareMode
     {
@@ -20,12 +20,12 @@ namespace Database.Search
     }
 
     /// <summary>
-    /// 比較演算子のユーティリティ
+    /// Utilities for comparison operators
     /// </summary>
     public static class CompareModeExtensions
     {
         /// <summary>
-        /// 記号を取得
+        /// Get symbol
         /// </summary>
         /// <param name="mode"></param>
         /// <returns></returns>
@@ -51,7 +51,7 @@ namespace Database.Search
         }
 
         /// <summary>
-        /// 演算子が等価(=)を含むかどうか
+        /// Whether operator contains equality(=)
         /// </summary>
         /// <param name="mode"></param>
         /// <returns></returns>

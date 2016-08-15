@@ -544,7 +544,7 @@
     <value>登録解除</value>
   </data>
   <data name="UpdateEnabledCheckBox_Content" xml:space="preserve">
-    <value>更新対象に含める</value>
+    <value>一括更新の対象に含める</value>
   </data>
   <data name="UpdateFlagLabel_Text" xml:space="preserve">
     <value>ページ遷移時に画像の検査を開始します</value>
@@ -782,5 +782,8 @@
   </data>
   <data name="DisableMoveButton" xml:space="preserve">
     <value>画像変更ボタンを透明にする</value>
+  </data>
+  <data name="RefreshMode" xml:space="preserve">
+    <value>更新方法</value>
   </data>
 </root>

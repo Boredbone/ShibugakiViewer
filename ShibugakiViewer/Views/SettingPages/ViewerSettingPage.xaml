@@ -12,11 +12,16 @@
              xmlns:tb="clr-namespace:WpfTools.Behaviors;assembly=WpfTools"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <UserControl.DataContext>
-        <viewModels:ViewerSettingPageViewModel/>
-    </UserControl.DataContext>
     <UserControl.Resources>
         <Style TargetType="ComboBox" x:Key="comboBoxStyle">
+            <Setter Property="Margin" Value="16,4,4,4"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="MinWidth" Value="100"/>
+        </Style>
+        <Style TargetType="TextBlock" x:Key="headerTextStyle">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="GroupBox">
             <Setter Property="Margin" Value="4"/>
         </Style>
     </UserControl.Resources>
@@ -28,142 +33,165 @@
             HorizontalScrollBarVisibility="Disabled"
             VerticalContentAlignment="Stretch">
             <StackPanel HorizontalAlignment="Left" Grid.Row="0">
-                <TextBlock Text="{Binding Text.Value}"/>
+
+                <GroupBox Header="Viewer Operation">
+                    <StackPanel>
+
+                        <CheckBox 
+                            Content="{x:Static properties:Resources.DisableMoveButton}" 
+                            IsChecked="{Binding IsViewerMoveButtonDisabled.Value,Mode=TwoWay}"/>
+
+                        <CheckBox 
+                            Content="{x:Static properties:Resources.OpenNaviSingleTapSwitch_Text}" 
+                            IsChecked="{Binding IsOpenNavigationWithSingleTapEnabled.Value,Mode=TwoWay}"/>
+                        <CheckBox 
+                            Content="{x:Static properties:Resources.ExtendedMouseSwitch_Text}" 
+                            IsChecked="{Binding UseExtendedMouseButtonsToSwitchImage.Value,Mode=TwoWay}"/>
 
 
-                <TextBlock Text="{x:Static properties:Resources.ThumbSizeSelector_Header}"/>
-                <TextBox Width="200" 
-                     Text="{Binding ThumbnailSize.Value,Mode=TwoWay,UpdateSourceTrigger=Explicit}"
-                     b:TextBoxBehavior.UpdateByReturn="True"/>
+                        <!--<CheckBox 
+                        Content="{x:Static properties:Resources.PageTurning}" 
+                        IsChecked="{Binding IsFlipReversed.Value,Mode=TwoWay}"/>-->
 
-                <CheckBox Content="IsAutoInformationPaneEnabled"
-                      IsChecked="{Binding IsAutoInformationPaneEnabled.Value,Mode=TwoWay}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
 
+                            <TextBlock
+                                Grid.Row="0" Grid.Column="0"
+                                Style="{StaticResource headerTextStyle}"
+                                Text="{x:Static properties:Resources.PageTurning}"/>
+                            <ComboBox 
+                                Grid.Row="0" Grid.Column="1"
+                                Style="{StaticResource comboBoxStyle}"
+                                SelectedIndex="{Binding IsFlipReversed.Value,Mode=TwoWay,
+                                Converter={StaticResource BoolIntConverter}}">
+                                <ComboBoxItem>
+                                    <TextBlock Text="{x:Static properties:Resources.FlipNormal}"/>
+                                </ComboBoxItem>
+                                <ComboBoxItem>
+                                    <TextBlock Text="{x:Static properties:Resources.FlipReverse}"/>
+                                </ComboBoxItem>
+                            </ComboBox>
 
-                <!--<CheckBox Content="Theme" IsChecked="{Binding IsDarkTheme.Value,Mode=TwoWay}"/>-->
+                            <TextBlock
+                                Grid.Row="1" Grid.Column="0"
+                                Style="{StaticResource headerTextStyle}"
+                                Text="{x:Static properties:Resources.CursorKeyFuncHelp_Header}"/>
 
-                <TextBlock Text="{x:Static properties:Resources.ThemeSelectorHeader_Text}"/>
-                <ComboBox 
-                Style="{StaticResource comboBoxStyle}"
-                SelectedIndex="{Binding IsDarkTheme.Value,Mode=TwoWay,Converter={StaticResource BoolIntConverter}}">
-                    <ComboBoxItem>
-                        <TextBlock Text="{x:Static properties:Resources.LightText_Text}"/>
-                    </ComboBoxItem>
-                    <ComboBoxItem>
-                        <TextBlock Text="{x:Static properties:Resources.DarkText_Text}"/>
-                    </ComboBoxItem>
-                </ComboBox>
-
-
-                <tc:ColorSelector SelectedColor="{Binding BackColor.Value,Mode=TwoWay}"/>
-
-
-                <CheckBox 
-                Content="{x:Static properties:Resources.GroupingSwitch_Header}" 
-                IsChecked="{Binding IsGroupingEnabled.Value,Mode=TwoWay}"/>
-                <!--<CheckBox 
-                Content="{x:Static properties:Resources.LibRefreshModeHelp_Header}" 
-                IsChecked="{Binding RefreshLibraryCompletely.Value,Mode=TwoWay}"/>-->
-
-                <TextBlock Text="{x:Static properties:Resources.LibRefreshModeHelp_Header}"/>
-                <ComboBox 
-                Style="{StaticResource comboBoxStyle}"
-                SelectedIndex="{Binding RefreshLibraryCompletely.Value,Mode=TwoWay,Converter={StaticResource BoolIntConverter}}">
-                    <ComboBoxItem>
-                        <TextBlock Text="{x:Static properties:Resources.RefreshModeFast}"/>
-                    </ComboBoxItem>
-                    <ComboBoxItem>
-                        <TextBlock Text="{x:Static properties:Resources.RefreshModeSlow}"/>
-                    </ComboBoxItem>
-                </ComboBox>
-
-
-                <!--<CheckBox 
-                Content="{x:Static properties:Resources.PageTurning}" 
-                IsChecked="{Binding IsFlipReversed.Value,Mode=TwoWay}"/>-->
-
-                <TextBlock Text="{x:Static properties:Resources.PageTurning}"/>
-                <ComboBox 
-                Style="{StaticResource comboBoxStyle}"
-                SelectedIndex="{Binding IsFlipReversed.Value,Mode=TwoWay,Converter={StaticResource BoolIntConverter}}">
-                    <ComboBoxItem>
-                        <TextBlock Text="{x:Static properties:Resources.FlipNormal}"/>
-                    </ComboBoxItem>
-                    <ComboBoxItem>
-                        <TextBlock Text="{x:Static properties:Resources.FlipReverse}"/>
-                    </ComboBoxItem>
-                </ComboBox>
-
-                <CheckBox 
-                Content="{x:Static properties:Resources.AnimatedGifSwitch_Text}" 
-                IsChecked="{Binding IsAnimatedGifEnabled.Value,Mode=TwoWay}"/>
-                <CheckBox 
-                Content="{x:Static properties:Resources.OpenNaviSingleTapSwitch_Text}" 
-                IsChecked="{Binding IsOpenNavigationWithSingleTapEnabled.Value,Mode=TwoWay}"/>
-                <CheckBox 
-                Content="{x:Static properties:Resources.ExtendedMouseSwitch_Text}" 
-                IsChecked="{Binding UseExtendedMouseButtonsToSwitchImage.Value,Mode=TwoWay}"/>
-                <CheckBox 
-                Content="{x:Static properties:Resources.AutoRefereshHelp_Text}" 
-                IsChecked="{Binding RefreshLibraryOnLaunched.Value,Mode=TwoWay}"/>
-                <CheckBox 
-                Content="{x:Static properties:Resources.RefreshFolderVisibleHelp_Header}" 
-                IsChecked="{Binding IsLibraryRefreshStatusVisible.Value,Mode=TwoWay}"/>
-                <CheckBox 
-                Content="IsFolderUpdatedNotificationVisible" 
-                IsChecked="{Binding IsFolderUpdatedNotificationVisible.Value,Mode=TwoWay}"/>
-
-                <CheckBox 
-                Content="{x:Static properties:Resources.DisableMoveButton}" 
-                IsChecked="{Binding IsViewerMoveButtonDisabled.Value,Mode=TwoWay}"/>
-                
-                <TextBlock
-                        Text="{x:Static properties:Resources.CursorKeyFuncHelp_Header}"/>
-
-                <ComboBox 
-                    SelectedIndex="{Binding CursorKeyBind.Value,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
-                    <ComboBoxItem 
-                            Content="{x:Static properties:Resources.CursorKeyToFlipHelp_Content}"/>
-                    <ComboBoxItem
-                            Content="{x:Static properties:Resources.CursorKeyToMoveHelp_Content}"/>
-                </ComboBox>
-
-                <TextBlock TextWrapping="Wrap"
-                           Text="{x:Static properties:Resources.ResizeMethodText_Text}"/>
-                <ComboBox Margin="0,7,0,0" HorizontalAlignment="Left"
-                          MinWidth="170"
-                          SelectedIndex="{Binding IsFill.Value,Mode=TwoWay,
-                    Converter={StaticResource BoolIntConverter}}">
-                    <ComboBoxItem
-                        Content="{x:Static properties:Resources.FitText_Content}"/>
-                    <ComboBoxItem
-                        Content="{x:Static properties:Resources.FillText_Content}"/>
-                </ComboBox>
-
-                <CheckBox
-                    IsChecked="{Binding IsResizingAlways.Value,Mode=TwoWay}"
-                    Content="{x:Static properties:Resources.ResizeSmallImageText_Text}"/>
-
-                <CheckBox
-                    IsChecked="{Binding IsSlideshowFullScreen.Value,Mode=TwoWay}"
-                    Content="{x:Static properties:Resources.FullscreenText_Text}"/>
+                            <ComboBox 
+                                Grid.Row="1" Grid.Column="1"
+                                Style="{StaticResource comboBoxStyle}"
+                                SelectedIndex="{Binding CursorKeyBind.Value,Mode=TwoWay,
+                                UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBoxItem 
+                                    Content="{x:Static properties:Resources.CursorKeyToFlipHelp_Content}"/>
+                                <ComboBoxItem
+                                    Content="{x:Static properties:Resources.CursorKeyToMoveHelp_Content}"/>
+                            </ComboBox>
+                        </Grid>
+                    </StackPanel>
+                </GroupBox>
 
 
-                
-                
-                <TextBlock Text="{x:Static properties:Resources.DurationText_Text}"/>
+                <GroupBox Header="Color">
+                    <StackPanel>
 
-                <TextBlock>
-                    <Run Text="{Binding FlipTimeSec.Value}"/>
-                    <Run Text=" "/>
-                    <Run Text="{x:Static properties:Resources.SecondsText_Text}"/>
-                </TextBlock>
 
-                <Slider Minimum="1" Maximum="60" SmallChange="1" LargeChange="5"
-                        Value="{Binding FlipTimeSec.Value,Mode=TwoWay}"
-                        tb:SliderBehavior.IsReceivePreviewMouseWheel="True"/>
+                        <!--<CheckBox Content="Theme" IsChecked="{Binding IsDarkTheme.Value,Mode=TwoWay}"/>-->
 
-                <!--<TextBlock Text="{x:Static properties:Resources.TransitionTimeText_Text}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            
+                            <TextBlock
+                                Grid.Row="0" Grid.Column="0"
+                                Style="{StaticResource headerTextStyle}"
+                                Text="{x:Static properties:Resources.ThemeSelectorHeader_Text}"/>
+                            <ComboBox 
+                                Grid.Row="0" Grid.Column="1"
+                                Style="{StaticResource comboBoxStyle}"
+                                SelectedIndex="{Binding IsDarkTheme.Value,Mode=TwoWay,
+                                Converter={StaticResource BoolIntConverter}}">
+                                <ComboBoxItem>
+                                    <TextBlock Text="{x:Static properties:Resources.LightText_Text}"/>
+                                </ComboBoxItem>
+                                <ComboBoxItem>
+                                    <TextBlock Text="{x:Static properties:Resources.DarkText_Text}"/>
+                                </ComboBoxItem>
+                            </ComboBox>
+
+                            <TextBlock 
+                                Grid.Row="1" Grid.Column="0"
+                                Style="{StaticResource headerTextStyle}"
+                                Text="Background"/>
+                            <ToggleButton
+                                Grid.Row="1" Grid.Column="1"
+                                Margin="16,4,4,4"
+                                x:Name="colorButton" HorizontalAlignment="Left">
+                                <ToggleButton.Content>
+                                    <Border
+                                        Width="32" Height="16"
+                                        Background="{Binding BackColor.Value,Mode=OneWay,
+                                        Converter={StaticResource ColorToBrushConverter}}"
+                                        BorderThickness="1"
+                                        BorderBrush="Black"/>
+                                </ToggleButton.Content>
+                            </ToggleButton>
+                        </Grid>
+
+                        <tc:ColorSelector
+                            Visibility="{Binding ElementName=colorButton,Path=IsChecked,Mode=OneWay,
+                            Converter={StaticResource TrueToVisibleConverter}}"
+                            SelectedColor="{Binding BackColor.Value,Mode=TwoWay}"
+                            Alpha="False"/>
+
+
+                    </StackPanel>
+                </GroupBox>
+
+
+                <GroupBox Header="Slideshow">
+                    <StackPanel>
+
+                        <CheckBox
+                            IsChecked="{Binding IsSlideshowFullScreen.Value,Mode=TwoWay}"
+                            Content="{x:Static properties:Resources.FullscreenText_Text}"/>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock 
+                                Style="{StaticResource headerTextStyle}"
+                                Text="{x:Static properties:Resources.DurationText_Text}"/>
+
+                            <TextBlock Grid.Column="1" HorizontalAlignment="Right">
+                            <Run Text="{Binding FlipTimeSec.Value}"/>
+                            <Run Text=" "/>
+                            <Run Text="{x:Static properties:Resources.SecondsText_Text}"/>
+                            </TextBlock>
+
+                        </Grid>
+                        <Slider 
+                            Minimum="1" Maximum="60" SmallChange="1" LargeChange="5"
+                            Value="{Binding FlipTimeSec.Value,Mode=TwoWay}"
+                            tb:SliderBehavior.IsReceivePreviewMouseWheel="True"/>
+
+                        <!--<TextBlock Text="{x:Static properties:Resources.TransitionTimeText_Text}"/>
 
                 <TextBlock>
                     <Run Text="{Binding AnimationTimeSec.Value,StringFormat={}{0:0.##}}"/>
@@ -176,6 +204,47 @@
                         tb:SliderBehavior.IsReceiveMouseWheel="True"
                         AutoToolTipPrecision="2">
                 </Slider>-->
+                    </StackPanel>
+                </GroupBox>
+
+
+                <GroupBox Header="Viewer">
+                    <StackPanel>
+
+
+                        <CheckBox 
+                            Content="{x:Static properties:Resources.AnimatedGifSwitch_Text}" 
+                            IsChecked="{Binding IsAnimatedGifEnabled.Value,Mode=TwoWay}"/>
+
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock 
+                                Style="{StaticResource headerTextStyle}"
+                                TextWrapping="Wrap"
+                                Text="{x:Static properties:Resources.ResizeMethodText_Text}"/>
+                            <ComboBox
+                                Grid.Column="1"
+                                Style="{StaticResource comboBoxStyle}"
+                                SelectedIndex="{Binding IsFill.Value,Mode=TwoWay,
+                                Converter={StaticResource BoolIntConverter}}">
+                                <ComboBoxItem
+                                    Content="{x:Static properties:Resources.FitText_Content}"/>
+                                <ComboBoxItem
+                                    Content="{x:Static properties:Resources.FillText_Content}"/>
+                            </ComboBox>
+                        </Grid>
+
+                        <CheckBox
+                            IsChecked="{Binding IsResizingAlways.Value,Mode=TwoWay}"
+                            Content="{x:Static properties:Resources.ResizeSmallImageText_Text}"/>
+
+                    </StackPanel>
+                </GroupBox>
+
             </StackPanel>
         </ScrollViewer>
     </Grid>

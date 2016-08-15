@@ -11,8 +11,7 @@ namespace ImageLibrary.Creation
         ImageFileInformation GetImage(string path, PropertiesLevel level);
 
 
-        Task<long> EnumerateFilesAsync
-            (
+        Task<long> EnumerateFilesAsync(
             Action<int> OnFileEnumerated, 
             bool containsChildren = true, 
             CancellationToken cancellationToken = default(CancellationToken),

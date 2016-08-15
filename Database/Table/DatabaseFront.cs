@@ -116,32 +116,7 @@ namespace Database.Table
             {
                 throw new ArgumentException("Parameter mismatch");
             }
-
-
-
-            //var count = this.informationTable.Count(connection);
-            //using (var transaction = connection.BeginTransaction())
-            //{
-            //    try
-            //    {
-            //        if (count <= 0)
-            //        {
-            //            this.informationTable.Add(new TableInformation()
-            //            {
-            //                Created = DateTimeOffset.Now,
-            //                Modified= DateTimeOffset.Now,
-            //                TableName = DatabaseInformationName,
-            //                Version = this.Version,
-            //            }, connection, transaction);
-            //        }
-            //        transaction.Commit();
-            //    }
-            //    catch
-            //    {
-            //        transaction.Rollback();
-            //    }
-            //}
-
+            
 
             foreach (var table in this.tables.Skip(1))
             {
@@ -186,7 +161,6 @@ namespace Database.Table
 
             this.RequestTransaction(async context =>
             {
-                //await this.informationTable.ReplaceRangeAsync(informations, context.Connection,context.Transaction);
                 foreach (var info in informations)
                 {
                     if (!oldInformations.Any(x => x.Id == info.Id))
@@ -287,7 +261,6 @@ namespace Database.Table
                 DateTimeOffset result;
                 DateTimeOffset.TryParse(value.ToString(), out result);
                 return result;
-                //return DateTimeOffset.Parse(value.ToString());
             }
         }
 

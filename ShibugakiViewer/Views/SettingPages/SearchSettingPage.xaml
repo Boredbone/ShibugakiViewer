@@ -1,0 +1,121 @@
+﻿<UserControl x:Class="ShibugakiViewer.Views.SettingPages.SearchSettingPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ShibugakiViewer.Views.SettingPages"
+             xmlns:viewModels="clr-namespace:ShibugakiViewer.ViewModels.SettingPages"
+             xmlns:b="clr-namespace:ShibugakiViewer.Views.Behaviors"
+             xmlns:tc="clr-namespace:WpfTools.Controls;assembly=WpfTools"
+             xmlns:converter="clr-namespace:ShibugakiViewer.Views.Converters"
+             xmlns:properties="clr-namespace:ShibugakiViewer.Properties"
+             xmlns:tb="clr-namespace:WpfTools.Behaviors;assembly=WpfTools"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <Style TargetType="ComboBox" x:Key="comboBoxStyle">
+            <Setter Property="Margin" Value="16,4,4,4"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="MinWidth" Value="100"/>
+        </Style>
+        <Style TargetType="TextBlock" x:Key="headerTextStyle">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="GroupBox">
+            <Setter Property="Margin" Value="4"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <ScrollViewer
+            Grid.Row="0"
+            Margin="0"
+            VerticalScrollBarVisibility="Auto"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalContentAlignment="Stretch">
+            <StackPanel HorizontalAlignment="Left" Grid.Row="0">
+
+                <GroupBox Header="Search Result View">
+                    <StackPanel>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock 
+                                Style="{StaticResource headerTextStyle}"
+                                Text="{x:Static properties:Resources.ThumbSizeSelector_Header}"/>
+                            <TextBox 
+                                Grid.Column="1"
+                                HorizontalAlignment="Stretch"
+                                Margin="16,4,4,4"
+                                Text="{Binding ThumbnailSize.Value,Mode=TwoWay,UpdateSourceTrigger=Explicit}"
+                                b:TextBoxBehavior.UpdateByReturn="True"/>
+                        </Grid>
+
+                        <CheckBox
+                            Content="IsAutoInformationPaneEnabled"
+                            IsChecked="{Binding IsAutoInformationPaneEnabled.Value,Mode=TwoWay}"/>
+                    </StackPanel>
+                </GroupBox>
+
+
+                <GroupBox Header="Library">
+                    <StackPanel>
+                        <CheckBox 
+                            Content="{x:Static properties:Resources.AutoRefereshHelp_Text}" 
+                            IsChecked="{Binding RefreshLibraryOnLaunched.Value,Mode=TwoWay}"/>
+                        <CheckBox 
+                            Content="{x:Static properties:Resources.RefreshFolderVisibleHelp_Header}" 
+                            IsChecked="{Binding IsLibraryRefreshStatusVisible.Value,Mode=TwoWay}"/>
+                        <CheckBox 
+                            Content="IsFolderUpdatedNotificationVisible" 
+                            IsChecked="{Binding IsFolderUpdatedNotificationVisible.Value,Mode=TwoWay}"/>
+
+
+                        <!--<CheckBox 
+                        Content="{x:Static properties:Resources.LibRefreshModeHelp_Header}" 
+                        IsChecked="{Binding RefreshLibraryCompletely.Value,Mode=TwoWay}"/>-->
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock 
+                                Style="{StaticResource headerTextStyle}"
+                                Text="{x:Static properties:Resources.RefreshMode}"/>
+                            <ComboBox 
+                                Grid.Column="1"
+                                Style="{StaticResource comboBoxStyle}"
+                                SelectedIndex="{Binding RefreshLibraryCompletely.Value,Mode=TwoWay,
+                                Converter={StaticResource BoolIntConverter}}">
+                                <ComboBoxItem>
+                                    <TextBlock Text="{x:Static properties:Resources.RefreshModeFast}"/>
+                                </ComboBoxItem>
+                                <ComboBoxItem>
+                                    <TextBlock Text="{x:Static properties:Resources.RefreshModeSlow}"/>
+                                </ComboBoxItem>
+                            </ComboBox>
+                        </Grid>
+                    </StackPanel>
+                </GroupBox>
+
+
+
+                <GroupBox Header="Search">
+                    <StackPanel>
+
+                        <CheckBox 
+                            Content="{x:Static properties:Resources.GroupingSwitch_Header}" 
+                            IsChecked="{Binding IsGroupingEnabled.Value,Mode=TwoWay}"/>
+                    </StackPanel>
+                </GroupBox>
+
+
+
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

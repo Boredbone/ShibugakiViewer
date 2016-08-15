@@ -71,7 +71,7 @@ namespace ShibugakiViewer.Launcher
 
                             return;
                         }
-                        catch(System.ComponentModel.Win32Exception e)
+                        catch(System.ComponentModel.Win32Exception)
                         {
                             //var tx = e.ToString();
                         }

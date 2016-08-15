@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace ShibugakiViewer.Views.SettingPages
 {
     /// <summary>
-    /// ViewerSettingPage.xaml の相互作用ロジック
+    /// SearchSettingPage.xaml の相互作用ロジック
     /// </summary>
-    public partial class ViewerSettingPage : UserControl
+    public partial class SearchSettingPage : UserControl
     {
-        public ViewerSettingPage()
+        public SearchSettingPage()
         {
             InitializeComponent();
         }

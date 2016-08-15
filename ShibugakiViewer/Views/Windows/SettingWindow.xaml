@@ -28,7 +28,13 @@
                     Grid.Row="0">
             
             <TabItem Header="Viewer">
-                <pages:ViewerSettingPage x:Name="viewerSetting"/>
+                <pages:ViewerSettingPage 
+                    DataContext="{Binding SettingViewModel,Mode=OneWay}"/>
+            </TabItem>
+
+            <TabItem Header="Search">
+                <pages:SearchSettingPage
+                    DataContext="{Binding SettingViewModel,Mode=OneWay}"/>
             </TabItem>
             
             <!--

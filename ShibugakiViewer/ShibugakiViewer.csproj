@@ -144,9 +144,7 @@
     <Compile Include="Models\Utility\RandomNumber.cs" />
     <Compile Include="ViewModels\SettingPages\FolderSettingPageViewModel.cs" />
     <Compile Include="ViewModels\SettingPages\LibraryCreationPageViewModel.cs" />
-    <Compile Include="ViewModels\SettingPages\SlideshowSettingPageViewModel.cs" />
     <Compile Include="ViewModels\SettingPages\ViewerSettingPageViewModel.cs" />
-    <Compile Include="ViewModels\SlideshowPageViewModel.cs" />
     <Compile Include="Views\Behaviors\AnimatedGifbehavior.cs" />
     <Compile Include="Views\Behaviors\ExtendedMouseBinding.cs" />
     <Compile Include="Views\Behaviors\FullScreenBehavior.cs" />
@@ -160,7 +158,6 @@
     <Compile Include="Views\Behaviors\PopupMenuBehavior.cs" />
     <Compile Include="Views\Behaviors\RecordSelectBehavior.cs" />
     <Compile Include="Views\Behaviors\ScrollHelperBehavior.cs" />
-    <Compile Include="Views\Behaviors\StoryboardBehabior.cs" />
     <Compile Include="Views\Behaviors\TapBehavior.cs" />
     <Compile Include="Views\Behaviors\TextBoxBehavior.cs" />
     <Compile Include="Views\Behaviors\SizeBehavior.cs" />
@@ -205,15 +202,15 @@
     <Compile Include="Views\InformationPanes\ToolsPage.xaml.cs">
       <DependentUpon>ToolsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Pages\SlideshowPage.xaml.cs">
-      <DependentUpon>SlideshowPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\SettingPages\FolderSettingPage.xaml.cs">
       <DependentUpon>FolderSettingPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\SettingPages\SettingWindowViewModel.cs" />
     <Compile Include="Views\SettingPages\LibraryCreationPage.xaml.cs">
       <DependentUpon>LibraryCreationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SettingPages\SearchSettingPage.xaml.cs">
+      <DependentUpon>SearchSettingPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingPages\ViewerSettingPage.xaml.cs">
       <DependentUpon>ViewerSettingPage.xaml</DependentUpon>
@@ -223,9 +220,6 @@
     </Compile>
     <Compile Include="Views\Windows\SettingWindow.xaml.cs">
       <DependentUpon>SettingWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Windows\SlideshowWindow.xaml.cs">
-      <DependentUpon>SlideshowWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Windows\VersionWindow.xaml.cs">
       <DependentUpon>VersionWindow.xaml</DependentUpon>
@@ -294,10 +288,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Pages\SlideshowPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Pages\ViewerPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -331,6 +321,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SettingPages\LibraryCreationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SettingPages\SearchSettingPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -380,10 +374,6 @@
       <DependentUpon>ClientWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="Views\Windows\SettingWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Windows\SlideshowWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

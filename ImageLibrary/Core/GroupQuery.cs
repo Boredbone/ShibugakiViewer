@@ -31,7 +31,6 @@ namespace ImageLibrary.Core
         {
             using (var connection = this.Table.Parent.Connect())
             {
-                //var tx = this.GetGroupFilter(group);
                 return await this.Table.CountAsync(connection,
                     this.GetFilterString(group));
             }
@@ -49,8 +48,6 @@ namespace ImageLibrary.Core
                 throw new ArgumentException();
             }
             return this.GetGroupFilterString(group.Id);
-            //return DatabaseFunction.And(DatabaseFunction.IsFalse(nameof(Record.IsGroup)),
-            //    DatabaseFunction.AreEqualWithEscape(nameof(Record.GroupKey), group.Id));
         }
 
         public string GetGroupFilterString(string groupId)
@@ -74,26 +71,5 @@ namespace ImageLibrary.Core
                 SortSetting.GetFullSql(group.GetSort()),
                 skip, take);
         }
-
-
-        //public async Task<long> FindIndexAsync(Record group, Record record)
-        //{
-        //    //return this.Library.FindIndexAsync
-        //    //    (this.GetFilterString(group),
-        //    //    SortSetting.GetFullSql(group.GetSort()),
-        //    //    record);
-        //    
-        //    var filter = DatabaseFunction.And(this.GetFilterString(group),
-        //        SortSetting.GetOrderFilterSql(group.GetSort(), record));
-        //
-        //    using (var connection = this.Table.Parent.Connect())
-        //    {
-        //        return (await this.Table.CountAsync(connection, filter, record)) - 1;
-        //    }
-        //}
-
-
-        //public Task<string[]> GetAllIdsAsync(Record group)
-        //    => this.Library.GetAllIdsAsync(this.GetFilterString(group));
     }
 }

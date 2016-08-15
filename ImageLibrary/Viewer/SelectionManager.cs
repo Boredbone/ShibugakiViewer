@@ -8,7 +8,6 @@ using System.Collections.Specialized;
 using Boredbone.Utility.Extensions;
 using System.ComponentModel;
 using ImageLibrary.File;
-using Boredbone.XamlTools;
 using System.Reactive.Subjects;
 using System.Reactive.Linq;
 using System.Reactive;

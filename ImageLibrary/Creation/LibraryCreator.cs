@@ -77,32 +77,29 @@ namespace ImageLibrary.Creation
             this.LoadingSubject.OnNext("");
 
 #if TEST_BUILD
-                if (false)
-                {
+            if (false)
+            {
 #pragma warning disable 162
-                    for (int x = 0; x < 30; x++)
-                    {
-                        await Task.Delay(500);
-                        this.LoadingSubject.OnNext(Guid.NewGuid().ToString());
-                    }
-                    await Task.Delay(1000);
-                    //return;
-                    this.LoadedSubject.OnNext(new LibraryLoadResult()
-                    {
-                        AddedFiles = new Dictionary<string, FileInformation>()
-                        {
-                            {"a",null},{"b",null}
-                        },
-                        RemovedFiles = new Dictionary<string, FileInformation>()
-                        {
-                            {"c",null},{"d",null},{"e",null}
-                        }
-                    });
-                    //this.loadingSubject.OnCompleted();
-                    return;
-                    //throw new ArgumentException();
-#pragma warning restore 162
+                for (int x = 0; x < 30; x++)
+                {
+                    await Task.Delay(500);
+                    this.LoadingSubject.OnNext(Guid.NewGuid().ToString());
                 }
+                await Task.Delay(1000);
+                this.LoadingSubject.OnNext(null);
+                await Task.Delay(100);
+
+                this.LoadedSubject.OnNext(new LibraryLoadResult()
+                {
+                    AddedFiles = new Dictionary<string, Record>(),
+                    RemovedFiles = new Dictionary<string, Record>(),
+                    UpdatedFiles = new Dictionary<string, Record>(),
+                    Action = action,
+                    DateTime = DateTimeOffset.Now,
+                });
+                return;
+#pragma warning restore 162
+            }
 #endif
 
             var cts = new CancellationTokenSource();

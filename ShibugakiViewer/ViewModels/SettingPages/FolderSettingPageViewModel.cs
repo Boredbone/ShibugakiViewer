@@ -23,6 +23,7 @@ namespace ShibugakiViewer.ViewModels.SettingPages
 
         public ReactiveProperty<bool> IsProfessionalFolderSettingEnabled { get; }
         public ReactiveProperty<bool> IsEditable { get; }
+        public ReadOnlyReactiveProperty<bool> IsProfessionalFolderSettingEnabledView { get; }
 
         public ReactiveCommand IgnoreCommand { get; }
         public ReactiveCommand RefreshCommand { get; }
@@ -53,7 +54,13 @@ namespace ShibugakiViewer.ViewModels.SettingPages
                 .ToReactivePropertyAsSynchronized(x => x.IsProfessionalFolderSettingEnabled)
                 .AddTo(this.Disposables);
 
-            this.IgnoreCommand = new ReactiveCommand()
+            this.IsProfessionalFolderSettingEnabledView = this.IsEditable
+                .CombineLatest(this.IsProfessionalFolderSettingEnabled, (a, b) => a && b)
+                .ToReadOnlyReactiveProperty()
+                .AddTo(this.Disposables);
+
+            this.IgnoreCommand = this.IsEditable
+                .ToReactiveCommand()
                 .WithSubscribe(x =>
                 {
                     var folder = x as FolderInformation;
@@ -77,7 +84,8 @@ namespace ShibugakiViewer.ViewModels.SettingPages
                     }
                 }, this.Disposables);
 
-            this.AddCommand = new ReactiveCommand()
+            this.AddCommand = this.IsEditable
+                .ToReactiveCommand()
                 .WithSubscribe(_ =>
                 {
                     var dir = this.previousSelectedDirectory?.Split(System.IO.Path.DirectorySeparatorChar);

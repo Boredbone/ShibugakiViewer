@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Boredbone.Utility.Extensions;
-using Boredbone.XamlTools;
 using Database.Search;
 using Database.Table;
 using ImageLibrary.File;
@@ -336,50 +335,51 @@ namespace ImageLibrary.SearchProperty
         }
         
 
-        private static Dictionary<FileProperty, ResourceString> Labels;
+        private static Dictionary<FileProperty, string> Labels;
 
         /// <summary>
         /// プロパティの表示名をリソースから取得
         /// </summary>
         /// <param name="getString"></param>
-        public static void InitializeLabels(Func<string, string> getString)
+        public static void InitializeLabels(Func<string, string> GetResource)
         {
             if (Labels != null)
             {
                 return;
             }
-            Labels = new Dictionary<FileProperty, ResourceString>(){
-                {FileProperty.Id,new ResourceString("FullPath",getString)},
-                {FileProperty.DirectoryPath,new ResourceString("DirectoryPath",getString)},
-                {FileProperty.DirectoryPathStartsWith,new ResourceString("Directory",getString)},
-                {FileProperty.DirectoryPathContains,new ResourceString("DirectoryPathContains",getString)},
-                {FileProperty.FullPath,new ResourceString("FullPath",getString)},
-                {FileProperty.FileName,new ResourceString("FileName",getString)},
-                {FileProperty.FileNameContains,new ResourceString("FileNameContains",getString)},
-                {FileProperty.FileNameSequenceNumLeft,new ResourceString("FileNameSequenceNumLeft",getString)},
-                {FileProperty.FileNameSequenceNumRight,new ResourceString("FileNameSequenceNumRight",getString)},
-                {FileProperty.DateTimeCreated,new ResourceString("DateCreated",getString)},
-                {FileProperty.DateTimeModified,new ResourceString("DateModified",getString)},
-                {FileProperty.DateTimeRegistered,new ResourceString("DateRegistered",getString)},
-                {FileProperty.DateCreated,new ResourceString("DateCreated",getString)},
-                {FileProperty.DateModified,new ResourceString("DateModified",getString)},
-                {FileProperty.DateRegistered,new ResourceString("DateRegistered",getString)},
-                {FileProperty.Width,new ResourceString("Width",getString)},
-                {FileProperty.Height,new ResourceString("Height",getString)},
-                {FileProperty.Size,new ResourceString("FileSize",getString)},
-                {FileProperty.ContainsTag,new ResourceString("Tag",getString)},
-                {FileProperty.HasTag,new ResourceString("HasTag",getString)},
-                {FileProperty.Rating,new ResourceString("Rating",getString)},
-                {FileProperty.Group,new ResourceString("Group",getString)},
-                {FileProperty.AspectRatio,new ResourceString("AspectRatio",getString)},
+            Labels = new Dictionary<FileProperty, string>()
+            {
+                {FileProperty.Id, GetResource("FullPath")},
+                {FileProperty.DirectoryPath, GetResource("DirectoryPath")},
+                {FileProperty.DirectoryPathStartsWith, GetResource("Directory")},
+                {FileProperty.DirectoryPathContains, GetResource("DirectoryPathContains")},
+                {FileProperty.FullPath, GetResource("FullPath")},
+                {FileProperty.FileName, GetResource("FileName")},
+                {FileProperty.FileNameContains, GetResource("FileNameContains")},
+                {FileProperty.FileNameSequenceNumLeft, GetResource("FileNameSequenceNumLeft")},
+                {FileProperty.FileNameSequenceNumRight, GetResource("FileNameSequenceNumRight")},
+                {FileProperty.DateTimeCreated, GetResource("DateCreated")},
+                {FileProperty.DateTimeModified, GetResource("DateModified")},
+                {FileProperty.DateTimeRegistered, GetResource("DateRegistered")},
+                {FileProperty.DateCreated, GetResource("DateCreated")},
+                {FileProperty.DateModified, GetResource("DateModified")},
+                {FileProperty.DateRegistered, GetResource("DateRegistered")},
+                {FileProperty.Width, GetResource("Width")},
+                {FileProperty.Height, GetResource("Height")},
+                {FileProperty.Size, GetResource("FileSize")},
+                {FileProperty.ContainsTag, GetResource("Tag")},
+                {FileProperty.HasTag, GetResource("HasTag")},
+                {FileProperty.Rating, GetResource("Rating")},
+                {FileProperty.Group, GetResource("Group")},
+                {FileProperty.AspectRatio, GetResource("AspectRatio")},
             };
 
-            isLabel = getString("Is");
-            isNotLabel = getString("IsNot");
-            containsLabel = getString("Contains");
-            notContainsLabel = getString("DoNotContains");
-            andLabel = getString("MatchAll");
-            orLabel = getString("MatchAny");
+            isLabel = GetResource("Is");
+            isNotLabel = GetResource("IsNot");
+            containsLabel = GetResource("Contains");
+            notContainsLabel = GetResource("DoNotContains");
+            andLabel = GetResource("MatchAll");
+            orLabel = GetResource("MatchAny");
         }
 
         /// <summary>
@@ -389,10 +389,10 @@ namespace ImageLibrary.SearchProperty
         /// <returns></returns>
         public static string GetPropertyLabel(this FileProperty property)
         {
-            ResourceString result;
+            string result;
             if (Labels.TryGetValue(property, out result))
             {
-                return result.Value;
+                return result;
             }
             return "";
         }

@@ -544,7 +544,7 @@
     <value>Unregister</value>
   </data>
   <data name="UpdateEnabledCheckBox_Content" xml:space="preserve">
-    <value>Always Up-To-Date</value>
+    <value>Join Mass Update</value>
   </data>
   <data name="UpdateFlagLabel_Text" xml:space="preserve">
     <value>Updating will be started after page transition.</value>
@@ -782,5 +782,8 @@
   </data>
   <data name="DisableMoveButton" xml:space="preserve">
     <value>Use transparent buttons to change image</value>
+  </data>
+  <data name="RefreshMode" xml:space="preserve">
+    <value>Update Mode</value>
   </data>
 </root>

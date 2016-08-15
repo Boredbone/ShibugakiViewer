@@ -30,16 +30,22 @@ namespace ShibugakiViewer.Views.SettingPages
         {
             (this.DataContext as IDisposable)?.Dispose();
         }
-        
-
-        private void itemGridView_Unloaded(object sender, RoutedEventArgs e)
-        {
-
-        }
     }
 
     public class CheckModeConverter : IValueConverter
     {
+        //private static Lazy<Dictionary<FolderCheckMode, string>> dictionary
+        //    = new Lazy<Dictionary<FolderCheckMode, string>>(() =>
+        //    {
+        //        var core = ((App)Application.Current).Core;
+        //        return new Dictionary<FolderCheckMode, string>
+        //        {
+        //            [FolderCheckMode.None] = core.GetResourceString("RefreshModeDefault"),
+        //            [FolderCheckMode.Light] = core.GetResourceString("RefreshModeFast"),
+        //            [FolderCheckMode.Detail] = core.GetResourceString("RefreshModeSlow"),
+        //        };
+        //    });
+
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             var key = value as FolderCheckMode?;
@@ -47,8 +53,14 @@ namespace ShibugakiViewer.Views.SettingPages
             {
                 return null;
             }
-            var core = ((App)Application.Current).Core;
+            //string str;
+            //if (dictionary.Value.TryGetValue(key.Value, out str))
+            //{
+            //    return str;
+            //}
 
+            var core = ((App)Application.Current).Core;
+            
             switch (key)
             {
                 case FolderCheckMode.None:

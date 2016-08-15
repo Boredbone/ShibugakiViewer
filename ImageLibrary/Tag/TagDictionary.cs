@@ -162,28 +162,7 @@ namespace ImageLibrary.Tag
                 return existingTag.Value.Key;
             }
 
-
-            var newKey = this.AddOrReplace(newTag);
-
-            //var newKey = this.RegisteredTags.Count + 1;
-            //
-            //while (this.RegisteredTags.ContainsKey(newKey))
-            //{
-            //    newKey++;
-            //}
-            //
-            //
-            //var isAdded = this.RegisteredTags.TryAdd(newKey, newTag);
-            //
-            //if (isAdded)
-            //{
-            //    newTag.Id = newKey;
-            //    this.AddedSubject.OnNext(newTag);
-            //}
-            //
-            //this.IsEdited = true;
-            
-            return newKey;
+            return this.AddOrReplace(newTag);
         }
 
 
@@ -238,18 +217,6 @@ namespace ImageLibrary.Tag
             this.IsEdited = true;
             return key;
         }
-
-        ///// <summary>
-        ///// 辞書にキーが含まれているか調査
-        ///// </summary>
-        ///// <param name="key"></param>
-        ///// <returns></returns>
-        //public bool ContainsTagKey(int key)
-        //{
-        //    return this.RegisteredTags.ContainsKey(key);
-        //}
-
         
-            
     }
 }

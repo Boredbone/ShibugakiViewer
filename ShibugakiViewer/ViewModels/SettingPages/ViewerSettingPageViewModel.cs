@@ -20,7 +20,7 @@ namespace ShibugakiViewer.ViewModels.SettingPages
         //public ReactiveCommand GenerateNewClientCommand { get; }
         //public ReactiveCommand ConvertCommand { get; }
         
-        public ReactiveProperty<string> Text { get; }
+        //public ReactiveProperty<string> Text { get; }
 
         public ReactiveProperty<int> CursorKeyBind { get; }
         public ReactiveProperty<int> ThumbnailSize { get; }
@@ -55,7 +55,7 @@ namespace ShibugakiViewer.ViewModels.SettingPages
             var core = ((App)Application.Current).Core;
             var library = core.Library;
 
-            this.Text = new ReactiveProperty<string>().AddTo(this.Disposables);
+            //this.Text = new ReactiveProperty<string>().AddTo(this.Disposables);
 
             this.ThumbnailSize = core
                 .ToReactivePropertyAsSynchronized(x => x.ThumbNailSize)

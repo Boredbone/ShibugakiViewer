@@ -21,28 +21,28 @@ namespace ShibugakiViewer.Models
                 {CompareMode.Great,">"},
                 {CompareMode.NotEqual,"!="},
             };
-        private static Dictionary<CompareMode, ResourceString> Labels;
-        public static void InitializeLabels(Func<string, string> getString)
+        private static Dictionary<CompareMode, string> Labels;
+        public static void InitializeLabels(Func<string, string> GetResource)
         {
             if (Labels != null)
             {
                 return;
             }
-            Labels = new Dictionary<CompareMode, ResourceString>(){
-                {CompareMode.Less,new ResourceString("LessThan",getString)},
-                {CompareMode.LessEqual,new ResourceString("LessEqual",getString)},
-                {CompareMode.Equal,new ResourceString("EqualsTo",getString)},
-                {CompareMode.GreatEqual,new ResourceString("GreaterEqual",getString)},
-                {CompareMode.Great,new ResourceString("GreaterThan",getString)},
-                {CompareMode.NotEqual,new ResourceString("NotEqualsTo",getString)},
+            Labels = new Dictionary<CompareMode, string>(){
+                {CompareMode.Less,GetResource("LessThan")},
+                {CompareMode.LessEqual,GetResource("LessEqual")},
+                {CompareMode.Equal,GetResource("EqualsTo")},
+                {CompareMode.GreatEqual,GetResource("GreaterEqual")},
+                {CompareMode.Great,GetResource("GreaterThan")},
+                {CompareMode.NotEqual,GetResource("NotEqualsTo")},
             };
         }
         public static string GetLabel(this CompareMode property)
         {
-            ResourceString result;
+            string result;
             if (Labels.TryGetValue(property, out result))
             {
-                return result.Value;
+                return result;
             }
             return "";
         }

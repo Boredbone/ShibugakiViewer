@@ -700,18 +700,7 @@ namespace ShibugakiViewer.ViewModels
                 this.IsPopupOpen.Value = false;
             }
         }
-
-        public void StartSlideshow()
-        {
-            var vm = new SlideshowPageViewModel(this);
-            var window = new SlideshowWindow()
-            {
-                DataContext = vm,
-                Owner = this.View,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            };
-            window.Show();
-        }
+        
 
         /// <summary>
         /// タグ選択ダイアログ表示

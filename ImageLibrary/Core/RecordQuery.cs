@@ -46,18 +46,7 @@ namespace ImageLibrary.Core
         /// <returns></returns>
         public string GetFilterString(SearchInformation criteria)
         {
-            //var groupFilter = (this.IsGroupingEnabled)
-            //    ? DatabaseFunction.Or(
-            //        DatabaseFunction.IsTrue(nameof(Record.IsGroup)),
-            //        DatabaseFunction.IsNull(nameof(Record.GroupKey)))
-            //    : DatabaseFunction.IsFalse(nameof(Record.IsGroup));
-
             var search = criteria.GetWhereSql();
-
-            //var filter = (search != null)
-            //    ? DatabaseFunction.And(groupFilter, search)
-            //    : $"({groupFilter})";
-
             return GetFilterString(search);
         }
 
@@ -102,34 +91,5 @@ namespace ImageLibrary.Core
 
             return records;
         }
-
-
-        //public async Task<long> FindIndexAsync(SearchInformation criteria, Record record)
-        //{
-        //    //return this.Library.FindIndexAsync
-        //    //    (this.GetFilterString(criteria),
-        //    //    SortSetting.GetFullSql(criteria.GetSort()),
-        //    //    record);
-        //
-        //
-        //    //var sort = this.GetSort(criteria.SortSettings, this.Searcher.DefaultSort);
-        //
-        //    var selectorParams = SortSetting.GetReferenceSelectorSql(criteria.GetSort());
-        //    var selector = $"SELECT {selectorParams} FROM {this.Table.Name} WHERE Id = @Id LIMIT 1";
-        //
-        //    var filter = DatabaseFunction.And(this.GetFilterString(criteria),
-        //        SortSetting.GetOrderFilterSql(criteria.GetSort(), record));
-        //
-        //    using (var connection = this.Table.Parent.Connect())
-        //    {
-        //        var reference = await this.Table.GetDynamicParametersAsync(connection, selector, record);
-        //        
-        //        return (await this.Table.CountAsync(connection, filter, reference)) - 1;
-        //    }
-        //}
-    
-
-        //public Task<string[]> GetAllIdsAsync(SearchInformation criteria)
-        //    => this.Library.GetAllIdsAsync(this.GetFilterString(criteria));
     }
 }
