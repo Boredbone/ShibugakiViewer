@@ -22,7 +22,7 @@
 
         <sc:RatingTextConverter x:Key="RatingTextConverter" />
 
-        <DataTemplate DataType="{x:Type file:Record}" x:Key="thumbnailTemplate">
+        <DataTemplate x:Key="thumbnailTemplate">
 
             <!--Command="{Binding 
                 RelativeSource={RelativeSource FindAncestor,
@@ -71,6 +71,7 @@
                         Background="{StaticResource ThumbnailDefaultBorderColor}"
                         HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                         Margin="6"
+                        DataContext="{Binding Value}"
                         ToolTipService.InitialShowDelay="1000"
                         ToolTipService.ShowDuration="10000">
                         <Image 
@@ -299,7 +300,7 @@
                             Value="{StaticResource ThumbnailSelectColor}"/>
                 </DataTrigger>
 
-                <DataTrigger Binding="{Binding IsGroup,Mode=OneWay}" Value="true">
+                <DataTrigger Binding="{Binding Value.IsGroup,Mode=OneWay}" Value="true">
 
                     <Setter
                         TargetName="groupBorder"

@@ -565,6 +565,11 @@ namespace ImageLibrary.Viewer
                 .ToList()
                 .Find(x => x.Value?.Id != null && x.Value.Id.Equals(value.Id));
 
+            if (item.Value == null)
+            {
+                var tx = item.Key;
+            }
+
             return (item.Value != null) ? item.Key : -1;
         }
 

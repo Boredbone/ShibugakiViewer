@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Boredbone.Utility.Extensions;
 using Boredbone.Utility.Notification;
+using Boredbone.Utility.Tools;
 using ImageLibrary.Core;
 using ImageLibrary.File;
 using ImageLibrary.Viewer;
@@ -154,21 +155,11 @@ namespace ShibugakiViewer.ViewModels
 
             //サムネイルクリック
             this.ItemClickCommand = new ReactiveCommand()
-                .WithSubscribeOfType<Record>(record =>
-                {
-                    if (this.IsInSelecting.Value)
-                    {
-                        this.SelectItem(record);
-                    }
-                    else
-                    {
-                        client.MoveToViewerOrGroupDetail(record);
-                    }
-                }, this.Disposables);
+                .WithSubscribe(context => this.SelectOrShow(context, true), this.Disposables);
 
             //選択
             this.ItemSelectCommand = new ReactiveCommand()
-                .WithSubscribeOfType<Record>(record => this.SelectItem(record), this.Disposables);
+                .WithSubscribe(context => this.SelectOrShow(context, false), this.Disposables);
 
             //ソート条件編集
             this.EditSortCommand = new ReactiveCommand()
@@ -228,11 +219,33 @@ namespace ShibugakiViewer.ViewModels
             this.RegisterKeyReceiver(parent);
         }
 
+
+        private void SelectOrShow(object context, bool show)
+        {
+
+            var pair = context as Indexed<object>;
+            var record = pair?.Value as Record;
+            if (record == null)
+            {
+                return;
+            }
+            var index = pair.Index;
+
+            if (!show || this.IsInSelecting.Value)
+            {
+                this.SelectItem(record, index);
+            }
+            else
+            {
+                client.MoveToViewerOrGroupDetail(record, index);
+            }
+        }
+
         /// <summary>
         /// 選択
         /// </summary>
         /// <param name="record"></param>
-        private void SelectItem(Record record)
+        private void SelectItem(Record record, long index)
         {
             if (this.parent.KeyReceiver.IsKeyPressed(ModifierKeys.Shift))
             {

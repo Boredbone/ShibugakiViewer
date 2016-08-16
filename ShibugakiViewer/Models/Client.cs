@@ -662,7 +662,7 @@ namespace ShibugakiViewer.Models
         /// </summary>
         /// <param name="record"></param>
         /// <param name="index"></param>
-        public void MoveToViewerOrGroupDetail(Record record)
+        public void MoveToViewerOrGroupDetail(Record record, long index)
         {
             if (record == null)
             {
@@ -678,11 +678,11 @@ namespace ShibugakiViewer.Models
                 return;
             }
 
-            var key = this.front.FindIndex(record);
+            //var index = this.front.FindIndex(record);
 
-            if (key >= 0)
+            if (index >= 0)
             {
-                this.ViewerIndex.Value = key;
+                this.ViewerIndex.Value = index;
                 core.ImageBuffer.ClearThumbNailRequests();
                 this.ChangePage(PageType.Viewer);
             }
