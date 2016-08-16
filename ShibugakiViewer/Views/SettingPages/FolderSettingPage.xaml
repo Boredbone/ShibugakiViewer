@@ -14,7 +14,7 @@
     <UserControl.DataContext>
         <viewModels:FolderSettingPageViewModel/>
     </UserControl.DataContext>
-    
+
     <UserControl.Resources>
         <Control x:Key="rootControl"/>
         <ObjectDataProvider x:Key="CheckMode" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
@@ -24,7 +24,7 @@
         </ObjectDataProvider>
         <local:CheckModeConverter x:Key="CheckModeConverter" />
     </UserControl.Resources>
-    
+
     <Grid HorizontalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -34,8 +34,8 @@
         </Grid.RowDefinitions>
 
         <ContentControl Visibility="Collapsed" Content="{StaticResource rootControl}"/>
-        
-        <Grid>
+
+        <Grid Margin="4">
             <!-- Text="Folders to load Images"-->
             <TextBlock x:Name="pageTitle"
                        Text="{x:Static properties:Resources.FolderManagePageTitle_Text}"
@@ -43,10 +43,10 @@
                        Style="{StaticResource TitleTextBlockStyle}"
                        IsHitTestVisible="false" TextWrapping="NoWrap" 
                        VerticalAlignment="Center" Margin="0"/>
-            
+
         </Grid>
 
-        <Grid Grid.Row="1" x:Name="controllerGrid">
+        <Grid Grid.Row="1" x:Name="controllerGrid" Margin="4">
             <Button Content="{x:Static properties:Resources.FolderPageButton_Label}"
                     x:Uid="FolderPageButton"
                     HorizontalAlignment="Left"
@@ -60,7 +60,7 @@
                       IsChecked="{Binding IsProfessionalFolderSettingEnabled.Value,Mode=TwoWay}"/>
         </Grid>
 
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="2" Visibility="Collapsed">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -169,83 +169,112 @@
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Background="{StaticResource PathItemColor}"
-                          HorizontalAlignment="Stretch"
-                          MaxWidth="1000" Margin="4">
+                    <Grid
+                        Background="{StaticResource PathItemColor}"
+                        HorizontalAlignment="Stretch"
+                        MaxWidth="700" Margin="4"
+                        IsEnabled="{Binding Source={StaticResource rootControl},
+                        Path=DataContext.IsEditable.Value}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <StackPanel Grid.Row="0">
 
-                            <TextBlock Text="{Binding Path}"
-                                   TextWrapping="Wrap"
-                                   Margin="15,0,15,0"
-                                   FontSize="{StaticResource NormalTextSize}"/>
-                            
+                            <TextBlock 
+                                Text="{Binding Path}"
+                                TextWrapping="Wrap"
+                                Margin="15,0,15,0"
+                                FontSize="{StaticResource NormalTextSize}"/>
+
                         </StackPanel>
 
 
-                        <WrapPanel Orientation="Horizontal" Grid.Row="1"
-                                   Visibility="{Binding 
-                            Source={StaticResource rootControl},
+                        <StackPanel
+                            Orientation="Horizontal" Grid.Row="1"
+                            Margin="15,0,15,0"
+                            Visibility="{Binding Source={StaticResource rootControl},
                             Path=DataContext.IsProfessionalFolderSettingEnabled.Value,
                             Converter={StaticResource FalseToVisibleConverter}}">
 
-                            <Grid Width="220">
-                                <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                                    <TextBlock FontSize="16" TextWrapping="Wrap" Margin="15,0,15,10"
-                                               HorizontalAlignment="Right">
-                                        <Run Text="{Binding Count}"/>
-                                        <Run Text=" "/>
-                                        <Run
-                                            Text="{x:Static properties:Resources.ImageUnitLabel_Text}" 
-                                            x:Uid="ImageUnitLabel"/>
-                                    </TextBlock>
-                                </StackPanel>
-                            </Grid>
-                            <StackPanel Orientation="Horizontal">
-                                <Button x:Uid="RemoveFolderButton" 
-                                        Content="{x:Static properties:Resources.RemoveFolderButton_Content}"
-                                        Command="{Binding 
-                                    Source={StaticResource rootControl},
-                                    Path=DataContext.IgnoreCommand,
-                                    Mode=OneWay}"
-                                        CommandParameter="{Binding}"/>
-                            </StackPanel>
-                        </WrapPanel>
+                            <Button
+                                Margin="4"
+                                Content="{x:Static properties:Resources.UpdateNowButton_Content}" 
+                                Command="{Binding Source={StaticResource rootControl},
+                                Path=DataContext.RefreshCommand,
+                                Mode=OneWay}"
+                                CommandParameter="{Binding}"/>
+
+                            <Button
+                                Margin="4" x:Uid="RemoveFolderButton"
+                                Content="{x:Static properties:Resources.RemoveFolderButton_Content}"
+                                Command="{Binding Source={StaticResource rootControl},
+                                Path=DataContext.IgnoreCommand,
+                                Mode=OneWay}"
+                                CommandParameter="{Binding}"/>
+
+                        </StackPanel>
 
 
-                        <WrapPanel Orientation="Horizontal" Grid.Row="1"
-                                   Visibility="{Binding
-                            Source={StaticResource rootControl},
+
+                        <StackPanel
+                            Orientation="Horizontal" Grid.Row="1"
+                            Margin="15,0,15,0"
+                            Visibility="{Binding Source={StaticResource rootControl},
                             Path=DataContext.IsProfessionalFolderSettingEnabled.Value,
                             Converter={StaticResource TrueToVisibleConverter}}">
 
-                            <Grid Width="220">
-                                <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                                    <TextBlock FontSize="16" TextWrapping="Wrap" Margin="15,0,15,10"
-                                               HorizontalAlignment="Right">
-                                        <Run Text="{Binding Count}"/>
-                                        <Run Text=" "/>
-                                        <Run
-                                            Text="{x:Static properties:Resources.ImageUnitLabel_Text}" 
-                                            x:Uid="ImageUnitLabel"/>
-                                    </TextBlock>
-                                    <CheckBox
-                                        Content="{x:Static properties:Resources.UpdateEnabledCheckBox_Content}"
-                                        x:Uid="UpdateEnabledCheckBox"
-                                        HorizontalAlignment="Right" Margin="15,0,15,10"
-                                        IsChecked="{Binding AutoRefreshEnable,Mode=TwoWay}" />
-                                </StackPanel>
-                            </Grid>
-                            <StackPanel Orientation="Vertical" Width="Auto">
+                            <StackPanel Orientation="Vertical" VerticalAlignment="Top">
+
+                                <Button
+                                    Margin="4"
+                                    Content="{x:Static properties:Resources.UpdateNowButton_Content}" 
+                                    Command="{Binding Source={StaticResource rootControl},
+                                    Path=DataContext.RefreshCommand,
+                                    Mode=OneWay}"
+                                    CommandParameter="{Binding}"/>
+
+                                <Button
+                                    Margin="4"
+                                    x:Uid="RemoveFolderButton"
+                                    Content="{x:Static properties:Resources.RemoveFolderButton_Content}"
+                                    Command="{Binding 
+                                    Source={StaticResource rootControl},
+                                    Path=DataContext.IgnoreCommand,
+                                    Mode=OneWay}"
+                                    CommandParameter="{Binding}"/>
+                            </StackPanel>
+
+                            <StackPanel 
+                                Orientation="Vertical" VerticalAlignment="Top"
+                                Margin="15,4,15,10">
+                                <CheckBox
+                                    Content="{x:Static properties:Resources.UpdateEnabledCheckBox_Content}"
+                                    x:Uid="UpdateEnabledCheckBox"
+                                    IsChecked="{Binding AutoRefreshEnable,Mode=TwoWay}" 
+                                    Margin="0"/>
+
+                                <CheckBox
+                                    Content="IsTopDirectoryOnly"
+                                    IsChecked="{Binding IsTopDirectoryOnly,Mode=TwoWay}" 
+                                    Margin="0,4,0,4"/>
+
+                                <CheckBox
+                                    Content="WatchChange"
+                                    IsChecked="{Binding WatchChange,Mode=TwoWay}"
+                                    Margin="0"/>
+
+                            </StackPanel>
+
+                            <StackPanel
+                                Orientation="Vertical" Width="Auto" VerticalAlignment="Top"
+                                Margin="4">
                                 <TextBlock
                                     Text="{x:Static properties:Resources.LibRefreshModeHelp_Header}"/>
-                                <ComboBox Width="250" x:Uid="LibRefreshModeHelp"
-                                          Margin="0,7,0,25" HorizontalAlignment="Left"
-                                          ItemsSource="{Binding Source={StaticResource CheckMode}}" 
-                                          SelectedValue="{Binding Mode,Mode=TwoWay}">
+                                <ComboBox 
+                                    Margin="8,2,0,0" HorizontalAlignment="Left"
+                                    ItemsSource="{Binding Source={StaticResource CheckMode}}" 
+                                    SelectedValue="{Binding Mode,Mode=TwoWay}">
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
                                             <ContentPresenter
@@ -254,52 +283,7 @@
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
                             </StackPanel>
-                            <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                                <StackPanel Orientation="Horizontal" Width="Auto">
-
-                                    <Button
-                                        Content="{x:Static properties:Resources.UpdateNowButton_Content}" 
-                                        Command="{Binding 
-                                        Source={StaticResource rootControl},
-                                        Path=DataContext.RefreshCommand,
-                                        Mode=OneWay}"
-                                            CommandParameter="{Binding}"/>
-                                    <TextBlock 
-                                        Text="{x:Static properties:Resources.UpdateFlagLabel_Text}"
-                                        x:Uid="UpdateFlagLabel"
-                                       Foreground="Red"
-                                       VerticalAlignment="Center"
-                                        Visibility="{Binding RefreshTrigger,
-                            Converter={StaticResource TrueToVisibleConverter}}"/>
-                                    
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" Width="Auto"
-                                            HorizontalAlignment="Left">
-                                    <Button
-                                        x:Uid="RemoveFolderButton"
-                                        Content="{x:Static properties:Resources.RemoveFolderButton_Content}"
-                                        Command="{Binding 
-                                    Source={StaticResource rootControl},
-                                    Path=DataContext.IgnoreCommand,
-                                    Mode=OneWay}"
-                                        CommandParameter="{Binding}"/>
-                                </StackPanel>
-                            </StackPanel>
-                            <StackPanel Orientation="Vertical" VerticalAlignment="Bottom">
-
-                                <CheckBox
-                                        Content="WatchChange"
-                                        HorizontalAlignment="Left" Margin="15,0,15,10"
-                                        IsChecked="{Binding WatchChange,Mode=TwoWay}" />
-
-                                <CheckBox
-                                        Content="IsTopDirectoryOnly"
-                                        HorizontalAlignment="Left" Margin="15,0,15,10"
-                                        IsChecked="{Binding IsTopDirectoryOnly,Mode=TwoWay}" />
-                                
-
-                            </StackPanel>
-                        </WrapPanel>
+                        </StackPanel>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

@@ -12,7 +12,7 @@
         ResizeMode="CanResizeWithGrip"
         Closed="Window_Closed"
         mc:Ignorable="d"
-        Title="{x:Static properties:Resources.Options}" Height="720" Width="640">
+        Title="{x:Static properties:Resources.Options}" Height="580" Width="400">
     <Window.DataContext>
         <viewModels:SettingWindowViewModel/>
     </Window.DataContext>
@@ -29,13 +29,13 @@
                     Padding="0"
                     Grid.Row="0"
                     SelectedIndex="{Binding ElementName=controlRoot,Path=Core.SettingPageIndex,Mode=TwoWay}">
-            
-            <TabItem Header="Viewer">
+
+            <TabItem Header="{x:Static properties:Resources.ViewerSettings_Text}">
                 <pages:ViewerSettingPage 
                     DataContext="{Binding SettingViewModel,Mode=OneWay}"/>
             </TabItem>
 
-            <TabItem Header="Search">
+            <TabItem Header="{x:Static properties:Resources.LibrarySettings_Text}">
                 <pages:SearchSettingPage
                     DataContext="{Binding SettingViewModel,Mode=OneWay}"/>
             </TabItem>

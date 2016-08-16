@@ -15,7 +15,7 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d"
         Title="{x:Static properties:Resources.DatabaseTool}"
-        Height="720" Width="640"
+        Height="600" Width="500"
         Style="{StaticResource DefaultWindowStyle}"
         ResizeMode="CanResizeWithGrip"
         Closed="Window_Closed">

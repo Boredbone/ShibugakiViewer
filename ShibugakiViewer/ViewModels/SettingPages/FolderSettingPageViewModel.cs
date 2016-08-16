@@ -78,7 +78,6 @@ namespace ShibugakiViewer.ViewModels.SettingPages
                     var folder = x as FolderInformation;
                     if (folder != null)
                     {
-                        //folder.RefreshTrigger = !folder.RefreshTrigger;
                         folder.RefreshEnable = true;
                         this.library.RefreshLibraryAsync(true).FireAndForget();
                     }

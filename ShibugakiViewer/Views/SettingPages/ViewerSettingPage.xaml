@@ -32,7 +32,7 @@
             VerticalScrollBarVisibility="Auto"
             HorizontalScrollBarVisibility="Disabled"
             VerticalContentAlignment="Stretch">
-            <StackPanel HorizontalAlignment="Left" Grid.Row="0">
+            <StackPanel HorizontalAlignment="Stretch" Grid.Row="0">
 
                 <GroupBox Header="Viewer Operation">
                     <StackPanel>
@@ -143,7 +143,7 @@
                                 x:Name="colorButton" HorizontalAlignment="Left">
                                 <ToggleButton.Content>
                                     <Border
-                                        Width="32" Height="16"
+                                        Width="32" Height="16" Margin="2"
                                         Background="{Binding BackColor.Value,Mode=OneWay,
                                         Converter={StaticResource ColorToBrushConverter}}"
                                         BorderThickness="1"
@@ -156,14 +156,16 @@
                             Visibility="{Binding ElementName=colorButton,Path=IsChecked,Mode=OneWay,
                             Converter={StaticResource TrueToVisibleConverter}}"
                             SelectedColor="{Binding BackColor.Value,Mode=TwoWay}"
-                            Alpha="False"/>
+                            Alpha="False"
+                            HorizontalAlignment="Left"
+                            Width="300"/>
 
 
                     </StackPanel>
                 </GroupBox>
 
 
-                <GroupBox Header="Slideshow">
+                <GroupBox Header="{x:Static properties:Resources.Slideshow}">
                     <StackPanel>
 
                         <CheckBox
@@ -171,23 +173,18 @@
                             Content="{x:Static properties:Resources.FullscreenText_Text}"/>
 
                         <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
                             <TextBlock 
-                                Style="{StaticResource headerTextStyle}"
-                                Text="{x:Static properties:Resources.DurationText_Text}"/>
-
-                            <TextBlock Grid.Column="1" HorizontalAlignment="Right">
-                            <Run Text="{Binding FlipTimeSec.Value}"/>
-                            <Run Text=" "/>
-                            <Run Text="{x:Static properties:Resources.SecondsText_Text}"/>
+                                Style="{StaticResource headerTextStyle}">
+                                <Run Text="{x:Static properties:Resources.DurationText_Text}"/>
+                                <Run Text=" "/>
+                                <Run Text="{Binding FlipTimeSec.Value}"/>
+                                <Run Text=" "/>
+                                <Run Text="{x:Static properties:Resources.SecondsText_Text}"/>
                             </TextBlock>
-
                         </Grid>
                         <Slider 
                             Minimum="1" Maximum="60" SmallChange="1" LargeChange="5"
+                            Width="300" HorizontalAlignment="Left"
                             Value="{Binding FlipTimeSec.Value,Mode=TwoWay}"
                             tb:SliderBehavior.IsReceivePreviewMouseWheel="True"/>
 

@@ -15,7 +15,7 @@
     <UserControl.Resources>
         <Style TargetType="ComboBox" x:Key="comboBoxStyle">
             <Setter Property="Margin" Value="16,4,4,4"/>
-            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="MinWidth" Value="100"/>
         </Style>
         <Style TargetType="TextBlock" x:Key="headerTextStyle">
@@ -32,7 +32,7 @@
             VerticalScrollBarVisibility="Auto"
             HorizontalScrollBarVisibility="Disabled"
             VerticalContentAlignment="Stretch">
-            <StackPanel HorizontalAlignment="Left" Grid.Row="0">
+            <StackPanel HorizontalAlignment="Stretch" Grid.Row="0">
 
                 <GroupBox Header="Search Result View">
                     <StackPanel>
@@ -47,7 +47,8 @@
                                 Text="{x:Static properties:Resources.ThumbSizeSelector_Header}"/>
                             <TextBox 
                                 Grid.Column="1"
-                                HorizontalAlignment="Stretch"
+                                HorizontalAlignment="Left"
+                                Width="150"
                                 Margin="16,4,4,4"
                                 Text="{Binding ThumbnailSize.Value,Mode=TwoWay,UpdateSourceTrigger=Explicit}"
                                 b:TextBoxBehavior.UpdateByReturn="True"/>

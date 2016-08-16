@@ -176,11 +176,7 @@ namespace ShibugakiViewer
             {
                 this.Core.SettingPageIndex = index;
             }
-
-            var window = this.Windows.OfType<SettingWindow>().FirstOrDefault()
-                ?? new SettingWindow();
-            window.Show();
-            window.Activate();
+            this.ShowUniqueWindow<SettingWindow>();
         }
 
         public void ShowToolWindow(int index)
@@ -189,17 +185,21 @@ namespace ShibugakiViewer
             {
                 this.Core.ToolPageIndex = index;
             }
-
-            var window = this.Windows.OfType<ToolWindow>().FirstOrDefault()
-                ?? new ToolWindow();
-            window.Show();
-            window.Activate();
+            this.ShowUniqueWindow<ToolWindow>();
         }
 
-        public void ShowFolderWindow()
+        public void ShowFolderWindow() => this.ShowUniqueWindow<FolderWindow>();
+        //{
+        //    var window = this.Windows.OfType<FolderWindow>().FirstOrDefault()
+        //        ?? new FolderWindow();
+        //    window.Show();
+        //    window.Activate();
+        //}
+
+        private void ShowUniqueWindow<T>() where T : Window, new()
         {
-            var window = this.Windows.OfType<FolderWindow>().FirstOrDefault()
-                ?? new FolderWindow();
+            var window = this.Windows.OfType<T>().FirstOrDefault()
+                ?? new T();
             window.Show();
             window.Activate();
         }

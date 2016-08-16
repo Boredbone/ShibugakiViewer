@@ -275,23 +275,6 @@
                     </Grid>
                 </Grid>
             </Grid>
-            <!--
-                    <TextBlock Text="{Binding ThumbnailFilePath}" TextWrapping="Wrap"/>
-                    <TextBlock Text="{Binding DateLastUsed}" TextWrapping="Wrap"/>
-                    <TextBlock Text="{Binding Root.Children.Count,Mode=OneWay}"/>
-                    -->
-            <!--
-            <StackPanel Grid.Row="1" Orientation="Horizontal">
-                
-                <CheckBox Content="Or" IsChecked="{Binding CurrentSearch.Value.Root.IsOr,Mode=TwoWay}"/>
-                <TextBlock Text="{Binding CurrentSearch.Value.Root.IsOr,Mode=OneWay}"/>
-                <Button Content="Add"
-                        Command="{Binding AddCriteriaCommand}"/>
-                <Button Content="Favorite"
-                        Command="{Binding AddToFavoriteCommand}"/>
-                <Button Content="New"
-                        Command="{Binding NewSearchCommand}"/>
-            </StackPanel>-->
 
 
             <!-- Control Box -->

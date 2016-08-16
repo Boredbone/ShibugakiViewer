@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,10 +20,11 @@ namespace ShibugakiViewer.ViewModels.SettingPages
     {
         //public ReactiveCommand GenerateNewClientCommand { get; }
         //public ReactiveCommand ConvertCommand { get; }
-        
+
         //public ReactiveProperty<string> Text { get; }
 
         public ReactiveProperty<int> CursorKeyBind { get; }
+        [Range(64, 512)]
         public ReactiveProperty<int> ThumbnailSize { get; }
         public ReactiveProperty<bool> IsAutoInformationPaneEnabled { get; }
 
@@ -58,7 +60,8 @@ namespace ShibugakiViewer.ViewModels.SettingPages
             //this.Text = new ReactiveProperty<string>().AddTo(this.Disposables);
 
             this.ThumbnailSize = core
-                .ToReactivePropertyAsSynchronized(x => x.ThumbNailSize)
+                .ToReactivePropertyAsSynchronized(x => x.ThumbNailSize, ignoreValidationErrorValue: true)
+                .SetValidateAttribute(() => this.ThumbnailSize)
                 .AddTo(this.Disposables);
 
             this.IsAutoInformationPaneEnabled = core
@@ -139,6 +142,6 @@ namespace ShibugakiViewer.ViewModels.SettingPages
             //this.ConvertCommand = new ReactiveCommand()
             //    .WithSubscribe(_ => this.Convert(core).FireAndForget(), this.Disposables);
         }
-        
+
     }
 }
