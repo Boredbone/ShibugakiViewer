@@ -239,6 +239,10 @@ namespace ImageLibrary.Viewer
                             offset += existing.Start;
                             takes = existing.End - existing.Start + 1;
                         }
+                        else
+                        {
+                            return;
+                        }
                     }
 
                     if (takes >= 0)

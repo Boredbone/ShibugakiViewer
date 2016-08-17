@@ -96,7 +96,8 @@
                                     Text="{Binding Name,UpdateSourceTrigger=Default,Mode=TwoWay}"
                                     PreviewKeyDown="TagNameTextBox_PreviewKeyDown" 
                                     IsEnabledChanged="TagNameTextBox_IsEnabledChanged"
-                                    behavior:PlaceHolderBehavior.PlaceHolderControl="{Binding ElementName=nameBoxPlaceHolder}"/>
+                                    behavior:PlaceHolderBehavior.PlaceHolderControl="{Binding ElementName=nameBoxPlaceHolder}"
+                                        Loaded="TagNameTextBox_Loaded"/>
 
                                     <TextBlock
                                         x:Name="nameBoxPlaceHolder"

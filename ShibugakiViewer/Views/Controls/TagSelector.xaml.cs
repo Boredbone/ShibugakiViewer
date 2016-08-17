@@ -304,7 +304,7 @@ namespace ShibugakiViewer.Views.Controls
             }
             else if (e.Key == Key.Enter)
             {
-                if(FocusManager.GetFocusedElement(this) is TextBox)
+                if (FocusManager.GetFocusedElement(this) is TextBox)
                 {
                     return;
                 }
@@ -317,6 +317,8 @@ namespace ShibugakiViewer.Views.Controls
                 e.Handled = true;
             }
         }
+
+
 
         private bool SelectItem(TagInformation tag)
         {
@@ -332,5 +334,10 @@ namespace ShibugakiViewer.Views.Controls
             return false;
         }
 
+        private void TagNameTextBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            var item = sender as UIElement;
+            //item?.Focus();
+        }
     }
 }

@@ -277,8 +277,9 @@ namespace ShibugakiViewer.Models
 
             //キャッシュクリア
             var catalogReset = this.front.CacheCleared
-                    .Where(x => x.Action != CacheClearAction.SearchChanged
-                        && this.SelectedPage.Value == PageType.Catalog)
+                    .Where(x => this.SelectedPage.Value == PageType.Catalog)
+                    //.Where(x => x.Action != CacheClearAction.SearchChanged
+                    //    && this.SelectedPage.Value == PageType.Catalog)
                     .Select(_ => this.CatalogIndex.Value);
 
 
@@ -538,7 +539,7 @@ namespace ShibugakiViewer.Models
             });
 
             this.SetNewSearch(search);
-            this.ChangePage(PageType.Catalog);
+            this.ChangePage(PageType.Catalog, null);
         }
 
         /// <summary>
@@ -673,7 +674,7 @@ namespace ShibugakiViewer.Models
             {
                 this.SetNewGroupSearch(record);
                 core.ImageBuffer.ClearThumbNailRequests();
-                this.ChangePage(PageType.Catalog);
+                this.ChangePage(PageType.Catalog, null);
 
                 return;
             }
@@ -682,9 +683,29 @@ namespace ShibugakiViewer.Models
 
             if (index >= 0)
             {
-                this.ViewerIndex.Value = index;
+                var id = this.front.SearchInformation.Key;
+
+                //this.ViewerIndex.Value = index;
                 core.ImageBuffer.ClearThumbNailRequests();
-                this.ChangePage(PageType.Viewer);
+                //Debug.WriteLine($"1:{index} to {this.ViewerIndex.Value}");
+
+
+                //if (this.front.SearchInformation.Key != id)
+                //{
+                //    Debug.WriteLine($"2:{id} to {this.front.SearchInformation.Key}");
+                //}
+
+                this.ChangePage(PageType.Viewer, index);
+
+
+                if (this.ViewerIndex.Value != index)
+                {
+                    Debug.WriteLine($"3:{index} to {this.ViewerIndex.Value}");
+                }
+                if (this.front.SearchInformation.Key != id)
+                {
+                    Debug.WriteLine($"4:{id} to {this.front.SearchInformation.Key}");
+                }
             }
         }
 
@@ -703,8 +724,8 @@ namespace ShibugakiViewer.Models
             }
 
             this.SetNewGroupSearch(record);
-            this.ViewerIndex.Value = index;
-            this.ChangePage(PageType.Viewer);
+            //this.ViewerIndex.Value = index;
+            this.ChangePage(PageType.Viewer, index);
         }
 
 
@@ -825,7 +846,7 @@ namespace ShibugakiViewer.Models
                 case PageType.Search:
                 case PageType.Catalog:
                 case PageType.Viewer:
-                    this.ChangePage(type);
+                    this.ChangePage(type, null);
                     break;
                 case PageType.Slideshow:
                     break;
@@ -834,22 +855,59 @@ namespace ShibugakiViewer.Models
             }
         }
 
-        private void ChangePage(PageType type)
+        private void ChangePage(PageType type,long? viewerIndex)
         {
+            var i = viewerIndex ?? this.ViewerIndex.Value;
+            var id = this.front.SearchInformation.Key;
+
             if (this.History.BackHistoryCount.Value > 0
                 && (this.History.Current.Type == PageType.None
                 || this.History.Current.Type == PageType.Search))
             {
+                if (viewerIndex.HasValue)
+                {
+                    this.ViewerIndex.Value = viewerIndex.Value;
+                }
                 this.History.Current.Type = type;
+                Debug.WriteLine($"a");
             }
             else if (this.History.Current.Type != type)
             {
-                var state = this.History.Current.Clone();
-                state.Type = type;
+                var state = new ViewState()
+                {
+                    Search = this.front.SearchInformation,
+                    GroupKey = this.front.FeaturedGroup?.Id,
+                    ViewerIndex = viewerIndex ?? this.ViewerIndex.Value,
+                    CatalogIndex = this.CatalogIndex.Value,
+                    Type = type,
+                };
+                
+                //this.History.Current.Clone();
+                //state.Type = type;
                 this.History.MoveNew(state);
+                Debug.WriteLine($"b");
+            }
+
+            if (this.ViewerIndex.Value != i)
+            {
+                Debug.WriteLine($"5:{i} to {this.ViewerIndex.Value}");
+            }
+            if (this.front.SearchInformation.Key != id)
+            {
+                Debug.WriteLine($"6:{id} to {this.front.SearchInformation.Key}");
             }
 
             this.PageChangeRequestSubject.OnNext(type);
+
+
+            if (this.ViewerIndex.Value != i)
+            {
+                Debug.WriteLine($"7:{i} to {this.ViewerIndex.Value}");
+            }
+            if (this.front.SearchInformation.Key != id)
+            {
+                Debug.WriteLine($"8:{id} to {this.front.SearchInformation.Key}");
+            }
         }
 
         public void Back() => this.History.MoveBack();
@@ -881,7 +939,7 @@ namespace ShibugakiViewer.Models
             });
 
 
-            this.ChangePage(PageType.Viewer);
+            this.ChangePage(PageType.Viewer, 0);
 
             if (records.Length == 1)
             {
