@@ -352,21 +352,15 @@ namespace ShibugakiViewer.ViewModels
             this.PointerMoveCommand = new ReactiveCommand()
                 .WithSubscribe(x =>
                 {
-
                     var y = ((Point)x).Y;
 
                     if (y < 100)
                     {
-
-                        //if (!this.IsTopBarOpen.Value)
-
                         this.IsTopBarOpen.Value = true;
                         this.topBarOpenedByPointer = true;
-
                     }
                     else if (y > 150)
                     {
-
                         if (this.topBarOpenedByPointer && !this.IsTopBarFixed.Value)
                         {
                             this.IsTopBarOpen.Value = false;

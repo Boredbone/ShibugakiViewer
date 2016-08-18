@@ -54,8 +54,10 @@ namespace ShibugakiViewer.ViewModels
         public ReactiveProperty<Visibility> ImagePropertiesVisibility { get; }
         public ReadOnlyReactiveProperty<bool> IsInSelecting { get; }
         public ReadOnlyReactiveProperty<bool> IsRefreshEnabled { get; }
-        
+        public ReadOnlyReactiveProperty<bool> IsRenderingEnabled { get; }
+
         public Action<Vector> RequestScrollAction { get; set; }
+        public Action<int> ScrollToIndexAction { get; set; }
 
         public bool RefreshTrigger
         {
@@ -129,6 +131,9 @@ namespace ShibugakiViewer.ViewModels
                 .ToReadOnlyReactiveProperty()
                 .AddTo(this.Disposables);
 
+            this.IsRenderingEnabled = this.client.IsCatalogRenderingEnabled
+                .ToReadOnlyReactiveProperty(true)
+                .AddTo(this.Disposables);
             //戻ってきたときにサムネイル再読み込み
             client.BackHistoryCount
                 .Pairwise()
@@ -151,6 +156,11 @@ namespace ShibugakiViewer.ViewModels
                 .Throttle(TimeSpan.FromMilliseconds(3000))
                 .ObserveOnUIDispatcher()
                 .Subscribe(_ => this.RefreshTrigger = !this.RefreshTrigger)
+                .AddTo(this.Disposables);
+
+            //スクロール位置復元
+            this.client.CatalogScrollIndex
+                .Subscribe(x => this.ScrollToIndexAction?.Invoke((int)x))
                 .AddTo(this.Disposables);
 
             //サムネイルクリック

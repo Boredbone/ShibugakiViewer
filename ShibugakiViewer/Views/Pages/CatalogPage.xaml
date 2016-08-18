@@ -44,8 +44,7 @@
                 PressedBackground="#FFA0B0A0"
                 PressedBorderBrush="#FFA0B0A0"
                 PressedBorderThickness="0"
-                DisabledBorderBrush="LightGray"
-                >
+                DisabledBorderBrush="LightGray">
 
                 <!--
                 Template="{StaticResource thumbnailButton}"
@@ -485,7 +484,9 @@
             HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
             ItemTemplate="{StaticResource thumbnailTemplate}"
             ItemSize="{Binding ThumbnailViewSize.Value,Mode=OneWay}"
-            IsRefreshEnabled="{Binding IsRefreshEnabled.Value,Mode=OneWay}">
+            IsRefreshEnabled="{Binding IsRefreshEnabled.Value,Mode=OneWay}"
+            IsRenderingEnabled="{Binding IsRenderingEnabled.Value,Mode=OneWay}"
+            ScrollToIndexAction="{Binding ScrollToIndexAction,Mode=OneWayToSource}">
 
             <!--
             behaviors:ScrollHelperBehavior.ScrollSpeed="12.0"

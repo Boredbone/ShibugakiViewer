@@ -514,8 +514,6 @@ namespace ImageLibrary.Viewer
         /// </summary>
         private void Clear(CacheClearAction action)
         {
-            var resetFlag = action != CacheClearAction.SortChanged;
-
             if (action == CacheClearAction.SearchChanged)
             {
                 this.Length.Value = 0;
@@ -525,37 +523,14 @@ namespace ImageLibrary.Viewer
 
             this.Cache.Clear();
 
-
-            if (resetFlag)
+            if (action != CacheClearAction.SortChanged)
             {
-                //Debug.WriteLine(action);
                 this.isReset = true;
                 this.SearchAsync(0, 0, true).FireAndForget();
             }
 
-            //if (action != CacheClearAction.DatabaseUpdated)
-            //{
-            this.CacheClearedSubject.OnNext(new CacheClearedEventArgs()
-            {
-                Action = action,
-            });
-            //}
-
-            /*
-            if (this.Length.Value == 0)
-            {
-                this.CollectionChanged?.Invoke(this,
-                    new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-            }
-            else
-            {
-                this.Length.Value = 0;
-                //this.CacheClearedSubject.OnNext(Unit.Default);
-            }*/
-
-
-            //this.CacheClearedSubject.OnNext(Unit.Default);
-
+            this.CacheClearedSubject.OnNext
+                (new CacheClearedEventArgs() { Action = action, });
         }
 
         /// <summary>
