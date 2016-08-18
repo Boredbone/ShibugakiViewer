@@ -792,4 +792,7 @@
   <data name="Help" xml:space="preserve">
     <value>Help</value>
   </data>
+  <data name="LastUsedDate" xml:space="preserve">
+    <value>Last Used Date</value>
+  </data>
 </root>

@@ -420,6 +420,20 @@ namespace ShibugakiViewer.Models
             }
         }
 
+        public int TagSelectorSortMode
+        {
+            get { return this.Settings.TagSelectorSortMode; }
+            set
+            {
+                if (this.Settings.TagSelectorSortMode != value)
+                {
+                    this.Settings.TagSelectorSortMode = value;
+                    RaisePropertyChanged(nameof(TagSelectorSortMode));
+                }
+            }
+        }
+
+
 
         public bool IsSettingsLoaded { get; set; }
         public bool IsLibrarySettingsLoaded { get; set; }

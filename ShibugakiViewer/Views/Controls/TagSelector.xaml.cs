@@ -19,6 +19,8 @@ using ImageLibrary.Tag;
 using ShibugakiViewer.ViewModels;
 using Boredbone.Utility.Extensions;
 using System.Windows.Controls.Primitives;
+using System.Reactive.Disposables;
+using Reactive.Bindings.Extensions;
 
 namespace ShibugakiViewer.Views.Controls
 {
@@ -32,6 +34,8 @@ namespace ShibugakiViewer.Views.Controls
         public static string[] Alphabets { get; }
             = Enumerable.Range('A', 'Z' - 'A' + 1)
             .Select(x => Convert.ToChar(x).ToString()).Append(" ").ToArray();
+
+        private readonly Dictionary<string,IDisposable> disposables;
 
         public Action<TagInformation> TagSelectedCallBack { get; set; }
         public Record Target { get; set; }
@@ -57,11 +61,15 @@ namespace ShibugakiViewer.Views.Controls
         private TagInformation lastSelectedTag = null;
 
         private bool skipDecision = false;
-
+        private bool isSelectionInitialized = false;
 
         public TagSelector()
         {
             InitializeComponent();
+
+            this.isSelectionInitialized = true;
+
+            this.disposables = new Dictionary<string, IDisposable>();
 
             this.generatedTags = new HashSet<TagInformation>();
 
@@ -69,33 +77,42 @@ namespace ShibugakiViewer.Views.Controls
             var library = core.Library;
             this.tagDictionary = library.Tags;
 
-            this.Tags = new ObservableCollection<TagInformation>
-                (this.tagDictionary.GetAll().Select(x => x.Value));
+            this.Tags = new ObservableCollection<TagInformation>();
+                //(this.tagDictionary.GetAll().Select(x => x.Value));
 
             this.CloseEdit();
 
             this.list.ItemsSource = this.Tags;
 
-            var initialised = false;
 
             this.list.ItemContainerGenerator.StatusChanged += (sender, e) =>
             {
-                if (!initialised
+                if (!this.isSelectionInitialized
                     && this.list.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
                 {
-                    var tag = (this.ViewModel.TagSelectorLaseSelected != null)
-                        ? this.Tags.FirstOrDefault(x => x.Id == this.ViewModel.TagSelectorLaseSelected.Id)
-                        : this.Tags.FirstOrDefault();
+                    //var tag = (this.ViewModel.TagSelectorLastSelected != null)
+                    //    ? this.Tags.FirstOrDefault(x => x.Id == this.ViewModel.TagSelectorLastSelected.Id)
+                    //    : this.Tags.FirstOrDefault();
 
 
-                    if (this.SelectItem(tag))
+                    if (this.SelectLastTag())// this.SelectItem(tag))
                     {
-                        initialised = true;
+                        this.isSelectionInitialized = true;
                     }
                 }
             };
+
         }
 
+        private bool SelectLastTag()
+        {
+            var tag = (this.ViewModel.TagSelectorLastSelected != null)
+                ? this.Tags.FirstOrDefault(x => x.Id == this.ViewModel.TagSelectorLastSelected.Id)
+                : this.Tags.FirstOrDefault();
+
+
+            return this.SelectItem(tag);
+        }
 
         private void Border_SizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -179,8 +196,11 @@ namespace ShibugakiViewer.Views.Controls
             //var viewModel = this.DataContext as ClientWindowViewModel;
             if (this.ViewModel != null)
             {
-                this.ViewModel.TagSelectorLaseSelected
-                    = lastSelectedTag ?? (this.list.SelectedItem as TagInformation);
+                var lastTag = lastSelectedTag ?? (this.list.SelectedItem as TagInformation);
+                if (lastTag != null)
+                {
+                    this.ViewModel.TagSelectorLastSelected = lastTag;
+                }
             }
         }
 
@@ -203,6 +223,9 @@ namespace ShibugakiViewer.Views.Controls
         private void UserControl_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             this.CommitTags();
+
+            this.disposables.ForEach(x => x.Value.Dispose());
+            this.disposables.Clear();
         }
 
         private void TagNameTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -338,6 +361,46 @@ namespace ShibugakiViewer.Views.Controls
         {
             var item = sender as UIElement;
             //item?.Focus();
+        }
+        
+
+        private void LoadList(int mode)
+        {
+            this.CommitTags();
+
+            this.Tags.Clear();
+
+            var source = this.tagDictionary.GetAll();
+
+            if (mode==1)
+            {
+                source = source.OrderByDescending(x => x.Value.LastUsed);
+            }
+
+            foreach(var t in source)
+            {
+                this.Tags.Add(t.Value);
+            }
+            
+            this.CloseEdit();
+
+            this.isSelectionInitialized = false;
+        }
+
+        private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            var vm = e.NewValue as ClientWindowViewModel;
+            if (vm == null)
+            {
+                return;
+            }
+
+            vm.TagSelectorSortMode
+                .Subscribe(x =>
+                {
+                    this.LoadList(x);
+                })
+                .AddTo(this.disposables,"SortMode");
         }
     }
 }

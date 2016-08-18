@@ -131,7 +131,8 @@ namespace ShibugakiViewer.ViewModels
         public ReadOnlyReactiveProperty<string> WindowTitle { get; }
 
         public double TagSelectorScrollOffset { get; set; }
-        public TagInformation TagSelectorLaseSelected { get; set; }
+        public TagInformation TagSelectorLastSelected { get; set; }
+        public ReactiveProperty<int> TagSelectorSortMode { get; }
 
         public KeyReceiver<object> KeyReceiver { get; }
 
@@ -497,6 +498,11 @@ namespace ShibugakiViewer.ViewModels
                     }
                 })
                 .AddTo(this.Disposables);
+
+            this.TagSelectorSortMode = this.Core
+                .ToReactivePropertyAsSynchronized(x => x.TagSelectorSortMode)
+                .AddTo(this.Disposables);
+
 
 
             this.BackCommand = client.BackHistoryCount

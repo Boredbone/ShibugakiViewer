@@ -970,6 +970,15 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
+        ///   Last Used Date に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LastUsedDate {
+            get {
+                return ResourceManager.GetString("LastUsedDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   is less or equal to (&lt;=) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LessEqual {

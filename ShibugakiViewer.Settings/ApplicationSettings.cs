@@ -80,6 +80,10 @@ namespace ShibugakiViewer.Models
         [DataMember]
         public int ToolPageIndex { get; set; }
 
+        [DataMember]
+        public int TagSelectorSortMode { get; set; }
+
+
         public ApplicationSettings()
         {
             this.IsOpenNavigationWithSingleTapEnabled = true;
