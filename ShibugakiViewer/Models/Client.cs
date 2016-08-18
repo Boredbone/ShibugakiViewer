@@ -72,7 +72,7 @@ namespace ShibugakiViewer.Models
                 }
             }
         }
-        
+
         public ReactiveProperty<long> CatalogIndex { get; }
         public ReactiveProperty<long> ViewerIndex { get; }
 
@@ -141,7 +141,7 @@ namespace ShibugakiViewer.Models
                 .ObserveProperty(x => x.Count)
                 .ToReadOnlyReactiveProperty()
                 .AddTo(this.Disposables);
-            
+
 
             this.History = new History<ViewState>(new ViewState()).AddTo(this.Disposables);
 
@@ -211,7 +211,7 @@ namespace ShibugakiViewer.Models
             this.ViewerIndex = this.ToReactivePropertyAsSynchronized(x => x.ViewerIndexInner)
                 .AddTo(this.Disposables);
 
-            
+
             this.SearchCompleted
                 .Where(x => (this.SelectedPage.Value == PageType.Viewer && x.Takes > 0))
                 .ObserveOnUIDispatcher()
@@ -302,7 +302,7 @@ namespace ShibugakiViewer.Models
                     }
                 })
                 .AddTo(this.Disposables);
-            
+
 
             //Viewerインデックス変更時のデータベース問い合わせ
             var viewerImage = this.ViewerIndex
@@ -393,7 +393,7 @@ namespace ShibugakiViewer.Models
                 .Subscribe(x => LoadImagesMain(x, ImageQuality.Resized,
                     ListOrderFlags.Current | ListOrderFlags.Next | ListOrderFlags.Previous))
                 .AddTo(this.Disposables);
-            
+
             //表示中の画像のみ最高画質ロード
             viewerIndexChanged
                 .Throttle(TimeSpan.FromMilliseconds(originalImageLoadDelayMillisec))
@@ -527,6 +527,12 @@ namespace ShibugakiViewer.Models
             });
         }
 
+        /// <summary>
+        /// 単一条件の検索を開始
+        /// </summary>
+        /// <param name="property"></param>
+        /// <param name="reference"></param>
+        /// <param name="mode"></param>
         public void StartNewSearch(FileProperty property, object reference, CompareMode mode)
         {
 
@@ -744,7 +750,7 @@ namespace ShibugakiViewer.Models
             {
                 return;
             }
-            
+
 
             var option = new ImageLoadingOptions()
             {
@@ -832,8 +838,19 @@ namespace ShibugakiViewer.Models
         /// <param name="index"></param>
         public void PrepareNext(long index) => this.PrepareNextSubject.OnNext(index);
 
+        /// <summary>
+        /// 検索ページに移動
+        /// </summary>
+        public void MoveToSearch() => this.MoveToPage(PageType.Search, false);
 
-        public void MoveToPage(PageType type, bool force = false)
+        /// <summary>
+        /// 一覧ページに移動
+        /// </summary>
+        public void MoveToCatalog() => this.MoveToPage(PageType.Catalog, false);
+
+        
+
+        private void MoveToPage(PageType type, bool force = false)
         {
             if (this.SelectedPage.Value == type && !force)
             {
@@ -848,17 +865,15 @@ namespace ShibugakiViewer.Models
                 case PageType.Viewer:
                     this.ChangePage(type, null);
                     break;
-                case PageType.Slideshow:
-                    break;
                 default:
                     break;
             }
         }
 
-        private void ChangePage(PageType type,long? viewerIndex)
+        private void ChangePage(PageType type, long? viewerIndex)
         {
             var i = viewerIndex ?? this.ViewerIndex.Value;
-            var id = this.front.SearchInformation.Key;
+            var id = this.front.SearchInformation?.Key;
 
             if (this.History.BackHistoryCount.Value > 0
                 && (this.History.Current.Type == PageType.None
@@ -881,7 +896,7 @@ namespace ShibugakiViewer.Models
                     CatalogIndex = this.CatalogIndex.Value,
                     Type = type,
                 };
-                
+
                 //this.History.Current.Clone();
                 //state.Type = type;
                 this.History.MoveNew(state);
@@ -892,9 +907,9 @@ namespace ShibugakiViewer.Models
             {
                 Debug.WriteLine($"5:{i} to {this.ViewerIndex.Value}");
             }
-            if (this.front.SearchInformation.Key != id)
+            if (this.front.SearchInformation?.Key != id)
             {
-                Debug.WriteLine($"6:{id} to {this.front.SearchInformation.Key}");
+                Debug.WriteLine($"6:{id} to {this.front.SearchInformation?.Key}");
             }
 
             this.PageChangeRequestSubject.OnNext(type);
@@ -904,9 +919,9 @@ namespace ShibugakiViewer.Models
             {
                 Debug.WriteLine($"7:{i} to {this.ViewerIndex.Value}");
             }
-            if (this.front.SearchInformation.Key != id)
+            if (this.front.SearchInformation?.Key != id)
             {
-                Debug.WriteLine($"8:{id} to {this.front.SearchInformation.Key}");
+                Debug.WriteLine($"8:{id} to {this.front.SearchInformation?.Key}");
             }
         }
 
@@ -957,7 +972,7 @@ namespace ShibugakiViewer.Models
                     });
 
                     var index = await core.Library.FindIndexAsync(search, record);
-                    
+
                     this.front.Length
                         .Where(x => x > index)
                         .Take(1)
@@ -972,7 +987,7 @@ namespace ShibugakiViewer.Models
                     {
                         this.front.SetSearch(search, true);
                     });
-                    
+
                 })
                 .FireAndForget();
             }

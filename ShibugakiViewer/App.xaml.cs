@@ -150,6 +150,10 @@ namespace ShibugakiViewer
         }
 
 
+        /// <summary>
+        /// コマンド受信
+        /// </summary>
+        /// <param name="args"></param>
         private void ExecutePipeCommand(IList<string> args)
         {
             if (args == null || args.Count <= 0)
@@ -170,6 +174,10 @@ namespace ShibugakiViewer
             }
         }
 
+        /// <summary>
+        /// 設定ウインドウ
+        /// </summary>
+        /// <param name="index"></param>
         public void ShowSettingWindow(int index)
         {
             if (index > 0)
@@ -179,6 +187,10 @@ namespace ShibugakiViewer
             this.ShowUniqueWindow<SettingWindow>();
         }
 
+        /// <summary>
+        /// ツールウインドウ
+        /// </summary>
+        /// <param name="index"></param>
         public void ShowToolWindow(int index)
         {
             if (index > 0)
@@ -188,14 +200,15 @@ namespace ShibugakiViewer
             this.ShowUniqueWindow<ToolWindow>();
         }
 
+        /// <summary>
+        /// フォルダ設定ウインドウ
+        /// </summary>
         public void ShowFolderWindow() => this.ShowUniqueWindow<FolderWindow>();
-        //{
-        //    var window = this.Windows.OfType<FolderWindow>().FirstOrDefault()
-        //        ?? new FolderWindow();
-        //    window.Show();
-        //    window.Activate();
-        //}
 
+        /// <summary>
+        /// 指定されたウインドウがあれば最前面に表示，なければ生成
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
         private void ShowUniqueWindow<T>() where T : Window, new()
         {
             var window = this.Windows.OfType<T>().FirstOrDefault()
@@ -204,6 +217,10 @@ namespace ShibugakiViewer
             window.Activate();
         }
 
+        /// <summary>
+        /// Client表示
+        /// </summary>
+        /// <param name="files"></param>
         public void ShowClientWindow(IEnumerable<string> files)
         {
             var window = new ClientWindow();

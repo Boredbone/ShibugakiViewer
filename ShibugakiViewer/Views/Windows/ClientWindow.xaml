@@ -146,7 +146,7 @@
 
                         <cc:FlatButton
                             Style="{StaticResource menuFlatButtonStretchStyle}"
-                            Command="{Binding ChangePageCommand}" CommandParameter="0">
+                            Command="{Binding MoveToSearchPageCommand}">
                             <cc:LabeledIcon
                                 IconText="{StaticResource SearchSymbol}"
                                 Text="{x:Static properties:Resources.SearchTitleText_Text}"/>

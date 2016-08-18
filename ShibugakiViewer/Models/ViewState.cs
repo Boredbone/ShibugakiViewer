@@ -81,6 +81,5 @@ namespace ShibugakiViewer.Models
         Search,
         Catalog,
         Viewer,
-        Slideshow,
     }
 }

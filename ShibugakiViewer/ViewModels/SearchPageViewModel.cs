@@ -305,7 +305,7 @@ namespace ShibugakiViewer.ViewModels
             //return;
 
             client.SetNewSearch(info);
-            client.MoveToPage(PageType.Catalog);
+            client.MoveToCatalog();
 
             this.CurrentSearch.Value = SearchInformation.GenerateEmpty();
             if (!this.HasFavoriteSearch(info))//(this.SelectedTab.Value == TabMode.New)

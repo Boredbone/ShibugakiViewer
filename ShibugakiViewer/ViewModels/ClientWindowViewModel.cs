@@ -82,7 +82,7 @@ namespace ShibugakiViewer.ViewModels
         public ReactiveProperty<int> SelectedTab { get; }
 
         public ReactiveCommand BackCommand { get; }
-        public ReactiveCommand ChangePageCommand { get; }
+        public ReactiveCommand MoveToSearchPageCommand { get; }
         public ReactiveCommand OpenPaneCommand { get; }
         public ReactiveCommand OpenInformationPaneCommand { get; }
         public ReactiveCommand OpenSettingPaneCommand { get; }
@@ -164,8 +164,7 @@ namespace ShibugakiViewer.ViewModels
                 .CombineLatest(client.ViewerDisplaying, (Page, Item) => new { Page, Item })
                 .Select(x =>
                 {
-                    var file = (x.Page == PageType.Viewer || x.Page == PageType.Slideshow)
-                        ? x.Item?.FileName : null;
+                    var file = (x.Page == PageType.Viewer) ? x.Item?.FileName : null;
                     return (file == null) ? core.AppName : (file + " - " + core.AppName);
                 })
                 .ToReadOnlyReactiveProperty()
@@ -206,21 +205,18 @@ namespace ShibugakiViewer.ViewModels
 
             this.SelectedTab.Subscribe(x =>
             {
-                switch (x)
-                {
-                    case 0:
-                        client.MoveToPage(PageType.Search);
-                        break;
-                    case 1:
-                        client.MoveToPage(PageType.Catalog);
-                        break;
-                    case 2:
-                        client.MoveToPage(PageType.Viewer);
-                        break;
-                    //case 3:
-                    //    client.MoveToPage(PageType.Slideshow);
-                    //    break;
-                }
+                //switch (x)
+                //{
+                //    case 0:
+                //        client.MoveToPage(PageType.Search);
+                //        break;
+                //    case 1:
+                //        client.MoveToPage(PageType.Catalog);
+                //        break;
+                //    case 2:
+                //        client.MoveToPage(PageType.Viewer);
+                //        break;
+                //}
                 if (this.IsPaneOpen.Value)
                 {
                     if (this.IsPaneFixed.Value)
@@ -260,8 +256,7 @@ namespace ShibugakiViewer.ViewModels
                 .AddTo(this.Disposables);
 
             this.DefaultPaneMode = client.SelectedPage
-                .Select(x => (x == PageType.Slideshow) ? PaneMode.Disabled
-                    : (x == PageType.Viewer) ? PaneMode.HideInClosing
+                .Select(x => (x == PageType.Viewer) ? PaneMode.HideInClosing
                     : PaneMode.AlwaysVisible)
                 .ToReactiveProperty(PaneMode.AlwaysVisible)
                 .AddTo(this.Disposables);
@@ -509,19 +504,8 @@ namespace ShibugakiViewer.ViewModels
                 .ToReactiveCommand()
                 .WithSubscribe(_ => client.Back(), this.Disposables);
 
-            this.ChangePageCommand = new ReactiveCommand()
-                .WithSubscribe(x =>
-                {
-                    switch (x.ToString())
-                    {
-                        case "0":
-                            client.MoveToPage(PageType.Search);//.MoveToSearch();
-                            break;
-                        case "1":
-                            client.MoveToPage(PageType.Catalog);//.MoveToCatalog();
-                            break;
-                    }
-                }, this.Disposables);
+            this.MoveToSearchPageCommand = new ReactiveCommand()
+                .WithSubscribe(x => client.MoveToSearch(), this.Disposables);
 
             this.OpenPaneCommand = new ReactiveCommand()
                 .WithSubscribe(_ => this.TogglePane(OptionPaneType.None), this.Disposables);
@@ -543,8 +527,7 @@ namespace ShibugakiViewer.ViewModels
                 .WithSubscribe(_ =>
                 {
                     if (core.UseExtendedMouseButtonsToSwitchImage
-                        && (client.SelectedPage.Value == PageType.Viewer
-                            || client.SelectedPage.Value == PageType.Slideshow))
+                        && client.SelectedPage.Value == PageType.Viewer)
                     {
                         this.MouseExButtonSubject.OnNext(false);
                     }
@@ -558,8 +541,7 @@ namespace ShibugakiViewer.ViewModels
                 .WithSubscribe(_ =>
                 {
                     if (core.UseExtendedMouseButtonsToSwitchImage
-                        && (client.SelectedPage.Value == PageType.Viewer
-                            || client.SelectedPage.Value == PageType.Slideshow))
+                        && client.SelectedPage.Value == PageType.Viewer)
                     {
                         this.MouseExButtonSubject.OnNext(true);
                     }
@@ -588,7 +570,7 @@ namespace ShibugakiViewer.ViewModels
 
             //検索ページに移動
             this.KeyReceiver.Register(Key.F,
-                (_, __) => client.MoveToPage(PageType.Search),
+                (_, __) => client.MoveToSearch(),
                 0, modifier: ModifierKeys.Control);
 
 
