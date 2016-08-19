@@ -32,14 +32,14 @@ namespace ShibugakiViewer.Views.Behaviors
             {
                 textBox.LostFocus += (o, ea) =>
                 {
-                    textBox.GetBindingExpression(TextBox.TextProperty).UpdateSource();
+                    textBox.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
                 };
 
                 textBox.PreviewKeyDown += (o, ea) =>
                 {
                     if (ea.Key == Key.Enter)
                     {
-                        textBox.GetBindingExpression(TextBox.TextProperty).UpdateSource();
+                        textBox.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
                     }
                 };
             }

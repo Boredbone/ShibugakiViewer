@@ -72,7 +72,7 @@ namespace ShibugakiViewer.ViewModels
             }
         }
         private bool _fieldRefreshTrigger;
-        
+
         public ISearchResult SearchResult => this.client.SearchResult;
         public SelectionManager SelectedItems => this.client.SelectedItems;
 
@@ -108,7 +108,7 @@ namespace ShibugakiViewer.ViewModels
 
             this.DisplayIndex = this.StartIndex.Select(x => x + 1).ToReactiveProperty().AddTo(this.Disposables);
             this.DisplayIndex.Subscribe(x => this.StartIndex.Value = x - 1).AddTo(this.Disposables);
-            
+
             this.ThumbnailSize = core.ObserveProperty(x => x.ThumbNailSize)
                 .Select(x => (double)x)
                 .ToReactiveProperty().AddTo(this.Disposables);
@@ -132,8 +132,11 @@ namespace ShibugakiViewer.ViewModels
                 .AddTo(this.Disposables);
 
             this.IsRenderingEnabled = this.client.IsCatalogRenderingEnabled
+                .CombineLatest(this.client.SelectedPage, (e, p) => e && p == PageType.Catalog)
                 .ToReadOnlyReactiveProperty(true)
                 .AddTo(this.Disposables);
+
+
             //戻ってきたときにサムネイル再読み込み
             client.BackHistoryCount
                 .Pairwise()
@@ -142,14 +145,14 @@ namespace ShibugakiViewer.ViewModels
                 .Where(x => x)
                 .Subscribe(_ => this.RefreshTrigger = !this.RefreshTrigger)
                 .AddTo(this.Disposables);
-                        
+
             client.CacheUpdated
                  .SkipUntil(client.StateChanged)
                  .Take(1)
                  .Repeat()
                  .Subscribe(_ => this.RefreshTrigger = !this.RefreshTrigger)
                  .AddTo(this.Disposables);
-            
+
 
             //スクロールが落ち着いたら再読み込み
             this.StartIndex
@@ -176,7 +179,7 @@ namespace ShibugakiViewer.ViewModels
                 .WithSubscribe(x =>
                 {
                     var control = x as FrameworkElement;
-                    
+
                     var content = new SortEditor()
                     {
                         ItemsSource = this.client.GetSort(),
