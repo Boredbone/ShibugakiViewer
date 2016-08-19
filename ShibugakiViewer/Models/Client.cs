@@ -306,11 +306,14 @@ namespace ShibugakiViewer.Models
                 {
                     if (x.ViewSize > 0 && !this.IsStateChangingSubject.Value)
                     {
-                        var offset = Math.Max(x.Index.NewItem - (x.ViewSize / 2), 0);
-                        var takes = x.ViewSize * 2;
-                        var direction = (x.Index.NewItem == 0) ? 1 : (int)(x.Index.NewItem - x.Index.OldItem);
+                        this.SearchForCatalog(x.Index.NewItem, x.ViewSize, 
+                            (int)(x.Index.NewItem - x.Index.OldItem));
 
-                        this.front.GetRecords(offset, takes, direction, true);
+                        //var offset = Math.Max(x.Index.NewItem - (x.ViewSize / 2), 0);
+                        //var takes = x.ViewSize * 2;
+                        //var direction = (x.Index.NewItem == 0) ? 1 : (int)(x.Index.NewItem - x.Index.OldItem);
+                        //
+                        //this.front.GetRecords(offset, takes, direction, true);
                     }
                 })
                 .AddTo(this.Disposables);
@@ -513,8 +516,13 @@ namespace ShibugakiViewer.Models
                 }
                 else
                 {
-                    var direction = (catalogIndex == 0) ? 1 : 0;
-                    this.front.GetRecords(catalogIndex, this.PageSize.Value * 2, direction, true);
+                    this.SearchForCatalog(catalogIndex, this.PageSize.Value, 0);
+
+                    //var offset = Math.Max(index - (viewSize / 2), 0);
+                    //var takes = viewSize * 2;
+                    //var direction = (index == 0) ? 1 : baseDirection;
+                    //
+                    //this.front.GetRecords(offset, takes, direction, true);
                 }
             }
 
@@ -530,6 +538,16 @@ namespace ShibugakiViewer.Models
 
             //状態遷移完了
             this.IsStateChangingSubject.OnNext(false);
+        }
+
+
+        private void SearchForCatalog(long index, int viewSize, int baseDirection)
+        {
+            var offset = Math.Max(index - (viewSize / 2), 0);
+            var takes = viewSize * 2;
+            var direction = (index == 0) ? 1 : baseDirection;
+
+            this.front.GetRecords(offset, takes, direction, true);
         }
 
         /// <summary>
