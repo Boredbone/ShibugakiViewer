@@ -43,7 +43,7 @@ namespace ShibugakiViewer.Backup
             */
 
 
-            var mode = args[0];
+            var mode = args[0]?.ToLower();
             var serverFullPath = args[1];
             var saveDirectory = args[2];
             var mutexId = args[3];
@@ -77,11 +77,9 @@ namespace ShibugakiViewer.Backup
                                 pipeClient.Connect(300);
 
                                 // Read user input and send that to the client process.
-                                using (var sw = new StreamWriter(pipeClient))
+                                using (var sw = new StreamWriter(pipeClient) { AutoFlush = true })
                                 {
-                                    sw.AutoFlush = true;
                                     sw.WriteLine("?exit");
-                                    //Console.WriteLine("exit");
                                 }
                             }
 

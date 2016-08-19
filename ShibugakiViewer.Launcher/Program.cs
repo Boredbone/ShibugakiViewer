@@ -22,10 +22,11 @@ namespace ShibugakiViewer.Launcher
 
         static void Main(string[] args)
         {
-            //if (args == null || args.Length <= 0)
-            //{
-            //    return;
-            //}
+            var exitMode = args != null
+                && args.Length == 1
+                && args[0] != null
+                && args[0].ToLower().Equals("/q");
+            
 
             try
             {
@@ -51,6 +52,11 @@ namespace ShibugakiViewer.Launcher
 
                 if (!isServerRunning)
                 {
+                    if (exitMode)
+                    {
+                        return;
+                    }
+
                     var dir = System.AppDomain.CurrentDomain.BaseDirectory;
 
                     foreach (var folder in folderCandidates)
@@ -71,7 +77,7 @@ namespace ShibugakiViewer.Launcher
 
                             return;
                         }
-                        catch(System.ComponentModel.Win32Exception)
+                        catch (System.ComponentModel.Win32Exception)
                         {
                             //var tx = e.ToString();
                         }
@@ -85,21 +91,42 @@ namespace ShibugakiViewer.Launcher
                     pipeClient.Connect(5000);
 
                     // Read user input and send that to the client process.
-                    using (var sw = new StreamWriter(pipeClient))
+                    using (var sw = new StreamWriter(pipeClient) { AutoFlush = true })
                     {
-                        sw.AutoFlush = true;
-                        if (args != null)
+                        if (exitMode)
                         {
-                            foreach (var line in args)
-                            {
-                                sw.WriteLine(line);
-                            }
+                            sw.WriteLine("?exit");
                         }
-                        sw.WriteLine(endMark);
+                        else
+                        {
+                            if (args != null)
+                            {
+                                foreach (var line in args)
+                                {
+                                    sw.WriteLine(line);
+                                }
+                            }
+                            sw.WriteLine(endMark);
+                        }
+                    }
+                }
+
+
+                if (exitMode)
+                {
+                    using (var mutex = new Mutex(false, mutexId))
+                    {
+                        //ミューテックスの所有権を要求する
+                        if (mutex.WaitOne(5000, false))
+                        {
+                            //取得できた
+                            mutex.ReleaseMutex();
+                            mutex.Close();
+                        }
                     }
                 }
             }
-            catch (Exception)//NotImplementedException
+            catch (Exception)
             {
             }
         }
