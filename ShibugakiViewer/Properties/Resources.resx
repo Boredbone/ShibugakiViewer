@@ -475,7 +475,7 @@
     <value>Shortcuts for Tag</value>
   </data>
   <data name="AutoRefereshHelp_Text" xml:space="preserve">
-    <value>Update Automatically when the App is Launched</value>
+    <value>Update the library automatically when the app is launched</value>
   </data>
   <data name="BackHelp_Text" xml:space="preserve">
     <value>Back</value>
@@ -794,5 +794,32 @@
   </data>
   <data name="LastUsedDate" xml:space="preserve">
     <value>Last Used Date</value>
+  </data>
+  <data name="AutoInformationPaneLabel" xml:space="preserve">
+    <value>Show properties automatically when images are selected</value>
+  </data>
+  <data name="BackgroundColor" xml:space="preserve">
+    <value>Background</value>
+  </data>
+  <data name="ColorSetting" xml:space="preserve">
+    <value>Color</value>
+  </data>
+  <data name="FolderUpdateCheck" xml:space="preserve">
+    <value>Monitoring Addition / Removal of Files</value>
+  </data>
+  <data name="FolderUpdateNotificationLabel" xml:space="preserve">
+    <value>Notify when detecting addition / removal of files</value>
+  </data>
+  <data name="RefreshLibrarySetting" xml:space="preserve">
+    <value>Library Update</value>
+  </data>
+  <data name="SearchResultsView" xml:space="preserve">
+    <value>Display of Search Results</value>
+  </data>
+  <data name="TopDirectolyOnlyLabel" xml:space="preserve">
+    <value>Ignore Sub-Folders</value>
+  </data>
+  <data name="ViewerOperation" xml:space="preserve">
+    <value>Viewer Operation</value>
   </data>
 </root>

@@ -122,13 +122,20 @@ namespace ShibugakiViewer
             this.WindowPlacement = new WindowPlace(Path.Combine(saveDirectory, placementFileName));
 
             //Model初期化
-            this.Core.Initialize(saveDirectory);
+            var hasItem = this.Core.Initialize(saveDirectory);
 
             //通知アイコン
             this.ShowNotifyIcon()?.AddTo(this.disposables);
 
             //ウィンドウ
-            this.ShowClientWindow((e.Args.IsNullOrEmpty()) ? null : e.Args);
+            if (hasItem)
+            {
+                this.ShowClientWindow((e.Args.IsNullOrEmpty()) ? null : e.Args);
+            }
+            else
+            {
+                new WelcomeWindow() { ShowActivated = true }.Show();
+            }
 
             //パイプサーバ
             if (this.server == null)
@@ -223,8 +230,8 @@ namespace ShibugakiViewer
         /// <param name="files"></param>
         public void ShowClientWindow(IEnumerable<string> files)
         {
-            var window = new ClientWindow();
-            window.ShowActivated = true;
+            var window = new ClientWindow() { ShowActivated = true };
+
             if (files != null)
             {
                 var client = (window.DataContext as ClientWindowViewModel)?.Client;
@@ -234,8 +241,27 @@ namespace ShibugakiViewer
                 }
                 //window.ViewModel.LoadFiles(new[] { file });
             }
+
             window.Show();
         }
+
+        /// <summary>
+        /// ClientをCatalogPageで表示
+        /// </summary>
+        public void ShowClientWindowWithCatalog()
+        {
+            var window = new ClientWindow() { ShowActivated = true };
+
+            var client = (window.DataContext as ClientWindowViewModel)?.Client;
+            if (client != null)
+            {
+                client.StartNewSearch(null);
+            }
+
+            window.Show();
+        }
+
+
 
         /// <summary>
         /// アプリケーション終了時処理

@@ -299,7 +299,6 @@ namespace ShibugakiViewer.Models
                 .Restrict(TimeSpan.FromMilliseconds(100))
                 .Merge(catalogReset)
                 .Merge(databaseUpdatedForCatalog)
-                //.Merge(this.IsStateChangingSubject.Where(x=>!x).Select(_=>this.CatalogIndex.Value))
                 .Pairwise(0)
                 .CombineLatest(this.PageSize, (Index, ViewSize) => new { ViewSize, Index })
                 .Subscribe(x =>
@@ -308,12 +307,6 @@ namespace ShibugakiViewer.Models
                     {
                         this.SearchForCatalog(x.Index.NewItem, x.ViewSize, 
                             (int)(x.Index.NewItem - x.Index.OldItem));
-
-                        //var offset = Math.Max(x.Index.NewItem - (x.ViewSize / 2), 0);
-                        //var takes = x.ViewSize * 2;
-                        //var direction = (x.Index.NewItem == 0) ? 1 : (int)(x.Index.NewItem - x.Index.OldItem);
-                        //
-                        //this.front.GetRecords(offset, takes, direction, true);
                     }
                 })
                 .AddTo(this.Disposables);
@@ -517,12 +510,6 @@ namespace ShibugakiViewer.Models
                 else
                 {
                     this.SearchForCatalog(catalogIndex, this.PageSize.Value, 0);
-
-                    //var offset = Math.Max(index - (viewSize / 2), 0);
-                    //var takes = viewSize * 2;
-                    //var direction = (index == 0) ? 1 : baseDirection;
-                    //
-                    //this.front.GetRecords(offset, takes, direction, true);
                 }
             }
 
@@ -595,18 +582,48 @@ namespace ShibugakiViewer.Models
         /// <param name="mode"></param>
         public void StartNewSearch(FileProperty property, object reference, CompareMode mode)
         {
-
-            var search = new SearchInformation(new ComplexSearch(false));
-            search.Root.Add(new UnitSearch()
+            this.StartNewSearch(new[]
             {
-                Property = property,
-                Reference = reference,
-                Mode = mode,
+                new UnitSearch()
+                {
+                    Property = property,
+                    Reference = reference,
+                    Mode = mode,
+                }
             });
 
+            //var search = new SearchInformation(new ComplexSearch(false));
+            //search.Root.Add(new UnitSearch()
+            //{
+            //    Property = property,
+            //    Reference = reference,
+            //    Mode = mode,
+            //});
+            //
+            //this.SetNewSearch(search);
+            //this.ChangePage(PageType.Catalog, null, 0);
+        }
+
+        /// <summary>
+        /// 新しい検索を開始してページを移動
+        /// </summary>
+        /// <param name="criteria"></param>
+        public void StartNewSearch(IEnumerable<ISqlSearch> criteria)
+        {
+            var search = new SearchInformation(new ComplexSearch(false));
+
+            if (criteria != null)
+            {
+                foreach(var item in criteria)
+                {
+                    search.Root.Add(item);
+                }
+            }
+            
             this.SetNewSearch(search);
             this.ChangePage(PageType.Catalog, null, 0);
         }
+
 
         /// <summary>
         /// グループの内容を表示
@@ -629,10 +646,7 @@ namespace ShibugakiViewer.Models
         /// ソート条件を変更
         /// </summary>
         /// <param name="sort"></param>
-        public void SetSort(IEnumerable<SortSetting> sort)
-        {
-            this.front.SetSort(sort);
-        }
+        public void SetSort(IEnumerable<SortSetting> sort) => this.front.SetSort(sort);
 
         /// <summary>
         /// 現在のソート設定を取得

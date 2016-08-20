@@ -23,6 +23,10 @@
         </Style>
         <Style TargetType="GroupBox">
             <Setter Property="Margin" Value="4"/>
+            <Setter Property="Padding" Value="4"/>
+        </Style>
+        <Style TargetType="CheckBox">
+            <Setter Property="Margin" Value="0,4,4,4"/>
         </Style>
     </UserControl.Resources>
     <Grid>
@@ -34,34 +38,51 @@
             VerticalContentAlignment="Stretch">
             <StackPanel HorizontalAlignment="Stretch" Grid.Row="0">
 
-                <GroupBox Header="Search Result View">
+                <GroupBox Header="{x:Static properties:Resources.SearchResultsView}">
                     <StackPanel>
 
-                        <Grid>
+                        <Grid HorizontalAlignment="Left" Margin="0,0,0,8" Width="300">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock 
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.ColumnSpan="2"
+                                       HorizontalAlignment="Left"
                                 Style="{StaticResource headerTextStyle}"
                                 Text="{x:Static properties:Resources.ThumbSizeSelector_Header}"/>
+                            
+
+
+                            <Slider 
+                                Grid.Row="1" Grid.Column="0" Margin="4"
+                                Minimum="64" Maximum="512" SmallChange="10" LargeChange="50"
+                                HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                                Value="{Binding ThumbnailSize.Value,Mode=TwoWay}"
+                                tb:SliderBehavior.IsReceivePreviewMouseWheel="True"/>
+                            
                             <TextBox 
+                                Grid.Row="1"
                                 Grid.Column="1"
-                                HorizontalAlignment="Left"
-                                Width="150"
-                                Margin="16,4,4,4"
+                                HorizontalAlignment="Right" VerticalAlignment="Center"
+                                Width="70"
+                                Margin="4,0,0,0"
                                 Text="{Binding ThumbnailSize.Value,Mode=TwoWay,UpdateSourceTrigger=Explicit}"
                                 b:TextBoxBehavior.UpdateByReturn="True"/>
                         </Grid>
 
                         <CheckBox
-                            Content="IsAutoInformationPaneEnabled"
+                            Content="{x:Static properties:Resources.AutoInformationPaneLabel}"
                             IsChecked="{Binding IsAutoInformationPaneEnabled.Value,Mode=TwoWay}"/>
                     </StackPanel>
                 </GroupBox>
 
 
-                <GroupBox Header="Library">
+                <GroupBox Header="{x:Static properties:Resources.RefreshLibrarySetting}">
                     <StackPanel>
                         <CheckBox 
                             Content="{x:Static properties:Resources.AutoRefereshHelp_Text}" 
@@ -70,7 +91,8 @@
                             Content="{x:Static properties:Resources.RefreshFolderVisibleHelp_Header}" 
                             IsChecked="{Binding IsLibraryRefreshStatusVisible.Value,Mode=TwoWay}"/>
                         <CheckBox 
-                            Content="IsFolderUpdatedNotificationVisible" 
+                            IsEnabled="{Binding IsLibraryRefreshStatusVisible.Value,Mode=OneWay}"
+                            Content="{x:Static properties:Resources.FolderUpdateNotificationLabel}" 
                             IsChecked="{Binding IsFolderUpdatedNotificationVisible.Value,Mode=TwoWay}"/>
 
 
@@ -104,7 +126,7 @@
 
 
 
-                <GroupBox Header="Search">
+                <GroupBox Header="{x:Static properties:Resources.Search}">
                     <StackPanel>
 
                         <CheckBox 

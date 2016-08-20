@@ -43,8 +43,8 @@
                 <Run Text=" / "/>
                 <Run Text="{Binding MaxCount.Value,Mode=OneWay}"/>
             </TextBlock>
-            <Button Content="Refresh" Command="{Binding RefreshLibraryCommand}"/>
-            <!--<Button Content="Group" Click="Button_Click"/>-->
+            <!--<Button Content="Refresh" Command="{Binding RefreshLibraryCommand}"/>
+            <Button Content="Group" Click="Button_Click"/>-->
         </StackPanel>
 
         <DataGrid Name="dataGrid" Grid.Row="1"

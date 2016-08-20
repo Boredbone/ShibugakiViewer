@@ -96,7 +96,7 @@ namespace LibraryConverter.Compat
 
         public void ConvertSettings(ApplicationSettings target)
         {
-            target.ThumbNailSize = (int)this.oldSettings.ThumbNailSize;
+            target.ThumbNailSize = 200;// (int)this.oldSettings.ThumbNailSize;
             target.IsFlipAnimationEnabled = this.oldSettings.IsFlipAnimationEnabled;
             target.IsViewerPageTopBarFixed = this.oldSettings.IsViewerPageTopBarFixed;
             target.IsViewerPageLeftBarFixed = this.oldSettings.IsViewerPageLeftBarFixed;

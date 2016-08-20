@@ -12,7 +12,7 @@
         ResizeMode="CanResizeWithGrip"
         Closed="Window_Closed"
         mc:Ignorable="d"
-        Title="{x:Static properties:Resources.Options}" Height="580" Width="400">
+        Title="{x:Static properties:Resources.Options}" Height="590" Width="400">
     <Window.DataContext>
         <viewModels:SettingWindowViewModel/>
     </Window.DataContext>

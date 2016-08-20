@@ -49,7 +49,9 @@ namespace ImageLibrary.Core
         public IObservable<int> FileEnumerated => this.Creator.FileEnumerated;
         public IObservable<int> FileLoaded => this.Creator.FileLoaded;
 
-        public BehaviorSubject<bool> IsCreating { get; }
+        private BehaviorSubject<bool> IsCreatingSubject { get; }
+        public IObservable<bool> IsCreating => this.IsCreatingSubject.AsObservable();
+
 
         private Subject<DatabaseUpdatedEventArgs> DatabaseUpdatedSubject { get; }
         public IObservable<DatabaseUpdatedEventArgs> DatabaseUpdated => this.DatabaseUpdatedSubject.AsObservable();
@@ -132,7 +134,7 @@ namespace ImageLibrary.Core
 
 
             this.MessageSubject = new Subject<string>().AddTo(this.Disposables);
-            this.IsCreating = new BehaviorSubject<bool>(false).AddTo(this.Disposables);
+            this.IsCreatingSubject = new BehaviorSubject<bool>(false).AddTo(this.Disposables);
             this.DatabaseUpdatedSubject = new Subject<DatabaseUpdatedEventArgs>().AddTo(this.Disposables);
 
             this.Searcher = new SearchSortManager();
@@ -611,7 +613,7 @@ namespace ImageLibrary.Core
 
             using (await asyncLock.LockAsync())
             {
-                this.IsCreating.OnNext(true);
+                this.IsCreatingSubject.OnNext(true);
 
 
                 var ignored = this.Folders.GetIgnored().Select(x => x.Path).ToArray();
@@ -629,7 +631,7 @@ namespace ImageLibrary.Core
                 await this.Creator.RefreshLibraryAsync
                     (notifyResult ? LibraryLoadAction.UserOperation : LibraryLoadAction.Startup);
 
-                this.IsCreating.OnNext(false);
+                this.IsCreatingSubject.OnNext(false);
             }
         }
 
@@ -642,7 +644,7 @@ namespace ImageLibrary.Core
         {
             using (await asyncLock.LockAsync())
             {
-                this.IsCreating.OnNext(true);
+                this.IsCreatingSubject.OnNext(true);
 
                 this.Creator.Folders = folders;
                 this.Creator.IgnoredFolders = new string[0];
@@ -651,7 +653,7 @@ namespace ImageLibrary.Core
 
                 await this.Creator.RefreshLibraryAsync(LibraryLoadAction.Activation);
 
-                this.IsCreating.OnNext(false);
+                this.IsCreatingSubject.OnNext(false);
             }
         }
 
@@ -665,7 +667,7 @@ namespace ImageLibrary.Core
         {
             using (await asyncLock.LockAsync())
             {
-                this.IsCreating.OnNext(true);
+                this.IsCreatingSubject.OnNext(true);
 
                 await Task.Run(async () =>
                 {
@@ -727,7 +729,7 @@ namespace ImageLibrary.Core
                             (LibraryLoadAction.FolderChanged, args.AddedFiles, args.RemovedFiles);
                     }
                 });
-                this.IsCreating.OnNext(false);
+                this.IsCreatingSubject.OnNext(false);
             }
         }
 
@@ -818,6 +820,22 @@ namespace ImageLibrary.Core
                     .Select<string>(nameof(Record.Id))
                     .Take(1)
                     .FirstOrDefaultAsync()) != null;
+            }
+        }
+
+        /// <summary>
+        /// データベースにレコードが登録されているか確認
+        /// </summary>
+        /// <returns></returns>
+        public bool HasItems()
+        {
+            using (var connection = this.Database.Connect())
+            {
+                return this.Records
+                    .AsQueryable(connection)
+                    .Select<string>(nameof(Record.Id))
+                    .Take(1)
+                    .FirstOrDefault() != null;
             }
         }
 

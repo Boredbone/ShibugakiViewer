@@ -23,6 +23,10 @@
         </Style>
         <Style TargetType="GroupBox">
             <Setter Property="Margin" Value="4"/>
+            <Setter Property="Padding" Value="4"/>
+        </Style>
+        <Style TargetType="CheckBox">
+            <Setter Property="Margin" Value="0,4,4,4"/>
         </Style>
     </UserControl.Resources>
     <Grid>
@@ -34,7 +38,7 @@
             VerticalContentAlignment="Stretch">
             <StackPanel HorizontalAlignment="Stretch" Grid.Row="0">
 
-                <GroupBox Header="Viewer Operation">
+                <GroupBox Header="{x:Static properties:Resources.ViewerOperation}">
                     <StackPanel>
 
                         <CheckBox 
@@ -100,7 +104,7 @@
                 </GroupBox>
 
 
-                <GroupBox Header="Color">
+                <GroupBox Header="{x:Static properties:Resources.ColorSetting}">
                     <StackPanel>
 
 
@@ -136,18 +140,28 @@
                             <TextBlock 
                                 Grid.Row="1" Grid.Column="0"
                                 Style="{StaticResource headerTextStyle}"
-                                Text="Background"/>
+                                Text="{x:Static properties:Resources.BackgroundColor}"/>
                             <ToggleButton
                                 Grid.Row="1" Grid.Column="1"
                                 Margin="16,4,4,4"
                                 x:Name="colorButton" HorizontalAlignment="Left">
                                 <ToggleButton.Content>
-                                    <Border
-                                        Width="32" Height="16" Margin="2"
-                                        Background="{Binding BackColor.Value,Mode=OneWay,
-                                        Converter={StaticResource ColorToBrushConverter}}"
-                                        BorderThickness="1"
-                                        BorderBrush="Black"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border
+                                            Width="32" Height="16" Margin="2"
+                                            Background="{Binding BackColor.Value,Mode=OneWay,
+                                            Converter={StaticResource ColorToBrushConverter}}"
+                                            BorderThickness="1"
+                                            BorderBrush="Black"/>
+
+                                        <TextBlock
+                                            Grid.Column="1" Margin="4"
+                                            Text="{Binding BackColor.Value,Mode=OneWay}"/>
+                                    </Grid>
                                 </ToggleButton.Content>
                             </ToggleButton>
                         </Grid>
@@ -158,7 +172,8 @@
                             SelectedColor="{Binding BackColor.Value,Mode=TwoWay}"
                             Alpha="False"
                             HorizontalAlignment="Left"
-                            Width="300"/>
+                            Width="300"
+                            IsSelectedColorVisible="False"/>
 
 
                     </StackPanel>
@@ -184,7 +199,7 @@
                         </Grid>
                         <Slider 
                             Minimum="1" Maximum="60" SmallChange="1" LargeChange="5"
-                            Width="300" HorizontalAlignment="Left"
+                            Width="300" HorizontalAlignment="Left" Margin="4"
                             Value="{Binding FlipTimeSec.Value,Mode=TwoWay}"
                             tb:SliderBehavior.IsReceivePreviewMouseWheel="True"/>
 
@@ -205,7 +220,7 @@
                 </GroupBox>
 
 
-                <GroupBox Header="Viewer">
+                <GroupBox Header="{x:Static properties:Resources.Viewer}">
                     <StackPanel>
 
 

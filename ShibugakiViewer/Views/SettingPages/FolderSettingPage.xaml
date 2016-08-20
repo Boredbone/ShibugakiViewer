@@ -255,12 +255,12 @@
                                     Margin="0"/>
 
                                 <CheckBox
-                                    Content="IsTopDirectoryOnly"
+                                    Content="{x:Static properties:Resources.TopDirectolyOnlyLabel}"
                                     IsChecked="{Binding IsTopDirectoryOnly,Mode=TwoWay}" 
                                     Margin="0,4,0,4"/>
 
                                 <CheckBox
-                                    Content="WatchChange"
+                                    Content="{x:Static properties:Resources.FolderUpdateCheck}"
                                     IsChecked="{Binding WatchChange,Mode=TwoWay}"
                                     Margin="0"/>
 

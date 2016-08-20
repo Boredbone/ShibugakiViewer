@@ -145,6 +145,7 @@
     <Compile Include="ViewModels\SettingPages\FolderSettingPageViewModel.cs" />
     <Compile Include="ViewModels\SettingPages\LibraryCreationPageViewModel.cs" />
     <Compile Include="ViewModels\SettingPages\ViewerSettingPageViewModel.cs" />
+    <Compile Include="ViewModels\WelcomeWindowViewModel.cs" />
     <Compile Include="Views\Behaviors\AnimatedGifbehavior.cs" />
     <Compile Include="Views\Behaviors\ExtendedMouseBinding.cs" />
     <Compile Include="Views\Behaviors\FullScreenBehavior.cs" />
@@ -229,6 +230,9 @@
     </Compile>
     <Compile Include="Views\Windows\VersionWindow.xaml.cs">
       <DependentUpon>VersionWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Windows\WelcomeWindow.xaml.cs">
+      <DependentUpon>WelcomeWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -392,6 +396,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Windows\VersionWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Windows\WelcomeWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

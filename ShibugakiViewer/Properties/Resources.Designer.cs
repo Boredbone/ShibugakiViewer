@@ -133,6 +133,15 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
+        ///   Show properties automatically when images are selected に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string AutoInformationPaneLabel {
+            get {
+                return ResourceManager.GetString("AutoInformationPaneLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Automatic Zoom に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string AutomaticZoomHelp_Text {
@@ -142,7 +151,7 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
-        ///   Update Automatically when the App is Launched に類似しているローカライズされた文字列を検索します。
+        ///   Update the library automatically when the app is launched に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string AutoRefereshHelp_Text {
             get {
@@ -156,6 +165,15 @@ namespace ShibugakiViewer.Properties {
         public static string BackButton_ToolTip {
             get {
                 return ResourceManager.GetString("BackButton_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Background に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string BackgroundColor {
+            get {
+                return ResourceManager.GetString("BackgroundColor", resourceCulture);
             }
         }
         
@@ -210,6 +228,15 @@ namespace ShibugakiViewer.Properties {
         public static string CmsSwitch_Header {
             get {
                 return ResourceManager.GetString("CmsSwitch_Header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Color に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ColorSetting {
+            get {
+                return ResourceManager.GetString("ColorSetting", resourceCulture);
             }
         }
         
@@ -714,6 +741,24 @@ namespace ShibugakiViewer.Properties {
         public static string FolderRelativeId {
             get {
                 return ResourceManager.GetString("FolderRelativeId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Monitoring Addition / Removal of Files に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FolderUpdateCheck {
+            get {
+                return ResourceManager.GetString("FolderUpdateCheck", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Notify when detecting addition / removal of files に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FolderUpdateNotificationLabel {
+            get {
+                return ResourceManager.GetString("FolderUpdateNotificationLabel", resourceCulture);
             }
         }
         
@@ -1402,6 +1447,15 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
+        ///   Library Update に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RefreshLibrarySetting {
+            get {
+                return ResourceManager.GetString("RefreshLibrarySetting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Update Mode に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string RefreshMode {
@@ -1641,6 +1695,15 @@ namespace ShibugakiViewer.Properties {
         public static string SearchLabel {
             get {
                 return ResourceManager.GetString("SearchLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Display of Search Results に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SearchResultsView {
+            get {
+                return ResourceManager.GetString("SearchResultsView", resourceCulture);
             }
         }
         
@@ -1888,6 +1951,15 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
+        ///   Ignore Sub-Folders に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string TopDirectolyOnlyLabel {
+            get {
+                return ResourceManager.GetString("TopDirectolyOnlyLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Transition Time に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string TransitionTimeText_Text {
@@ -2037,6 +2109,15 @@ namespace ShibugakiViewer.Properties {
         public static string Viewer {
             get {
                 return ResourceManager.GetString("Viewer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Viewer Operation に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ViewerOperation {
+            get {
+                return ResourceManager.GetString("ViewerOperation", resourceCulture);
             }
         }
         

@@ -795,4 +795,31 @@
   <data name="LastUsedDate" xml:space="preserve">
     <value>最終使用日時</value>
   </data>
+  <data name="AutoInformationPaneLabel" xml:space="preserve">
+    <value>画像選択時に自動でプロパティを表示</value>
+  </data>
+  <data name="BackgroundColor" xml:space="preserve">
+    <value>背景色</value>
+  </data>
+  <data name="ColorSetting" xml:space="preserve">
+    <value>配色</value>
+  </data>
+  <data name="FolderUpdateCheck" xml:space="preserve">
+    <value>ファイルの追加/削除を監視</value>
+  </data>
+  <data name="FolderUpdateNotificationLabel" xml:space="preserve">
+    <value>ファイルの追加/削除を検知した時に通知</value>
+  </data>
+  <data name="RefreshLibrarySetting" xml:space="preserve">
+    <value>ライブラリの更新</value>
+  </data>
+  <data name="SearchResultsView" xml:space="preserve">
+    <value>検索結果の表示</value>
+  </data>
+  <data name="TopDirectolyOnlyLabel" xml:space="preserve">
+    <value>サブフォルダを含めない</value>
+  </data>
+  <data name="ViewerOperation" xml:space="preserve">
+    <value>ビューアの操作</value>
+  </data>
 </root>

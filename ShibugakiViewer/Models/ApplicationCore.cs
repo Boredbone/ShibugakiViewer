@@ -457,7 +457,7 @@ namespace ShibugakiViewer.Models
         private bool isChanged;
 
 
-        public void Initialize(string saveDirectory)
+        public bool Initialize(string saveDirectory)
         {
             // Set the user interface to display in the same culture as that set in Control Panel.
             System.Threading.Thread.CurrentThread.CurrentUICulture =
@@ -530,13 +530,17 @@ namespace ShibugakiViewer.Models
 
             this.isChanged = true;
             this.PropertyChangedAsObservable().Subscribe(x => this.isChanged = true).AddTo(this.Disposables);
-            
+
+
+            var libraryHasItem = this.Library.HasItems();
 
             //ライブラリ更新
-            if (this.RefreshLibraryOnLaunched)
+            if (libraryHasItem && this.RefreshLibraryOnLaunched)
             {
                 this.Library.StartRefreshLibrary(false);
             }
+
+            return libraryHasItem;
         }
         
 
