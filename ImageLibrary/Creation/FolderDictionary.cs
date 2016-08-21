@@ -108,6 +108,11 @@ namespace ImageLibrary.Creation
                         return;
                     }
                     this.WatchFolderUpdate(folder);
+
+                    if (x.PropertyName.Equals(nameof(FolderInformation.Ignored)))
+                    {
+                        this.Reset();
+                    }
                 })
                 .AddTo(this.Disposables);
 

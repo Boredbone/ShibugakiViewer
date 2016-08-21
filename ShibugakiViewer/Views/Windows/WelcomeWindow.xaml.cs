@@ -12,7 +12,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Reactive.Bindings.Extensions;
 using ShibugakiViewer.ViewModels;
+using ShibugakiViewer.ViewModels.SettingPages;
 
 namespace ShibugakiViewer.Views.Windows
 {
@@ -22,22 +24,47 @@ namespace ShibugakiViewer.Views.Windows
     public partial class WelcomeWindow : Window, IDisposable
     {
         private readonly SerialDisposable subscription = new SerialDisposable();
+        private readonly CompositeDisposable disposables;
 
+        private bool exitAll = true;
+        private bool closing = false;
 
         public WelcomeWindow()
         {
             InitializeComponent();
+
+            this.disposables = new CompositeDisposable();
+
+            this.subscription.AddTo(this.disposables);
+            this.folderSetting.AddTo(this.disposables);
+            this.libraryCreation.AddTo(this.disposables);
+
+            var fvm = this.folderSetting.DataContext as FolderSettingPageViewModel;
+            if (fvm != null)
+            {
+                fvm.IsInitializeMode.Value = true;
+            }
         }
 
         public void Dispose()
         {
-            this.subscription.Dispose();
+            this.disposables.Dispose();
             (this.DataContext as IDisposable)?.Dispose();
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            this.Dispose();
+            if (!this.closing)
+            {
+                this.closing = true;
+
+                if (this.exitAll)
+                {
+                    this.exitAll = false;
+                    ((App)Application.Current).ExitAll();
+                }
+                this.Dispose();
+            }
         }
 
         private void Window_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -49,6 +76,7 @@ namespace ShibugakiViewer.Views.Windows
                 {
                     if (x)
                     {
+                        this.exitAll = false;
                         this.Close();
                     }
                 });

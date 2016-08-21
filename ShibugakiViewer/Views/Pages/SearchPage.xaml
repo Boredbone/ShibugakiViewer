@@ -411,8 +411,7 @@
                     Command="{Binding StartSearchCommand}"
                     Style="{StaticResource informationPaneButtonStyle}"
                     HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    ToolTip="{x:Static properties:Resources.Search}">
+                    VerticalAlignment="Stretch">
 
                     <cc:LabeledIcon
                         HorizontalAlignment="Center"

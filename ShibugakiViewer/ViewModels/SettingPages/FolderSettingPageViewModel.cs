@@ -23,6 +23,7 @@ namespace ShibugakiViewer.ViewModels.SettingPages
 
         public ReactiveProperty<bool> IsProfessionalFolderSettingEnabled { get; }
         public ReactiveProperty<bool> IsEditable { get; }
+        public ReactiveProperty<bool> IsInitializeMode { get; }
         public ReadOnlyReactiveProperty<bool> IsProfessionalFolderSettingEnabledView { get; }
 
         public ReactiveCommand IgnoreCommand { get; }
@@ -49,13 +50,15 @@ namespace ShibugakiViewer.ViewModels.SettingPages
                 .ToReactiveProperty()
                 .AddTo(this.Disposables);
 
+            this.IsInitializeMode = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
+
 
             this.IsProfessionalFolderSettingEnabled = core
                 .ToReactivePropertyAsSynchronized(x => x.IsProfessionalFolderSettingEnabled)
                 .AddTo(this.Disposables);
 
-            this.IsProfessionalFolderSettingEnabledView = this.IsEditable
-                .CombineLatest(this.IsProfessionalFolderSettingEnabled, (a, b) => a && b)
+            this.IsProfessionalFolderSettingEnabledView = this.IsProfessionalFolderSettingEnabled
+                .CombineLatest(this.IsInitializeMode, (a, b) => a && !b)
                 .ToReadOnlyReactiveProperty()
                 .AddTo(this.Disposables);
 
@@ -67,11 +70,12 @@ namespace ShibugakiViewer.ViewModels.SettingPages
                     if (folder != null)
                     {
                         folder.Ignored = true;
-                        this.Folders.Reset();
+                        //this.Folders.Reset();
                     }
                 }, this.Disposables);
 
             this.RefreshCommand = this.IsEditable
+                .CombineLatest(this.IsInitializeMode, (a, b) => a && !b)
                 .ToReactiveCommand()
                 .WithSubscribe(x =>
                 {
@@ -117,14 +121,25 @@ namespace ShibugakiViewer.ViewModels.SettingPages
                     var exists = this.library.Folders.GetAll()
                         .FirstOrDefault(x => x.Path.Equals(folderPath));
 
+                    var refresh = false;
+
                     if (exists != null)
                     {
-                        exists.Ignored = false;
-                        return;
+                        if (exists.Ignored)
+                        {
+                            exists.Ignored = false;
+                            exists.RefreshEnable = true;
+                            refresh = true;
+                        }
                     }
                     else
                     {
                         this.library.Folders.Add(new FolderInformation(folderPath));
+                        refresh = true;
+                    }
+
+                    if (refresh && !this.IsInitializeMode.Value)
+                    {
                         this.library.RefreshLibraryAsync(true).FireAndForget();
                     }
 

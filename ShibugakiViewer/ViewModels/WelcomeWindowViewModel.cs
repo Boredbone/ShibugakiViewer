@@ -31,6 +31,11 @@ namespace ShibugakiViewer.ViewModels
         private Subject<bool> ExitSubject { get; }
         public IObservable<bool> Exit => this.ExitSubject.AsObservable();
 
+
+        public ReactiveProperty<int> SelectedTab { get; }
+
+        public ReactiveCommand ChangeTabCommand { get; }
+
         private readonly App application;
 
         public WelcomeWindowViewModel()
@@ -41,12 +46,28 @@ namespace ShibugakiViewer.ViewModels
 
             this.ExitSubject = new Subject<bool>().AddTo(this.Disposables);
 
+            this.SelectedTab = new ReactiveProperty<int>().AddTo(this.Disposables);
+
+            this.ChangeTabCommand = new ReactiveCommand()
+                .WithSubscribeOfType<string>(x =>
+                {
+                    var index = 0;
+                    if (int.TryParse(x, out index))
+                    {
+                        this.SelectedTab.Value = index;
+                    }
+                }, this.Disposables);
+
             library.Loaded.Subscribe(_ =>
             {
                 if (library.HasItems())
                 {
                     this.ExitSubject.OnNext(true);
-                    this.application.ShowClientWindowWithCatalog();
+                    this.application.ShowFirstClient(true, null);
+                }
+                else
+                {
+                    this.SelectedTab.Value = 2;
                 }
             })
             .AddTo(this.Disposables);
@@ -56,6 +77,7 @@ namespace ShibugakiViewer.ViewModels
                 .ToReactiveCommand()
                 .WithSubscribe(_ =>
                 {
+                    this.SelectedTab.Value = 3;
                     library.StartRefreshLibrary();
                 }, this.Disposables);
         }

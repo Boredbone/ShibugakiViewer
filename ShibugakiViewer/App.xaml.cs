@@ -124,11 +124,21 @@ namespace ShibugakiViewer
             //Model初期化
             var hasItem = this.Core.Initialize(saveDirectory);
 
+            if (hasItem)
+            {
+                this.ShowFirstClient(false, e.Args);
+            }
+            else
+            {
+                new WelcomeWindow() { ShowActivated = true }.Show();
+            }
+
+            /*
             //通知アイコン
             this.ShowNotifyIcon()?.AddTo(this.disposables);
 
             //ウィンドウ
-            if (hasItem)
+            if (false)//hasItem)
             {
                 this.ShowClientWindow((e.Args.IsNullOrEmpty()) ? null : e.Args);
             }
@@ -153,7 +163,7 @@ namespace ShibugakiViewer
                     .AddTo(this.disposables);
 
                 this.server.Activate(mutexId, pipeId);
-            }
+            }*/
         }
 
 
@@ -248,7 +258,7 @@ namespace ShibugakiViewer
         /// <summary>
         /// ClientをCatalogPageで表示
         /// </summary>
-        public void ShowClientWindowWithCatalog()
+        private void ShowClientWindowWithCatalog()
         {
             var window = new ClientWindow() { ShowActivated = true };
 
@@ -261,6 +271,40 @@ namespace ShibugakiViewer
             window.Show();
         }
 
+        public void ShowFirstClient(bool withCatalog, string[] files)
+        {
+
+            //通知アイコン
+            this.ShowNotifyIcon()?.AddTo(this.disposables);
+
+            //ウィンドウ
+            if (withCatalog)
+            {
+                this.ShowClientWindowWithCatalog();
+            }
+            else
+            {
+                this.ShowClientWindow((files.IsNullOrEmpty()) ? null : files);
+            }
+
+            //パイプサーバ
+            if (this.server == null)
+            {
+                this.server = new PipeServer().AddTo(this.disposables);
+
+                this.server.LineReceived
+                    .Buffer(this.server.LineReceived.Where(x => x.StartsWith(commandMarker)))
+                    .ObserveOnUIDispatcher()
+                    .Subscribe(x => this.ExecutePipeCommand(x), ex =>
+                    {
+                        MessageBox.Show(ex.ToString());
+                        this.Shutdown();
+                    })
+                    .AddTo(this.disposables);
+
+                this.server.Activate(mutexId, pipeId);
+            }
+        }
 
 
         /// <summary>

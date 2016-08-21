@@ -343,7 +343,7 @@ namespace LibraryConverter.Compat
                 AutoRefreshEnable = source.AutoRefreshEnable,
                 Ignored = source.Ignored,
                 RefreshEnable = source.RefreshEnable,
-                RefreshTrigger = source.RefreshTrigger,
+                //RefreshTrigger = source.RefreshTrigger,
                 IsTopDirectoryOnly = false,
                 Mode = (source.RefreshMode == ThreeState.None) ? FolderCheckMode.None
                     : (source.RefreshMode == ThreeState.False) ? FolderCheckMode.Light

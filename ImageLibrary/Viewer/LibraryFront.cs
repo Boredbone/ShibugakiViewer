@@ -518,10 +518,11 @@ namespace ImageLibrary.Viewer
             {
                 this.Length.Value = 0;
             }
+            //else
+            {
 
-            //TODO 現在実行中の検索をキャンセル
-
-            this.Cache.Clear();
+                this.Cache.Clear();
+            }
 
             if (action != CacheClearAction.SortChanged)
             {

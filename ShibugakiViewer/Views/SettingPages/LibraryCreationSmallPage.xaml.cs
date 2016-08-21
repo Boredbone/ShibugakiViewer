@@ -12,17 +12,15 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ShibugakiViewer.Models;
-using ShibugakiViewer.ViewModels.SettingPages;
 
 namespace ShibugakiViewer.Views.SettingPages
 {
     /// <summary>
-    /// LibraryCreationPage.xaml の相互作用ロジック
+    /// LibraryCreationSmallPage.xaml の相互作用ロジック
     /// </summary>
-    public partial class LibraryCreationPage : UserControl, IDisposable
+    public partial class LibraryCreationSmallPage : UserControl, IDisposable
     {
-        public LibraryCreationPage()
+        public LibraryCreationSmallPage()
         {
             InitializeComponent();
         }

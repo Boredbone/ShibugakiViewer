@@ -317,6 +317,7 @@
 
     <!-- Title -->
     <Style TargetType="TextBlock" x:Key="TitleTextBlockStyle">
+        <Setter Property="FontSize" Value="{StaticResource NormalTextSize}"/>
     </Style>
 
     <!-- ComboBox -->

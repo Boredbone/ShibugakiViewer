@@ -14,7 +14,7 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d"
         Style="{StaticResource DefaultWindowStyle}"
-        Title="WelcomeWindow" Height="300" Width="300"
+        Title="WelcomeWindow" Height="600" Width="500"
         DataContextChanged="Window_DataContextChanged"
         Closed="Window_Closed"
         Icon="/ShibugakiViewer;component/Assets/Icons/appicon.ico">
@@ -25,12 +25,107 @@
 
         <TabControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"
-                    Padding="0">
+                    Padding="0"
+                    SelectedIndex="{Binding SelectedTab.Value,Mode=TwoWay}">
 
             <TabItem Header="a">
                 <Grid>
-                    <Button Content="start" Command="{Binding StartRefreshCommand}"/>
+                    <StackPanel 
+                        Orientation="Vertical"
+                        HorizontalAlignment="Center" VerticalAlignment="Center">
+
+
+                        <Grid Height="56" Margin="8" Width="250">
+                            <cc:FlatButton
+                                Command="{Binding StartRefreshCommand}"
+                                Style="{StaticResource informationPaneButtonStyle}"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch">
+                                
+                                <cc:LabeledIcon
+                                    Margin="0,0,8,0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    IconText="{StaticResource RefreshSymbol}"
+                                    Text="{x:Static properties:Resources.RefreshLibrary}"/>
+                            </cc:FlatButton>
+                        </Grid>
+
+
+                        <Grid Height="32" Margin="8" Width="200">
+                            <cc:FlatButton
+                                Command="{Binding ChangeTabCommand}"
+                                CommandParameter="1"
+                                Style="{StaticResource informationPaneButtonStyle}"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch">
+
+                                <cc:LabeledIcon
+                                    Margin="0,0,8,0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    IconText="{StaticResource FolderSymbol}"
+                                    Text="{x:Static properties:Resources.FolderPageButton_Label}"/>
+                            </cc:FlatButton>
+                        </Grid>
+                        
+
+                        <Button Content="start" Command="{Binding StartRefreshCommand}"
+                                Margin="4"/>
+
+                        <Button Content="folder"
+                                Command="{Binding ChangeTabCommand}"
+                                CommandParameter="1"
+                                Margin="4"/>
+
+                    </StackPanel>
+                                
                 </Grid>
+            </TabItem>
+
+            <TabItem Header="b">
+                <Grid>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <pages:FolderSettingPage
+                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch" x:Name="folderSetting"/>
+
+                    <Button
+                        Content="{x:Static properties:Resources.OkButton_Content}"
+                        Grid.Row="1" Margin="8,8,32,16" HorizontalAlignment="Right"
+                        Width="86" Height="30"
+                        Command="{Binding ChangeTabCommand}"
+                        CommandParameter="0"/>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="c">
+                <Grid Background="{StaticResource PopupMaskColor}">
+
+                    <Border Background="White"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center"
+                            Height="100">
+                        
+                        <Button
+                            Content="{x:Static properties:Resources.OkButton_Content}"
+                            Width="86" Height="30"
+                            Command="{Binding ChangeTabCommand}"
+                            CommandParameter="1"/>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+
+            <TabItem Header="d">
+                <pages:LibraryCreationSmallPage
+                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch" x:Name="libraryCreation"/>
             </TabItem>
 
         </TabControl>

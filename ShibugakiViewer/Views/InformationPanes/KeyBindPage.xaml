@@ -27,13 +27,14 @@
                 
                 
                 <StackPanel
+                        Margin="4"
                      HorizontalAlignment="Stretch" Width="Auto">
                     
                     <TextBlock
                         Text="{x:Static properties:Resources.CursorKeyFuncHelp_Header}"/>
 
                     <ComboBox 
-                        Margin="0,7,0,27"
+                        Margin="0,4,0,8"
                         SelectedIndex="{Binding CursorKeyBind.Value,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                         HorizontalAlignment="Left">
                         <ComboBoxItem 

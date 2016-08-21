@@ -25,13 +25,13 @@ namespace ImageLibrary.Core
         //[DataMember]
         //public Dictionary<string, FolderInformation> Folders { get; set; }
         [DataMember]
-        public List<SearchInformation> SearchSettings { get; set; }
+        public List<SearchInformation> SearchSettings { get; private set; }
         [DataMember]
-        public List<SearchInformation> FavoriteSearch { get; set; }
+        public List<SearchInformation> FavoriteSearch { get; private set; }
         [DataMember]
-        public List<SortSetting> DefaultSort { get; set; }
+        public List<SortSetting> DefaultSort { get; private set; }
         [DataMember]
-        public List<SortSetting> DefaultGroupSort { get; set; }
+        public List<SortSetting> DefaultGroupSort { get; private set; }
 
         [DataMember]
         public bool IsGroupingEnabled
@@ -69,8 +69,17 @@ namespace ImageLibrary.Core
 
         public LibrarySettings()
         {
-            //this.Folders = new Dictionary<string, FolderInformation>();
+            this.SetDefault();
+        }
 
+        [OnDeserializing]
+        public void OnDeserializing(StreamingContext sc)
+        {
+            this.SetDefault();
+        }
+
+        private void SetDefault()
+        {
             this.SearchSettings = new List<SearchInformation>();
             this.FavoriteSearch = new List<SearchInformation>();
             this.DefaultSort = new List<SortSetting>();
@@ -79,7 +88,6 @@ namespace ImageLibrary.Core
             this.IsGroupingEnabled = true;
             this.RefreshLibraryCompletely = false;
         }
-
 
 
         public void Save(Library library, int version, XmlSettingManager<LibrarySettings> manager)
@@ -148,7 +156,7 @@ namespace ImageLibrary.Core
             }
             return false;
         }
-        
+
 
 
         public void Initialize(Library library)
@@ -207,8 +215,10 @@ namespace ImageLibrary.Core
             {
                 library.Searcher.InitializeFovoriteSearch(this.FavoriteSearch);
             }
-
-
+            else
+            {
+                this.FavoriteSearch = new List<SearchInformation>();
+            }
         }
 
         public static LibrarySettings Load

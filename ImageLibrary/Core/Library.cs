@@ -829,6 +829,8 @@ namespace ImageLibrary.Core
         /// <returns></returns>
         public bool HasItems()
         {
+            //return false;
+
             using (var connection = this.Database.Connect())
             {
                 return this.Records

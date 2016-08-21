@@ -213,6 +213,9 @@
     <Compile Include="Views\SettingPages\LibraryCreationPage.xaml.cs">
       <DependentUpon>LibraryCreationPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SettingPages\LibraryCreationSmallPage.xaml.cs">
+      <DependentUpon>LibraryCreationSmallPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SettingPages\SearchSettingPage.xaml.cs">
       <DependentUpon>SearchSettingPage.xaml</DependentUpon>
     </Compile>
@@ -335,6 +338,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SettingPages\LibraryCreationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SettingPages\LibraryCreationSmallPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

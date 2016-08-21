@@ -46,111 +46,22 @@
 
         </Grid>
 
-        <Grid Grid.Row="1" x:Name="controllerGrid" Margin="4">
+        <Grid Grid.Row="1" x:Name="controllerGrid" Margin="16,4,16,4">
             <Button Content="{x:Static properties:Resources.FolderPageButton_Label}"
                     x:Uid="FolderPageButton"
                     HorizontalAlignment="Left"
                     ToolTipService.ToolTip="{x:Static properties:Resources.FolderPageButton_Label}"
                     VerticalAlignment="Top"
-                    Command="{Binding AddCommand}"/>
+                    Command="{Binding AddCommand}"
+                    Padding="2"/>
 
-            <CheckBox x:Uid="AdvancedSettingsSwitch"
-                      Content="{x:Static properties:Resources.AdvancedSettingsSwitch_Header}" 
-                      HorizontalAlignment="Right"
-                      IsChecked="{Binding IsProfessionalFolderSettingEnabled.Value,Mode=TwoWay}"/>
-        </Grid>
-
-        <Grid Grid.Row="2" Visibility="Collapsed">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-
-
-            <ListView 
-                x:Name="list"
-                ItemsSource="{Binding Folders}"
-                VirtualizingPanel.ScrollUnit="Pixel"
-                SelectionMode="Single"
-                HorizontalAlignment="Stretch">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Path}"
-                                   TextWrapping="Wrap"/>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-
-            <Grid
-                Grid.Column="1"
-                HorizontalAlignment="Stretch"
-                Margin="4"
-                DataContext="{Binding ElementName=list,Path=SelectedItem}"
-                Visibility="{Binding ElementName=list,Path=SelectedItem,
-                Converter={StaticResource NullToVisibleConverter}}">
-                <StackPanel>
-
-                    <TextBlock
-                        Text="{Binding Path}"
-                        TextWrapping="Wrap"/>
-
-
-                    <Button 
-                        Content="{x:Static properties:Resources.RemoveFolderButton_Content}"
-                        Command="{Binding ElementName=controlRoot, Path=DataContext.IgnoreCommand,
-                        Mode=OneWay}"
-                        CommandParameter="{Binding}"/>
-
-                    <Button
-                        Content="{x:Static properties:Resources.UpdateNowButton_Content}" 
-                        Command="{Binding 
-                        ElementName=controlRoot,
-                        Path=DataContext.RefreshCommand,
-                        Mode=OneWay}"
-                        CommandParameter="{Binding}"/>
-
-                    <GroupBox Header="Option">
-                        <StackPanel>
-
-                            <CheckBox
-                        Content="{x:Static properties:Resources.UpdateEnabledCheckBox_Content}"
-                        x:Uid="UpdateEnabledCheckBox"
-                        Margin="15,0,15,10"
-                        IsChecked="{Binding AutoRefreshEnable,Mode=TwoWay}" />
-
-                            <CheckBox
-                        Content="IsTopDirectoryOnly"
-                        Margin="15,0,15,10"
-                        IsChecked="{Binding IsTopDirectoryOnly,Mode=TwoWay}" />
-
-                            <CheckBox
-                        Content="WatchChange"
-                        Margin="15,0,15,10"
-                        IsChecked="{Binding WatchChange,Mode=TwoWay}" />
-
-
-
-
-                            <TextBlock
-                        Text="{x:Static properties:Resources.LibRefreshModeHelp_Header}"/>
-
-                            <ComboBox Width="250" x:Uid="LibRefreshModeHelp"
-                              Margin="0,7,0,25" HorizontalAlignment="Left"
-                              ItemsSource="{Binding Source={StaticResource CheckMode}}" 
-                              SelectedValue="{Binding Mode,Mode=TwoWay}">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <ContentPresenter
-                                    Content="{Binding Converter={StaticResource CheckModeConverter}}"/>
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-
-
-                        </StackPanel>
-                    </GroupBox>
-                </StackPanel>
-            </Grid>
+            <CheckBox 
+                x:Uid="AdvancedSettingsSwitch"
+                Content="{x:Static properties:Resources.AdvancedSettingsSwitch_Header}" 
+                HorizontalAlignment="Right"
+                IsChecked="{Binding IsProfessionalFolderSettingEnabled.Value,Mode=TwoWay}"
+                Visibility="{Binding IsInitializeMode.Value,
+                Converter={StaticResource FalseToVisibleConverter}}"/>
         </Grid>
 
         <!-- Folder List -->
@@ -194,24 +105,33 @@
                             Orientation="Horizontal" Grid.Row="1"
                             Margin="15,0,15,0"
                             Visibility="{Binding Source={StaticResource rootControl},
-                            Path=DataContext.IsProfessionalFolderSettingEnabled.Value,
+                            Path=DataContext.IsProfessionalFolderSettingEnabledView.Value,
                             Converter={StaticResource FalseToVisibleConverter}}">
 
                             <Button
-                                Margin="4"
+                                Margin="4" Padding="2"
                                 Content="{x:Static properties:Resources.UpdateNowButton_Content}" 
                                 Command="{Binding Source={StaticResource rootControl},
                                 Path=DataContext.RefreshCommand,
                                 Mode=OneWay}"
-                                CommandParameter="{Binding}"/>
+                                CommandParameter="{Binding}"
+                                Visibility="{Binding Source={StaticResource rootControl},
+                                Path=DataContext.IsInitializeMode.Value,
+                                Converter={StaticResource FalseToVisibleConverter}}"/>
 
                             <Button
-                                Margin="4" x:Uid="RemoveFolderButton"
+                                Margin="4" Padding="2" x:Uid="RemoveFolderButton"
                                 Content="{x:Static properties:Resources.RemoveFolderButton_Content}"
                                 Command="{Binding Source={StaticResource rootControl},
                                 Path=DataContext.IgnoreCommand,
                                 Mode=OneWay}"
                                 CommandParameter="{Binding}"/>
+
+                            <CheckBox
+                                Content="{x:Static properties:Resources.TopDirectolyOnlyLabel}"
+                                IsChecked="{Binding IsTopDirectoryOnly,Mode=TwoWay}" 
+                                VerticalAlignment="Center"
+                                Margin="4"/>
 
                         </StackPanel>
 
@@ -221,13 +141,13 @@
                             Orientation="Horizontal" Grid.Row="1"
                             Margin="15,0,15,0"
                             Visibility="{Binding Source={StaticResource rootControl},
-                            Path=DataContext.IsProfessionalFolderSettingEnabled.Value,
+                            Path=DataContext.IsProfessionalFolderSettingEnabledView.Value,
                             Converter={StaticResource TrueToVisibleConverter}}">
 
                             <StackPanel Orientation="Vertical" VerticalAlignment="Top">
 
                                 <Button
-                                    Margin="4"
+                                    Margin="4" Padding="2"
                                     Content="{x:Static properties:Resources.UpdateNowButton_Content}" 
                                     Command="{Binding Source={StaticResource rootControl},
                                     Path=DataContext.RefreshCommand,
@@ -235,7 +155,7 @@
                                     CommandParameter="{Binding}"/>
 
                                 <Button
-                                    Margin="4"
+                                    Margin="4" Padding="2"
                                     x:Uid="RemoveFolderButton"
                                     Content="{x:Static properties:Resources.RemoveFolderButton_Content}"
                                     Command="{Binding 
