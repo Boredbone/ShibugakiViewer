@@ -245,15 +245,13 @@ namespace ShibugakiViewer.ViewModels
             this.PaneSelectedPath = new ReactiveProperty<string>((string)null)
                 .AddTo(this.Disposables);
             this.PaneSelectedPath.Where(x => !string.IsNullOrWhiteSpace(x))
-                .Subscribe(x => this.Client.StartNewSearch
-                    (FileProperty.DirectoryPathStartsWith, x, CompareMode.Equal))
+                .Subscribe(x => this.StartPathOrTagSearch(FileProperty.DirectoryPathStartsWith, x))
                 .AddTo(this.Disposables);
 
             this.PaneSelectedTag = new ReactiveProperty<TagInformation>((TagInformation)null)
                 .AddTo(this.Disposables);
             this.PaneSelectedTag.Where(x => x != null)
-                .Subscribe(x => this.Client.StartNewSearch
-                    (FileProperty.ContainsTag, x.Id, CompareMode.Equal))
+                .Subscribe(x => this.StartPathOrTagSearch(FileProperty.ContainsTag, x.Id))
                 .AddTo(this.Disposables);
 
             this.DefaultPaneMode = client.SelectedPage
@@ -611,6 +609,15 @@ namespace ShibugakiViewer.ViewModels
                 (_, __) => { },
                 0);//, modifier: ModifierKeys.Shift);
 
+        }
+
+        private void StartPathOrTagSearch(FileProperty property,object reference)
+        {
+            this.Client.StartNewSearch(property, reference, CompareMode.Equal);
+            if (this.IsPaneOpen.Value && !this.IsPaneFixed.Value)
+            {
+                this.IsPaneOpen.Value = false;
+            }
         }
 
         private void ShowInformationPane(bool open = false)

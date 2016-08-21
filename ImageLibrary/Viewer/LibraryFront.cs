@@ -61,7 +61,7 @@ namespace ImageLibrary.Viewer
         public IObservable<Record> FeaturedGroupChanged => this.FeaturedGroupChangedSubject.AsObservable();
 
         public ReactiveProperty<bool> IsGroupMode { get; }
-        
+
         public IObservable<LibraryLoadResult> DatabaseAddedOrRemoved => this.library.Loaded;
 
         private bool isReset = false;
@@ -157,7 +157,7 @@ namespace ImageLibrary.Viewer
             {
                 this.Clear(CacheClearAction.SearchChanged);
             }
-            
+
         }
 
         public void RefreshSearchList()
@@ -279,7 +279,7 @@ namespace ImageLibrary.Viewer
             if (this.isReset)
             {
                 length = await criteria.CountAsync(library).ConfigureAwait(false);
-                
+
                 this.Length.Value = length;
                 this.isReset = false;
             }
@@ -288,7 +288,7 @@ namespace ImageLibrary.Viewer
             {
                 return;
             }
-            
+
             if (offset < 0)
             {
                 if (takes < length)
@@ -363,9 +363,9 @@ namespace ImageLibrary.Viewer
             {
                 throw new ArgumentException();
             }
-            
+
             var result = await criteria.SearchAsync(library, offset, takes);
-            
+
             for (int i = 0; i < takes; i++)
             {
                 if (i < result.Length)
@@ -400,7 +400,7 @@ namespace ImageLibrary.Viewer
                     Length = result.Length,
                 });
             }
-            
+
             return result;
         }
 
@@ -518,11 +518,8 @@ namespace ImageLibrary.Viewer
             {
                 this.Length.Value = 0;
             }
-            //else
-            {
 
-                this.Cache.Clear();
-            }
+            this.Cache.Clear();
 
             if (action != CacheClearAction.SortChanged)
             {
@@ -710,7 +707,7 @@ namespace ImageLibrary.Viewer
             {
                 return value;
             }
-            
+
             return null;
         }
 

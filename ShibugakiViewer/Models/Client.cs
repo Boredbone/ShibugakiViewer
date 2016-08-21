@@ -305,7 +305,7 @@ namespace ShibugakiViewer.Models
                 {
                     if (x.ViewSize > 0 && !this.IsStateChangingSubject.Value)
                     {
-                        this.SearchForCatalog(x.Index.NewItem, x.ViewSize, 
+                        this.SearchForCatalog(x.Index.NewItem, x.ViewSize,
                             (int)(x.Index.NewItem - x.Index.OldItem));
                     }
                 })
@@ -489,19 +489,20 @@ namespace ShibugakiViewer.Models
             if (state.Type == PageType.Catalog)
             {
                 this.CatalogScrollIndexSubject.OnNext(catalogIndex);
+                Debug.WriteLine($"catalog:{catalogIndex}");
             }
             //Catalog再描画
             this.IsCatalogRenderingEnabledSubject.OnNext(true);
 
 
 
-            
+
             if ((state.GroupKey != null || state.Search != null) && state.Type != PageType.Search)
             {
                 //画像読み込みをクリア
                 core.ImageBuffer.ClearThumbNailRequests();
                 core.ImageBuffer.ClearRequests();
-                
+
                 //DB問い合わせ
                 if (state.Type == PageType.Viewer)
                 {
@@ -614,12 +615,12 @@ namespace ShibugakiViewer.Models
 
             if (criteria != null)
             {
-                foreach(var item in criteria)
+                foreach (var item in criteria)
                 {
                     search.Root.Add(item);
                 }
             }
-            
+
             this.SetNewSearch(search);
             this.ChangePage(PageType.Catalog, null, 0);
         }
@@ -946,8 +947,8 @@ namespace ShibugakiViewer.Models
 
         private void ChangePage(PageType type, long? viewerIndex, long? catalogIndex)
         {
-            var i = viewerIndex ?? this.ViewerIndex.Value;
-            var id = this.front.SearchInformation?.Key;
+            //var i = viewerIndex ?? this.ViewerIndex.Value;
+            //var id = this.front.SearchInformation?.Key;
 
             if (this.History.BackHistoryCount.Value > 0
                 && (this.History.Current.Type == PageType.None
@@ -962,7 +963,7 @@ namespace ShibugakiViewer.Models
                     this.CatalogIndex.Value = catalogIndex.Value;
                 }
                 this.History.Current.Type = type;
-                Debug.WriteLine($"a");
+                //Debug.WriteLine($"a,{catalogIndex},{viewerIndex}->{this.CatalogIndex.Value},{this.ViewerIndex.Value}");
             }
             else if (this.History.Current.Type != type)
             {
@@ -978,29 +979,35 @@ namespace ShibugakiViewer.Models
                 //this.History.Current.Clone();
                 //state.Type = type;
                 this.History.MoveNew(state);
-                Debug.WriteLine($"b");
+                //Debug.WriteLine($"b,{catalogIndex},{viewerIndex}->{this.CatalogIndex.Value},{this.ViewerIndex.Value}");
             }
 
-            if (this.ViewerIndex.Value != i)
-            {
-                Debug.WriteLine($"5:{i} to {this.ViewerIndex.Value}");
-            }
-            if (this.front.SearchInformation?.Key != id)
-            {
-                Debug.WriteLine($"6:{id} to {this.front.SearchInformation?.Key}");
-            }
+            //if (this.ViewerIndex.Value != i)
+            //{
+            //    Debug.WriteLine($"5:{i} to {this.ViewerIndex.Value}");
+            //}
+            //if (this.front.SearchInformation?.Key != id)
+            //{
+            //    Debug.WriteLine($"6:{id} to {this.front.SearchInformation?.Key}");
+            //}
 
             this.PageChangeRequestSubject.OnNext(type);
 
+            if (type == PageType.Catalog && catalogIndex.HasValue)
+            {
+                this.CatalogScrollIndexSubject.OnNext(catalogIndex.Value);
+            }
 
-            if (this.ViewerIndex.Value != i)
-            {
-                Debug.WriteLine($"7:{i} to {this.ViewerIndex.Value}");
-            }
-            if (this.front.SearchInformation?.Key != id)
-            {
-                Debug.WriteLine($"8:{id} to {this.front.SearchInformation?.Key}");
-            }
+
+
+            //if (this.ViewerIndex.Value != i)
+            //{
+            //    Debug.WriteLine($"7:{i} to {this.ViewerIndex.Value}");
+            //}
+            //if (this.front.SearchInformation?.Key != id)
+            //{
+            //    Debug.WriteLine($"8:{id} to {this.front.SearchInformation?.Key}");
+            //}
         }
 
         public void Back() => this.History.MoveBack();
