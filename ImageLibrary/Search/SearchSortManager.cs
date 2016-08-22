@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using Boredbone.Utility.Extensions;
 using ImageLibrary.Core;
 using ImageLibrary.File;
@@ -169,6 +170,10 @@ namespace ImageLibrary.Search
 
             if (this.FavoriteSearchList.ContainsIndex(favoriteIndex))
             {
+                if (!this.FavoriteSearchList[favoriteIndex].ValueEquals(this.SearchSettings[setting.Key]))
+                {
+                    MessageBox.Show($"{this.FavoriteSearchList[favoriteIndex].Name},{this.SearchSettings[setting.Key].Name}");
+                }
                 this.FavoriteSearchList.RemoveAt(favoriteIndex);
                 this.FavoriteSearchList.Insert(favoriteIndex, this.SearchSettings[setting.Key]);
             }

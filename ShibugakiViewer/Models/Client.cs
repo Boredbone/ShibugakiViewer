@@ -558,12 +558,17 @@ namespace ShibugakiViewer.Models
         /// <param name="search"></param>
         public void SetNewSearch(SearchInformation search)
         {
-            if (this.front.FeaturedGroup == null
-                && this.front.SearchInformation != null
-                && this.front.SearchInformation.SettingEquals(search))
-            {
-                return;
-            }
+
+            //var catalogIndex = 0L;
+            //var viewerIndex = 0L;
+            //
+            //if (this.front.FeaturedGroup == null
+            //    && this.front.SearchInformation != null
+            //    && this.front.SearchInformation.SettingEquals(search))
+            //{
+            //    catalogIndex = this.CatalogIndex.Value;
+            //    viewerIndex = this.ViewerIndex.Value;
+            //}
 
             this.History.MoveNew(new ViewState()
             {

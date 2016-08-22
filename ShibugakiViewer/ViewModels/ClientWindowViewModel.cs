@@ -77,7 +77,7 @@ namespace ShibugakiViewer.ViewModels
             }
         }
         private SearchPageViewModel _fieldSearch;
-        
+
 
         public ReactiveProperty<int> SelectedTab { get; }
 
@@ -114,7 +114,7 @@ namespace ShibugakiViewer.ViewModels
         public ReactiveProperty<double> JumpListWidth { get; }
 
         public ReactiveProperty<OptionPaneType> SelectedInformationPage { get; }
-        
+
 
         public ReactiveCommand<string> OptionPageCommand { get; }
 
@@ -259,7 +259,7 @@ namespace ShibugakiViewer.ViewModels
                     : PaneMode.AlwaysVisible)
                 .ToReactiveProperty(PaneMode.AlwaysVisible)
                 .AddTo(this.Disposables);
-            
+
 
 
             this.IsOptionPageOpen = this.SelectedInformationPage
@@ -293,7 +293,7 @@ namespace ShibugakiViewer.ViewModels
                         }
                     }
                 }, this.Disposables);
-            
+
 
 
             //設定
@@ -404,14 +404,14 @@ namespace ShibugakiViewer.ViewModels
                 }
             }).AddTo(this.Disposables);
 
-            
+
 
 
             this.OpenSettingWindowCommand = new ReactiveCommand()
                 .WithSubscribe(_ => ((App)Application.Current).ShowSettingWindow(-1), this.Disposables);
 
             this.OptionPageCommand = new ReactiveCommand<string>().AddTo(this.Disposables);
-            
+
 
 
 
@@ -423,7 +423,7 @@ namespace ShibugakiViewer.ViewModels
                     = (int)(x ? KeyReceiverMode.PopupIsOpened : KeyReceiverMode.Normal))
                 .AddTo(this.Disposables);
 
-            
+
 
 
             this.prevPaneMode = this.PaneDisplayMode.Value;
@@ -611,7 +611,7 @@ namespace ShibugakiViewer.ViewModels
 
         }
 
-        private void StartPathOrTagSearch(FileProperty property,object reference)
+        private void StartPathOrTagSearch(FileProperty property, object reference)
         {
             this.Client.StartNewSearch(property, reference, CompareMode.Equal);
             if (this.IsPaneOpen.Value && !this.IsPaneFixed.Value)
@@ -700,7 +700,7 @@ namespace ShibugakiViewer.ViewModels
                 this.ShowInformationPane(true);
             }
         }
-        
+
 
         private void ClosePopupOrMenu()
         {
@@ -720,7 +720,7 @@ namespace ShibugakiViewer.ViewModels
                 this.IsPopupOpen.Value = false;
             }
         }
-        
+
 
         /// <summary>
         /// タグ選択ダイアログ表示
@@ -731,7 +731,7 @@ namespace ShibugakiViewer.ViewModels
             switch (this.Client.SelectedPage.Value)
             {
                 case PageType.Catalog:
-                    if (this.SelectedItems.Count <= 0  && this.SelectedRecord.Value == null)
+                    if (this.SelectedItems.Count <= 0 && this.SelectedRecord.Value == null)
                     {
                         return;
                     }
@@ -747,7 +747,7 @@ namespace ShibugakiViewer.ViewModels
             }
 
             var left
-                = (relativeControl != null) ? 10.0 
+                = (relativeControl != null) ? 10.0
                 : this.IsPaneOpen.Value ? (openPaneWidth + 10.0)
                 : 10.0;
 

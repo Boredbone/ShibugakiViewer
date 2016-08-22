@@ -39,7 +39,7 @@ namespace ImageLibrary.Viewer
         public ReactiveProperty<long> Length { get; }
         public int PageSize { get; set; }
 
-        private ConcurrentDictionary<long, Record> Cache { get; }
+        private Dictionary<long, Record> Cache { get; }
 
         public SearchInformation SearchInformation { get; private set; }
 
@@ -74,7 +74,7 @@ namespace ImageLibrary.Viewer
         public LibraryFront(Library library)
         {
             this.library = library;
-            this.Cache = new ConcurrentDictionary<long, Record>();
+            this.Cache = new Dictionary<long, Record>();
 
             this.CacheClearedSubject = new Subject<CacheClearedEventArgs>().AddTo(this.Disposables);
             this.CacheUpdatedSubject = new Subject<CacheUpdatedEventArgs>().AddTo(this.Disposables);
@@ -335,13 +335,16 @@ namespace ImageLibrary.Viewer
                 }
                 offset = 0;
 
-                while (this.Cache.ContainsKey(offset))
+                lock (this.Cache)
                 {
-                    offset++;
-                }
-                while (this.Cache.ContainsKey(offset + takes - 1) && takes > 0)
-                {
-                    takes--;
+                    while (this.Cache.ContainsKey(offset))
+                    {
+                        offset++;
+                    }
+                    while (this.Cache.ContainsKey(offset + takes - 1) && takes > 0)
+                    {
+                        takes--;
+                    }
                 }
 
                 if (takes > 0 && offset < length)
@@ -366,15 +369,18 @@ namespace ImageLibrary.Viewer
 
             var result = await criteria.SearchAsync(library, offset, takes);
 
-            for (int i = 0; i < takes; i++)
+            lock (this.Cache)
             {
-                if (i < result.Length)
+                for (int i = 0; i < takes; i++)
                 {
-                    this.Cache[offset + i] = result[i];
-                }
-                else
-                {
-                    this.Cache[offset + i] = dummyRecord;
+                    if (i < result.Length)
+                    {
+                        this.Cache[offset + i] = result[i];
+                    }
+                    else
+                    {
+                        this.Cache[offset + i] = dummyRecord;
+                    }
                 }
             }
 
@@ -453,12 +459,16 @@ namespace ImageLibrary.Viewer
         /// <returns></returns>
         private CacheCheckResult CheckCache(long offset, int takes)
         {
+            Record[] result;
+
             //指定インデックスのアイテムがあるかチェック
-            var result = Enumerable
-                .Range(0, takes)
-                .Select(x => x + offset)
-                .Select(i => this.GetItemFromIndex(i, true))
-                .ToArray();
+            lock (this.Cache)
+            {
+                result = Enumerable
+                    .Range(0, takes)
+                    .Select(i => this.GetItemFromIndexWithoutLock(i + offset, true))
+                    .ToArray();
+            }
 
             var start = 0;
             var end = result.Length - 1;
@@ -519,7 +529,10 @@ namespace ImageLibrary.Viewer
                 this.Length.Value = 0;
             }
 
-            this.Cache.Clear();
+            lock (this.Cache)
+            {
+                this.Cache.Clear();
+            }
 
             if (action != CacheClearAction.SortChanged)
             {
@@ -538,14 +551,24 @@ namespace ImageLibrary.Viewer
         /// <returns></returns>
         public long FindIndex(Record value)
         {
-            var item = this.Cache
-                .ToList()
-                .Find(x => x.Value?.Id != null && x.Value.Id.Equals(value.Id));
+            var item = this.GetFromCacheById(value.Id);
 
-            if (item.Value == null)
-            {
-                var tx = item.Key;
-            }
+            //KeyValuePair<long, Record> item;
+            //
+            //lock (this.Cache)
+            //{
+            //    item = this.Cache
+            //        .FirstOrDefault(x => x.Value?.Id != null && x.Value.Id.Equals(value.Id));
+            //}
+
+            //var item = this.Cache
+            //    .ToList()
+            //    .Find(x => x.Value?.Id != null && x.Value.Id.Equals(value.Id));
+
+            //if (item.Value == null)
+            //{
+            //    var tx = item.Key;
+            //}
 
             return (item.Value != null) ? item.Key : -1;
         }
@@ -562,19 +585,35 @@ namespace ImageLibrary.Viewer
 
         public Record[] ActivateFiles(string[] files)
         {
-            this.Cache.Clear();
-            var recors = files.Select((x, c) =>
+            var records = files.Select(x => new Record(x)).ToArray();
+
+            //long count;
+            //Record[] records = new Record[files.LongLength];
+
+            lock (this.Cache)
             {
-                var record = new Record(x);
-                this.Cache[(long)c] = record;
-                return record;
-            }).ToArray();
+                this.Cache.Clear();
+
+                for (long c = 0; c < records.LongLength; c++)
+                {
+                    this.Cache[c] = records[c];
+                }
+
+                //records = files.Select((x, c) =>
+                //{
+                //    var record = new Record(x);
+                //    this.Cache[(long)c] = record;
+                //    return record;
+                //}).ToArray();
+
+                //count = this.Cache.Count;
+            }
 
             this.SetSearch(null, false);
 
-            this.Length.Value = this.Cache.Count;
+            this.Length.Value = records.LongLength;// this.Cache.Count;
 
-            return recors;
+            return records;
         }
 
         public async Task ActivateFolderAsync(string file)
@@ -679,14 +718,30 @@ namespace ImageLibrary.Viewer
             }
         }
 
-        public async Task<Record> GetItemFromIdAsync(string id)
+        public async Task<Record> GetItemByIdAsync(string id)
         {
-            var item = this.Cache.Select(x => x.Value).FirstOrDefault(x => x.Id.Equals(id));
+            var item = this.GetFromCacheById(id).Value;
+            //Record item = null;
+            //
+            //lock (this.Cache)
+            //{
+            //    item = this.Cache.Select(x => x.Value).FirstOrDefault(x => x.Id.Equals(id));
+            //}
+
             if (item != null)
             {
                 return item;
             }
             return await this.library.GetRecordAsync(id);
+        }
+
+        private KeyValuePair<long, Record> GetFromCacheById(string id)
+        {
+            lock (this.Cache)
+            {
+                return this.Cache
+                    .FirstOrDefault(x => x.Value?.Id != null && x.Value.Id.Equals(id));
+            }
         }
 
 
@@ -695,7 +750,7 @@ namespace ImageLibrary.Viewer
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        private Record GetItemFromIndex(long index, bool acceptDummy = false)
+        private Record GetItemFromIndexWithoutLock(long index, bool acceptDummy = false)
         {
             if (index < 0)
             {
@@ -709,6 +764,14 @@ namespace ImageLibrary.Viewer
             }
 
             return null;
+        }
+
+        private Record GetItemFromIndex(long index, bool acceptDummy = false)
+        {
+            lock (this.Cache)
+            {
+                return this.GetItemFromIndexWithoutLock(index, acceptDummy);
+            }
         }
 
         public Record this[long index] => this.GetItemFromIndex(index, false);
