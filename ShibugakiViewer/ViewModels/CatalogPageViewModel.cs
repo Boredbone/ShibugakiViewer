@@ -232,7 +232,11 @@ namespace ShibugakiViewer.ViewModels
             this.RegisterKeyReceiver(parent);
         }
 
-
+        /// <summary>
+        /// クリックされたアイテムの選択または表示
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="show"></param>
         private void SelectOrShow(object context, bool show)
         {
 

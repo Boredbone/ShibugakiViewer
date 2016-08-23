@@ -535,7 +535,7 @@ namespace ShibugakiViewer.Models
             var takes = viewSize * 2;
             var direction = (index == 0) ? 1 : baseDirection;
 
-            this.front.GetRecords(offset, takes, direction, true);
+            this.front.GetRecords(offset, takes > 0 ? takes : 1, direction, true);
         }
 
         /// <summary>

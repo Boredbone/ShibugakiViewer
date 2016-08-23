@@ -218,7 +218,7 @@ namespace ImageLibrary.Viewer
         /// <returns></returns>
         public async Task SearchAsync(long offset, int takes, bool wait)
         {
-            if (this.asyncLock.IsLocked && !wait)
+            if (!wait && this.asyncLock.IsLocked)
             {
                 return;
             }
