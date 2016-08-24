@@ -27,6 +27,8 @@ namespace ShibugakiViewer.Views.Windows
         public ApplicationCore Core { get; }
         private CompositeDisposable disposables = new CompositeDisposable();
 
+        private bool conpatButtonLoaded = false;
+
         public ToolWindow()
         {
             this.application = (App)Application.Current;
@@ -72,10 +74,16 @@ namespace ShibugakiViewer.Views.Windows
             //this.core.ConvertOldLibraryAsync().FireAndForget();
         }
 
-        private async void PopupDialogBehavior_Opening(object arg1, EventArgs arg2)
+
+        private async void mikanImportButton_Loaded(object sender, RoutedEventArgs e)
         {
-            var convertable = await this.Core.IsOldConvertableAsync();
-            this.mikanImportButton.Visibility = VisibilityHelper.Set(convertable);
+            if (!conpatButtonLoaded)
+            {
+                conpatButtonLoaded = true;
+                var convertable = await this.Core.IsOldConvertableAsync();
+                this.mikanImportButton.Visibility = VisibilityHelper.Set(convertable);
+            }
         }
+
     }
 }

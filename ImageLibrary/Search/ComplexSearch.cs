@@ -31,8 +31,7 @@ namespace ImageLibrary.Search
             }
         }
         private ObservableCollection<ISqlSearch> _fieldInnerChildren;
-
-        //private ObservableCollection<ISqlSearch> InnerChildren { get; set; }
+        
         public ComplexSearch Parent { get; set; }
 
         [DataMember]
@@ -104,9 +103,6 @@ namespace ImageLibrary.Search
             return (this.IsOr)
                 ? DatabaseFunction.Or(items)
                 : DatabaseFunction.And(items);
-
-            //var combiner = this.IsOr ? "OR" : "AND";
-            //return $"({items.Join($" {combiner} ")})";
         }
 
         public void Remove(ISqlSearch item)

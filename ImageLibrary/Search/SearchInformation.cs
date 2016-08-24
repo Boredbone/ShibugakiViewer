@@ -113,15 +113,7 @@ namespace ImageLibrary.Search
         {
             return this.Root.ToSql();
         }
-
-        //public string[] GetOrderSql()
-        //{
-        //    if (this.SortSettings == null || this.SortSettings.Count <= 0)
-        //    {
-        //        return null;
-        //    }
-        //    return SortSetting.GetFullSql(this.SortSettings);
-        //}
+        
 
         public bool SetSort(IEnumerable<SortSetting> source)
         {
@@ -136,16 +128,6 @@ namespace ImageLibrary.Search
             this.SortSettings = source.ToList();
             LibraryOwner.GetCurrent().Searcher.SetDefaultSort(source);
             return true;
-
-            //if (SortSettings == null
-            //    || !SortSettings.SequenceEqual(source, (x, y) => x.Equals(y)))
-            //{
-            //    this.SortSettings = new List<SortSetting>(source);
-            //    LibraryOwner.GetCurrent().Searcher.SetDefaultSort(source);
-            //    //RaisePropertyChanged(nameof(SortEntry));
-            //    return true;
-            //}
-            //return false;
         }
 
         public IEnumerable<SortSetting> GetSort()
@@ -155,15 +137,6 @@ namespace ImageLibrary.Search
                 return LibraryOwner.GetCurrent().Searcher.GetDefaultSort();
             }
             return this.SortSettings.Select(x => x.Clone());
-
-            //var list = this.SortSettings;
-            //
-            //if (list == null || list.Count <= 0)
-            //{
-            //    var defaultList = LibraryOwner.GetCurrent().Searcher.GetDefaultSort();
-            //    list = defaultList.ToList();
-            //}
-            //return list;
         }
 
         public SearchInformation Clone()
@@ -232,12 +205,7 @@ namespace ImageLibrary.Search
 
         public Task<Record[]> SearchAsync(Library library, long skip, long take)
             => library.RecordQuery.SearchAsync(this, skip, take);
-
-        //public Task<long> FindIndexAsync(Library library, Record record)
-        //    => library.RecordQuery.FindIndexAsync(this, record);
-
-        //public Task<string[]> GetAllIdsAsync(Library library)
-        //    => library.RecordQuery.GetAllIdsAsync(this);
+        
 
         public static SearchInformation GenerateEmpty() => new SearchInformation(new ComplexSearch(false));
 

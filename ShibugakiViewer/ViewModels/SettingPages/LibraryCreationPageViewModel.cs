@@ -45,9 +45,9 @@ namespace ShibugakiViewer.ViewModels.SettingPages
             //this.Updated = new ObservableCollection<string>();
 
             this.MaxCount = library.FileEnumerated
-                .Buffer(TimeSpan.FromMilliseconds(500))
-                .Where(x => x.Count > 0)
-                .Select(x => x.Last())
+                //.Buffer(TimeSpan.FromMilliseconds(500))
+                //.Where(x => x.Count > 0)
+                //.Select(x => x.Last())
                 .ObserveOnUIDispatcher()
                 .ToReadOnlyReactiveProperty()
                 .AddTo(this.Disposables);

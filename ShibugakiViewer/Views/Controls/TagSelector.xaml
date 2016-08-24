@@ -117,13 +117,14 @@
                                     <ComboBox
                                         x:Name="shortcutComboBox"
                                         ItemsSource="{Binding Source={x:Static local:TagSelector.Alphabets}}"
-                                        SelectedItem="{Binding Shortcut,Mode=OneWay,Converter={StaticResource ShortcutComboBoxConverter}}"
+                                        SelectedItem="{Binding Shortcut,Mode=OneWay,
+                                        Converter={StaticResource ShortcutComboBoxConverter}}"
                                         SelectionChanged="shortcutComboBox_SelectionChanged"
-                                          VerticalAlignment="Center"
-                                          Margin="0" HorizontalAlignment="Stretch"
-                                          ToolTipService.ToolTip="{x:Static properties:Resources.KeyShortcut}"
-                                        
-                                    behavior:ComboBoxPlaceHolderBehavior.PlaceHolderControl="{Binding ElementName=shortcutPlaceHolder}"/>
+                                        VerticalAlignment="Center"
+                                        Margin="0" HorizontalAlignment="Stretch"
+                                        ToolTipService.ToolTip="{x:Static properties:Resources.KeyShortcut}"
+                                        behavior:ComboBoxPlaceHolderBehavior.PlaceHolderControl="{Binding ElementName=shortcutPlaceHolder}"
+                                        ScrollViewer.CanContentScroll="False"/>
 
                                     <TextBlock
                                         x:Name="shortcutPlaceHolder"

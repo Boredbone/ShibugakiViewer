@@ -57,6 +57,7 @@
                     </cc:FlatButton>
 
                     <cc:FlatButton
+                        Loaded="mikanImportButton_Loaded"
                                             x:Name="mikanImportButton"
                                             Style="{StaticResource contextMenuButtonStyle}"
                                             Click="mikanImportButton_Click">

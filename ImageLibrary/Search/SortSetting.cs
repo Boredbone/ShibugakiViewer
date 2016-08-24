@@ -83,9 +83,6 @@ namespace ImageLibrary.Search
 
         public static string GetOrderFilterSql(IEnumerable<SortSetting> items, Record record)
         {
-            //TODO アスペクト比，フルパスが含まれている場合も正常に動作するか？
-            //TODO グループが含まれている，グループ内の時は？　
-
             if (items == null)
             {
                 return null;
@@ -101,7 +98,7 @@ namespace ImageLibrary.Search
                 { Column = FileProperty.Id.GetSortColumns().First(), Symbol = "<=" })
                 .Select((x, c) =>
                 {
-                    var symbol = x.Symbol;//.IsDescending ? ">" : "<";
+                    var symbol = x.Symbol;
                     var reference = $"@C{c}";
 
                     var str = $"{x.Column} {symbol} {reference}";
@@ -111,17 +108,6 @@ namespace ImageLibrary.Search
                     return fil;
                 })
                 .ToArray();
-
-            /*
-            foreach (var item in items)
-            {
-                var symbol = item.IsDescending ? ">" : "<";
-
-                item.Property.AppendFilterReferences(record, symbol, filters, prevOrders);
-
-            }
-
-            FileProperty.Id.AppendFilterReferences(record, "<=", filters, prevOrders);*/
             
             return DatabaseFunction.Or(filters.ToArray());
         }
@@ -131,14 +117,7 @@ namespace ImageLibrary.Search
             public string Column { get; set; }
             public string Symbol { get; set; }
         }
-
-        //private void AppendFilter
-        //    (string name, string reference, string symbol, List<string> filters, List<string> prevOrders)
-        //{
-        //    var str = $"{name} {symbol} {reference}";
-        //    filters.Add(DatabaseFunction.And(prevOrders.Append(str).ToArray()));
-        //    prevOrders.Add(DatabaseFunction.AreEqual(name, reference));
-        //}
+        
 
         public static string GetReferenceSelectorSql(IEnumerable<SortSetting> items)
         {
@@ -198,8 +177,8 @@ namespace ImageLibrary.Search
 
             return this.ValueEquals((SortSetting)obj);
         }
+        
 
-        //Equalsがtrueを返すときに同じ値を返す
         public override int GetHashCode()
         {
             return this.IsDescending.GetHashCode() ^ this.Property.GetHashCode();

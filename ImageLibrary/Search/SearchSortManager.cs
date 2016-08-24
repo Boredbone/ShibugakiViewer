@@ -82,16 +82,7 @@ namespace ImageLibrary.Search
             .ForEach(x => this.FavoriteSearchList.Add(x));
 
         }
-
-        //public SearchInformation[] GetAllHistory()
-        //{
-        //    return this.SearchSettings.Select(x =>
-        //    {
-        //        x.Value.Key = x.Key;
-        //        return x.Value;
-        //    })
-        //    .ToArray();
-        //}
+        
 
         public SearchInformation GetLatest()
             => this.SearchSettings
@@ -217,24 +208,7 @@ namespace ImageLibrary.Search
             }
         }
 
-
-        //public IEnumerable<SortSetting> GetGroupSort(string groupKey)
-        //{
-        //    var group = LibraryOwner.GetCurrent().GetRecord(groupKey);
-        //    if (group != null)
-        //    {
-        //        var sort = group.GetSort()?.ToArray();
-        //
-        //        if (sort != null && sort.Length > 0)
-        //        {
-        //            return group.GetSort();
-        //        }
-        //    }
-        //    return this.DefaultGroupSort;
-        //    
-        //}
-
-
+        
         public string GenerateAlbumName()
         {
             for (int i = 0; i < 1024; i++)
