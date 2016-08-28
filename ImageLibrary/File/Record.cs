@@ -538,7 +538,18 @@ namespace ImageLibrary.File
             this.Id = fullPath;
             this.FullPath = fullPath;
 
-            this.SetName(System.IO.Path.GetFileName(fullPath));
+            try
+            {
+                this.SetName(System.IO.Path.GetFileName(fullPath));
+            }
+            catch (ArgumentException)
+            {
+                this.Id = "";
+                this.FullPath = "";
+                this.SetName("");
+                this.Directory = "";
+                return;
+            }
             
             if (fullPath.IsNullOrEmpty())
             {

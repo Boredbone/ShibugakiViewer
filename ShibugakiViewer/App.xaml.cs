@@ -178,7 +178,7 @@ namespace ShibugakiViewer
                 return;
             }
 
-            var command = args[args.Count - 1];
+            var command = args[args.Count - 1].Replace("\0", "");
 
             switch (command)
             {
