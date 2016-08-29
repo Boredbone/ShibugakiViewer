@@ -96,6 +96,12 @@ namespace ShibugakiViewer.Models.ImageViewer
             (Record file, string fullPath, int thumbNailSize, int frameWidth,
             int frameHeight, bool cmsEnable)
         {
+
+
+            //return false;
+            //return Task.Run(async () =>
+            //{
+
             this.FullPath = fullPath;
 
             if (fullPath == null)
@@ -104,37 +110,117 @@ namespace ShibugakiViewer.Models.ImageViewer
             }
 
             var asThumbNail = (thumbNailSize > 0);
-
-
-            //return false;
-            //return await Task.Run(() =>
-            //{
-
             try
             {
                 //Debug.WriteLine(fullPath);
 
                 GraphicInformation information = null;
 
-                using (var fileStream = new FileStream
-                    (fullPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true))
+                //if (false)
+                //{
+
+                //    using (var fileStream = new FileStream
+                //        (fullPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true))
+                //    {
+                //        var length = (fileStream.Length < int.MaxValue) ? (int)fileStream.Length : int.MaxValue;
+
+                //        //byte[] buff = new byte[length];
+                //        //await stream.ReadAsync(buff, 0, length);
+
+
+                //        using (var stream = new MemoryStream(length))
+                //        {
+                //            fileStream.Position = 0;
+
+                //            stream.Position = 0;
+                //            await fileStream.CopyToAsync(stream, length, default(CancellationToken));
+                //            stream.Position = 0;
+
+
+
+                //            this.IsNotFound = false;
+
+                //            information = new GraphicInformation(stream);
+
+                //            this.Information = information;
+
+                //            if (information.IsMetaImage)
+                //            {
+                //                return false;
+                //            }
+
+                //            await Application.Current.Dispatcher.InvokeAsync(() =>
+                //            {
+
+
+                //                var image = new BitmapImage();
+
+                //                image.BeginInit();
+                //                image.CacheOption = BitmapCacheOption.OnLoad;
+                //                image.CreateOptions = BitmapCreateOptions.None;
+
+                //                if (frameWidth > 0)
+                //                {
+                //                    image.DecodePixelWidth = frameWidth;
+                //                    this.Quality = ImageQuality.Resized;
+                //                }
+                //                else if (frameHeight > 0)
+                //                {
+                //                    image.DecodePixelHeight = frameHeight;
+                //                    this.Quality = ImageQuality.Resized;
+                //                }
+                //                else if (asThumbNail)
+                //                {
+                //                    image.DecodePixelWidth = thumbNailSize;
+                //                    //image.DecodePixelHeight = thumbNailSize;
+                //                    this.Quality = ImageQuality.LowQuality;
+                //                }
+                //                else
+                //                {
+                //                    this.Quality = ImageQuality.OriginalSize;
+                //                }
+
+                //                if (information.BlankHeaderLength == 0)
+                //                {
+                //                    stream.Position = 0;
+
+                //                    image.StreamSource = stream;
+                //                    //image.UriSource = new Uri(fullPath);
+
+                //                    image.EndInit();
+                //                    image.Freeze();
+                //                }
+                //                else
+                //                {
+                //                    using (var ms = new MemoryStream(length - information.BlankHeaderLength))
+                //                    {
+
+                //                        stream.Position = information.BlankHeaderLength;
+                //                        //stream.Seek(information.BlankHeaderLength, System.IO.SeekOrigin.Begin);
+                //                        ms.Position = 0;
+                //                        stream.CopyTo(ms);
+                //                        ms.Position = 0;
+
+                //                        image.StreamSource = ms;
+
+                //                        image.EndInit();
+                //                        image.Freeze();
+                //                    }
+                //                }
+
+                //                //this.Image = image;
+                //            });
+                //        }
+                //    }
+
+                //}
+                //else
                 {
-                    var length = (fileStream.Length < int.MaxValue) ? (int)fileStream.Length : int.MaxValue;
-
-                    //byte[] buff = new byte[length];
-                    //await stream.ReadAsync(buff, 0, length);
-
-
-                    using (var stream = new MemoryStream(length))
+                    //Debug.WriteLine($"aa:{Thread.CurrentThread.ManagedThreadId}");
+                    //await Task.Delay(1);
+                    //Debug.WriteLine($"bb:{Thread.CurrentThread.ManagedThreadId}");
+                    using (var stream = File.OpenRead(fullPath))
                     {
-                        fileStream.Position = 0;
-
-                        stream.Position = 0;
-                        await fileStream.CopyToAsync(stream, length, default(CancellationToken));
-                        stream.Position = 0;
-
-
-
                         this.IsNotFound = false;
 
                         information = new GraphicInformation(stream);
@@ -146,141 +232,68 @@ namespace ShibugakiViewer.Models.ImageViewer
                             return false;
                         }
 
-                        await Application.Current.Dispatcher.InvokeAsync(() =>
+                        //Debug.WriteLine($"cc:{Thread.CurrentThread.ManagedThreadId}");
+
+
+                        var image = new BitmapImage();
+
+                        image.BeginInit();
+                        image.CacheOption = BitmapCacheOption.OnLoad;
+                        image.CreateOptions = BitmapCreateOptions.None;
+
+                        if (frameWidth > 0)
                         {
-
-
-                            var image = new BitmapImage();
-
-                            image.BeginInit();
-                            image.CacheOption = BitmapCacheOption.OnLoad;
-                            image.CreateOptions = BitmapCreateOptions.None;
-
-                            if (frameWidth > 0)
-                            {
-                                image.DecodePixelWidth = frameWidth;
-                                this.Quality = ImageQuality.Resized;
-                            }
-                            else if (frameHeight > 0)
-                            {
-                                image.DecodePixelHeight = frameHeight;
-                                this.Quality = ImageQuality.Resized;
-                            }
-                            else if (asThumbNail)
-                            {
-                                image.DecodePixelWidth = thumbNailSize;
-                                //image.DecodePixelHeight = thumbNailSize;
-                                this.Quality = ImageQuality.LowQuality;
-                            }
-                            else
-                            {
-                                this.Quality = ImageQuality.OriginalSize;
-                            }
-
-                            if (information.BlankHeaderLength == 0)
-                            {
-                                stream.Position = 0;
-
-                                image.StreamSource = stream;
-                                //image.UriSource = new Uri(fullPath);
-
-                                image.EndInit();
-                                image.Freeze();
-                            }
-                            else
-                            {
-                                using (var ms = new MemoryStream(length - information.BlankHeaderLength))
-                                {
-
-                                    stream.Position = information.BlankHeaderLength;
-                                    //stream.Seek(information.BlankHeaderLength, System.IO.SeekOrigin.Begin);
-                                    ms.Position = 0;
-                                    stream.CopyTo(ms);
-                                    ms.Position = 0;
-
-                                    image.StreamSource = ms;
-
-                                    image.EndInit();
-                                    image.Freeze();
-                                }
-                            }
-
-                            this.Image = image;
-                        });
-                    }
-                }
-
-                /*
-                using (var stream = File.OpenRead(fullPath))
-                {
-                    this.IsNotFound = false;
-
-                    information = new GraphicInformation(stream);
-
-                    this.Information = information;
-
-                    if (information.IsMetaImage)
-                    {
-                        return false;
-                    }
-
-
-
-                    image.BeginInit();
-                    image.CacheOption = BitmapCacheOption.OnLoad;
-                    image.CreateOptions = BitmapCreateOptions.None;
-
-                    if (frameWidth > 0)
-                    {
-                        image.DecodePixelWidth = frameWidth;
-                        this.Quality = ImageQuality.Resized;
-                    }
-                    else if (frameHeight > 0)
-                    {
-                        image.DecodePixelHeight = frameHeight;
-                        this.Quality = ImageQuality.Resized;
-                    }
-                    else if (asThumbNail)
-                    {
-                        image.DecodePixelWidth = thumbNailSize;
-                        //image.DecodePixelHeight = thumbNailSize;
-                        this.Quality = ImageQuality.LowQuality;
-                    }
-                    else
-                    {
-                        this.Quality = ImageQuality.OriginalSize;
-                    }
-
-                    if (information.BlankHeaderLength == 0)
-                    {
-                        stream.Position = 0;
-
-                        image.StreamSource = stream;
-                        //image.UriSource = new Uri(fullPath);
-
-                        image.EndInit();
-                        image.Freeze();
-                    }
-                    else
-                    {
-                        using (var ms = new MemoryStream((int)(stream.Length - information.BlankHeaderLength)))
+                            image.DecodePixelWidth = frameWidth;
+                            this.Quality = ImageQuality.Resized;
+                        }
+                        else if (frameHeight > 0)
                         {
+                            image.DecodePixelHeight = frameHeight;
+                            this.Quality = ImageQuality.Resized;
+                        }
+                        else if (asThumbNail)
+                        {
+                            image.DecodePixelWidth = thumbNailSize;
+                            //image.DecodePixelHeight = thumbNailSize;
+                            this.Quality = ImageQuality.LowQuality;
+                        }
+                        else
+                        {
+                            this.Quality = ImageQuality.OriginalSize;
+                        }
 
-                            stream.Position = information.BlankHeaderLength;
-                            //stream.Seek(information.BlankHeaderLength, System.IO.SeekOrigin.Begin);
-                            ms.Position = 0;
-                            stream.CopyTo(ms);
-                            ms.Position = 0;
+                        if (information.BlankHeaderLength == 0)
+                        {
+                            stream.Position = 0;
 
-                            image.StreamSource = ms;
+                            image.StreamSource = stream;
+                            //image.UriSource = new Uri(fullPath);
 
                             image.EndInit();
                             image.Freeze();
                         }
+                        else
+                        {
+                            using (var ms = new MemoryStream((int)(stream.Length - information.BlankHeaderLength)))
+                            {
+
+                                stream.Position = information.BlankHeaderLength;
+                                //stream.Seek(information.BlankHeaderLength, System.IO.SeekOrigin.Begin);
+                                ms.Position = 0;
+                                stream.CopyTo(ms);
+                                ms.Position = 0;
+
+                                image.StreamSource = ms;
+
+                                image.EndInit();
+                                image.Freeze();
+                            }
+                        }
+                        this.Image = image;
+                        //Debug.WriteLine($"dd:{Thread.CurrentThread.ManagedThreadId}");
                     }
-                }*/
 
-
+                }
 
                 //リサイズされた画像サイズ
                 //this.LoadedHeight = image.PixelHeight;
@@ -330,7 +343,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 this.IsNotFound = true;
                 return false;
             }
-            //}//).ConfigureAwait(false);
+            //});
         }
 
 #if false

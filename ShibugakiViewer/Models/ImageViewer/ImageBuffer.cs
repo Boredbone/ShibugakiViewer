@@ -87,6 +87,8 @@ namespace ShibugakiViewer.Models.ImageViewer
 
             var scheduler = new EventLoopScheduler();
 
+            Debug.WriteLine($"oo:{Thread.CurrentThread.ManagedThreadId}");
+
             //読み込み要求を処理
             var subscription = this.ActionQueueSubject
                 .ObserveOn(scheduler)
