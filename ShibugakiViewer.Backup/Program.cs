@@ -43,7 +43,7 @@ namespace ShibugakiViewer.Backup
             */
 
 
-            var mode = args[0]?.ToLower();
+            var modeText = args[0]?.ToLower();
             var serverFullPath = args[1];
             var saveDirectory = args[2];
             var mutexId = args[3];
@@ -56,7 +56,46 @@ namespace ShibugakiViewer.Backup
 
             var fileName = $"ShibugakiViewerLibrary_{DateTime.Now.ToString("yyyyMMddHHmm")}.svl";
 
-            //Console.WriteLine("start");
+            if (modeText == null)
+            {
+                return;
+            }
+
+            Mode mode;
+            switch (modeText)
+            {
+                case "/w":
+                    mode = Mode.Export;
+                    break;
+                case "/r":
+                    mode = Mode.Import;
+                    break;
+                case "/c":
+                    mode = Mode.Convert;
+                    break;
+                default:
+                    return;
+            }
+
+            string modeLabel;
+            switch (mode)
+            {
+                case Mode.Export:
+                    modeLabel = "Export";
+                    break;
+                case Mode.Import:
+                    modeLabel = "Import";
+                    break;
+                case Mode.Convert:
+                    modeLabel = "Converter";
+                    break;
+                default:
+                    modeLabel = "";
+                    break;
+            }
+
+            Console.WriteLine("ShibugakiViewer Library " + modeLabel);
+            Console.WriteLine("Processing...");
 
             try
             {
@@ -102,13 +141,22 @@ namespace ShibugakiViewer.Backup
                         //ライブラリの圧縮または解凍
                         switch (mode)
                         {
-                            case "/w":
+                            case Mode.Export:
                                 Save(files, saveDirectory, filter, fileName);
                                 break;
-                            case "/r":
+                            case Mode.Import:
                                 Load(files, saveDirectory, filter);
                                 break;
+                            case Mode.Convert:
+                                var version = 0;
+                                int.TryParse(files[2], out version);
+                                new Compat()
+                                    .ConvertOldLibraryAsync(saveDirectory, files[0], files[1], version)
+                                    .Wait();
+                                break;
                         }
+
+                        Console.WriteLine("Done");
                     }
                     catch
                     {
@@ -205,6 +253,14 @@ namespace ShibugakiViewer.Backup
                     }
                 }
             }
+        }
+
+
+        enum Mode
+        {
+            Import,
+            Export,
+            Convert,
         }
     }
 }

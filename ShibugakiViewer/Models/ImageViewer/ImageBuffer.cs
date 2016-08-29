@@ -99,11 +99,9 @@ namespace ShibugakiViewer.Models.ImageViewer
                         || this.highQualityPreLoadRequest.TryDequeue(preloadQueueCapacity, out packet)
                         || this.thumbNailLoadRequest.TryDequeue(this.ThumbnailRequestCapacity, out packet))
                     {
-                        //this.LoadImageAsync(packet).FireAndForget();
                         await this.LoadImageAsync(packet).ConfigureAwait(false);
                     }
                 });
-            //.AddTo(this.Disposables);
 
             Disposable.Create(() =>
             {
@@ -113,13 +111,13 @@ namespace ShibugakiViewer.Models.ImageViewer
 
         }
 
-        public async Task<ImageSourceContainer> GetImageAsync
+        private async Task<ImageSourceContainer> GetImageAsync
             (Record file, ImageLoadingOptions option, bool hasPriority,
             ObservableCancellationTokenSource tokenSource)
         {
             return await this.GetImageMainAsync(file, file.FullPath, option, hasPriority, tokenSource);
         }
-        public async Task<ImageSourceContainer> GetImageAsync
+        private async Task<ImageSourceContainer> GetImageAsync
             (string path, ImageLoadingOptions option, bool hasPriority,
             ObservableCancellationTokenSource tokenSource)
         {
@@ -526,12 +524,12 @@ namespace ShibugakiViewer.Models.ImageViewer
                 {
                     if (file != null)
                     {
-                        var t = await image.LoadImage
+                        var t = await image.LoadImageAsync
                             (file, thumbNailSize, frameWidth, frameHeight, option.CmsEnable);
                     }
                     else
                     {
-                        await image.LoadImage
+                        await image.LoadImageAsync
                             (key, thumbNailSize, frameWidth, frameHeight, option.CmsEnable);
                     }
                     command.Observer.OnNext(30);
@@ -596,12 +594,12 @@ namespace ShibugakiViewer.Models.ImageViewer
                     {
                         if (file != null)
                         {
-                            var t2 = await image.LoadImage
+                            var t2 = await image.LoadImageAsync
                                (file, thumbNailSize, frameWidth, frameHeight, option.CmsEnable);
                         }
                         else
                         {
-                            await image.LoadImage
+                            await image.LoadImageAsync
                                 (key, thumbNailSize, frameWidth, frameHeight, option.CmsEnable);
                         }
 

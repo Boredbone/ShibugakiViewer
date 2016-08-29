@@ -20,6 +20,8 @@ using System.Windows.Threading;
 using Boredbone.Utility.Notification;
 using Reactive.Bindings;
 using System.Reactive.Disposables;
+using System.Diagnostics;
+using System.Threading;
 
 namespace ImageLibrary.Viewer
 {
@@ -89,7 +91,7 @@ namespace ImageLibrary.Viewer
             this.AddedSubject.Select(_ => Unit.Default)
                 .Merge(this.RemovedSubject.Select(_ => Unit.Default))
                 .Merge(this.ClearedSubject)
-                .Subscribe(_ => this.RefreshCommonInformationAsync().FireAndForget())
+                .Subscribe(_ => this.RefreshCommonInformation())
                 .AddTo(this.Disposables);
 
             this.CommonRating = new ReactiveProperty<int>(this.CommonRatingInner).AddTo(this.Disposables);
@@ -406,7 +408,7 @@ namespace ImageLibrary.Viewer
                 this.SelectedItemSubject.OnNext(null);
             }
 
-            this.RefreshCommonInformationAsync().FireAndForget();
+            this.RefreshCommonInformation();
         }
 
         public bool Contains(Record item)
@@ -450,6 +452,11 @@ namespace ImageLibrary.Viewer
             => this.library.QueryHelper.RemoveTagAsync(this.ItemsSet.Select(x => x.Key), tag).FireAndForget();
 
 
+        private void RefreshCommonInformation()
+        {
+            Task.Run(async () => await this.RefreshCommonInformationAsync()).FireAndForget();
+        }
+
         private async Task RefreshCommonInformationAsync()
         {
             IEnumerable<int> tags;
@@ -466,15 +473,13 @@ namespace ImageLibrary.Viewer
 
                 if (tags == null)
                 {
-                    tags = await Task.Run(async () =>
-                        await this.library.QueryHelper.GetCommonTagsAsync(ids));
+                    tags = await this.library.QueryHelper.GetCommonTagsAsync(ids);
                 }
                 if (!ratingResult)
                 {
                     rating = await this.library.QueryHelper.GetCommonRatingAsync(ids);
                 }
             }
-            
 
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -486,6 +491,7 @@ namespace ImageLibrary.Viewer
                 this.CommonRatingInner = rating;
 
             }, DispatcherPriority.Background);
+            
         }
 
         private int[] GetCommonTagsFromCache()

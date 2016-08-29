@@ -664,6 +664,15 @@ namespace ShibugakiViewer.Models
             }
         }*/
 
+        public string[] GetConvertArgs()
+        {
+            return new[]
+            {
+                this.GetOldLibraryDirectory(),
+                settingVersion.ToString(),
+            };
+        }
+
         public async Task<bool> IsOldConvertableAsync()
         {
             var saveDirectory = this.GetOldLibraryDirectory();

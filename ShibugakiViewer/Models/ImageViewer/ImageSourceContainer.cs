@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Boredbone.Utility.Tools;
@@ -46,14 +47,14 @@ namespace ShibugakiViewer.Models.ImageViewer
             return this.Image != null || this.IsNotFound;
         }
 
-        public async Task<bool> LoadImage
+        public Task<bool> LoadImageAsync
             (string fullPath, int thumbNailSize, int frameWidth,
             int frameHeight, bool cmsEnable)
         {
-            return await this.LoadImageMain(null, fullPath, thumbNailSize, frameWidth, frameHeight, cmsEnable);
+            return this.LoadImageMainAsync(null, fullPath, thumbNailSize, frameWidth, frameHeight, cmsEnable);
         }
 
-        public async Task<bool> LoadImage
+        public async Task<bool> LoadImageAsync
             (Record file, int thumbNailSize, int frameWidth,
             int frameHeight, bool cmsEnable)
         {
@@ -62,7 +63,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 return false;
             }
 
-            var result = await this.LoadImageMain
+            var result = await this.LoadImageMainAsync
                 (file, file.FullPath, thumbNailSize, frameWidth, frameHeight, cmsEnable);
 
             if (this.IsNotFound)
@@ -91,8 +92,7 @@ namespace ShibugakiViewer.Models.ImageViewer
         //
         //}
 
-#pragma warning disable 1998
-        private async Task<bool> LoadImageMain
+        private async Task<bool> LoadImageMainAsync
             (Record file, string fullPath, int thumbNailSize, int frameWidth,
             int frameHeight, bool cmsEnable)
         {
@@ -108,17 +108,33 @@ namespace ShibugakiViewer.Models.ImageViewer
 
             //return false;
             //return await Task.Run(() =>
+            //{
+
+            try
             {
+                //Debug.WriteLine(fullPath);
 
-                try
+                GraphicInformation information = null;
+
+                using (var fileStream = new FileStream
+                    (fullPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true))
                 {
-                    var image = new BitmapImage();
-                    //Debug.WriteLine(fullPath);
+                    var length = (fileStream.Length < int.MaxValue) ? (int)fileStream.Length : int.MaxValue;
 
-                    GraphicInformation information = null;
+                    //byte[] buff = new byte[length];
+                    //await stream.ReadAsync(buff, 0, length);
 
-                    using (var stream = File.OpenRead(fullPath))
+
+                    using (var stream = new MemoryStream(length))
                     {
+                        fileStream.Position = 0;
+
+                        stream.Position = 0;
+                        await fileStream.CopyToAsync(stream, length, default(CancellationToken));
+                        stream.Position = 0;
+
+
+
                         this.IsNotFound = false;
 
                         information = new GraphicInformation(stream);
@@ -130,116 +146,192 @@ namespace ShibugakiViewer.Models.ImageViewer
                             return false;
                         }
 
+                        await Application.Current.Dispatcher.InvokeAsync(() =>
+                        {
 
 
-                        image.BeginInit();
-                        image.CacheOption = BitmapCacheOption.OnLoad;
-                        image.CreateOptions = BitmapCreateOptions.None;
+                            var image = new BitmapImage();
 
-                        if (frameWidth > 0)
-                        {
-                            image.DecodePixelWidth = frameWidth;
-                            this.Quality = ImageQuality.Resized;
-                        }
-                        else if (frameHeight > 0)
-                        {
-                            image.DecodePixelHeight = frameHeight;
-                            this.Quality = ImageQuality.Resized;
-                        }
-                        else if (asThumbNail)
-                        {
-                            image.DecodePixelWidth = thumbNailSize;
-                            //image.DecodePixelHeight = thumbNailSize;
-                            this.Quality = ImageQuality.LowQuality;
-                        }
-                        else
-                        {
-                            this.Quality = ImageQuality.OriginalSize;
-                        }
+                            image.BeginInit();
+                            image.CacheOption = BitmapCacheOption.OnLoad;
+                            image.CreateOptions = BitmapCreateOptions.None;
 
-                        if (information.BlankHeaderLength == 0)
-                        {
-                            stream.Position = 0;
-
-                            image.StreamSource = stream;
-                            //image.UriSource = new Uri(fullPath);
-
-                            image.EndInit();
-                            image.Freeze();
-                        }
-                        else
-                        {
-                            using (var ms = new MemoryStream((int)(stream.Length - information.BlankHeaderLength)))
+                            if (frameWidth > 0)
                             {
+                                image.DecodePixelWidth = frameWidth;
+                                this.Quality = ImageQuality.Resized;
+                            }
+                            else if (frameHeight > 0)
+                            {
+                                image.DecodePixelHeight = frameHeight;
+                                this.Quality = ImageQuality.Resized;
+                            }
+                            else if (asThumbNail)
+                            {
+                                image.DecodePixelWidth = thumbNailSize;
+                                //image.DecodePixelHeight = thumbNailSize;
+                                this.Quality = ImageQuality.LowQuality;
+                            }
+                            else
+                            {
+                                this.Quality = ImageQuality.OriginalSize;
+                            }
 
-                                stream.Position = information.BlankHeaderLength;
-                                //stream.Seek(information.BlankHeaderLength, System.IO.SeekOrigin.Begin);
-                                ms.Position = 0;
-                                stream.CopyTo(ms);
-                                ms.Position = 0;
+                            if (information.BlankHeaderLength == 0)
+                            {
+                                stream.Position = 0;
 
-                                image.StreamSource = ms;
+                                image.StreamSource = stream;
+                                //image.UriSource = new Uri(fullPath);
 
                                 image.EndInit();
                                 image.Freeze();
                             }
-                        }
+                            else
+                            {
+                                using (var ms = new MemoryStream(length - information.BlankHeaderLength))
+                                {
+
+                                    stream.Position = information.BlankHeaderLength;
+                                    //stream.Seek(information.BlankHeaderLength, System.IO.SeekOrigin.Begin);
+                                    ms.Position = 0;
+                                    stream.CopyTo(ms);
+                                    ms.Position = 0;
+
+                                    image.StreamSource = ms;
+
+                                    image.EndInit();
+                                    image.Freeze();
+                                }
+                            }
+
+                            this.Image = image;
+                        });
                     }
+                }
 
+                /*
+                using (var stream = File.OpenRead(fullPath))
+                {
+                    this.IsNotFound = false;
 
-                    this.Image = image;
+                    information = new GraphicInformation(stream);
 
-                    //リサイズされた画像サイズ
-                    //this.LoadedHeight = image.PixelHeight;
-                    //this.LoadedWidth = image.PixelWidth;
+                    this.Information = information;
 
-                    if (file != null && information != null)
+                    if (information.IsMetaImage)
                     {
-
-                        if ((file.Width != information.GraphicSize.Width)
-                            || (file.Height != information.GraphicSize.Height)
-                            || (file.Size != information.FileSize))
-                        {
-                            if (information.GraphicSize.Height > 0)
-                            {
-                                file.Width = information.GraphicSize.Width;
-                            }
-                            if (information.GraphicSize.Height > 0)
-                            {
-                                file.Height = information.GraphicSize.Height;
-                            }
-                            if (information.FileSize > 0)
-                            {
-                                file.Size = information.FileSize;
-                            }
-
-                            ImageFileUtility.UpdateInformation(file, false, true);
-
-                        }
+                        return false;
                     }
 
-                    return true;
 
-                }
-                catch (FileNotFoundException)
-                {
-                    this.IsNotFound = true;
-                    return false;
 
-                }
-                catch (DirectoryNotFoundException)
+                    image.BeginInit();
+                    image.CacheOption = BitmapCacheOption.OnLoad;
+                    image.CreateOptions = BitmapCreateOptions.None;
+
+                    if (frameWidth > 0)
+                    {
+                        image.DecodePixelWidth = frameWidth;
+                        this.Quality = ImageQuality.Resized;
+                    }
+                    else if (frameHeight > 0)
+                    {
+                        image.DecodePixelHeight = frameHeight;
+                        this.Quality = ImageQuality.Resized;
+                    }
+                    else if (asThumbNail)
+                    {
+                        image.DecodePixelWidth = thumbNailSize;
+                        //image.DecodePixelHeight = thumbNailSize;
+                        this.Quality = ImageQuality.LowQuality;
+                    }
+                    else
+                    {
+                        this.Quality = ImageQuality.OriginalSize;
+                    }
+
+                    if (information.BlankHeaderLength == 0)
+                    {
+                        stream.Position = 0;
+
+                        image.StreamSource = stream;
+                        //image.UriSource = new Uri(fullPath);
+
+                        image.EndInit();
+                        image.Freeze();
+                    }
+                    else
+                    {
+                        using (var ms = new MemoryStream((int)(stream.Length - information.BlankHeaderLength)))
+                        {
+
+                            stream.Position = information.BlankHeaderLength;
+                            //stream.Seek(information.BlankHeaderLength, System.IO.SeekOrigin.Begin);
+                            ms.Position = 0;
+                            stream.CopyTo(ms);
+                            ms.Position = 0;
+
+                            image.StreamSource = ms;
+
+                            image.EndInit();
+                            image.Freeze();
+                        }
+                    }
+                }*/
+
+
+
+                //リサイズされた画像サイズ
+                //this.LoadedHeight = image.PixelHeight;
+                //this.LoadedWidth = image.PixelWidth;
+
+                if (file != null && information != null)
                 {
-                    this.IsNotFound = true;
-                    return false;
+
+                    if ((file.Width != information.GraphicSize.Width)
+                        || (file.Height != information.GraphicSize.Height)
+                        || (file.Size != information.FileSize))
+                    {
+                        if (information.GraphicSize.Height > 0)
+                        {
+                            file.Width = information.GraphicSize.Width;
+                        }
+                        if (information.GraphicSize.Height > 0)
+                        {
+                            file.Height = information.GraphicSize.Height;
+                        }
+                        if (information.FileSize > 0)
+                        {
+                            file.Size = information.FileSize;
+                        }
+
+                        ImageFileUtility.UpdateInformation(file, false, true);
+
+                    }
                 }
-                catch (ArgumentException)
-                {
-                    this.IsNotFound = true;
-                    return false;
-                }
-            }//).ConfigureAwait(false);
+
+                return true;
+
+            }
+            catch (FileNotFoundException)
+            {
+                this.IsNotFound = true;
+                return false;
+
+            }
+            catch (DirectoryNotFoundException)
+            {
+                this.IsNotFound = true;
+                return false;
+            }
+            catch (ArgumentException)
+            {
+                this.IsNotFound = true;
+                return false;
+            }
+            //}//).ConfigureAwait(false);
         }
-#pragma warning restore 1998
 
 #if false
         private async Task<Windows.UI.Xaml.Media.Imaging.BitmapSource> LoadImageCmsAsync

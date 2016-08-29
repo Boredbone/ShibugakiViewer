@@ -12,54 +12,58 @@ namespace ShibugakiViewer.Backup
 {
     class Compat
     {
-        public const string settingsFileName = "appsettings.config";
-        private const int settingVersion = 3;
+        //public const string settingsFileName = "appsettings.config";
+        //private const int settingVersion = 3;
 
 
-        private XmlSettingManager<ApplicationSettings> SettingsXml { get; set; }
-        private ApplicationSettings Settings { get; set; }
+        //private XmlSettingManager<ApplicationSettings> SettingsXml { get; set; }
+        //private ApplicationSettings Settings { get; set; }
 
-        private string GetOldLibraryDirectory()
-        {
-            var dir = System.Environment.GetFolderPath
-                (Environment.SpecialFolder.LocalApplicationData);
+        //private string GetOldLibraryDirectory()
+        //{
+        //    var dir = System.Environment.GetFolderPath
+        //        (Environment.SpecialFolder.LocalApplicationData);
+        //
+        //    var saveDirectory =
+        //        Path.Combine(dir, @"Packages\60037Boredbone.MikanViewer_8weh06aq8rfkj\LocalState");
+        //
+        //    return saveDirectory;
+        //}
 
-            var saveDirectory =
-                Path.Combine(dir, @"Packages\60037Boredbone.MikanViewer_8weh06aq8rfkj\LocalState");
-
-            return saveDirectory;
-        }
-
-        public async Task ConvertOldLibraryAsync(string xmlSaveDirectory)
+        public async Task ConvertOldLibraryAsync
+            (string saveDirectory, string settingFileName, string oldLibraryDirectory, int settingVersion)
         {
             var library = LibraryOwner.GetCurrent();
 
 
             //ストレージに保存する設定
-            this.SettingsXml = new XmlSettingManager<ApplicationSettings>
-                (System.IO.Path.Combine(xmlSaveDirectory, settingsFileName));
+            var settingsXml = new XmlSettingManager<ApplicationSettings>
+                (Path.Combine(saveDirectory, settingFileName));
 
-            this.Settings = SettingsXml
+            var settings = settingsXml
                 .LoadXml(XmlLoadingOptions.IgnoreAllException | XmlLoadingOptions.UseBackup)
                 .Value;
 
 
             using (var locking = await library.LockAsync())
             {
-                var saveDirectory = this.GetOldLibraryDirectory();
+                //var saveDirectory = this.GetOldLibraryDirectory();
 
                 var converter = new LibraryConverter.Compat.Converter();
-                await converter.Start1(saveDirectory, this.Settings);
+                await converter.Start1(oldLibraryDirectory, settings);
 
                 var data = library.GetDataForConvert();
-                await converter.Start2(data.Item1, data.Item2, data.Item3);
+                var count = 0;
+
+                await converter.Start2(data.Item1, data.Item2, data.Item3,
+                    x => count = x, x => Console.WriteLine($"Imported {x} / {count}"));
             }
 
 
             try
             {
-                this.Settings.Version = settingVersion;
-                this.SettingsXml.SaveXml(this.Settings);
+                settings.Version = settingVersion;
+                settingsXml.SaveXml(settings);
             }
             catch
             {

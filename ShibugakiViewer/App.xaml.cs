@@ -79,20 +79,45 @@ namespace ShibugakiViewer
         {
             base.OnStartup(e);
 
+            bool createdNew = false;
 
             //多重起動防止
-            using (var mutex = new Mutex(false, mutexId))
+            using (var mutex = new Mutex(true, mutexId, out createdNew))
             {
-                if (!mutex.WaitOne(0, false))
+                if (createdNew)
+                {
+                    //取得できた
+                    mutex.ReleaseMutex();
+                    mutex.Close();
+                }
+                else
                 {
                     //すでに起動していると判断して終了
+                    mutex.Close();
                     MessageBox.Show($"{this.Core.AppName} is already launched.");
                     this.Shutdown();
                     return;
                 }
-                mutex.ReleaseMutex();
-                mutex.Close();
             }
+
+            //using (var mutex = new Mutex(false, mutexId))
+            //{
+            //    try
+            //    {
+            //        if (!mutex.WaitOne(0, false))
+            //        {
+            //            //すでに起動していると判断して終了
+            //            MessageBox.Show($"{this.Core.AppName} is already launched.");
+            //            this.Shutdown();
+            //            return;
+            //        }
+            //        mutex.ReleaseMutex();
+            //        mutex.Close();
+            //    }
+            //    catch (AbandonedMutexException)
+            //    {
+            //    }
+            //}
 
             this.isLaunched = true;
 
@@ -434,7 +459,7 @@ namespace ShibugakiViewer
                 new System.Windows.Forms.MenuItem(this.Core.GetResourceString("Exit"),
                     (o, e) => this.ExitAll())
             };
-            
+
             var subscription = new CompositeDisposable();
 
             this.notifyIcon = new System.Windows.Forms.NotifyIcon
@@ -461,21 +486,25 @@ namespace ShibugakiViewer
         /// 保存データのインポート・エクスポート
         /// </summary>
         /// <param name="isImport"></param>
-        public void ImportOrExportLibrary(bool isImport)
+        public void ImportOrExportLibrary(bool isImport, bool showDialog)
         {
-            var result = MessageBox.Show(this.Core.GetResourceString("ExportImportLibraryMessage"),
-                this.Core.AppName, MessageBoxButton.OKCancel, MessageBoxImage.Question);
-
-            if(result!=MessageBoxResult.OK && result != MessageBoxResult.Yes)
+            if (showDialog)
             {
-                return;
+                var result = MessageBox.Show(this.Core.GetResourceString("ExportImportLibraryMessage"),
+                    this.Core.AppName, MessageBoxButton.OKCancel, MessageBoxImage.Question);
+
+                if (result != MessageBoxResult.OK && result != MessageBoxResult.Yes)
+                {
+                    return;
+                }
             }
 
             var myAssembly = Assembly.GetEntryAssembly();
             var path = myAssembly.Location;
             var dir = Path.GetDirectoryName(path);
 
-            var args = new[] {
+            var args = new[]
+            {
                 (isImport ? "/r" : "/w"),
                 path,
                 this.SaveDirectory,
@@ -486,16 +515,49 @@ namespace ShibugakiViewer
                 ApplicationCore.settingsFileName,
             };
 
+            this.StartBackupApp(dir, args);
+        }
+
+        /// <summary>
+        /// 旧ライブラリのインポート
+        /// </summary>
+        public void ConvertOldLibrary()
+        {
+            var myAssembly = Assembly.GetEntryAssembly();
+            var path = myAssembly.Location;
+            var dir = Path.GetDirectoryName(path);
+
+            var args = new[]
+            {
+                "/c",
+                path,
+                this.SaveDirectory,
+                mutexId,
+                pipeId,
+                ApplicationCore.settingsFileName,
+            }
+            .Concat(this.Core.GetConvertArgs())
+            .ToArray();
+
+            this.StartBackupApp(dir, args);
+        }
+
+        /// <summary>
+        /// バックアップアプリ起動
+        /// </summary>
+        /// <param name="directory"></param>
+        /// <param name="args"></param>
+        private void StartBackupApp(string directory, string[] args)
+        {
             try
             {
-
                 //var path = serverFullPath;// Path.Combine(dir, serverPath);
 
                 //アプリ起動
                 var psi = new ProcessStartInfo()
                 {
-                    FileName = Path.Combine(dir, "ShibugakiViewer.Backup.exe"),
-                    WorkingDirectory = dir,
+                    FileName = Path.Combine(directory, "ShibugakiViewer.Backup.exe"),
+                    WorkingDirectory = directory,
                     UseShellExecute = false,
                     Arguments = args.Join(" "),
                 };
@@ -506,7 +568,6 @@ namespace ShibugakiViewer
             {
                 var tx = e.ToString();
             }
-
         }
     }
 }

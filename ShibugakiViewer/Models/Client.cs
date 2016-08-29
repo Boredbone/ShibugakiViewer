@@ -363,7 +363,7 @@ namespace ShibugakiViewer.Models
                     {
                         var index = await core.Library.FindIndexAsync(criteria, record);
 
-                        Application.Current.Dispatcher.Invoke(() =>
+                        await Application.Current.Dispatcher.InvokeAsync(() =>
                         {
                             this.viewerImageChangeGate = false;
                             this.ViewerIndexInner = index;
@@ -1080,7 +1080,7 @@ namespace ShibugakiViewer.Models
                             this.viewerImageChangeGate = true;
                         });
 
-                    Application.Current.Dispatcher.Invoke(() =>
+                    await Application.Current.Dispatcher.InvokeAsync(() =>
                     {
                         this.front.SetSearch(search, true);
                     });

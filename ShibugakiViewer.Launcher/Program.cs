@@ -31,23 +31,33 @@ namespace ShibugakiViewer.Launcher
             try
             {
                 var isServerRunning = true;
-                using (var mutex = new Mutex(false, mutexId))
+                bool createdNew = false;
+
+                using (var mutex = new Mutex(true, mutexId, out createdNew))
                 {
-                    try
+                    if (createdNew)
                     {
-                        //ミューテックスの所有権を要求する
-                        if (mutex.WaitOne(0, false))
-                        {
-                            //取得できた
-                            isServerRunning = false;
-                            mutex.ReleaseMutex();
-                            mutex.Close();
-                        }
-                    }
-                    catch (AbandonedMutexException)
-                    {
+                        //取得できた
                         isServerRunning = false;
+                        mutex.ReleaseMutex();
                     }
+                    mutex.Close();
+
+                    //try
+                    //{
+                    //    //ミューテックスの所有権を要求する
+                    //    if (mutex.WaitOne(0, false))
+                    //    {
+                    //        //取得できた
+                    //        isServerRunning = false;
+                    //        mutex.ReleaseMutex();
+                    //        mutex.Close();
+                    //    }
+                    //}
+                    //catch (AbandonedMutexException)
+                    //{
+                    //    isServerRunning = false;
+                    //}
                 }
 
                 if (!isServerRunning)

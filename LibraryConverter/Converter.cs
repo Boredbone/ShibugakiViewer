@@ -64,7 +64,7 @@ namespace LibraryConverter.Compat
         }
 
         public async Task Start2(LibrarySettings libSettings,
-            Library library, TypedTable<Record, string> records)
+            Library library, TypedTable<Record, string> records, Action<int> OnLoaded, Action<int> OnAdding)
         {
             this.ConvertLibrarySettings(libSettings);
 
@@ -91,7 +91,7 @@ namespace LibraryConverter.Compat
 
             await Task.Delay(1000);
 
-            await this.ConvertFileDatabase(library, records);
+            await this.ConvertFileDatabase(library, records, OnLoaded, OnAdding);
         }
 
         public void ConvertSettings(ApplicationSettings target)
@@ -199,12 +199,23 @@ namespace LibraryConverter.Compat
 
         }
 
-        private async Task ConvertFileDatabase(Library library, TypedTable<Record, string> records)
+        private async Task ConvertFileDatabase
+            (Library library, TypedTable<Record, string> records, Action<int> OnLoaded, Action<int> OnAdding)
         {
             this.ConvertFiles();
             ConvertGroups(library);
 
-            await records.ReplaceRangeBufferedAsync(this.Files.Select(x => x.Value));
+            OnLoaded?.Invoke(this.Files.Count);
+            var count = 0;
+
+            foreach (var items in this.Files.Select(x => x.Value).Buffer(1024))
+            {
+                await records.ReplaceRangeBufferedAsync(items);
+                count += items.Count;
+                OnAdding?.Invoke(count);
+            }
+
+            //await records.ReplaceRangeBufferedAsync(this.Files.Select(x => x.Value));
             //return this.Files.Select(x => x.Value);
         }
 

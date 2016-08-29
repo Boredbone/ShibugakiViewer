@@ -61,17 +61,17 @@ namespace ShibugakiViewer.Views.Windows
 
         private void FlatButton_Click_3(object sender, RoutedEventArgs e)
         {
-            this.application.ImportOrExportLibrary(false);
+            this.application.ImportOrExportLibrary(false, true);
         }
 
         private void FlatButton_Click_4(object sender, RoutedEventArgs e)
         {
-            this.application.ImportOrExportLibrary(true);
+            this.application.ImportOrExportLibrary(true, true);
         }
 
         private void mikanImportButton_Click(object sender, RoutedEventArgs e)
         {
-            //this.core.ConvertOldLibraryAsync().FireAndForget();
+            this.application.ConvertOldLibrary();
         }
 
 
