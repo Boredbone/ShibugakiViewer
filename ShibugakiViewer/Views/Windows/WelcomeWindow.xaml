@@ -168,6 +168,42 @@
                 </Grid>
             </TabItem>
 
+            <TabItem Header="e">
+                <Grid>
+                    <StackPanel 
+                        Orientation="Vertical"
+                        HorizontalAlignment="Center" VerticalAlignment="Center">
+
+                        <TextBlock>
+                            <Run x:Uid="WelcomeText1" Text="{x:Static properties:Resources.WelcomeText1_Text}"/>
+                            <Run Text="{StaticResource AppName}"/>
+                            <Run x:Uid="WelcomeText2" Text="{x:Static properties:Resources.WelcomeText2_Text}"/>
+                        </TextBlock>
+
+                        <TextBlock Text="Mikan Icon" Margin="16"/>
+
+                        <Grid Height="56" Margin="8" Width="250">
+                            <cc:FlatButton
+                                Command="{Binding ConvertOldLibraryCommand}"
+                                Style="{StaticResource informationPaneButtonStyle}"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch">
+
+                                <cc:LabeledIcon
+                                    Margin="0,0,8,0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    IconText="{StaticResource RefreshSymbol}"
+                                    Text="Import"/>
+                            </cc:FlatButton>
+                        </Grid>
+
+
+
+                    </StackPanel>
+
+                </Grid>
+            </TabItem>
         </TabControl>
     </Grid>
 </Window>

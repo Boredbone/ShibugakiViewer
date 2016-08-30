@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Boredbone.Utility;
 using ImageLibrary.Core;
+using ImageLibrary.Creation;
 using ShibugakiViewer.Models;
 
 namespace ShibugakiViewer.Backup
@@ -33,41 +34,58 @@ namespace ShibugakiViewer.Backup
         public async Task ConvertOldLibraryAsync
             (string saveDirectory, string settingFileName, string oldLibraryDirectory, int settingVersion)
         {
-            var library = LibraryOwner.GetCurrent();
+            Console.WriteLine($"Loading");
 
-
-            //ストレージに保存する設定
-            var settingsXml = new XmlSettingManager<ApplicationSettings>
-                (Path.Combine(saveDirectory, settingFileName));
-
-            var settings = settingsXml
-                .LoadXml(XmlLoadingOptions.IgnoreAllException | XmlLoadingOptions.UseBackup)
-                .Value;
-
-
-            using (var locking = await library.LockAsync())
+            var config = new LibraryConfiguration(saveDirectory)
             {
-                //var saveDirectory = this.GetOldLibraryDirectory();
+                Concurrency = 512,
+                FileTypeFilter = new HashSet<string>(),
+                FileSystem = new FileSystem(),
+            };
 
-                var converter = new LibraryConverter.Compat.Converter();
-                await converter.Start1(oldLibraryDirectory, settings);
+            LibraryOwner.SetConfig(config);
 
-                var data = library.GetDataForConvert();
-                var count = 0;
-
-                await converter.Start2(data.Item1, data.Item2, data.Item3,
-                    x => count = x, x => Console.WriteLine($"Imported {x} / {count}"));
-            }
-
-
-            try
-            {
-                settings.Version = settingVersion;
-                settingsXml.SaveXml(settings);
-            }
-            catch
+            using (var library = LibraryOwner.GetCurrent())
             {
 
+                library.InitSettings();
+                library.Load();
+
+                //ストレージに保存する設定
+                var settingsXml = new XmlSettingManager<ApplicationSettings>
+                    (Path.Combine(saveDirectory, settingFileName));
+
+                var settings = settingsXml
+                    .LoadXml(XmlLoadingOptions.IgnoreAllException | XmlLoadingOptions.UseBackup)
+                    .Value;
+
+
+                using (var locking = await library.LockAsync())
+                {
+                    //var saveDirectory = this.GetOldLibraryDirectory();
+
+                    var converter = new LibraryConverter.Compat.Converter();
+                    await converter.Start1(oldLibraryDirectory, settings);
+
+                    var data = library.GetDataForConvert();
+                    var count = 0;
+
+                    await converter.Start2(data.Item1, data.Item2, data.Item3,
+                        x => count = x, x => Console.WriteLine($"Imported {x} / {count}"));
+
+                    library.SaveSettings();
+                }
+
+
+                try
+                {
+                    settings.Version = settingVersion;
+                    settingsXml.SaveXml(settings);
+                }
+                catch
+                {
+
+                }
             }
         }
     }

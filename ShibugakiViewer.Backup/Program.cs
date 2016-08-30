@@ -55,7 +55,7 @@ namespace ShibugakiViewer.Backup
             var filter = "ShibugakiViewer Library (*.svl)|*.svl";
 
             var fileName = $"ShibugakiViewerLibrary_{DateTime.Now.ToString("yyyyMMddHHmm")}.svl";
-
+            
             if (modeText == null)
             {
                 return;
@@ -107,6 +107,7 @@ namespace ShibugakiViewer.Backup
 
                         if (!mutex.WaitOne(0, false))
                         {
+
                             //ミューテックス取得失敗
                             //稼働中のアプリケーションを終了
 
@@ -158,8 +159,11 @@ namespace ShibugakiViewer.Backup
 
                         Console.WriteLine("Done");
                     }
-                    catch
+                    catch(Exception e)
                     {
+                        Console.WriteLine(e.ToString());
+                        Console.ReadLine();
+                        return;
                     }
                     finally
                     {
@@ -173,9 +177,12 @@ namespace ShibugakiViewer.Backup
 
                 }
             }
-            catch
+            catch (Exception e)
             {
 
+                Console.WriteLine(e.ToString());
+                Console.ReadLine();
+                return;
             }
 
             try
@@ -195,7 +202,9 @@ namespace ShibugakiViewer.Backup
             }
             catch (Exception e)
             {
-                var tx = e.ToString();
+                Console.WriteLine(e.ToString());
+                Console.ReadLine();
+                return;
             }
         }
 

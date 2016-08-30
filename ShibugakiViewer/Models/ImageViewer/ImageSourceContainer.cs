@@ -3,11 +3,14 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+using Boredbone.Utility;
 using Boredbone.Utility.Tools;
 using ImageLibrary.Creation;
 using ImageLibrary.File;
@@ -17,7 +20,7 @@ namespace ShibugakiViewer.Models.ImageViewer
     /// <summary>
     /// ImageSourceと付随する情報を管理
     /// </summary>
-    public class ImageSourceContainer
+    public class ImageSourceContainer : IDisposable
     {
         public ImageSource Image { get; private set; }
 
@@ -37,8 +40,14 @@ namespace ShibugakiViewer.Models.ImageViewer
         }
 
 
-        public void ReleaseImage()
+        public void Dispose()
         {
+            var dispatcher = this.Image?.Dispatcher;
+            if (dispatcher != null)
+            {
+                dispatcher.BeginInvokeShutdown(DispatcherPriority.SystemIdle);
+                Dispatcher.Run();
+            }
             this.Image = null;
         }
 
@@ -116,105 +125,116 @@ namespace ShibugakiViewer.Models.ImageViewer
 
                 GraphicInformation information = null;
 
-                //if (false)
-                //{
+                if (false)
+                {
 
-                //    using (var fileStream = new FileStream
-                //        (fullPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true))
-                //    {
-                //        var length = (fileStream.Length < int.MaxValue) ? (int)fileStream.Length : int.MaxValue;
+                    using (var fileStream = new FileStream
+                        (fullPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true))
+                    {
+                        var length = (fileStream.Length < int.MaxValue) ? (int)fileStream.Length : int.MaxValue;
 
-                //        //byte[] buff = new byte[length];
-                //        //await stream.ReadAsync(buff, 0, length);
-
-
-                //        using (var stream = new MemoryStream(length))
-                //        {
-                //            fileStream.Position = 0;
-
-                //            stream.Position = 0;
-                //            await fileStream.CopyToAsync(stream, length, default(CancellationToken));
-                //            stream.Position = 0;
+                        byte[] buff = new byte[length];
+                        await fileStream.ReadAsync(buff, 0, length);
 
 
 
-                //            this.IsNotFound = false;
-
-                //            information = new GraphicInformation(stream);
-
-                //            this.Information = information;
-
-                //            if (information.IsMetaImage)
-                //            {
-                //                return false;
-                //            }
-
-                //            await Application.Current.Dispatcher.InvokeAsync(() =>
-                //            {
+                        using (var stream = new WrappingStream(new MemoryStream(buff)))
+                        {
+                            //fileStream.Position = 0;
+                            //
+                            //stream.Position = 0;
+                            //await fileStream.CopyToAsync(stream, length, default(CancellationToken));
+                            //stream.Position = 0;
 
 
-                //                var image = new BitmapImage();
 
-                //                image.BeginInit();
-                //                image.CacheOption = BitmapCacheOption.OnLoad;
-                //                image.CreateOptions = BitmapCreateOptions.None;
+                            this.IsNotFound = false;
 
-                //                if (frameWidth > 0)
-                //                {
-                //                    image.DecodePixelWidth = frameWidth;
-                //                    this.Quality = ImageQuality.Resized;
-                //                }
-                //                else if (frameHeight > 0)
-                //                {
-                //                    image.DecodePixelHeight = frameHeight;
-                //                    this.Quality = ImageQuality.Resized;
-                //                }
-                //                else if (asThumbNail)
-                //                {
-                //                    image.DecodePixelWidth = thumbNailSize;
-                //                    //image.DecodePixelHeight = thumbNailSize;
-                //                    this.Quality = ImageQuality.LowQuality;
-                //                }
-                //                else
-                //                {
-                //                    this.Quality = ImageQuality.OriginalSize;
-                //                }
+                            information = new GraphicInformation(stream);
 
-                //                if (information.BlankHeaderLength == 0)
-                //                {
-                //                    stream.Position = 0;
+                            this.Information = information;
 
-                //                    image.StreamSource = stream;
-                //                    //image.UriSource = new Uri(fullPath);
+                            if (information.IsMetaImage)
+                            {
+                                return false;
+                            }
 
-                //                    image.EndInit();
-                //                    image.Freeze();
-                //                }
-                //                else
-                //                {
-                //                    using (var ms = new MemoryStream(length - information.BlankHeaderLength))
-                //                    {
+                            byte[] fixedBuffer = null;
 
-                //                        stream.Position = information.BlankHeaderLength;
-                //                        //stream.Seek(information.BlankHeaderLength, System.IO.SeekOrigin.Begin);
-                //                        ms.Position = 0;
-                //                        stream.CopyTo(ms);
-                //                        ms.Position = 0;
+                            if (information.BlankHeaderLength > 0)
+                            {
+                                var fixedLength = buff.Length - information.BlankHeaderLength;
+                                fixedBuffer = new byte[fixedLength];
+                                for (int i = 0; i < fixedLength; i++)
+                                {
+                                    fixedBuffer[i] = buff[i + information.BlankHeaderLength];
+                                }
+                            }
 
-                //                        image.StreamSource = ms;
+                            //await Application.Current.Dispatcher.InvokeAsync(() =>
+                            {
 
-                //                        image.EndInit();
-                //                        image.Freeze();
-                //                    }
-                //                }
 
-                //                //this.Image = image;
-                //            });
-                //        }
-                //    }
+                                var image = new BitmapImage();
 
-                //}
-                //else
+                                image.BeginInit();
+                                image.CacheOption = BitmapCacheOption.OnLoad;
+                                image.CreateOptions = BitmapCreateOptions.None;
+
+                                if (frameWidth > 0)
+                                {
+                                    image.DecodePixelWidth = frameWidth;
+                                    this.Quality = ImageQuality.Resized;
+                                }
+                                else if (frameHeight > 0)
+                                {
+                                    image.DecodePixelHeight = frameHeight;
+                                    this.Quality = ImageQuality.Resized;
+                                }
+                                else if (asThumbNail)
+                                {
+                                    image.DecodePixelWidth = thumbNailSize;
+                                    //image.DecodePixelHeight = thumbNailSize;
+                                    this.Quality = ImageQuality.LowQuality;
+                                }
+                                else
+                                {
+                                    this.Quality = ImageQuality.OriginalSize;
+                                }
+
+                                if (fixedBuffer == null)
+                                {
+                                    stream.Position = 0;
+
+                                    image.StreamSource = stream;
+
+                                    image.EndInit();
+                                    if (image.CanFreeze)
+                                    {
+                                        image.Freeze();
+                                    }
+                                }
+                                else
+                                {
+                                    using (var ms = new WrappingStream(new MemoryStream(fixedBuffer)))
+                                    {
+                                        image.StreamSource = ms;
+
+                                        image.EndInit();
+                                        if (image.CanFreeze)
+                                        {
+                                            image.Freeze();
+                                        }
+                                    }
+                                }
+
+                                this.Image = image;
+                            }//);
+                        }
+                    }
+
+                }
+                else
                 {
                     //Debug.WriteLine($"aa:{Thread.CurrentThread.ManagedThreadId}");
                     //await Task.Delay(1);
@@ -235,62 +255,66 @@ namespace ShibugakiViewer.Models.ImageViewer
                         //Debug.WriteLine($"cc:{Thread.CurrentThread.ManagedThreadId}");
 
 
-                        var image = new BitmapImage();
+                        //await Application.Current.Dispatcher.InvokeAsync(() =>
+                        {
+                            var image = new BitmapImage();
 
-                        image.BeginInit();
-                        image.CacheOption = BitmapCacheOption.OnLoad;
-                        image.CreateOptions = BitmapCreateOptions.None;
+                            image.BeginInit();
+                            image.CacheOption = BitmapCacheOption.OnLoad;
+                            image.CreateOptions = BitmapCreateOptions.None;
 
-                        if (frameWidth > 0)
-                        {
-                            image.DecodePixelWidth = frameWidth;
-                            this.Quality = ImageQuality.Resized;
-                        }
-                        else if (frameHeight > 0)
-                        {
-                            image.DecodePixelHeight = frameHeight;
-                            this.Quality = ImageQuality.Resized;
-                        }
-                        else if (asThumbNail)
-                        {
-                            image.DecodePixelWidth = thumbNailSize;
-                            //image.DecodePixelHeight = thumbNailSize;
-                            this.Quality = ImageQuality.LowQuality;
-                        }
-                        else
-                        {
-                            this.Quality = ImageQuality.OriginalSize;
-                        }
-
-                        if (information.BlankHeaderLength == 0)
-                        {
-                            stream.Position = 0;
-
-                            image.StreamSource = stream;
-                            //image.UriSource = new Uri(fullPath);
-
-                            image.EndInit();
-                            image.Freeze();
-                        }
-                        else
-                        {
-                            using (var ms = new MemoryStream((int)(stream.Length - information.BlankHeaderLength)))
+                            if (frameWidth > 0)
                             {
+                                image.DecodePixelWidth = frameWidth;
+                                this.Quality = ImageQuality.Resized;
+                            }
+                            else if (frameHeight > 0)
+                            {
+                                image.DecodePixelHeight = frameHeight;
+                                this.Quality = ImageQuality.Resized;
+                            }
+                            else if (asThumbNail)
+                            {
+                                image.DecodePixelWidth = thumbNailSize;
+                                //image.DecodePixelHeight = thumbNailSize;
+                                this.Quality = ImageQuality.LowQuality;
+                            }
+                            else
+                            {
+                                this.Quality = ImageQuality.OriginalSize;
+                            }
 
-                                stream.Position = information.BlankHeaderLength;
-                                //stream.Seek(information.BlankHeaderLength, System.IO.SeekOrigin.Begin);
-                                ms.Position = 0;
-                                stream.CopyTo(ms);
-                                ms.Position = 0;
+                            if (information.BlankHeaderLength == 0)
+                            {
+                                stream.Position = 0;
 
-                                image.StreamSource = ms;
+                                image.StreamSource = stream;
+                                //image.UriSource = new Uri(fullPath);
 
                                 image.EndInit();
                                 image.Freeze();
                             }
-                        }
-                        this.Image = image;
-                        //Debug.WriteLine($"dd:{Thread.CurrentThread.ManagedThreadId}");
+                            else
+                            {
+                                using (var ms = new WrappingStream(new MemoryStream((int)
+                                    (stream.Length - information.BlankHeaderLength))))
+                                {
+
+                                    stream.Position = information.BlankHeaderLength;
+                                    //stream.Seek(information.BlankHeaderLength, System.IO.SeekOrigin.Begin);
+                                    ms.Position = 0;
+                                    stream.CopyTo(ms);
+                                    ms.Position = 0;
+
+                                    image.StreamSource = ms;
+
+                                    image.EndInit();
+                                    image.Freeze();
+                                }
+                            }
+                            this.Image = image;
+                            //Debug.WriteLine($"dd:{Thread.CurrentThread.ManagedThreadId}");
+                        }//);
                     }
 
                 }

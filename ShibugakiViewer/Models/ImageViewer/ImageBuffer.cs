@@ -768,7 +768,7 @@ namespace ShibugakiViewer.Models.ImageViewer
         {
             foreach (var e in dictionary)
             {
-                e.Value.ReleaseImage();
+                e.Value.Dispose();
             }
             dictionary.Clear();
         }
@@ -794,7 +794,7 @@ namespace ShibugakiViewer.Models.ImageViewer
             {
                 ImageBufferItem result;
                 dictionary.TryRemove(minKey, out result);
-                result?.ReleaseImage();
+                result?.Dispose();
             }
         }
 
@@ -851,7 +851,7 @@ namespace ShibugakiViewer.Models.ImageViewer
     /// <summary>
     /// 画像情報と最後に読み込まれた時期を保持
     /// </summary>
-    class ImageBufferItem
+    class ImageBufferItem:IDisposable
     {
         private ImageSourceContainer image;
         //public FileInformation File { get; set; }
@@ -878,9 +878,9 @@ namespace ShibugakiViewer.Models.ImageViewer
             //image.Quality = this.Quality;
             return image;
         }
-        public void ReleaseImage()
+        public void Dispose()
         {
-            image.ReleaseImage();
+            image.Dispose();
             //image.Image = null;
             //image = null;
         }

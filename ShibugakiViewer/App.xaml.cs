@@ -53,6 +53,7 @@ namespace ShibugakiViewer
         internal ApplicationCore Core { get; }
 
         private bool isLaunched = false;
+        private bool isInitialized = false;
 
         private System.Windows.Forms.NotifyIcon notifyIcon;
 
@@ -156,6 +157,7 @@ namespace ShibugakiViewer
             else
             {
                 new WelcomeWindow() { ShowActivated = true }.Show();
+                this.StartPipeServer();
             }
 
             /*
@@ -211,7 +213,10 @@ namespace ShibugakiViewer
                     this.ExitAll();
                     break;
                 default:
-                    this.ShowClientWindow(args.Where(x => !x.Equals(commandMarker)));
+                    if (this.isInitialized)
+                    {
+                        this.ShowClientWindow(args.Where(x => !x.Equals(commandMarker)));
+                    }
                     break;
             }
         }
@@ -311,6 +316,14 @@ namespace ShibugakiViewer
             {
                 this.ShowClientWindow((files.IsNullOrEmpty()) ? null : files);
             }
+
+            this.StartPipeServer();
+
+            this.isInitialized = true;
+        }
+
+        private void StartPipeServer()
+        {
 
             //パイプサーバ
             if (this.server == null)

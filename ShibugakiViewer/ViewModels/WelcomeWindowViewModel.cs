@@ -35,6 +35,7 @@ namespace ShibugakiViewer.ViewModels
         public ReactiveProperty<int> SelectedTab { get; }
 
         public ReactiveCommand ChangeTabCommand { get; }
+        public ReactiveCommand ConvertOldLibraryCommand { get; }
 
         private readonly App application;
 
@@ -80,6 +81,12 @@ namespace ShibugakiViewer.ViewModels
                     this.SelectedTab.Value = 3;
                     library.StartRefreshLibrary();
                 }, this.Disposables);
+
+            this.ConvertOldLibraryCommand = Observable
+                .FromAsync(() => core.IsOldConvertableAsync())
+                .ObserveOnUIDispatcher()
+                .ToReactiveCommand()
+                .WithSubscribe(_ => application.ConvertOldLibrary(), this.Disposables);
         }
 
     }
