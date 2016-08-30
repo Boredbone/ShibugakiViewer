@@ -14,7 +14,7 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d"
         Style="{StaticResource DefaultWindowStyle}"
-        Title="WelcomeWindow" Height="600" Width="500"
+        Title="{StaticResource AppName}" Height="600" Width="500"
         DataContextChanged="Window_DataContextChanged"
         Closed="Window_Closed"
         Icon="/ShibugakiViewer;component/Assets/Icons/appicon.ico">
@@ -34,6 +34,13 @@
                         Orientation="Vertical"
                         HorizontalAlignment="Center" VerticalAlignment="Center">
 
+                        <TextBlock>
+                            <Run x:Uid="WelcomeText1" Text="{x:Static properties:Resources.WelcomeText1_Text}"/>
+                            <Run Text="{StaticResource AppName}"/>
+                            <Run x:Uid="WelcomeText2" Text="{x:Static properties:Resources.WelcomeText2_Text}"/>
+                        </TextBlock>
+                        <TextBlock x:Uid="TutorialText1" Text="{x:Static properties:Resources.TutorialText1_Text}"/>
+                        <TextBlock x:Uid="TutorialText2" Text="{x:Static properties:Resources.TutorialText2_Text}"/>
 
                         <Grid Height="56" Margin="8" Width="250">
                             <cc:FlatButton
@@ -65,18 +72,9 @@
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     IconText="{StaticResource FolderSymbol}"
-                                    Text="{x:Static properties:Resources.FolderPageButton_Label}"/>
+                                    Text="{x:Static properties:Resources.RegisterFolderButton_Content}"/>
                             </cc:FlatButton>
                         </Grid>
-                        
-
-                        <Button Content="start" Command="{Binding StartRefreshCommand}"
-                                Margin="4"/>
-
-                        <Button Content="folder"
-                                Command="{Binding ChangeTabCommand}"
-                                CommandParameter="1"
-                                Margin="4"/>
 
                     </StackPanel>
                                 
@@ -90,8 +88,9 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-
+                    
                     <pages:FolderSettingPage
+                        Grid.Row="0" 
                         HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch" x:Name="folderSetting"/>
 
@@ -111,21 +110,62 @@
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
                             Height="100">
+                        <Grid Margin="8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            
+                            <StackPanel
+                                Grid.Row="0" HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                                
+                                <TextBlock
+                                    HorizontalAlignment="Center"  TextWrapping="Wrap" 
+                                    VerticalAlignment="Center" Margin="4"
+                                    Text="{x:Static properties:Resources.NoImageText1_Text}"/>
+                                <TextBlock 
+                                    HorizontalAlignment="Center"  TextWrapping="Wrap" 
+                                    VerticalAlignment="Center" Margin="4"
+                                    Text="{x:Static properties:Resources.NoImageText2_Text}"/>
+                            </StackPanel>
                         
                         <Button
+                            Grid.Row="1"
                             Content="{x:Static properties:Resources.OkButton_Content}"
                             Width="86" Height="30"
                             Command="{Binding ChangeTabCommand}"
                             CommandParameter="1"/>
+                        </Grid>
                     </Border>
                 </Grid>
             </TabItem>
 
 
             <TabItem Header="d">
-                <pages:LibraryCreationSmallPage
+                <Grid>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel>
+                        <TextBlock
+                            x:Uid="TutorialText3"
+                            Text="{x:Static properties:Resources.TutorialText3_Text}"/>
+                        <TextBlock
+                            x:Uid="TutorialText4"
+                            Text="{x:Static properties:Resources.TutorialText4_Text}"
+                            Visibility="{Binding WaitTextVisibility}"/>
+                    </StackPanel>
+                    
+                    <pages:LibraryCreationSmallPage
+                        Grid.Row="1" 
                         HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch" x:Name="libraryCreation"/>
+
+                </Grid>
             </TabItem>
 
         </TabControl>

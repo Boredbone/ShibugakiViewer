@@ -1978,7 +1978,7 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
-        ///   Tap &quot;Register folders&quot; if you want to load more images from other folders. に類似しているローカライズされた文字列を検索します。
+        ///   Click &quot;Register folders&quot; if you want to load more images from other folders. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string TutorialText2_Text {
             get {

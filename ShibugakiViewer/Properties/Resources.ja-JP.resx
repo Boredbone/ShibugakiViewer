@@ -562,7 +562,7 @@
     <value>このアプリは、ユーザーの"ピクチャ"フォルダから画像を読み込みます。</value>
   </data>
   <data name="TutorialText2_Text" xml:space="preserve">
-    <value>他のフォルダーからも画像を読み込みたい場合は"フォルダを登録"をタップしてください。</value>
+    <value>他のフォルダーからも画像を読み込みたい場合は"フォルダを登録"をクリックしてください。</value>
   </data>
   <data name="TutorialText3_Text" xml:space="preserve">
     <value>フォルダ内の画像を検査中です</value>

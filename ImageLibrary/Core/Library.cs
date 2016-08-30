@@ -842,7 +842,7 @@ namespace ImageLibrary.Core
         }
 
         /// <summary>
-        /// データべスの登録数
+        /// データべースの登録数
         /// </summary>
         /// <returns></returns>
         public long Count()

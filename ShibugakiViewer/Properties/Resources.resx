@@ -562,7 +562,7 @@
     <value>This app loads image files from user's "Pictures" folder.</value>
   </data>
   <data name="TutorialText2_Text" xml:space="preserve">
-    <value>Tap "Register folders" if you want to load more images from other folders.</value>
+    <value>Click "Register folders" if you want to load more images from other folders.</value>
   </data>
   <data name="TutorialText3_Text" xml:space="preserve">
     <value>Checking images in folders</value>
