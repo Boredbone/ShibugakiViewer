@@ -514,18 +514,20 @@ namespace ImageLibrary.Viewer
 
         private bool GetCommonRatingFromCache(out int rating)
         {
-            if (this.ItemsSet.Count <= 0)
+            var items = this.ItemsSet.ToArray();
+
+            if (items.Length <= 0)
             {
                 rating = -1;
                 return true;
             }
-            if (this.ItemsSet.Any(x => x.Value == null))
+            if (items.Any(x => x.Value == null))
             {
                 rating = -1;
                 return false;
             }
 
-            var values = this.ItemsSet.Select(x => x.Value.Rating).Distinct().Take(2).ToArray();
+            var values = items.Select(x => x.Value.Rating).Distinct().Take(2).ToArray();
 
             if (values.Length == 1)
             {

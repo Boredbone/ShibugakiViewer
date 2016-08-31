@@ -314,51 +314,47 @@ namespace ShibugakiViewer.Models.ImageViewer
         public void RequestLoading
             (Record file, ImageLoadingOptions option, IObserver<ImageSourceContainer> observer,
             bool hasPriority, CancellationToken token)
-        {
-            if (file != null)
-            {
-                this.RequestLoadingMain(file, file.FullPath, option, observer, hasPriority, token);
-            }
-        }
+            => this.RequestLoadingToTask(file, file?.FullPath, option, observer, hasPriority, token);
+
+
         public void RequestLoading
             (string path, ImageLoadingOptions option, IObserver<ImageSourceContainer> observer,
             bool hasPriority, CancellationToken token)
-        {
-            if (path != null)
-            {
-                this.RequestLoadingMain(null, path, option, observer, hasPriority, token);
-            }
-        }
+            => this.RequestLoadingToTask(null, path, option, observer, hasPriority, token);
+
 
         public void RequestLoading
             (Record file, ImageLoadingOptions option, IObserver<ImageSourceContainer> observer,
             bool hasPriority, ObservableCancellationTokenSource tokenSource)
-        {
-            if (file == null || tokenSource.IsDisposed)
-            {
-                return;
-            }
+            => this.RequestLoadingToTask(file, file.FullPath, option, observer, hasPriority, tokenSource);
 
-            this.cancellationSources.Add(tokenSource);
-
-            var token = tokenSource.Token;
-
-            this.RequestLoadingMain(file, file.FullPath, option, observer, hasPriority, token);
-        }
         public void RequestLoading
             (string path, ImageLoadingOptions option, IObserver<ImageSourceContainer> observer,
             bool hasPriority, ObservableCancellationTokenSource tokenSource)
+            => this.RequestLoadingToTask(null, path, option, observer, hasPriority, tokenSource);
+
+
+        private void RequestLoadingToTask
+            (Record file, string path, ImageLoadingOptions option, IObserver<ImageSourceContainer> observer,
+            bool hasPriority, CancellationToken token)
         {
-            if (path == null || tokenSource.IsDisposed)
+            //Task.Run(() =>
+                this.RequestLoadingMain(file, path, option, observer, hasPriority, token);
+        }
+
+        private void RequestLoadingToTask
+            (Record file, string path, ImageLoadingOptions option, IObserver<ImageSourceContainer> observer,
+            bool hasPriority, ObservableCancellationTokenSource tokenSource)
+        {
+            if ((file != null || path != null) && !tokenSource.IsDisposed)
             {
-                return;
+                //Task.Run(() =>
+                {
+                    this.cancellationSources.Add(tokenSource);
+                    var token = tokenSource.Token;
+                    this.RequestLoadingMain(file, path, option, observer, hasPriority, token);
+                }//);
             }
-
-            this.cancellationSources.Add(tokenSource);
-
-            var token = tokenSource.Token;
-
-            this.RequestLoadingMain(null, path, option, observer, hasPriority, token);
         }
 
 
@@ -366,17 +362,19 @@ namespace ShibugakiViewer.Models.ImageViewer
             (Record file, string path, ImageLoadingOptions option, IObserver<ImageSourceContainer> observer,
             bool hasPriority, CancellationToken token)
         {
-            if (observer == null)
-            {
-                observer = emptyObserver;
-            }
-
             var filePath = file?.FullPath ?? path;
 
             if (filePath == null)
             {
                 return;
             }
+
+
+            if (observer == null)
+            {
+                observer = emptyObserver;
+            }
+
 
             ImageSourceContainer image;
             if (this.TryGetImage(filePath, option.Quality, out image))
@@ -406,7 +404,7 @@ namespace ShibugakiViewer.Models.ImageViewer
 
             var request = (file != null)
                 ? new CommandPacket(file, option.Clone(), observer)
-                : new CommandPacket(path, option.Clone(), observer);
+                : new CommandPacket(filePath, option.Clone(), observer);
 
             request.CancellationToken = token;
 

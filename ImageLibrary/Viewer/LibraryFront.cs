@@ -400,11 +400,14 @@ namespace ImageLibrary.Viewer
                 }
                 this.CollectionChanged?.Invoke(this, eventArgs);
 
-                this.CacheUpdatedSubject.OnNext(new CacheUpdatedEventArgs()
+                if (this.CacheUpdatedSubject.HasObservers)
                 {
-                    Start = offset,
-                    Length = result.Length,
-                });
+                    this.CacheUpdatedSubject.OnNext(new CacheUpdatedEventArgs()
+                    {
+                        Start = offset,
+                        Length = result.Length,
+                    });
+                }
             }
 
             return result;

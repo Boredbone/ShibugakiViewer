@@ -405,75 +405,64 @@ namespace ShibugakiViewer.Views.Behaviors
 
             var tokenSource = new ObservableCancellationTokenSource();
 
-            var subject = new Subject<ImageSourceContainer>();//.AddTo(disposables);
+            var subject = new Subject<ImageSourceContainer>();
 
-
-            //var p = this.RecordInner?.FullPath ?? this.FilePathInner;
+            
 
             subject
                 .LastOrDefaultAsync()
-                .ObserveOnUIDispatcher()
                 .Take(1)
-                .Subscribe(x =>
+                .Select(x =>
                 {
-
-                    ImageSourceContainer image = null;
-
                     if (x != null)
                     {
-                        image = x;
-                    }
-                    else if (!this.Buffer.TryGetImage(path, quality, out image))
-                    {
-                        image = null;
+                        return x;
                     }
 
+                    ImageSourceContainer image = null;
+                    if (this.Buffer.TryGetImage(path, quality, out image))
+                    {
+                        return image;
+                    }
+                    return null;
+                })
+                .ObserveOnUIDispatcher()
+                .Subscribe(image =>
+                {
                     if (image != null)
                     {
                         var p = this.RecordInner?.FullPath ?? this.FilePathInner;
 
-                        if (p == null)// || !p.Equals(image?.FullPath))
+                        if (p == null)
                         {
                             this.ChangeSource(null, null, false);
                         }
-                        //if (image?.FullPath == null || !image.FullPath.Equals(p))
-                        //{
-                        //    this.ChangeSource(null, null, false);
-                        //    //element.Source = null;
-                        //    //element.Source = image.Image;
-                        //}
                         else if(p.Equals(image?.FullPath))
                         {
                             this.ChangeSource(image.Image, image.FullPath,
                                 image.Information != null
                                 && image.Information.Type == GraphicFileType.Gif
                                 && image.Quality >= ImageQuality.Resized);
-                            //element.Source = image.Image;
                         }
                     }
                     else
                     {
                         //this.ChangeSource(null, null, false);
                     }
-
-                    //Debug.WriteLine($"completed:{record?.FullPath ?? path}");
+                    
                     this.disposables.Clear();
 
                 });
-            //.AddTo(this.disposables);
 
 
             Disposable.Create(() =>
             {
-                //return;
-                //Debug.WriteLine($"disposed:{record?.FullPath ?? path}");
                 tokenSource?.Cancel(true);
                 tokenSource?.Dispose();
 
             }).AddTo(this.disposables);
 
-
-            //Debug.WriteLine($"requested:{record?.FullPath ?? path}");
+            
 
             if (record != null)
             {
@@ -483,7 +472,6 @@ namespace ShibugakiViewer.Views.Behaviors
                 }
                 else
                 {
-
                     this.Buffer.RequestLoading(record, option, subject, priority, tokenSource.Token);
                 }
             }
