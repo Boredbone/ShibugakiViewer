@@ -48,7 +48,7 @@ namespace ShibugakiViewer.ViewModels.SettingPages
                 //.Buffer(TimeSpan.FromMilliseconds(500))
                 //.Where(x => x.Count > 0)
                 //.Select(x => x.Last())
-                .ObserveOnUIDispatcher()
+                //.ObserveOnUIDispatcher()
                 .ToReadOnlyReactiveProperty()
                 .AddTo(this.Disposables);
 
@@ -56,7 +56,7 @@ namespace ShibugakiViewer.ViewModels.SettingPages
                 .Buffer(TimeSpan.FromMilliseconds(500))
                 .Where(x => x.Count > 0)
                 .Select(x => x.Last())
-                .ObserveOnUIDispatcher()
+                //.ObserveOnUIDispatcher()
                 .ToReadOnlyReactiveProperty()
                 .AddTo(this.Disposables);
 

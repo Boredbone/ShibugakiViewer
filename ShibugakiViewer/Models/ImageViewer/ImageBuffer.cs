@@ -68,7 +68,8 @@ namespace ShibugakiViewer.Models.ImageViewer
 
         private readonly Boredbone.Utility.AsyncLock asyncLock;
 
-        private static IObserver<int> emptyObserver = Observer.Create<int>(_ => { });
+        private static IObserver<ImageSourceContainer> emptyObserver
+            = Observer.Create<ImageSourceContainer>(_ => { });
 
 
         public ImageBuffer()
@@ -168,7 +169,7 @@ namespace ShibugakiViewer.Models.ImageViewer
 
                     //await Task.Delay(10);
 
-                    var observer = new Subject<int>();
+                    var observer = new Subject<ImageSourceContainer>();
                     if (file != null)
                     {
                         this.RequestLoading(file, option, observer, hasPriority, token);
@@ -183,14 +184,15 @@ namespace ShibugakiViewer.Models.ImageViewer
                     //    //.Merge(tokenSource.Canceled.Catch((Exception e) => Observable.Empty<Unit>()).Select(_ => 0).Do(_=>Debug.WriteLine("Canceled")))
                     //    .Catch((Exception e) => Observable.Empty<int>())
                     //    .LastOrDefaultAsync();
+                    image = null;
 
                     if (!tokenSource.IsDisposed)
                     {
                         try
                         {
-                            var r = await observer
+                            image = await observer
                                 .TakeUntil(tokenSource.Canceled.Select(_ => 0).LastOrDefaultAsync())
-                                .Catch((Exception e) => Observable.Empty<int>())
+                                .Catch((Exception e) => Observable.Empty<ImageSourceContainer>())
                                 .LastOrDefaultAsync();
 
                         }
@@ -202,7 +204,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                         //.Do(x => Debug.WriteLine("RxCanceled")))
                     }
 
-                    if (this.TryGetImage(path, option.Quality, out image))
+                    if (image != null || this.TryGetImage(path, option.Quality, out image))
                     {
                         return image;
                     }
@@ -310,7 +312,7 @@ namespace ShibugakiViewer.Models.ImageViewer
 
 
         public void RequestLoading
-            (Record file, ImageLoadingOptions option, IObserver<int> observer,
+            (Record file, ImageLoadingOptions option, IObserver<ImageSourceContainer> observer,
             bool hasPriority, CancellationToken token)
         {
             if (file != null)
@@ -319,7 +321,7 @@ namespace ShibugakiViewer.Models.ImageViewer
             }
         }
         public void RequestLoading
-            (string path, ImageLoadingOptions option, IObserver<int> observer,
+            (string path, ImageLoadingOptions option, IObserver<ImageSourceContainer> observer,
             bool hasPriority, CancellationToken token)
         {
             if (path != null)
@@ -329,7 +331,7 @@ namespace ShibugakiViewer.Models.ImageViewer
         }
 
         public void RequestLoading
-            (Record file, ImageLoadingOptions option, IObserver<int> observer,
+            (Record file, ImageLoadingOptions option, IObserver<ImageSourceContainer> observer,
             bool hasPriority, ObservableCancellationTokenSource tokenSource)
         {
             if (file == null || tokenSource.IsDisposed)
@@ -344,7 +346,7 @@ namespace ShibugakiViewer.Models.ImageViewer
             this.RequestLoadingMain(file, file.FullPath, option, observer, hasPriority, token);
         }
         public void RequestLoading
-            (string path, ImageLoadingOptions option, IObserver<int> observer,
+            (string path, ImageLoadingOptions option, IObserver<ImageSourceContainer> observer,
             bool hasPriority, ObservableCancellationTokenSource tokenSource)
         {
             if (path == null || tokenSource.IsDisposed)
@@ -361,7 +363,7 @@ namespace ShibugakiViewer.Models.ImageViewer
 
 
         private void RequestLoadingMain
-            (Record file, string path, ImageLoadingOptions option, IObserver<int> observer,
+            (Record file, string path, ImageLoadingOptions option, IObserver<ImageSourceContainer> observer,
             bool hasPriority, CancellationToken token)
         {
             if (observer == null)
@@ -387,6 +389,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                         file.Width = image.Information.GraphicSize.Width;
                         file.Height = image.Information.GraphicSize.Height;
                     }
+                    observer.OnNext(image);
                     observer.OnCompleted();
                     return;
                 }
@@ -439,11 +442,12 @@ namespace ShibugakiViewer.Models.ImageViewer
 
             var key = command.Path;
 
-            ImageBufferItem result;
-            if (this.TryGetImageData(key, command.Option.Quality, out result))
+            ImageSourceContainer result;
+            if (this.TryGetImage(key, command.Option.Quality, out result))
             {
                 if (result != null)
                 {
+                    command.Observer.OnNext(result);
                     command.Observer.OnCompleted();
                     return;
                 }
@@ -457,7 +461,6 @@ namespace ShibugakiViewer.Models.ImageViewer
             }
 
 
-            command.Observer.OnNext(10);
 
             using (var locked = await this.asyncLock.LockAsync())
             {
@@ -534,7 +537,6 @@ namespace ShibugakiViewer.Models.ImageViewer
                         await image.LoadImageAsync
                             (key, thumbNailSize, frameWidth, frameHeight, option.CmsEnable);
                     }
-                    command.Observer.OnNext(30);
                 }
                 catch (OutOfMemoryException e)
                 {
@@ -564,7 +566,6 @@ namespace ShibugakiViewer.Models.ImageViewer
                         return;
                     }
 
-                    command.Observer.OnNext(50);
 
                     ClearBuffer();
                     GC.Collect();
@@ -605,7 +606,6 @@ namespace ShibugakiViewer.Models.ImageViewer
                                 (key, thumbNailSize, frameWidth, frameHeight, option.CmsEnable);
                         }
 
-                        command.Observer.OnNext(70);
                     }
                     catch (Exception e)
                     {
@@ -633,8 +633,9 @@ namespace ShibugakiViewer.Models.ImageViewer
                     }
 
                     this.UpdatedSubject.OnNext(key);
+                    command.Observer.OnNext(image);
                 }
-                command.Observer.OnCompleted();//TODO 読み込み失敗した場合もCompletedにしていいか？
+                command.Observer.OnCompleted();
             }
             //finally
             //{
@@ -723,7 +724,7 @@ namespace ShibugakiViewer.Models.ImageViewer
         private class CommandPacket
         {
             public Record File { get; set; }
-            public IObserver<int> Observer { get; set; }
+            public IObserver<ImageSourceContainer> Observer { get; set; }
             public ImageLoadingOptions Option { get; set; }
             public CancellationToken CancellationToken { get; set; }
 
@@ -736,7 +737,7 @@ namespace ShibugakiViewer.Models.ImageViewer
             //public TaskCompletionSource<string> CompletionSource { get; private set; }
             //public int ProcessDuration { get; private set; }
 
-            public CommandPacket(Record file, ImageLoadingOptions option, IObserver<int> observer)
+            public CommandPacket(Record file, ImageLoadingOptions option, IObserver<ImageSourceContainer> observer)
             {
                 this.File = file;
                 this.path = null;
@@ -744,7 +745,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 this.Option = option;
             }
 
-            public CommandPacket(string path, ImageLoadingOptions option, IObserver<int> observer)
+            public CommandPacket(string path, ImageLoadingOptions option, IObserver<ImageSourceContainer> observer)
             {
                 this.File = null;
                 this.path = path;
@@ -851,7 +852,7 @@ namespace ShibugakiViewer.Models.ImageViewer
     /// <summary>
     /// 画像情報と最後に読み込まれた時期を保持
     /// </summary>
-    class ImageBufferItem:IDisposable
+    class ImageBufferItem : IDisposable
     {
         private ImageSourceContainer image;
         //public FileInformation File { get; set; }

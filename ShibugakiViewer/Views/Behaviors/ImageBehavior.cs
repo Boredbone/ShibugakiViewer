@@ -405,29 +405,44 @@ namespace ShibugakiViewer.Views.Behaviors
 
             var tokenSource = new ObservableCancellationTokenSource();
 
-            var subject = new Subject<int>();//.AddTo(disposables);
+            var subject = new Subject<ImageSourceContainer>();//.AddTo(disposables);
 
 
-            var p = this.RecordInner?.FullPath ?? this.FilePathInner;
+            //var p = this.RecordInner?.FullPath ?? this.FilePathInner;
 
             subject
                 .LastOrDefaultAsync()
                 .ObserveOnUIDispatcher()
                 .Take(1)
-                .Subscribe(_ =>
+                .Subscribe(x =>
                 {
 
                     ImageSourceContainer image = null;
 
-                    if (this.Buffer.TryGetImage(path, quality, out image))
+                    if (x != null)
                     {
-                        if (image?.FullPath == null || !image.FullPath.Equals(p))
+                        image = x;
+                    }
+                    else if (!this.Buffer.TryGetImage(path, quality, out image))
+                    {
+                        image = null;
+                    }
+
+                    if (image != null)
+                    {
+                        var p = this.RecordInner?.FullPath ?? this.FilePathInner;
+
+                        if (p == null)// || !p.Equals(image?.FullPath))
                         {
                             this.ChangeSource(null, null, false);
-                            //element.Source = null;
-                            //element.Source = image.Image;
                         }
-                        else
+                        //if (image?.FullPath == null || !image.FullPath.Equals(p))
+                        //{
+                        //    this.ChangeSource(null, null, false);
+                        //    //element.Source = null;
+                        //    //element.Source = image.Image;
+                        //}
+                        else if(p.Equals(image?.FullPath))
                         {
                             this.ChangeSource(image.Image, image.FullPath,
                                 image.Information != null
@@ -438,7 +453,7 @@ namespace ShibugakiViewer.Views.Behaviors
                     }
                     else
                     {
-                        this.ChangeSource(null, null, false);
+                        //this.ChangeSource(null, null, false);
                     }
 
                     //Debug.WriteLine($"completed:{record?.FullPath ?? path}");

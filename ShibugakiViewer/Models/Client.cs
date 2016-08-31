@@ -183,7 +183,7 @@ namespace ShibugakiViewer.Models
             .AddTo(this.Disposables);
 
             this.Length = this.front.Length
-                .ObserveOnUIDispatcher()
+                //.ObserveOnUIDispatcher()
                 .ToReadOnlyReactiveProperty()
                 .AddTo(this.Disposables);
 

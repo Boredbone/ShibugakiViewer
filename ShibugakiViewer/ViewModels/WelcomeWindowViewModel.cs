@@ -84,7 +84,7 @@ namespace ShibugakiViewer.ViewModels
 
             this.ConvertOldLibraryCommand = Observable
                 .FromAsync(() => core.IsOldConvertableAsync())
-                .ObserveOnUIDispatcher()
+                //.ObserveOnUIDispatcher()
                 .ToReactiveCommand()
                 .WithSubscribe(_ => application.ConvertOldLibrary(), this.Disposables);
         }

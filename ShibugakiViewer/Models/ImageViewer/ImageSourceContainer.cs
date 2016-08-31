@@ -312,6 +312,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                                     image.Freeze();
                                 }
                             }
+                            
                             this.Image = image;
                             //Debug.WriteLine($"dd:{Thread.CurrentThread.ManagedThreadId}");
                         }//);
