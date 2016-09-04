@@ -822,4 +822,7 @@
   <data name="ViewerOperation" xml:space="preserve">
     <value>ビューアの操作</value>
   </data>
+  <data name="Skip" xml:space="preserve">
+    <value>スキップ</value>
+  </data>
 </root>

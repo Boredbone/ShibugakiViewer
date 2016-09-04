@@ -762,7 +762,7 @@ namespace ShibugakiViewer.Models
             {
                 return;
             }
-
+            
             if (record.IsGroup)
             {
                 this.SetNewGroupSearch(record);

@@ -137,6 +137,7 @@
     </ApplicationDefinition>
     <Compile Include="Models\ImageViewer\FlipDirection.cs" />
     <Compile Include="Models\SharePathOperation.cs" />
+    <Compile Include="Models\Utility\IconHelper.cs" />
     <Compile Include="Models\Utility\KeyReceiver.cs" />
     <Compile Include="Models\Utility\RandomNumber.cs" />
     <Compile Include="ViewModels\SettingPages\FolderSettingPageViewModel.cs" />
@@ -148,6 +149,7 @@
     <Compile Include="Views\Behaviors\FullScreenBehavior.cs" />
     <Compile Include="Views\Behaviors\HoverControlBehavior.cs" />
     <Compile Include="Views\Behaviors\HoverGridBehavior.cs" />
+    <Compile Include="Views\Behaviors\IconToImageSourceBehavior.cs" />
     <Compile Include="Views\Behaviors\ImageBehavior.cs" />
     <Compile Include="Views\Behaviors\KeyReceiverBehavior.cs" />
     <Compile Include="Views\Behaviors\ManipulationCommandBehavior.cs" />
@@ -467,6 +469,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Icons\appicon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Icons\mikan_rect64.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.102.0\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.102.0\build\net46\System.Data.SQLite.Core.targets')" />

@@ -253,12 +253,15 @@ namespace ImageLibrary.Viewer
                     }
 
 
-                    this.SearchCompletedSubject.OnNext(new SearchCompletedEventArgs()
+                    if (this.SearchCompletedSubject.HasObservers)
                     {
-                        Start = offset,
-                        Takes = takes,
-                        Length = 0,
-                    });
+                        this.SearchCompletedSubject.OnNext(new SearchCompletedEventArgs()
+                        {
+                            Start = offset,
+                            Takes = takes,
+                            Length = 0,
+                        });
+                    }
 
                 }
             });

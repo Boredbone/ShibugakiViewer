@@ -6,6 +6,8 @@
         xmlns:local="clr-namespace:ShibugakiViewer.Views.Windows"
         xmlns:tb="clr-namespace:WpfTools.Behaviors;assembly=WpfTools"
         xmlns:properties="clr-namespace:ShibugakiViewer.Properties"
+        xmlns:b="clr-namespace:ShibugakiViewer.Views.Behaviors"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d"
         Style="{StaticResource DefaultWindowStyle}"
         ShowActivated="True" WindowStartupLocation="CenterOwner"
@@ -46,31 +48,56 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     
-                    <StackPanel Grid.Row="0">
+                    <StackPanel>
 
 
-                        <TextBlock Style="{StaticResource titleTextStyle}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0"
+                                    Background="Transparent"
+                                    Width="64" Height="64"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Image 
+                                    Stretch="None"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center">
+                                    <i:Interaction.Behaviors>
+                                        <b:IconToImageSourceBehavior
+                                            Source="/ShibugakiViewer;component/Assets/Icons/appicon.ico"
+                                            Size="48"/>
+                                    </i:Interaction.Behaviors>
+                                </Image>
+                            </Border>
+                            
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Style="{StaticResource titleTextStyle}">
                             <Run Text="{StaticResource AppName}"/>
-                        </TextBlock>
+                                </TextBlock>
 
-                        <TextBlock Style="{StaticResource titleTextStyle}">
+                                <TextBlock Style="{StaticResource titleTextStyle}">
                             <Run Text="Version "/>
                             <Run Name="versionText" Text="1.0"/>
-                        </TextBlock>
-                        
-                        <TextBlock Style="{StaticResource smallTextStyle}">
+                                </TextBlock>
+
+                                <TextBlock Style="{StaticResource smallTextStyle}">
                             <Run Text="Date "/>
                             <Run Name="buildDate" Text="1.0"/>
-                        </TextBlock>
+                                </TextBlock>
 
-                        <TextBlock Style="{StaticResource titleTextStyle}">
+                                <TextBlock Style="{StaticResource titleTextStyle}">
                             <Hyperlink NavigateUri="https://github.com/Boredbone/ShibugakiViewer"
                                        tb:HyperlinkBehavior.NavigateByClick="True">
                                 <Run Text="Project Home"/>
                             </Hyperlink>
-                        </TextBlock>
+                                </TextBlock>
+                            </StackPanel>
 
-
+                        </Grid>
+                        
                         <TextBlock x:Name="description" Style="{StaticResource smallTextStyle}"
                                    Text="This software is built using these libraries:"/>
 

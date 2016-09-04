@@ -159,38 +159,6 @@ namespace ShibugakiViewer
                 new WelcomeWindow() { ShowActivated = true }.Show();
                 this.StartPipeServer();
             }
-
-            /*
-            //通知アイコン
-            this.ShowNotifyIcon()?.AddTo(this.disposables);
-
-            //ウィンドウ
-            if (false)//hasItem)
-            {
-                this.ShowClientWindow((e.Args.IsNullOrEmpty()) ? null : e.Args);
-            }
-            else
-            {
-                new WelcomeWindow() { ShowActivated = true }.Show();
-            }
-
-            //パイプサーバ
-            if (this.server == null)
-            {
-                this.server = new PipeServer().AddTo(this.disposables);
-
-                this.server.LineReceived
-                    .Buffer(this.server.LineReceived.Where(x => x.StartsWith(commandMarker)))
-                    .ObserveOnUIDispatcher()
-                    .Subscribe(x => this.ExecutePipeCommand(x), ex =>
-                    {
-                        MessageBox.Show(ex.ToString());
-                        this.Shutdown();
-                    })
-                    .AddTo(this.disposables);
-
-                this.server.Activate(mutexId, pipeId);
-            }*/
         }
 
 
@@ -410,48 +378,55 @@ namespace ShibugakiViewer
             //var errorMember = exception.TargetSite.Name;
             //var errorMessage = exception.Message;
             //var message = string.Format(exception.ToString());
-            MessageBox.Show(exception.ToString(), "UnhandledException",
+
+#if DEBUG
+            var text = exception.ToString();
+#else
+            var text = exception.Message;
+#endif
+
+            MessageBox.Show(text, "UnhandledException",
                 MessageBoxButton.OK, MessageBoxImage.Stop);
             Environment.Exit(0);
         }
 
-        /// <summary>
-        /// アイコンを生成
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        private System.Drawing.Icon CreateIcon(string path)
-        {
-            try
-            {
-                const string iconUri = "pack://application:,,,/Assets/Icons/appicon.ico";
+        ///// <summary>
+        ///// アイコンを生成
+        ///// </summary>
+        ///// <param name="path"></param>
+        ///// <returns></returns>
+        //private System.Drawing.Icon CreateIcon(string path, int size)
+        //{
+        //    try
+        //    {
+        //        //const string iconUri = "pack://application:,,,/Assets/Icons/appicon.ico";
 
-                Uri uri;
-                if (!Uri.TryCreate(iconUri, UriKind.Absolute, out uri))
-                {
-                    return null;
-                }
+        //        Uri uri;
+        //        if (!Uri.TryCreate(path, UriKind.Absolute, out uri))
+        //        {
+        //            return null;
+        //        }
 
-                var streamResourceInfo = GetResourceStream(uri);
-                if (streamResourceInfo == null)
-                {
-                    return null;
-                }
+        //        var streamResourceInfo = GetResourceStream(uri);
+        //        if (streamResourceInfo == null)
+        //        {
+        //            return null;
+        //        }
 
-                System.Drawing.Icon icon;
+        //        System.Drawing.Icon icon;
 
-                using (var stream = streamResourceInfo.Stream)
-                {
-                    icon = new System.Drawing.Icon(stream, new System.Drawing.Size(16, 16));
-                }
+        //        using (var stream = streamResourceInfo.Stream)
+        //        {
+        //            icon = new System.Drawing.Icon(stream, new System.Drawing.Size(size, size));
+        //        }
 
-                return icon;
-            }
-            catch
-            {
-                return null;
-            }
-        }
+        //        return icon;
+        //    }
+        //    catch
+        //    {
+        //        return null;
+        //    }
+        //}
 
         /// <summary>
         /// 通知アイコン表示
@@ -459,7 +434,7 @@ namespace ShibugakiViewer
         /// <returns></returns>
         private IDisposable ShowNotifyIcon()
         {
-            var icon = this.CreateIcon("pack://application:,,,/Assets/Icons/appicon.ico");
+            var icon = IconHelper.CreateIcon("pack://application:,,,/Assets/Icons/appicon.ico", 16);
             if (icon == null)
             {
                 return null;

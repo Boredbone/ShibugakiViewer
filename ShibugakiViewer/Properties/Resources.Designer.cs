@@ -1798,6 +1798,15 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
+        ///   Skip に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Skip {
+            get {
+                return ResourceManager.GetString("Skip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Slideshow に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Slideshow {

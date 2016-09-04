@@ -21,6 +21,13 @@
     <Window.DataContext>
         <viewModels:WelcomeWindowViewModel/>
     </Window.DataContext>
+    <Window.Resources>
+        <Style TargetType="TextBlock" BasedOn="{StaticResource TitleTextBlockStyle}"
+               x:Key="welcomeTitleStyle">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="8"/>
+        </Style>
+    </Window.Resources>
     <Grid>
 
         <TabControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
@@ -29,12 +36,13 @@
                     SelectedIndex="{Binding SelectedTab.Value,Mode=TwoWay}">
 
             <TabItem Header="a">
-                <Grid>
+                <Grid Background="{StaticResource BaseColor}">
                     <StackPanel 
                         Orientation="Vertical"
                         HorizontalAlignment="Center" VerticalAlignment="Center">
 
-                        <TextBlock>
+                        <TextBlock 
+                            Style="{StaticResource welcomeTitleStyle}">
                             <Run x:Uid="WelcomeText1" Text="{x:Static properties:Resources.WelcomeText1_Text}"/>
                             <Run Text="{StaticResource AppName}"/>
                             <Run x:Uid="WelcomeText2" Text="{x:Static properties:Resources.WelcomeText2_Text}"/>
@@ -82,7 +90,7 @@
             </TabItem>
 
             <TabItem Header="b">
-                <Grid>
+                <Grid Background="{StaticResource BaseColor}">
 
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
@@ -143,7 +151,7 @@
 
 
             <TabItem Header="d">
-                <Grid>
+                <Grid Background="{StaticResource BaseColor}">
 
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -169,18 +177,59 @@
             </TabItem>
 
             <TabItem Header="e">
-                <Grid>
+                <Grid Background="{StaticResource BaseColor}">
                     <StackPanel 
                         Orientation="Vertical"
                         HorizontalAlignment="Center" VerticalAlignment="Center">
 
-                        <TextBlock>
+                        <TextBlock
+                            Style="{StaticResource welcomeTitleStyle}">
                             <Run x:Uid="WelcomeText1" Text="{x:Static properties:Resources.WelcomeText1_Text}"/>
                             <Run Text="{StaticResource AppName}"/>
                             <Run x:Uid="WelcomeText2" Text="{x:Static properties:Resources.WelcomeText2_Text}"/>
                         </TextBlock>
 
-                        <TextBlock Text="Mikan Icon" Margin="16"/>
+                        <TextBlock Text="Mikan detected import?" Margin="16"/>
+
+                        <Grid HorizontalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0"
+                                    Background="Transparent"
+                                    Width="64" Height="64"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center">
+                                <Image 
+                                    Stretch="None"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Source="/ShibugakiViewer;component/Assets/Icons/mikan_rect64.png" />
+                            </Border>
+                            <TextBlock 
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                Text="{StaticResource RightArSymbol}"
+                                FontFamily="{StaticResource SymbolFont}"
+                                FontSize="{StaticResource IconFontSize}"/>
+                            <Border Grid.Column="2"
+                                    Background="Transparent"
+                                    Width="64" Height="64"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Image 
+                                    Stretch="None"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center">
+                                    <i:Interaction.Behaviors>
+                                        <b:IconToImageSourceBehavior
+                                            Source="/ShibugakiViewer;component/Assets/Icons/appicon.ico"
+                                            Size="48"/>
+                                    </i:Interaction.Behaviors>
+                                </Image>
+                            </Border>
+                        </Grid>
 
                         <Grid Height="56" Margin="8" Width="250">
                             <cc:FlatButton
@@ -193,11 +242,27 @@
                                     Margin="0,0,8,0"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    IconText="{StaticResource RefreshSymbol}"
-                                    Text="Import"/>
+                                    IconText="{StaticResource ImportSymbol}"
+                                    Text="{x:Static properties:Resources.ImportMikanViewer}"/>
                             </cc:FlatButton>
                         </Grid>
 
+                        <Grid Height="32" Margin="8" Width="150">
+                            <cc:FlatButton
+                                Command="{Binding ChangeTabCommand}"
+                                CommandParameter="0"
+                                Style="{StaticResource informationPaneButtonStyle}"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch">
+
+                                <TextBlock
+                                    Margin="0,0,8,0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    FontSize="{StaticResource NormalTextSize}"
+                                    Text="{x:Static properties:Resources.Skip}"/>
+                            </cc:FlatButton>
+                        </Grid>
 
 
                     </StackPanel>

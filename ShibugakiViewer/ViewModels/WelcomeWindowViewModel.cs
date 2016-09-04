@@ -47,7 +47,11 @@ namespace ShibugakiViewer.ViewModels
 
             this.ExitSubject = new Subject<bool>().AddTo(this.Disposables);
 
-            this.SelectedTab = new ReactiveProperty<int>().AddTo(this.Disposables);
+            var oldConvertable = core.IsOldConvertable();
+
+            var firstTab = oldConvertable ? 4 : 0;
+
+            this.SelectedTab = new ReactiveProperty<int>(firstTab).AddTo(this.Disposables);
 
             this.ChangeTabCommand = new ReactiveCommand()
                 .WithSubscribeOfType<string>(x =>
@@ -83,7 +87,8 @@ namespace ShibugakiViewer.ViewModels
                 }, this.Disposables);
 
             this.ConvertOldLibraryCommand = Observable
-                .FromAsync(() => core.IsOldConvertableAsync())
+                .Return(oldConvertable)
+                //.FromAsync(() => core.IsOldConvertableAsync())
                 //.ObserveOnUIDispatcher()
                 .ToReactiveCommand()
                 .WithSubscribe(_ => application.ConvertOldLibrary(), this.Disposables);

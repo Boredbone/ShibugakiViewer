@@ -649,40 +649,22 @@ namespace ShibugakiViewer.Models
 
             return saveDirectory;
         }
-        /*
-        public async Task ConvertOldLibraryAsync()
-        {
-            using (var locking = await this.Library.LockAsync())
-            {
-                var saveDirectory = this.GetOldLibraryDirectory();
 
-                var converter = new LibraryConverter.Compat.Converter();
-                await converter.Start1(saveDirectory, this.Settings);
-
-                var data = this.Library.GetDataForConvert();
-                await converter.Start2(data.Item1, data.Item2, data.Item3);
-            }
-        }*/
 
         public string[] GetConvertArgs()
-        {
-            return new[]
-            {
-                this.GetOldLibraryDirectory(),
-                settingVersion.ToString(),
-            };
-        }
+            => new[] { this.GetOldLibraryDirectory(), settingVersion.ToString(), };
+        
+
+        private bool IsOldLibraryDirectoryExists()
+            => System.IO.Directory.Exists(this.GetOldLibraryDirectory());
+        
 
         public async Task<bool> IsOldConvertableAsync()
-        {
-            var saveDirectory = this.GetOldLibraryDirectory();
+            => this.IsOldLibraryDirectoryExists() && !(await this.Library.HasItemsAsync());
 
-            if (!System.IO.Directory.Exists(saveDirectory))
-            {
-                return false;
-            }
-            return !(await this.Library.HasItemsAsync());
-        }
+        public bool IsOldConvertable()
+            => this.IsOldLibraryDirectoryExists() && !this.Library.HasItems();
+
 
         private string ShowLibraryResult(LibraryLoadResult result)
         {

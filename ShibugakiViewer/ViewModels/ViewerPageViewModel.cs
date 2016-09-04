@@ -199,7 +199,18 @@ namespace ShibugakiViewer.ViewModels
             this.DisplayZoomFactor = this.CurrentZoomFactorPercent.ToReactiveProperty().AddTo(this.Disposables);
 
             this.DisplayZoomFactor.Where(x => x != this.CurrentZoomFactorPercent.Value)
-                .Subscribe(x => this.DesiredZoomFactor.Value = x / 100.0).AddTo(this.Disposables);
+                .Subscribe(x =>
+                {
+                    var value = x / 100.0;
+                    if (this.DesiredZoomFactor.Value == value)
+                    {
+                        value += 0.00001;
+                        //this.DesiredZoomFactor.Value = this.CurrentZoomFactorPercent.Value / 200.0;
+                        //return;
+                    }
+                    this.DesiredZoomFactor.Value = value;
+                })
+                .AddTo(this.Disposables);
 
             this.IsImageChanging = new ReactiveProperty<bool>().AddTo(this.Disposables);
 

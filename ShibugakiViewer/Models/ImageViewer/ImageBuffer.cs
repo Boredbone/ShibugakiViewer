@@ -19,16 +19,12 @@ using Boredbone.Utility.Notification;
 
 namespace ShibugakiViewer.Models.ImageViewer
 {
-
     /// <summary>
     /// 読み込んだ画像を保持するバッファ
     /// </summary>
     public class ImageBuffer : DisposableBase
     {
-
-
         private ConcurrentDictionary<string, ImageBufferItem> images;
-        //private ConcurrentDictionary<string, ImageBufferItem> smallImages;
         private ConcurrentDictionary<string, ImageBufferItem> thumbNailImages;
 
         private ulong count = 0;
@@ -48,10 +44,7 @@ namespace ShibugakiViewer.Models.ImageViewer
 
         private Subject<string> UpdatedSubject { get; }
         public IObservable<string> Updated => this.UpdatedSubject.AsObservable();
-
-        //private Task processTask;
-        //private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-        //private EventWaitHandle waitHandle;
+        
         private readonly ConcurrentQueue<CommandPacket> currentFileLoadRequest
             = new ConcurrentQueue<CommandPacket>();
         private readonly ConcurrentQueue<CommandPacket> lowQualityPreLoadRequest
@@ -75,10 +68,7 @@ namespace ShibugakiViewer.Models.ImageViewer
         public ImageBuffer()
         {
             images = new ConcurrentDictionary<string, ImageBufferItem>();
-            //smallImages = new ConcurrentDictionary<string, ImageBufferItem>();
             thumbNailImages = new ConcurrentDictionary<string, ImageBufferItem>();
-            //thumbNailCache = new ConcurrentQueue<ImageLoader>();
-            //ThumbNailCacheSize = 100;
 
             this.UpdatedSubject = new Subject<string>().AddTo(this.Disposables);
 
@@ -87,13 +77,11 @@ namespace ShibugakiViewer.Models.ImageViewer
             this.ActionQueueSubject = new Subject<Unit>().AddTo(this.Disposables);
 
             var scheduler = new EventLoopScheduler();
-
-            Debug.WriteLine($"oo:{Thread.CurrentThread.ManagedThreadId}");
+            
 
             //読み込み要求を処理
             var subscription = this.ActionQueueSubject
                 .ObserveOn(scheduler)
-                //.ObserveOnUIDispatcher()
                 .Subscribe(async _ =>
                 {
                     CommandPacket packet;
@@ -131,9 +119,7 @@ namespace ShibugakiViewer.Models.ImageViewer
             (Record file, string path, ImageLoadingOptions option, bool hasPriority,
             ObservableCancellationTokenSource tokenSource)
         {
-            //return null;// this.thumbNailImages.FirstOrNull()?.Value.GetImage(0);
-
-
+            
             ImageSourceContainer image;
             if (this.TryGetImage(path, option.Quality, out image))
             {
@@ -148,10 +134,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                     return image;
                 }
             }
-            //if (this.semaphore != null)
-            //{
-            //    await this.semaphore.WaitAsync().ConfigureAwait(false);// token);
-            //}
+
             try
             {
                 if (tokenSource.IsDisposed)
@@ -164,11 +147,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 var token = tokenSource.Token;
 
                 return await Task.Run(async () =>
-                //return await Task.Delay(10).ContinueWith(async __=>
                 {
-
-                    //await Task.Delay(10);
-
                     var observer = new Subject<ImageSourceContainer>();
                     if (file != null)
                     {
@@ -177,13 +156,8 @@ namespace ShibugakiViewer.Models.ImageViewer
                     else
                     {
                         this.RequestLoading(path, option, observer, hasPriority, token);
-
                     }
-
-                    //var r = await observer
-                    //    //.Merge(tokenSource.Canceled.Catch((Exception e) => Observable.Empty<Unit>()).Select(_ => 0).Do(_=>Debug.WriteLine("Canceled")))
-                    //    .Catch((Exception e) => Observable.Empty<int>())
-                    //    .LastOrDefaultAsync();
+                    
                     image = null;
 
                     if (!tokenSource.IsDisposed)
@@ -194,14 +168,10 @@ namespace ShibugakiViewer.Models.ImageViewer
                                 .TakeUntil(tokenSource.Canceled.Select(_ => 0).LastOrDefaultAsync())
                                 .Catch((Exception e) => Observable.Empty<ImageSourceContainer>())
                                 .LastOrDefaultAsync();
-
                         }
                         catch
                         {
-
                         }
-
-                        //.Do(x => Debug.WriteLine("RxCanceled")))
                     }
 
                     if (image != null || this.TryGetImage(path, option.Quality, out image))
@@ -210,18 +180,12 @@ namespace ShibugakiViewer.Models.ImageViewer
                     }
 
                     return null;
-                });//, tokenSource.Token);
-                //.ConfigureAwait(false);
+                });
             }
             catch
             {
                 return null;
             }
-            //finally
-            //{
-            //
-            //    this.semaphore?.Release();
-            //}
         }
 
 
@@ -239,10 +203,8 @@ namespace ShibugakiViewer.Models.ImageViewer
                     return true;
                 }
             }
-
             image = null;
             return false;
-
         }
 
 
@@ -256,16 +218,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 return false;
             }
 
-
             var key = path;
-
-            //var f = thumbNailImages.FirstOrNull()?.Value;
-            //if (f != null)
-            //{
-            //    result = f;
-            //    return true;
-            //}
-
 
             if (quality == ImageQuality.ThumbNail)
             {
@@ -392,8 +345,6 @@ namespace ShibugakiViewer.Models.ImageViewer
                     return;
                 }
             }
-            //this.ClearThumbNails();
-
 
             if (this.MetaImageExtention != null
                 && this.MetaImageExtention.Contains(System.IO.Path.GetExtension(filePath).ToLower()))
@@ -434,10 +385,6 @@ namespace ShibugakiViewer.Models.ImageViewer
 
         private async Task LoadImageAsync(CommandPacket command)
         {
-            //using (var subject = new Subject<int>())
-            //{
-            //    subject.Subscribe(command.Observer);
-
             var key = command.Path;
 
             ImageSourceContainer result;
@@ -453,7 +400,6 @@ namespace ShibugakiViewer.Models.ImageViewer
 
             if (command.CancellationToken.IsCancellationRequested)
             {
-                //Debug.WriteLine("TaskCanceled");
                 command.Observer.OnCompleted();
                 return;
             }
@@ -462,10 +408,6 @@ namespace ShibugakiViewer.Models.ImageViewer
 
             using (var locked = await this.asyncLock.LockAsync())
             {
-                //if (this.semaphore != null)
-                //{
-                //    await this.semaphore.WaitAsync(command.CancellationToken).ConfigureAwait(false);// token);
-                //}
                 var image = new ImageSourceContainer();
 
                 bool failedFlag = false;
@@ -619,11 +561,6 @@ namespace ShibugakiViewer.Models.ImageViewer
                         thumbNailImages.AddOrExtrude
                             (key, new ImageBufferItem(image, ++this.count), thumbNailbufferSize);
                     }
-                    //else if (image.Quality == ImageQuality.LowQuality)
-                    //{
-                    //    smallImages.AddOrExtrude
-                    //        (key, new ImageBufferItem(image, ++this.count), bufferSize);
-                    //}
                     else
                     {
                         images.AddOrExtrude
@@ -635,10 +572,6 @@ namespace ShibugakiViewer.Models.ImageViewer
                 }
                 command.Observer.OnCompleted();
             }
-            //finally
-            //{
-            //    this.semaphore?.Release();
-            //}
         }
 
 
@@ -651,7 +584,6 @@ namespace ShibugakiViewer.Models.ImageViewer
 
         private void ClearBuffer()
         {
-            //this.smallImages.ClearBuffer();
             this.images.ClearBuffer();
             this.thumbNailImages.ClearBuffer();
         }
@@ -682,23 +614,7 @@ namespace ShibugakiViewer.Models.ImageViewer
             this.ClearThumbNailRequests();
             this.thumbNailImages.ClearBuffer();
         }
-
-
-
-        //public void CacheThumbNail(ImageLoader loader)
-        //{
-        //    this.thumbNailCache.Enqueue(loader);
-        //    if (this.thumbNailCache.Count > ThumbNailCacheSize)
-        //    {
-        //        ImageLoader item;
-        //        if (thumbNailCache.TryDequeue(out item))
-        //        {
-        //            item.ReleaseThumbNail();
-        //        }
-        //        //this.thumbNailCache[0].ReleaseThumbNail();
-        //        //this.thumbNailCache.RemoveAt(0);
-        //    }
-        //}
+        
 
         private void ClearQueue(ConcurrentQueue<CommandPacket> queue)
         {
@@ -730,10 +646,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 => (this.path != null) ? this.path : this.File?.FullPath;
 
             private string path;
-
-            //public string Data { get; private set; }
-            //public TaskCompletionSource<string> CompletionSource { get; private set; }
-            //public int ProcessDuration { get; private set; }
+            
 
             public CommandPacket(Record file, ImageLoadingOptions option, IObserver<ImageSourceContainer> observer)
             {
@@ -825,8 +738,6 @@ namespace ShibugakiViewer.Models.ImageViewer
     {
         public double FrameWidth { get; set; }
         public double FrameHeight { get; set; }
-        //public bool ResizeEnable { get; set; }
-        //public bool HasPriority { get; set; }
         public ImageQuality Quality { get; set; }
         public bool CmsEnable { get; set; }
 
@@ -837,8 +748,6 @@ namespace ShibugakiViewer.Models.ImageViewer
             {
                 FrameHeight = this.FrameHeight,
                 FrameWidth = this.FrameWidth,
-                //ResizeEnable = this.ResizeEnable,
-                //HasPriority=this.HasPriority,
                 Quality = this.Quality,
                 CmsEnable = this.CmsEnable,
 
@@ -853,7 +762,6 @@ namespace ShibugakiViewer.Models.ImageViewer
     class ImageBufferItem : IDisposable
     {
         private ImageSourceContainer image;
-        //public FileInformation File { get; set; }
         public ulong LastLoadedCount { get; private set; }
 
         public ImageBufferItem(ImageSourceContainer source, ulong initialCount)
@@ -873,18 +781,12 @@ namespace ShibugakiViewer.Models.ImageViewer
         public ImageSourceContainer GetImage(ulong count)
         {
             LastLoadedCount = count;
-            //image.IsThumbNail = this.IsThumbNail;
-            //image.Quality = this.Quality;
             return image;
         }
         public void Dispose()
         {
             image.Dispose();
-            //image.Image = null;
-            //image = null;
         }
-
-
     }
 
 
