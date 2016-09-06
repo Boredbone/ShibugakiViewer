@@ -29,15 +29,8 @@ namespace ShibugakiViewer.Views.Behaviors
 
         public static readonly DependencyProperty ScrollSpeedProperty =
             DependencyProperty.Register("ScrollSpeed", typeof(double),
-                typeof(ScrollHelperBehavior),
-                new PropertyMetadata(6.0, new PropertyChangedCallback(OnScrollSpeedChanged)));
-
-
-        private static void OnScrollSpeedChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
-        {
-            //var host = o as UIElement;
-            //host.PreviewMouseWheel += new MouseWheelEventHandler(OnPreviewMouseWheelScrolled);
-        }
+                typeof(ScrollHelperBehavior), new PropertyMetadata(6.0));
+        
 
         #endregion
 
@@ -96,10 +89,10 @@ namespace ShibugakiViewer.Views.Behaviors
 
         private ScrollViewer childView = null;
 
-        private ConcurrentDictionary<int, SingleValueAnimator<double>> animatingObjects
-            = new ConcurrentDictionary<int, SingleValueAnimator<double>>();
+        private Dictionary<int, SingleValueAnimator<double>> animatingObjects
+            = new Dictionary<int, SingleValueAnimator<double>>();
 
-        private ConcurrentQueue<ScrollRequestContainer> request = new ConcurrentQueue<ScrollRequestContainer>();
+        private Queue<ScrollRequestContainer> request = new Queue<ScrollRequestContainer>();
 
         private int idCount = 0;
         private int[] prevActedIds = null;
@@ -119,23 +112,11 @@ namespace ShibugakiViewer.Views.Behaviors
 
         public ScrollViewer GetScrollViewer()
         {
-
-            if (this.childView != null)
+            if (this.childView == null)
             {
-                return this.childView;
+                this.childView = (this.AssociatedObject as ScrollViewer)
+                    ?? this.AssociatedObject.Descendants<ScrollViewer>().FirstOrDefault();
             }
-
-            // Return the DependencyObject if it is a ScrollViewer
-            var self = this.AssociatedObject as ScrollViewer;
-            if (self != null)
-            {
-                this.childView = self;
-            }
-            else
-            {
-                this.childView = this.AssociatedObject.Descendants<ScrollViewer>().FirstOrDefault();
-            }
-
             return this.childView;
         }
 
@@ -174,7 +155,7 @@ namespace ShibugakiViewer.Views.Behaviors
 
         private void ScrollToVerticalOffset(double delta, bool isAnimationEnabled)
         {
-
+            
             var scrollViewer = this.GetScrollViewer();
 
             if (scrollViewer == null)
@@ -205,11 +186,7 @@ namespace ShibugakiViewer.Views.Behaviors
 
             target.ValueChanged += (o, e) => this.Animated(scrollViewer, id, target, e);
 
-            animation.Completed += (o, e) =>
-            {
-                SingleValueAnimator<double> buffer;
-                this.animatingObjects.TryRemove(id, out buffer);
-            };
+            animation.Completed += (o, e) => this.animatingObjects.Remove(id);
 
             target.BeginAnimation(SingleValueAnimator<double>.ValueProperty, animation);
         }
@@ -224,6 +201,7 @@ namespace ShibugakiViewer.Views.Behaviors
             (ScrollViewer scrollViewer, int id, SingleValueAnimator<double> target,
             DependencyPropertyChangedEventArgs e)
         {
+            
 
             this.request.Enqueue(new ScrollRequestContainer()
             {
@@ -231,8 +209,8 @@ namespace ShibugakiViewer.Views.Behaviors
                 NewValue = (double)e.NewValue,
                 Id = id,
             });
-            
-            this.animatingObjects.TryAdd(id, target);
+
+            this.animatingObjects[id] = target;
 
             //リクエストが溜まっていない間はスクロールしない
             if (request.Count < this.animatingObjects.Count)
@@ -241,29 +219,27 @@ namespace ShibugakiViewer.Views.Behaviors
                 return;
             }
 
-            var items = this.request.DequeueAll().ToArray();
+            var items = this.request.ToArray();
+            this.request.Clear();
 
             var oldValue = items.Sum(x => x.OldValue);
             var newValue = items.Sum(x => x.NewValue);
 
             var ids = items.Select(x => x.Id).Distinct().ToArray();
 
-            //Debug.WriteLine(items.Select(x=>x.Id.ToString()).Join(","));
-
-
             if (this.prevActedIds != null)
             {
                 //動いていないアニメーションが検出された
 
                 var actedIds = this.prevActedIds.Concat(ids).Distinct().ToArray();
+                
 
                 this.animatingObjects
                     .Where(x => !actedIds.Contains(x.Key))
                     .ToArray()
                     .ForEach(x =>
                     {
-                        SingleValueAnimator<double> buffer;
-                        this.animatingObjects.TryRemove(x.Key, out buffer);
+                        this.animatingObjects.Remove(x.Key);
                         Debug.WriteLine($"aborted animation is detected:{x.Key}");
                     });
 
