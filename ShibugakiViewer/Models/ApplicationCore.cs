@@ -452,7 +452,7 @@ namespace ShibugakiViewer.Models
             set { this.Settings.IsViewerPageLeftBarFixed = value; }
         }
         
-        private object lockObject = new object();
+        private static object lockObject = new object();
 
         private bool isChanged;
 
@@ -555,7 +555,7 @@ namespace ShibugakiViewer.Models
 
         private void SaveLibrarySettings()
         {
-            lock (this.lockObject)
+            lock (lockObject)
             {
                 try
                 {
@@ -569,7 +569,7 @@ namespace ShibugakiViewer.Models
         }
         public void SaveApplicationSettings()
         {
-            lock (this.lockObject)
+            lock (lockObject)
             {
                 if (!this.isChanged)
                 {

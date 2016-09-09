@@ -113,7 +113,7 @@ namespace ImageLibrary.Core
         private Tracker<FolderInformation, int> FolderTracker { get; }
 
 
-        private AsyncLock asyncLock = new AsyncLock();
+        private static AsyncLock asyncLock = new AsyncLock();
         
 
         public bool IsLoaded { get; private set; } = false;
@@ -785,7 +785,7 @@ namespace ImageLibrary.Core
         /// 外部から更新をロック
         /// </summary>
         /// <returns></returns>
-        public Task<IDisposable> LockAsync() => this.asyncLock.LockAsync();
+        public Task<IDisposable> LockAsync() => asyncLock.LockAsync();
 
         /// <summary>
         /// 指定フォルダ内のファイルを使って起動

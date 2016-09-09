@@ -21,32 +21,12 @@ namespace ShibugakiViewer.Models.ImageViewer
 
         public string Path { get; private set; }
 
+        private bool isNotFound = false;
+
         public MetaImage()
         {
-            //this.Path = fullPath;
-            //this.LoadImage(fullPath);
         }
-
-        //public MetaImage(Record record)
-        //{
-        //    this.Path = record.FullPath;
-        //    this.LoadImage(record.FullPath);
-        //
-        //    if (record.Width < this.Width)
-        //    {
-        //        Debug.WriteLine($"Property changed ({record.FileName})");
-        //        Debug.WriteLine($"Width : {record.Width} -> {this.Width}");
-        //        record.Width = this.Width;
-        //    }
-        //
-        //    if (record.Height < this.Height)
-        //    {
-        //        Debug.WriteLine($"Property changed ({record.FileName})");
-        //        Debug.WriteLine($"Height : {record.Height} -> {this.Height}");
-        //        record.Height = this.Height;
-        //    }
-        //}
-
+        
         /// <summary>
         /// Load image from file
         /// </summary>
@@ -57,8 +37,12 @@ namespace ShibugakiViewer.Models.ImageViewer
             try
             {
                 var image = System.Drawing.Image.FromFile(fullPath);
-
                 this.Source = image;
+            }
+            catch (FileNotFoundException)
+            {
+                this.isNotFound = true;
+                this.Source = null;
             }
             catch
             {
@@ -69,6 +53,12 @@ namespace ShibugakiViewer.Models.ImageViewer
         public void LoadImage(Record record)
         {
             this.LoadImage(record.FullPath);
+
+            if (this.isNotFound)
+            {
+                record.IsNotFound = true;
+                return;
+            }
 
             if (record.Width != this.Width || record.Height != this.Height)
             {

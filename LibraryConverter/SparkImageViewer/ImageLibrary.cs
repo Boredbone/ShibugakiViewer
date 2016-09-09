@@ -26,7 +26,7 @@ namespace SparkImageViewer.DataModel
         private const string libraryFileNameExt = ".xml";
 
         private static AsyncLock asyncLock = new AsyncLock();
-        private AsyncLock storageAccessLock = new AsyncLock();
+        private static AsyncLock storageAccessLock = new AsyncLock();
 
         //private ApplicationCoreData settings;
         private SearchSortManager searcher;
@@ -60,7 +60,7 @@ namespace SparkImageViewer.DataModel
         public async Task LoadLibraryAsync()
         {
 
-            using (await this.storageAccessLock.LockAsync())
+            using (await storageAccessLock.LockAsync())
             {
                 var succeeded = false;
                 var dictionary = new Dictionary<string, FileInformation>();

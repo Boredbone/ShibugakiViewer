@@ -376,13 +376,13 @@ namespace SparkImageViewer.DataModel
 
 
 
-        private AsyncLock storageAccessLock = new AsyncLock();
+        private static AsyncLock storageAccessLock = new AsyncLock();
 
 
         private async Task<bool> LoadSettingsAsync()
         {
 
-            using (await this.storageAccessLock.LockAsync())
+            using (await storageAccessLock.LockAsync())
             {
                 this.XmlLoadingMessages.Clear();
 
@@ -446,7 +446,7 @@ namespace SparkImageViewer.DataModel
 
         private async Task<bool> LoadLibrarySettingsAsync()
         {
-            using (await this.storageAccessLock.LockAsync())
+            using (await storageAccessLock.LockAsync())
             {
                 LibrarySettings tmpLibSettings;
 
