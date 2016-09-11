@@ -565,7 +565,7 @@
     <value>Click "Register folders" if you want to load more images from other folders.</value>
   </data>
   <data name="TutorialText3_Text" xml:space="preserve">
-    <value>Checking images in folders</value>
+    <value>Checking images in folders.</value>
   </data>
   <data name="TutorialText4_Text" xml:space="preserve">
     <value>This may take several minutes.</value>
@@ -769,7 +769,7 @@
     <value>Import Library</value>
   </data>
   <data name="ImportMikanViewer" xml:space="preserve">
-    <value>Import from MikanViewer</value>
+    <value>Import from Mikan Viewer</value>
   </data>
   <data name="SetThumbnail" xml:space="preserve">
     <value>Set to Thumbnail</value>
@@ -824,5 +824,17 @@
   </data>
   <data name="Skip" xml:space="preserve">
     <value>Skip</value>
+  </data>
+  <data name="TutorialText5" xml:space="preserve">
+    <value>It seems that the Mikan Viewer is installed on this computer.</value>
+  </data>
+  <data name="TutorialText6" xml:space="preserve">
+    <value>Do you want to import the library from it?</value>
+  </data>
+  <data name="FolderUpdateChecking" xml:space="preserve">
+    <value>Monitoring Addition / Removal of Files</value>
+  </data>
+  <data name="LibraryUpadating" xml:space="preserve">
+    <value>Updating Library</value>
   </data>
 </root>

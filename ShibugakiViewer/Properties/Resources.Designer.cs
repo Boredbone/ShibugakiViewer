@@ -1996,7 +1996,7 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
-        ///   Checking images in folders に類似しているローカライズされた文字列を検索します。
+        ///   Checking images in folders. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string TutorialText3_Text {
             get {
@@ -2010,6 +2010,24 @@ namespace ShibugakiViewer.Properties {
         public static string TutorialText4_Text {
             get {
                 return ResourceManager.GetString("TutorialText4_Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   It seems that the Mikan Viewer is installed on this computer. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string TutorialText5 {
+            get {
+                return ResourceManager.GetString("TutorialText5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Do you want to import the library from it? に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string TutorialText6 {
+            get {
+                return ResourceManager.GetString("TutorialText6", resourceCulture);
             }
         }
         

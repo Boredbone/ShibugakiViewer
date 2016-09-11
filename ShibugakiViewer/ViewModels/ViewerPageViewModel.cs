@@ -51,9 +51,7 @@ namespace ShibugakiViewer.ViewModels
 
         public ReactiveProperty<bool> IsRandom { get; }
         private readonly RandomNumber randomNumber;
-
-        //public ReactiveCommand MouseExButtonLeftCommand { get; }
-        //public ReactiveCommand MouseExButtonRightCommand { get; }
+        
         public ReactiveCommand TapCommand { get; }
         public ReactiveCommand PointerMoveCommand { get; }
         public ReactiveCommand OpenPaneCommand { get; }
@@ -96,8 +94,7 @@ namespace ShibugakiViewer.ViewModels
         public Action<object, MouseEventArgs> PointerLeaveAction { get; }
         public Action<object, MouseEventArgs> PointerDownAction { get; }
         public Action<object, MouseEventArgs> PointerUpAction { get; }
-
-        //public ReactiveProperty<bool> IsPointerMoving { get; }
+        
         public ReactiveProperty<bool> IsLeftButtonEnter { get; }
         public ReactiveProperty<bool> IsRightButtonEnter { get; }
         public ReactiveProperty<bool> IsLeftButtonPressed { get; }
@@ -109,7 +106,7 @@ namespace ShibugakiViewer.ViewModels
         private readonly Client client;
         private readonly Library library;
 
-        private bool CursorKeyForMove => this.parent.Core.CursorKeyBind == 1;// { get; set; } = false;
+        private bool CursorKeyForMove => this.parent.Core.CursorKeyBind == 1;
 
         private bool topBarOpenedByPointer = false;
 
@@ -165,27 +162,7 @@ namespace ShibugakiViewer.ViewModels
                     }
                 })
                 .AddTo(this.Disposables);
-
-            //client.SelectedPage.Subscribe(x =>
-            //{
-            //    this.IsRandom.Value = false;
-            //    if (x == PageType.Viewer && parent.Core.IsSlideshowRandom)
-            //    {
-            //        this.IsRandom.Value = true;
-            //    }
-            //})
-            //.AddTo(this.Disposables);
-            //client.SearchChanged.Subscribe(_ => this.randomNumber.Clear()).AddTo(this.Disposables);
-
-            //client.Length.Subscribe(x =>
-            //{
-            //    if (x > 0 && this.IsRandom.Value)
-            //    {
-            //        this.randomNumber.Clear();
-            //        this.client.PrepareNext(this.randomNumber.GetNext());
-            //    }
-            //})
-            //.AddTo(this.Disposables);
+            
 
 
             this.ZoomFactor = new ReactiveProperty<double>().AddTo(this.Disposables);
@@ -226,25 +203,7 @@ namespace ShibugakiViewer.ViewModels
             this.IsGifAnimationEnabled = parent.Core
                 .ToReactivePropertyAsSynchronized(x => x.IsAnimatedGifEnabled)
                 .AddTo(this.Disposables);
-
-            //client.StateChanged
-            //    .Do(_ =>
-            //    {
-            //        var index = client.ViewerIndex.Value;
-            //        var result = client.GetRecords(index, 1);
-            //    })
-            //    .Delay(TimeSpan.FromMilliseconds(100))
-            //    .ObserveOnUIDispatcher()
-            //    .Subscribe(_ => this.SetRecord(client))//this.Record.Value = ImageLibrary.File.Record.Empty)
-            //    .AddTo(this.Disposables);
-
-            //client.StateChanged
-            //    .Subscribe(_ =>
-            //    {
-            //        var index = client.ViewerIndex.Value;
-            //        var result = client.GetRecords(index, 1);
-            //    })
-            //    .AddTo(this.Disposables);
+            
 
             this.IsFill = parent.Core
                 .ObserveProperty(x => x.IsSlideshowResizeToFill)
@@ -274,33 +233,14 @@ namespace ShibugakiViewer.ViewModels
                     }
                 })
                 .AddTo(this.Disposables);
-
-            //this.MouseExButtonLeftCommand = new ReactiveCommand()
-            //    .WithSubscribe(_ =>
-            //    {
-            //        if (parent.Core.UseExtendedMouseButtonsToSwitchImage)
-            //        {
-            //            this.MoveLeft();
-            //        }
-            //    }, this.Disposables);
-            //
-            //this.MouseExButtonRightCommand = new ReactiveCommand()
-            //    .WithSubscribe(_ =>
-            //    {
-            //        if (parent.Core.UseExtendedMouseButtonsToSwitchImage)
-            //        {
-            //            this.MoveRight();
-            //        }
-            //    }, this.Disposables);
+            
 
 
             this.ViewWidth = new ReactiveProperty<double>().AddTo(this.Disposables);
             this.ViewWidth.Subscribe(x => client.ViewWidth = x).AddTo(this.Disposables);
             this.ViewHeight = new ReactiveProperty<double>().AddTo(this.Disposables);
             this.ViewHeight.Subscribe(x => client.ViewHeight = x).AddTo(this.Disposables);
-
-            //this.LimitedDesiredOffset = new ReactiveProperty<Point>().AddTo(this.Disposables);
-            //this.DesiredOffset = new ReactiveProperty<Point>().AddTo(this.Disposables);
+            
             this.IsInHorizontalMirror = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
             this.IsInVerticalMirror = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
             this.IsAutoScalingEnabled = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
@@ -309,7 +249,6 @@ namespace ShibugakiViewer.ViewModels
             this.IsScrollRequested = new ReactiveProperty<bool>().AddTo(this.Disposables);
 
             this.IsTopBarOpen = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
-            //this.IsTopBarFixed = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
             this.IsTopBarFixed = parent.Core
                 .ToReactivePropertyAsSynchronized(x => x.IsViewerPageTopBarFixed)
                 .AddTo(this.Disposables);
@@ -501,6 +440,10 @@ namespace ShibugakiViewer.ViewModels
 
             this.PointerMoveAction = (o, e) =>
             {
+                if (this.IsDisposed)
+                {
+                    return;
+                }
                 var element = o as FrameworkElement;
                 if (element == null)
                 {
@@ -529,6 +472,10 @@ namespace ShibugakiViewer.ViewModels
             };
             this.PointerLeaveAction = (o, e) =>
             {
+                if (this.IsDisposed)
+                {
+                    return;
+                }
                 this.IsLeftButtonEnter.Value = false;
                 this.IsRightButtonEnter.Value = false;
                 this.IsLeftButtonPressed.Value = false;
@@ -536,6 +483,10 @@ namespace ShibugakiViewer.ViewModels
             };
             this.PointerDownAction = (o, e) =>
             {
+                if (this.IsDisposed)
+                {
+                    return;
+                }
                 var element = o as FrameworkElement;
                 if (element == null)
                 {
@@ -548,6 +499,10 @@ namespace ShibugakiViewer.ViewModels
             };
             this.PointerUpAction = (o, e) =>
             {
+                if (this.IsDisposed)
+                {
+                    return;
+                }
                 this.IsLeftButtonPressed.Value = false;
                 this.IsRightButtonPressed.Value = false;
             };
@@ -583,12 +538,6 @@ namespace ShibugakiViewer.ViewModels
             }
 
             return 0;
-
-
-            ////CtrlかShiftが押されている
-            //var ctrlOrShift = modifier == ModifierKeys.Control || modifier == ModifierKeys.Shift;
-            //
-            //return (this.CursorKeyForMove ^ ctrlOrShift);
         }
 
         private void HidePopup()
@@ -651,19 +600,12 @@ namespace ShibugakiViewer.ViewModels
 
 
         private void ZoomImage(double coefficient)
-        {
-            this.DesiredZoomFactor.Value = this.ZoomFactor.Value * coefficient;
-        }
+            => this.DesiredZoomFactor.Value = this.ZoomFactor.Value * coefficient;
+
 
         private void StartAutoScaling()
-        {
-            //if (this.IsAutoScalingEnabled.Value)
-            //{
-            //    this.IsAutoScalingEnabled.Value = false;
-            //}
-            this.IsAutoScalingEnabled.Toggle();
-            //this.IsAutoScalingEnabled.Value = false;
-        }
+            => this.IsAutoScalingEnabled.Toggle();
+        
         private void HorizontalMirror()
             => this.IsInHorizontalMirror.Toggle();
 

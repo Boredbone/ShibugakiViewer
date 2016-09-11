@@ -302,20 +302,7 @@ namespace ImageLibrary.Core
 
             return records;
         }
-
-        //public async Task<long> FindIndexAsync(string filter, string[] sort, Record target)
-        //{
-        //    using (var connection = this.Database.Connect())
-        //    {
-        //        var result = await this.Records
-        //            .AsQueryable(connection)
-        //            .Where(filter)
-        //            .OrderBy(sort.Append(FileProperty.Id.ToSort(false)).ToArray())
-        //            .FindIndexAsync(nameof(Record.Id), target);
-        //
-        //        return (result == null || result.Length <= 0) ? -1L : result[0];
-        //    }
-        //}
+        
 
         /// <summary>
         /// 指定検索条件下でのインデックスを調べる
@@ -347,7 +334,6 @@ namespace ImageLibrary.Core
             (IDbConnection connection, ISearchCriteria criteria, string filterSql, Record target)
         {
             var selectorParams = SortSetting.GetReferenceSelectorSql(criteria.GetSort());
-            //var selector = $"SELECT {selectorParams} FROM {this.Records.Name} WHERE Id = @Id LIMIT 1";
 
             var reference = await this.Records.GetDynamicParametersAsync(connection, selectorParams, target);
 
@@ -411,43 +397,6 @@ namespace ImageLibrary.Core
                     .ConfigureAwait(false);
 
                 return await this.GetRegionIdsMainAsync(connection, criteria, index1, index2, filter);
-                
-                /*
-                if ((index1 < 0 && index2 < 0)
-                    || (index1 < 0 || index1 == index2)
-                    || (index2 < 0))
-                {
-                    return null;
-                }
-
-                var startIndex = index1;
-                var endIndex = index2;
-                //var startRecord = record1;
-                //var endRecord = record2;
-
-                if (index2 < index1)
-                {
-                    startIndex = index2;
-                    endIndex = index1;
-                    //startRecord = record2;
-                    //endRecord = record1;
-                }
-
-                if (index2 - index1 == 1)
-                {
-                    return null;
-                }
-
-                var sort = SortSetting.GetFullSql(criteria.GetSort());
-                
-                return await this.Records
-                    .AsQueryable(connection)
-                    .Where(filter)
-                    .OrderBy(sort.Append(FileProperty.Id.ToSort(false)).ToArray())
-                    .Select<string>(nameof(Record.Id))
-                    .Skip(startIndex + 1)
-                    .Take(endIndex - startIndex - 1)
-                    .ToArrayAsync();*/
             }
         }
 

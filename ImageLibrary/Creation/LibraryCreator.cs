@@ -76,7 +76,7 @@ namespace ImageLibrary.Creation
         {
             this.LoadingSubject.OnNext("");
 
-#if TEST_BUILD
+#if !!TEST_BUILD
             if (true)
             {
 #pragma warning disable 162

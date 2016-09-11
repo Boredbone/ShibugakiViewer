@@ -112,9 +112,9 @@ namespace LibraryConverter.Compat
             target.IsProfessionalFolderSettingEnabled = this.oldSettings.IsProfessionalFolderSettingEnabled;
             target.SlideshowAnimationTimeMillisec = this.oldSettings.SlideshowAnimationTimeMillisec;
             target.SlideshowFlipTimeMillisec = this.oldSettings.SlideshowFlipTimeMillisec;
-            target.IsSlideshowResizingAlways = this.oldSettings.IsSlideshowResizingAlways;
-            target.IsSlideshowResizeToFill = this.oldSettings.IsSlideshowResizeToFill;
-            target.IsSlideshowRandom = this.oldSettings.IsSlideshowRandom;
+            target.IsSlideshowResizingAlways = false;// this.oldSettings.IsSlideshowResizingAlways;
+            target.IsSlideshowResizeToFill = false;// this.oldSettings.IsSlideshowResizeToFill;
+            target.IsSlideshowRandom = false;// this.oldSettings.IsSlideshowRandom;
             target.IsSlideshowFullScreen = this.oldSettings.IsSlideshowFullScreen;
             //target.IsAutoInformationPaneDisabled = false;
 

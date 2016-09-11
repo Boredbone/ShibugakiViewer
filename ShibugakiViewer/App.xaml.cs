@@ -195,7 +195,7 @@ namespace ShibugakiViewer
         /// <param name="index"></param>
         public void ShowSettingWindow(int index)
         {
-            if (index > 0)
+            if (index >= 0)
             {
                 this.Core.SettingPageIndex = index;
             }
@@ -208,7 +208,7 @@ namespace ShibugakiViewer
         /// <param name="index"></param>
         public void ShowToolWindow(int index)
         {
-            if (index > 0)
+            if (index >= 0)
             {
                 this.Core.ToolPageIndex = index;
             }
@@ -466,10 +466,19 @@ namespace ShibugakiViewer
             this.notifyIcon.DoubleClick += (o, e) => this.ShowClientWindow(null);
             this.notifyIcon.BalloonTipClicked += (o, e) => this.ShowToolWindow(0);
 
+            var monitoringText = this.Core.GetResourceString("FolderUpdateChecking");
+            var updatingText = this.Core.GetResourceString("LibraryUpadating");
+
+            this.Core.Library.IsCreating.Subscribe(x =>
+            {
+                this.notifyIcon.Text = (x ? updatingText : monitoringText) + " - " + this.Core.AppName;
+            })
+            .AddTo(subscription);
+
             return subscription;
 
         }
-
+        
         /// <summary>
         /// 保存データのインポート・エクスポート
         /// </summary>

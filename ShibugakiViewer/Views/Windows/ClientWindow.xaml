@@ -35,7 +35,6 @@
         <Style x:Key="noHeaderTabItemStyle" TargetType="{x:Type TabItem}"
                BasedOn="{StaticResource NoHeaderTabItemStyleBase}">
             <Setter Property="IsTabStop" Value="False" />
-            <!---->
             <Setter Property="LayoutTransform">
                 <Setter.Value>
                     <TransformGroup>

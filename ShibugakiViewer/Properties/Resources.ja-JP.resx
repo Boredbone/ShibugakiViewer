@@ -565,7 +565,7 @@
     <value>他のフォルダーからも画像を読み込みたい場合は"フォルダを登録"をクリックしてください。</value>
   </data>
   <data name="TutorialText3_Text" xml:space="preserve">
-    <value>フォルダ内の画像を検査中です</value>
+    <value>フォルダ内の画像を検査中です。</value>
   </data>
   <data name="TutorialText4_Text" xml:space="preserve">
     <value>完了まで数分かかる場合があります。</value>
@@ -766,7 +766,7 @@
     <value>ライブラリのインポート</value>
   </data>
   <data name="ImportMikanViewer" xml:space="preserve">
-    <value>MikanViewerからインポート</value>
+    <value>Mikan Viewerからインポート</value>
   </data>
   <data name="Directory" xml:space="preserve">
     <value>ファイルの場所</value>
@@ -824,5 +824,17 @@
   </data>
   <data name="Skip" xml:space="preserve">
     <value>スキップ</value>
+  </data>
+  <data name="TutorialText5" xml:space="preserve">
+    <value>このコンピュータにはMikan Viewerがインストールされているようです。</value>
+  </data>
+  <data name="TutorialText6" xml:space="preserve">
+    <value>ライブラリをインポートしますか？</value>
+  </data>
+  <data name="FolderUpdateChecking" xml:space="preserve">
+    <value>ファイルの追加/削除を監視中</value>
+  </data>
+  <data name="LibraryUpadating" xml:space="preserve">
+    <value>ライブラリの更新中</value>
   </data>
 </root>

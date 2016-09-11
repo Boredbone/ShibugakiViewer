@@ -27,6 +27,24 @@
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="Margin" Value="8"/>
         </Style>
+        <Style x:Key="noHeaderTabItemStyle" TargetType="{x:Type TabItem}"
+               BasedOn="{StaticResource NoHeaderTabItemStyleBase}">
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="LayoutTransform">
+                <Setter.Value>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="0" ScaleY="0"/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Visibility" Value="Collapsed"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
     </Window.Resources>
     <Grid>
 
@@ -34,9 +52,12 @@
                     HorizontalContentAlignment="Stretch"
                     Padding="0"
                     SelectedIndex="{Binding SelectedTab.Value,Mode=TwoWay}">
+            <!--
+                    Style="{StaticResource NoHeaderTabControlStyleBase}"-->
 
-            <TabItem Header="a">
+            <TabItem Header="a" Style="{StaticResource noHeaderTabItemStyle}">
                 <Grid Background="{StaticResource BaseColor}">
+
                     <StackPanel 
                         Orientation="Vertical"
                         HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -47,8 +68,12 @@
                             <Run Text="{StaticResource AppName}"/>
                             <Run x:Uid="WelcomeText2" Text="{x:Static properties:Resources.WelcomeText2_Text}"/>
                         </TextBlock>
-                        <TextBlock x:Uid="TutorialText1" Text="{x:Static properties:Resources.TutorialText1_Text}"/>
-                        <TextBlock x:Uid="TutorialText2" Text="{x:Static properties:Resources.TutorialText2_Text}"/>
+
+                        <TextBlock Margin="8">
+                            <Run Text="{x:Static properties:Resources.TutorialText1_Text}"/>
+                            <LineBreak/>
+                            <Run Text="{x:Static properties:Resources.TutorialText2_Text}"/>
+                        </TextBlock>
 
                         <Grid Height="56" Margin="8" Width="250">
                             <cc:FlatButton
@@ -89,7 +114,7 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="b">
+            <TabItem Header="b" Style="{StaticResource noHeaderTabItemStyle}">
                 <Grid Background="{StaticResource BaseColor}">
 
                     <Grid.RowDefinitions>
@@ -111,7 +136,7 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="c">
+            <TabItem Header="c" Style="{StaticResource noHeaderTabItemStyle}">
                 <Grid Background="{StaticResource PopupMaskColor}">
 
                     <Border Background="White"
@@ -150,7 +175,7 @@
             </TabItem>
 
 
-            <TabItem Header="d">
+            <TabItem Header="d" Style="{StaticResource noHeaderTabItemStyle}">
                 <Grid Background="{StaticResource BaseColor}">
 
                     <Grid.RowDefinitions>
@@ -176,7 +201,7 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="e">
+            <TabItem Header="e" Style="{StaticResource noHeaderTabItemStyle}">
                 <Grid Background="{StaticResource BaseColor}">
                     <StackPanel 
                         Orientation="Vertical"
@@ -189,7 +214,11 @@
                             <Run x:Uid="WelcomeText2" Text="{x:Static properties:Resources.WelcomeText2_Text}"/>
                         </TextBlock>
 
-                        <TextBlock Text="Mikan detected import?" Margin="16"/>
+                        <TextBlock Margin="8">
+                            <Run Text="{x:Static properties:Resources.TutorialText5}"/>
+                            <LineBreak/>
+                            <Run Text="{x:Static properties:Resources.TutorialText6}"/>
+                        </TextBlock>
 
                         <Grid HorizontalAlignment="Center">
                             <Grid.ColumnDefinitions>
@@ -256,7 +285,7 @@
                                 VerticalAlignment="Stretch">
 
                                 <TextBlock
-                                    Margin="0,0,8,0"
+                                    Margin="0"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     FontSize="{StaticResource NormalTextSize}"

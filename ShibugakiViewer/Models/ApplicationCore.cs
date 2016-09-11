@@ -48,13 +48,13 @@ namespace ShibugakiViewer.Models
         public Library Library { get; private set; }
         public ImageBuffer ImageBuffer { get; private set; }
         private ResourceManager ResourceManager { get; set; }
-        
-        
+
+
         public IObservable<string> SystemNotification { get; private set; }
 
         public ReactiveCollection<LibraryUpdateHistoryItem> LibraryUpdateHistory { get; private set; }
-        
-        
+
+
         public string AppName
         {
             get
@@ -239,7 +239,7 @@ namespace ShibugakiViewer.Models
                 }
             }
         }
-        
+
 
         public bool IsDarkTheme
         {
@@ -451,7 +451,7 @@ namespace ShibugakiViewer.Models
             get { return this.Settings.IsViewerPageLeftBarFixed; }
             set { this.Settings.IsViewerPageLeftBarFixed = value; }
         }
-        
+
         private static object lockObject = new object();
 
         private bool isChanged;
@@ -491,7 +491,7 @@ namespace ShibugakiViewer.Models
             library.AddTo(this.Disposables);
 
             this.Library = library;
-            
+
 
             this.LibraryUpdateHistory = new ReactiveCollection<LibraryUpdateHistoryItem>().AddTo(this.Disposables);
 
@@ -542,7 +542,7 @@ namespace ShibugakiViewer.Models
 
             return libraryHasItem;
         }
-        
+
 
         /// <summary>
         /// 設定ファイルをローカルストレージに保存
@@ -636,28 +636,73 @@ namespace ShibugakiViewer.Models
             App.Current.Resources["SearchLabel"] = this.GetResourceString("Search");
             App.Current.Resources["WidthLabel"] = this.GetResourceString("Width");
             App.Current.Resources["HeightLabel"] = this.GetResourceString("Height");
-            
+
         }
+
+        private string oldLibraryDirectory = null;
 
         private string GetOldLibraryDirectory()
         {
-            var dir = System.Environment.GetFolderPath
-                (Environment.SpecialFolder.LocalApplicationData);
+            if (this.oldLibraryDirectory == null)
+            {
+                var dir = System.Environment.GetFolderPath
+                    (Environment.SpecialFolder.LocalApplicationData);
 
-            var saveDirectory =
-                Path.Combine(dir, @"Packages\60037Boredbone.MikanViewer_8weh06aq8rfkj\LocalState");
+                //var saveDirectory =
+                //    Path.Combine(dir, @"Packages\60037Boredbone.MikanViewer_8weh06aq8rfkj\LocalState");
 
-            return saveDirectory;
+                var folders = System.IO.Directory.GetDirectories
+                    (Path.Combine(dir, "Packages"), "*Boredbone.MikanViewer*",
+                    System.IO.SearchOption.TopDirectoryOnly);
+
+                if (folders == null || folders.Length == 0)
+                {
+                    this.oldLibraryDirectory = "";
+                    return null;
+                }
+
+
+                string folder = null;
+                if (folders.Length == 1)
+                {
+                    folder = folders[0];
+                }
+                else
+                {
+                    folder = folders.FirstOrDefault(x => System.IO.Path.GetFileName(x).StartsWith("60037"))
+                        ?? folders[0];
+                }
+
+                if (folder != null)
+                {
+                    this.oldLibraryDirectory = Path.Combine(folder, "LocalState");
+                }
+                else
+                {
+                    this.oldLibraryDirectory = "";
+                    return null;
+                }
+            }
+
+
+            return this.oldLibraryDirectory;
         }
-
+    
 
         public string[] GetConvertArgs()
             => new[] { this.GetOldLibraryDirectory(), settingVersion.ToString(), };
-        
+
 
         private bool IsOldLibraryDirectoryExists()
-            => System.IO.Directory.Exists(this.GetOldLibraryDirectory());
-        
+        {
+            var dir = this.GetOldLibraryDirectory();
+            if (dir.IsNullOrWhiteSpace())
+            {
+                return false;
+            }
+            return System.IO.Directory.Exists(dir);
+        }
+
 
         public async Task<bool> IsOldConvertableAsync()
             => this.IsOldLibraryDirectoryExists() && !(await this.Library.HasItemsAsync());

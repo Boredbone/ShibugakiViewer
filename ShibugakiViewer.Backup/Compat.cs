@@ -34,6 +34,11 @@ namespace ShibugakiViewer.Backup
         public async Task ConvertOldLibraryAsync
             (string saveDirectory, string settingFileName, string oldLibraryDirectory, int settingVersion)
         {
+            if (saveDirectory == null || settingFileName == null || oldLibraryDirectory == null)
+            {
+                return;
+            }
+
             Console.WriteLine($"Loading");
 
             var config = new LibraryConfiguration(saveDirectory)
