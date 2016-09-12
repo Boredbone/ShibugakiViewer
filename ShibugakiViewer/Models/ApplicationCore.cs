@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
@@ -18,10 +19,12 @@ using ImageLibrary.Core;
 using ImageLibrary.Creation;
 using ImageLibrary.SearchProperty;
 using ImageLibrary.Viewer;
+using Microsoft.WindowsAPICodePack.Shell;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using ShibugakiViewer.Models.ImageViewer;
 using ShibugakiViewer.Models.Utility;
+using WpfTools;
 using WpfTools.Extensions;
 
 namespace ShibugakiViewer.Models
@@ -641,58 +644,77 @@ namespace ShibugakiViewer.Models
 
         private string oldLibraryDirectory = null;
 
+        /// <summary>
+        /// 旧ライブラリの保存ディレクトリを取得
+        /// </summary>
+        /// <returns></returns>
         private string GetOldLibraryDirectory()
         {
-            if (this.oldLibraryDirectory == null)
+            try
             {
-                var dir = System.Environment.GetFolderPath
-                    (Environment.SpecialFolder.LocalApplicationData);
-
-                //var saveDirectory =
-                //    Path.Combine(dir, @"Packages\60037Boredbone.MikanViewer_8weh06aq8rfkj\LocalState");
-
-                var folders = System.IO.Directory.GetDirectories
-                    (Path.Combine(dir, "Packages"), "*Boredbone.MikanViewer*",
-                    System.IO.SearchOption.TopDirectoryOnly);
-
-                if (folders == null || folders.Length == 0)
+                if (this.oldLibraryDirectory == null)
                 {
-                    this.oldLibraryDirectory = "";
-                    return null;
+                    var dir = System.Environment.GetFolderPath
+                        (Environment.SpecialFolder.LocalApplicationData);
+
+                    //var saveDirectory =
+                    //    Path.Combine(dir, @"Packages\60037Boredbone.MikanViewer_8weh06aq8rfkj\LocalState");
+
+                    var folders = System.IO.Directory.GetDirectories
+                        (Path.Combine(dir, "Packages"), "*Boredbone.MikanViewer*",
+                        System.IO.SearchOption.TopDirectoryOnly);
+
+                    if (folders == null || folders.Length == 0)
+                    {
+                        this.oldLibraryDirectory = "";
+                        return null;
+                    }
+
+
+                    string folder = null;
+                    if (folders.Length == 1)
+                    {
+                        folder = folders[0];
+                    }
+                    else
+                    {
+                        folder = folders.FirstOrDefault(x => System.IO.Path.GetFileName(x).StartsWith("60037"))
+                            ?? folders[0];
+                    }
+
+                    if (folder != null)
+                    {
+                        this.oldLibraryDirectory = Path.Combine(folder, "LocalState");
+                    }
+                    else
+                    {
+                        this.oldLibraryDirectory = "";
+                        return null;
+                    }
                 }
 
 
-                string folder = null;
-                if (folders.Length == 1)
-                {
-                    folder = folders[0];
-                }
-                else
-                {
-                    folder = folders.FirstOrDefault(x => System.IO.Path.GetFileName(x).StartsWith("60037"))
-                        ?? folders[0];
-                }
-
-                if (folder != null)
-                {
-                    this.oldLibraryDirectory = Path.Combine(folder, "LocalState");
-                }
-                else
-                {
-                    this.oldLibraryDirectory = "";
-                    return null;
-                }
+                return this.oldLibraryDirectory;
             }
-
-
-            return this.oldLibraryDirectory;
+            catch
+            {
+                this.oldLibraryDirectory = "";
+                return null;
+            }
         }
-    
 
+        /// <summary>
+        /// 旧ライブラリ変換用のパラメータを取得
+        /// </summary>
+        /// <returns></returns>
         public string[] GetConvertArgs()
             => new[] { this.GetOldLibraryDirectory(), settingVersion.ToString(), };
 
 
+        /// <summary>
+        /// 旧ライブラリのディレクトリが存在するか
+        /// </summary>
+        /// <returns></returns>
         private bool IsOldLibraryDirectoryExists()
         {
             var dir = this.GetOldLibraryDirectory();
@@ -710,7 +732,11 @@ namespace ShibugakiViewer.Models
         public bool IsOldConvertable()
             => this.IsOldLibraryDirectoryExists() && !this.Library.HasItems();
 
-
+        /// <summary>
+        /// ライブラリ更新結果を文字列化
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
         private string ShowLibraryResult(LibraryLoadResult result)
         {
 
@@ -745,11 +771,80 @@ namespace ShibugakiViewer.Models
             return resultText;
         }
 
+        /// <summary>
+        /// 新しいClientWindowを表示
+        /// </summary>
+        /// <param name="files"></param>
         public void ShowNewClient(IEnumerable<string> files)
         {
             ((App)Application.Current).ShowClientWindow(files);
         }
 
+        /// <summary>
+        /// フォルダを登録
+        /// </summary>
+        /// <param name="defaultPath"></param>
+        /// <param name="lastSelectedPath"></param>
+        /// <returns></returns>
+        public bool AddFolder(string defaultPath, out string lastSelectedPath)
+        {
+            lastSelectedPath = null;
+
+            string folderPath = null;
+            using (var fbd = new FolderSelectDialog())
+            {
+                if (System.IO.Directory.Exists(defaultPath))
+                {
+                    fbd.DefaultDirectory = defaultPath;
+                }
+
+                if (fbd.ShowDialog() == true)
+                {
+                    folderPath = fbd.SelectedPath;
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(folderPath))
+            {
+                return false;
+            }
+
+            var folders = new List<string>();
+
+            try
+            {
+                if ((".library-ms").Equals(Path.GetExtension(folderPath)))
+                {
+                    //Windowsライブラリの場合
+
+                    var libraryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                        @"Microsoft\Windows\Libraries\");
+                    var libraryName = Path.GetFileNameWithoutExtension
+                        (folderPath.Split(Path.DirectorySeparatorChar).Last());
+
+                    using (var shellLibrary = ShellLibrary.Load(libraryName, libraryPath, true))
+                    {
+                        foreach (var folder in shellLibrary)
+                        {
+                            folders.Add(folder.Path);
+                            lastSelectedPath = folder.Path;
+                        }
+                    }
+                }
+                else
+                {
+                    //通常フォルダ
+                    folders.Add(folderPath);
+                    lastSelectedPath = folderPath;
+                }
+            }
+            catch
+            {
+
+            }
+
+            return this.Library.Folders.RegisterFolders(folders.ToArray());
+        }
     }
 
     public class LibraryUpdateHistoryItem

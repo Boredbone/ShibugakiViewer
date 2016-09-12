@@ -12,7 +12,7 @@ using ImageLibrary.Core;
 using ImageLibrary.Creation;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
-using WpfTools;
+using ShibugakiViewer.Models;
 
 namespace ShibugakiViewer.ViewModels.SettingPages
 {
@@ -64,22 +64,19 @@ namespace ShibugakiViewer.ViewModels.SettingPages
 
             this.IgnoreCommand = this.IsEditable
                 .ToReactiveCommand()
-                .WithSubscribe(x =>
+                .WithSubscribeOfType<FolderInformation>(folder =>
                 {
-                    var folder = x as FolderInformation;
                     if (folder != null)
                     {
                         folder.Ignored = true;
-                        //this.Folders.Reset();
                     }
                 }, this.Disposables);
 
             this.RefreshCommand = this.IsEditable
                 .CombineLatest(this.IsInitializeMode, (a, b) => a && !b)
                 .ToReactiveCommand()
-                .WithSubscribe(x =>
+                .WithSubscribeOfType<FolderInformation>(folder =>
                 {
-                    var folder = x as FolderInformation;
                     if (folder != null)
                     {
                         folder.RefreshEnable = true;
@@ -97,6 +94,21 @@ namespace ShibugakiViewer.ViewModels.SettingPages
                     {
                         defaultPath = dir.Take(dir.Length - 1).Join(System.IO.Path.DirectorySeparatorChar.ToString());
                     }
+
+                    string folderPath;
+
+                    var result = core.AddFolder(defaultPath, out folderPath);
+
+                    if (!folderPath.IsNullOrWhiteSpace())
+                    {
+                        this.previousSelectedDirectory = folderPath;
+                    }
+                    if (result && !this.IsInitializeMode.Value)
+                    {
+                        this.library.RefreshLibraryAsync(true).FireAndForget();
+                    }
+
+                    /*
                     string folderPath = null;
                     using (var fbd = new FolderSelectDialog())
                     {
@@ -141,7 +153,7 @@ namespace ShibugakiViewer.ViewModels.SettingPages
                     if (refresh && !this.IsInitializeMode.Value)
                     {
                         this.library.RefreshLibraryAsync(true).FireAndForget();
-                    }
+                    }*/
 
                 }, this.Disposables);
         }

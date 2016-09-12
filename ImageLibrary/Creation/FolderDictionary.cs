@@ -96,6 +96,50 @@ namespace ImageLibrary.Creation
             this.AddedSubject.OnNext(item);
         }
 
+        /// <summary>
+        /// フォルダを登録
+        /// </summary>
+        /// <param name="folders"></param>
+        /// <returns>登録された場合はtrue</returns>
+        public bool RegisterFolders(params string[] folders)
+        {
+            var existingFolders = this.GetAll().ToArray();
+
+            var registered = false;
+
+            foreach (var folderPath in folders)
+            {
+                if (folderPath.IsNullOrWhiteSpace())
+                {
+                    continue;
+                }
+
+                var exists = existingFolders.FirstOrDefault(x => x.Path.Equals(folderPath));
+
+                if (exists != null)
+                {
+                    if (exists.Ignored)
+                    {
+                        exists.Ignored = false;
+                        exists.RefreshEnable = true;
+                        registered = true;
+                    }
+                }
+                else
+                {
+                    this.Add(new FolderInformation(folderPath));
+                    registered = true;
+                }
+
+            }
+
+            return registered;
+        }
+
+        /// <summary>
+        /// フォルダ監視
+        /// </summary>
+        /// <param name="folder"></param>
         private void SubscribeFolderUpdate(FolderInformation folder)
         {
             folder.PropertyChangedAsObservable()

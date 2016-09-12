@@ -91,7 +91,7 @@ namespace ShibugakiViewer.Models
             this.IsViewerPageLeftBarFixed = true;
             this.IsViewerPageTopBarFixed = true;
             this.ThumbNailSize = 200;
-            this.RefreshLibraryOnLaunched = false;
+            this.RefreshLibraryOnLaunched = true;
             this.IsLibraryRefreshStatusVisible = true;
             this.IsProfessionalFolderSettingEnabled = false;
             this.IsCmsEnabled = false;

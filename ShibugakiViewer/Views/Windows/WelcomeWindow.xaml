@@ -26,6 +26,7 @@
                x:Key="welcomeTitleStyle">
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="Margin" Value="8"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
         </Style>
         <Style x:Key="noHeaderTabItemStyle" TargetType="{x:Type TabItem}"
                BasedOn="{StaticResource NoHeaderTabItemStyleBase}">
@@ -51,9 +52,8 @@
         <TabControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"
                     Padding="0"
-                    SelectedIndex="{Binding SelectedTab.Value,Mode=TwoWay}">
-            <!--
-                    Style="{StaticResource NoHeaderTabControlStyleBase}"-->
+                    SelectedIndex="{Binding SelectedTab.Value,Mode=TwoWay}"
+                    Style="{StaticResource NoHeaderTabControlStyleBase}">
 
             <TabItem Header="a" Style="{StaticResource noHeaderTabItemStyle}">
                 <Grid Background="{StaticResource BaseColor}">
@@ -69,7 +69,7 @@
                             <Run x:Uid="WelcomeText2" Text="{x:Static properties:Resources.WelcomeText2_Text}"/>
                         </TextBlock>
 
-                        <TextBlock Margin="8">
+                        <TextBlock Margin="8" TextWrapping="Wrap">
                             <Run Text="{x:Static properties:Resources.TutorialText1_Text}"/>
                             <LineBreak/>
                             <Run Text="{x:Static properties:Resources.TutorialText2_Text}"/>
@@ -142,34 +142,29 @@
                     <Border Background="White"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
-                            Height="100">
-                        <Grid Margin="8">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            
-                            <StackPanel
+                            MinHeight="100">
+
+                        <StackPanel
+                                Margin="8"
                                 Grid.Row="0" HorizontalAlignment="Center"
                                 VerticalAlignment="Center">
-                                
-                                <TextBlock
+
+                            <TextBlock
                                     HorizontalAlignment="Center"  TextWrapping="Wrap" 
                                     VerticalAlignment="Center" Margin="4"
                                     Text="{x:Static properties:Resources.NoImageText1_Text}"/>
-                                <TextBlock 
+                            <TextBlock 
                                     HorizontalAlignment="Center"  TextWrapping="Wrap" 
                                     VerticalAlignment="Center" Margin="4"
                                     Text="{x:Static properties:Resources.NoImageText2_Text}"/>
-                            </StackPanel>
-                        
-                        <Button
+
+                            <Button
                             Grid.Row="1"
                             Content="{x:Static properties:Resources.OkButton_Content}"
                             Width="86" Height="30"
                             Command="{Binding ChangeTabCommand}"
                             CommandParameter="1"/>
-                        </Grid>
+                        </StackPanel>
                     </Border>
                 </Grid>
             </TabItem>
@@ -214,7 +209,7 @@
                             <Run x:Uid="WelcomeText2" Text="{x:Static properties:Resources.WelcomeText2_Text}"/>
                         </TextBlock>
 
-                        <TextBlock Margin="8">
+                        <TextBlock Margin="8" TextWrapping="Wrap">
                             <Run Text="{x:Static properties:Resources.TutorialText5}"/>
                             <LineBreak/>
                             <Run Text="{x:Static properties:Resources.TutorialText6}"/>

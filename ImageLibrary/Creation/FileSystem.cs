@@ -247,7 +247,7 @@ namespace ImageLibrary.Creation
             public string FullPath { get; }
 
             private readonly Shell32.Folder folder;
-            private readonly FolderItem file;
+            private readonly Shell32.FolderItem file;
 
             public FileAccesser(string fullPath, string name, Shell32.Folder folder)
             {

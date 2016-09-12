@@ -67,8 +67,6 @@ namespace ImageLibrary.Viewer
         private int _fieldCommonRatingInner = -1;
 
 
-        //public event NotifyCollectionChangedEventHandler CollectionChanged;
-
         private readonly Library library;
 
 
@@ -131,8 +129,6 @@ namespace ImageLibrary.Viewer
                 };
                 this.Ids.Add(item.Id);
                 this.AddedSubject.OnNext(dic);
-                //this.CollectionChanged?.Invoke(this,
-                //    new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, dic.ToList()));
 
                 return true;
             }
@@ -164,8 +160,6 @@ namespace ImageLibrary.Viewer
                 };
                 this.Ids.Add(id);
                 this.AddedSubject.OnNext(dic);
-                //this.CollectionChanged?.Invoke(this,
-                //    new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, dic.ToList()));
 
             }
         }
@@ -205,8 +199,6 @@ namespace ImageLibrary.Viewer
             this.NotifyCountChanged();
 
             this.AddedSubject.OnNext(dic);
-            //this.CollectionChanged?.Invoke(this,
-            //    new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, dic.ToList()));
 
         }
 
@@ -240,46 +232,11 @@ namespace ImageLibrary.Viewer
             this.NotifyCountChanged();
 
             this.AddedSubject.OnNext(dic);
-            //this.CollectionChanged?.Invoke(this,
-            //    new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, dic.ToList()));
-
         }
 
 
-        public bool Remove(Record item)
-        {
-            var id = item.Id;
-            return this.Remove(id);
+        public bool Remove(Record item) => this.Remove(item.Id);
 
-            //this.LastSelectedItem = null;
-            //
-            //if (this.ItemsSet.ContainsKey(id))
-            //{
-            //    //var removed = this.ItemsSet.First(x => x.Key == item.Id);
-            //    this.ItemsSet.Remove(id);
-            //
-            //    if (this.SelectedItemSubject.Value?.Id == id)
-            //    {
-            //        this.SelectedItemSubject.OnNext(this.ItemsSet.Select(x => x.Value).FirstOrDefault());
-            //    }
-            //
-            //    this.NotifyCountChanged();
-            //
-            //    var dic = new Dictionary<string, Record>()
-            //    {
-            //        [id] = item
-            //    };
-            //    this.Ids.Remove(id);
-            //    this.RemovedSubject.OnNext(dic);
-            //    //this.CollectionChanged?.Invoke(this,
-            //    //    new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, dic.ToList(),-1));
-            //
-            //
-            //    return true;
-            //
-            //}
-            //return false;
-        }
 
         public bool Remove(string id)
         {
@@ -302,9 +259,6 @@ namespace ImageLibrary.Viewer
                 };
                 this.Ids.Remove(id);
                 this.RemovedSubject.OnNext(dic);
-                ///this.CollectionChanged?.Invoke(this,
-                ///    new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, dic.ToList()));
-
 
                 return true;
 
@@ -343,8 +297,6 @@ namespace ImageLibrary.Viewer
             this.NotifyCountChanged();
 
             this.RemovedSubject.OnNext(dic);
-            //this.CollectionChanged?.Invoke(this,
-            //    new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, dic.ToList()));
         }
 
         public void RemoveRange(IEnumerable<string> ids)
@@ -377,11 +329,9 @@ namespace ImageLibrary.Viewer
             this.NotifyCountChanged();
 
             this.RemovedSubject.OnNext(dic);
-            //this.CollectionChanged?.Invoke(this,
-            //    new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, dic.ToList()));
         }
 
-        
+
 
         public void Clear()
         {
@@ -394,8 +344,6 @@ namespace ImageLibrary.Viewer
 
             this.Ids.Clear();
             this.ClearedSubject.OnNext(Unit.Default);
-            //this.CollectionChanged?.Invoke(this,
-            //    new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
         public void ClearCache()
@@ -491,24 +439,26 @@ namespace ImageLibrary.Viewer
                 this.CommonRatingInner = rating;
 
             }, DispatcherPriority.Background);
-            
+
         }
 
         private int[] GetCommonTagsFromCache()
         {
-            if (this.ItemsSet.Count <= 0)
+            var items = this.ItemsSet.ToArray();
+
+            if (items.Length <= 0)
             {
                 return new int[0];
             }
-            if (this.ItemsSet.Any(x => x.Value == null))
+            if (items.Any(x => x.Value == null))
             {
                 return null;
             }
 
-            var record = this.ItemsSet.First().Value;
+            var record = items.First().Value;
 
             return record.TagSet.Read()
-                .Where(tag => this.ItemsSet.All(x => x.Value != null && x.Value.TagSet.Contains(tag)))
+                .Where(tag => items.All(x => x.Value != null && x.Value.TagSet.Contains(tag)))
                 .ToArray();
         }
 
@@ -598,11 +548,5 @@ namespace ImageLibrary.Viewer
         {
             this.RaisePropertyChanged(nameof(Count));
         }
-
-        //public IEnumerator<KeyValuePair<string, Record>> GetEnumerator()
-        //    => this.ItemsSet.GetEnumerator();
-        //
-        //IEnumerator IEnumerable.GetEnumerator()
-        //    => ((IEnumerable<KeyValuePair<string, Record>>)this).GetEnumerator();
     }
 }

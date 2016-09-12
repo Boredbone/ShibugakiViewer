@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -163,7 +164,8 @@ namespace ImageLibrary.Search
             {
                 if (!this.FavoriteSearchList[favoriteIndex].ValueEquals(this.SearchSettings[setting.Key]))
                 {
-                    MessageBox.Show($"{this.FavoriteSearchList[favoriteIndex].Name},{this.SearchSettings[setting.Key].Name}");
+                    Debug.WriteLine($"{this.FavoriteSearchList[favoriteIndex].Name},{this.SearchSettings[setting.Key].Name}");
+                    this.SearchSettings[setting.Key].Name = this.FavoriteSearchList[favoriteIndex].Name;
                 }
                 this.FavoriteSearchList.RemoveAt(favoriteIndex);
                 this.FavoriteSearchList.Insert(favoriteIndex, this.SearchSettings[setting.Key]);
