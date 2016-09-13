@@ -147,8 +147,10 @@
                         Margin="0,0,0,10">
 
                     <Button x:Uid="OkButton"
+                            IsDefault="True"
                             Content="{x:Static properties:Resources.OkButton_Content}"
-                            Command="{Binding OkCommand}" Width="100" Margin="20,0"/>
+                            Command="{Binding OkCommand}" Width="100" Margin="20,0"
+                            Click="OkButton_Click"/>
 
                     <Button x:Uid="CancelButton"
                             Content="{x:Static properties:Resources.CancelButton_Content}"

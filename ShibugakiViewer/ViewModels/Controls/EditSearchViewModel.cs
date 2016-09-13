@@ -140,7 +140,7 @@ namespace ShibugakiViewer.ViewModels.Controls
 
             var unit = source.IsUnit ? (UnitSearch)source : null;
             this.Init(unit);
-
+            
 
             this.IsEditing = new ReactiveProperty<bool>(true).AddTo(this.unsubscribers);
 

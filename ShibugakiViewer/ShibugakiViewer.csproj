@@ -41,6 +41,9 @@
   <PropertyGroup>
     <ApplicationIcon>Assets\Icons\appicon.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
@@ -146,6 +149,7 @@
     <Compile Include="ViewModels\WelcomeWindowViewModel.cs" />
     <Compile Include="Views\Behaviors\AnimatedGifbehavior.cs" />
     <Compile Include="Views\Behaviors\ExtendedMouseBinding.cs" />
+    <Compile Include="Views\Behaviors\FocusBehavior.cs" />
     <Compile Include="Views\Behaviors\FullScreenBehavior.cs" />
     <Compile Include="Views\Behaviors\HoverControlBehavior.cs" />
     <Compile Include="Views\Behaviors\HoverGridBehavior.cs" />
@@ -433,6 +437,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Resource Include="Assets\Fonts\materialdesignicons-webfont.ttf" />
+    <None Include="app.manifest" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

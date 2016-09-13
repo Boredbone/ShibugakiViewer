@@ -39,6 +39,10 @@ namespace ShibugakiViewer.Views.Controls
                 //sv.ChangeView(null, sv.ScrollableHeight, null);
             }
         }
-        
+
+        private void OkButton_Click(object sender, RoutedEventArgs e)
+        {
+            ((Button)sender).Focus();
+        }
     }
 }
