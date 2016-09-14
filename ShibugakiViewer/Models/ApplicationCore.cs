@@ -437,6 +437,18 @@ namespace ShibugakiViewer.Models
         }
 
 
+        public bool UseLogicalPixel
+        {
+            get { return this.Settings.UseLogicalPixel; }
+            set
+            {
+                if (this.Settings.UseLogicalPixel != value)
+                {
+                    this.Settings.UseLogicalPixel = value;
+                    RaisePropertyChanged(nameof(UseLogicalPixel));
+                }
+            }
+        }
 
         public bool IsSettingsLoaded { get; set; }
         public bool IsLibrarySettingsLoaded { get; set; }

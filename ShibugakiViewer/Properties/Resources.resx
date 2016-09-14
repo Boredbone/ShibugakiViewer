@@ -837,4 +837,13 @@
   <data name="LibraryUpadating" xml:space="preserve">
     <value>Updating Library</value>
   </data>
+  <data name="HighDpi" xml:space="preserve">
+    <value>High DPI</value>
+  </data>
+  <data name="UseLogicalPixel" xml:space="preserve">
+    <value>Use Logical Pixel</value>
+  </data>
+  <data name="UsePhysicalPixel" xml:space="preserve">
+    <value>Use Physical Pixel</value>
+  </data>
 </root>

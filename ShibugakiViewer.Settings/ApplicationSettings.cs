@@ -84,6 +84,10 @@ namespace ShibugakiViewer.Models
         public int TagSelectorSortMode { get; set; }
 
 
+        [DataMember]
+        public bool UseLogicalPixel { get; set; }
+
+
         public ApplicationSettings()
         {
             this.IsOpenNavigationWithSingleTapEnabled = true;
@@ -112,6 +116,8 @@ namespace ShibugakiViewer.Models
 
             this.BackgroundColor = ~(uint)0;
             this.IsDarkTheme = false;
+
+            this.UseLogicalPixel = false;
         }
     }
 }

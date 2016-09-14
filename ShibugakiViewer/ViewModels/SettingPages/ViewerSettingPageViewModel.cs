@@ -45,6 +45,7 @@ namespace ShibugakiViewer.ViewModels.SettingPages
         public ReactiveProperty<bool> IsFill { get; }
         public ReactiveProperty<bool> IsResizingAlways { get; }
         public ReactiveProperty<bool> IsSlideshowFullScreen { get; }
+        public ReactiveProperty<bool> UseLogicalPixel { get; }
 
         public ReactiveProperty<double> AnimationTimeSec { get; }
         public ReactiveProperty<int> FlipTimeSec { get; }
@@ -121,6 +122,10 @@ namespace ShibugakiViewer.ViewModels.SettingPages
 
             this.IsSlideshowFullScreen = core
                 .ToReactivePropertyAsSynchronized(x => x.IsSlideshowFullScreen)
+                .AddTo(this.Disposables);
+
+            this.UseLogicalPixel = core
+                .ToReactivePropertyAsSynchronized(x => x.UseLogicalPixel)
                 .AddTo(this.Disposables);
 
 

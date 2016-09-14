@@ -234,12 +234,34 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            
                             <TextBlock 
+                                Grid.Row="0" 
+                                Style="{StaticResource headerTextStyle}"
+                                TextWrapping="Wrap"
+                                Text="{x:Static properties:Resources.HighDpi}"/>
+                            <ComboBox
+                                Grid.Row="0" Grid.Column="1"
+                                Style="{StaticResource comboBoxStyle}"
+                                SelectedIndex="{Binding UseLogicalPixel.Value,Mode=TwoWay,
+                                Converter={StaticResource BoolIntConverter}}">
+                                <ComboBoxItem
+                                    Content="{x:Static properties:Resources.UsePhysicalPixel}"/>
+                                <ComboBoxItem
+                                    Content="{x:Static properties:Resources.UseLogicalPixel}"/>
+                            </ComboBox>
+                            
+                            <TextBlock 
+                                Grid.Row="1" 
                                 Style="{StaticResource headerTextStyle}"
                                 TextWrapping="Wrap"
                                 Text="{x:Static properties:Resources.ResizeMethodText_Text}"/>
                             <ComboBox
-                                Grid.Column="1"
+                                Grid.Row="1" Grid.Column="1"
                                 Style="{StaticResource comboBoxStyle}"
                                 SelectedIndex="{Binding IsFill.Value,Mode=TwoWay,
                                 Converter={StaticResource BoolIntConverter}}">

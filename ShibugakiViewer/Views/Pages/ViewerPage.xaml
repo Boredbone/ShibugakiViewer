@@ -35,7 +35,7 @@
                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                 ViewHeight="{Binding ViewHeight.Value,Mode=OneWayToSource}"
                 ViewWidth="{Binding ViewWidth.Value,Mode=OneWayToSource}"
-                ZoomFactor="{Binding ZoomFactor.Value,Mode=OneWayToSource}"
+                ActualZoomFactor="{Binding ZoomFactor.Value,Mode=OneWayToSource}"
                 DesiredZoomFactor="{Binding DesiredZoomFactor.Value,Mode=OneWay}"
                 Orientation="{Binding Orientation.Value,Mode=TwoWay}"
                 IsAutoScalingEnabled="{Binding IsAutoScalingEnabled.Value,Mode=TwoWay}"
@@ -50,6 +50,7 @@
                 IsGifAnimationEnabled="{Binding IsGifAnimationEnabled.Value,Mode=OneWay}"
                 IsZoomoutOnly="{Binding IsZoomoutOnly.Value,Mode=OneWay}"
                 IsFill="{Binding IsFill.Value,Mode=OneWay}"
+                ScaleToPhysicalPixel="{Binding UsePhysicalPixel.Value,Mode=OneWay}"
                 >
                 <!--
                 ActualOffset="{Binding LimitedDesiredOffset.Value,Mode=TwoWay}"

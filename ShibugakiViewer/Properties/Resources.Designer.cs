@@ -754,6 +754,15 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
+        ///   Monitoring Addition / Removal of Files に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FolderUpdateChecking {
+            get {
+                return ResourceManager.GetString("FolderUpdateChecking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Notify when detecting addition / removal of files に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string FolderUpdateNotificationLabel {
@@ -871,6 +880,15 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
+        ///   High DPI に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string HighDpi {
+            get {
+                return ResourceManager.GetString("HighDpi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   History に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string HistoryText_Text {
@@ -925,7 +943,7 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
-        ///   Import from MikanViewer に類似しているローカライズされた文字列を検索します。
+        ///   Import from Mikan Viewer に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ImportMikanViewer {
             get {
@@ -1056,6 +1074,15 @@ namespace ShibugakiViewer.Properties {
         public static string LibrarySettings_Text {
             get {
                 return ResourceManager.GetString("LibrarySettings_Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Updating Library に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LibraryUpadating {
+            get {
+                return ResourceManager.GetString("LibraryUpadating", resourceCulture);
             }
         }
         
@@ -2118,6 +2145,24 @@ namespace ShibugakiViewer.Properties {
         public static string UpdatingText_Text {
             get {
                 return ResourceManager.GetString("UpdatingText_Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Use Logical Pixel に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string UseLogicalPixel {
+            get {
+                return ResourceManager.GetString("UseLogicalPixel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Use Physical Pixel に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string UsePhysicalPixel {
+            get {
+                return ResourceManager.GetString("UsePhysicalPixel", resourceCulture);
             }
         }
         

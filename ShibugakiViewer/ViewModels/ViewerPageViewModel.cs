@@ -69,6 +69,7 @@ namespace ShibugakiViewer.ViewModels
 
         public ReactiveProperty<double> ViewWidth { get; }
         public ReactiveProperty<double> ViewHeight { get; }
+        public ReadOnlyReactiveProperty<bool> UsePhysicalPixel { get; }
 
         public ReactiveProperty<bool> IsTopBarOpen { get; }
         public ReactiveProperty<bool> IsTopBarFixed { get; }
@@ -178,15 +179,22 @@ namespace ShibugakiViewer.ViewModels
             this.DisplayZoomFactor.Where(x => x != this.CurrentZoomFactorPercent.Value)
                 .Subscribe(x =>
                 {
-                    var value = x / 100.0;
-                    if (this.DesiredZoomFactor.Value == value)
-                    {
-                        value += 0.00001;
-                        //this.DesiredZoomFactor.Value = this.CurrentZoomFactorPercent.Value / 200.0;
-                        //return;
-                    }
-                    this.DesiredZoomFactor.Value = value;
+                    this.ChangeZoomFactor(x / 100.0);
+                    //var value = x / 100.0;
+                    //if (this.DesiredZoomFactor.Value == value)
+                    //{
+                    //    value += 0.00001;
+                    //    //this.DesiredZoomFactor.Value = this.CurrentZoomFactorPercent.Value / 200.0;
+                    //    //return;
+                    //}
+                    //this.DesiredZoomFactor.Value = value;
                 })
+                .AddTo(this.Disposables);
+
+            this.UsePhysicalPixel = parent.Core
+                .ObserveProperty(x => x.UseLogicalPixel)
+                .Select(x => !x)
+                .ToReadOnlyReactiveProperty()
                 .AddTo(this.Disposables);
 
             this.IsImageChanging = new ReactiveProperty<bool>().AddTo(this.Disposables);
@@ -600,8 +608,17 @@ namespace ShibugakiViewer.ViewModels
 
 
         private void ZoomImage(double coefficient)
-            => this.DesiredZoomFactor.Value = this.ZoomFactor.Value * coefficient;
+            => this.ChangeZoomFactor(this.ZoomFactor.Value * coefficient);
+        //this.DesiredZoomFactor.Value = this.ZoomFactor.Value * coefficient;
 
+        private void ChangeZoomFactor(double value)
+        {
+            if (this.DesiredZoomFactor.Value == value)
+            {
+                value += 0.00001;
+            }
+            this.DesiredZoomFactor.Value = value;
+        }
 
         private void StartAutoScaling()
             => this.IsAutoScalingEnabled.Toggle();

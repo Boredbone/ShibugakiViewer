@@ -8,6 +8,7 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              x:Name="scrollImageViewer" 
              DataContextChanged="scrollImageViewer_DataContextChanged"
+             Loaded="scrollImageViewer_Loaded"
              Unloaded="scrollImageViewer_Unloaded"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">

@@ -837,4 +837,13 @@
   <data name="LibraryUpadating" xml:space="preserve">
     <value>ライブラリの更新中</value>
   </data>
+  <data name="HighDpi" xml:space="preserve">
+    <value>High DPI</value>
+  </data>
+  <data name="UseLogicalPixel" xml:space="preserve">
+    <value>論理ピクセルを使用</value>
+  </data>
+  <data name="UsePhysicalPixel" xml:space="preserve">
+    <value>物理ピクセルを使用</value>
+  </data>
 </root>
