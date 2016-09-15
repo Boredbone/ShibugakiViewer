@@ -64,7 +64,7 @@ namespace ShibugakiViewer.Views.InformationPanes
 
         private void FlatButton_Click_2(object sender, RoutedEventArgs e)
         {
-            this.application.ShowToolWindow(-1);
+            this.application.ShowToolWindow(0);
         }
 
         private void FlatButton_Click(object sender, RoutedEventArgs e)
