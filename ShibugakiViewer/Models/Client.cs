@@ -1041,15 +1041,16 @@ namespace ShibugakiViewer.Models
 
             var records = this.front.ActivateFiles(files);
 
-            this.History.MoveNew(new ViewState()
+            var state = new ViewState()
             {
                 Search = null,
                 GroupKey = null,
                 CatalogIndex = 0,
                 ViewerIndex = 0,
                 Type = PageType.Catalog,
-            });
+            };
 
+            this.History.MoveNew(state);
 
             this.ChangePage(PageType.Viewer, 0, 0);
 
@@ -1067,6 +1068,14 @@ namespace ShibugakiViewer.Models
                         Reference = record.Directory,
                         Mode = CompareMode.Equal,
                     });
+                    search.SetSort(new[]
+                    {
+                        new SortSetting() { Property = FileProperty.FileName, IsDescending = false }
+                    });
+
+                    state.Search = search;
+                    this.History.Current.Search = search;
+                    
 
                     var index = await core.Library.FindIndexAsync(search, record);
 
