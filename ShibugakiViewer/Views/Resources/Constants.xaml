@@ -184,22 +184,7 @@
         <system:String x:Key="AscendingSymbol">&#xE904;</system:String>
         <system:String x:Key="DescendingSymbol">&#xE904;</system:String>-->
 
-    <!--
-        <system:String x:Key="ApplicationId1">e50c46c5-4ff9-46e6-90a5-ac975948544a</system:String>
-        <system:String x:Key="AdUnitId1">11499275</system:String>
 
-        <system:String x:Key="AdduplexApplicationId1">801d0a65-7615-41a8-a12d-3efa92019916</system:String>
-        <system:String x:Key="AdduplexAdUnitId1">161723</system:String>
-
-        <system:String x:Key="AdduplexApplicationId2">d98638ac-2ff7-41ae-a396-4b85cf392f6b</system:String>
-        <system:String x:Key="AdduplexAdUnitId2">174691</system:String>
-
-
-        <system:Double x:Key="AdWidth1">480.0</system:Double>
-        <system:Double x:Key="AdHeight1">80.0</system:Double>
-
-        <system:Double x:Key="AdWidth2">480.0</system:Double>
-        <system:Double x:Key="AdHeight2">80.0</system:Double>-->
 
     <system:Double x:Key="CompactPaneWidth">48.0</system:Double>
     <system:Double x:Key="OpenPaneWidth">320.0</system:Double>

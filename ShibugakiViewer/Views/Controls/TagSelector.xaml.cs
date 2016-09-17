@@ -327,7 +327,8 @@ namespace ShibugakiViewer.Views.Controls
             }
             else if (e.Key == Key.Enter)
             {
-                if (FocusManager.GetFocusedElement(this) is TextBox)
+                var focused = FocusManager.GetFocusedElement(this) ?? Keyboard.FocusedElement; 
+                if (focused is TextBox)
                 {
                     return;
                 }
