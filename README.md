@@ -8,46 +8,47 @@ for Windows 7/8/8.1/10
 
 ---
 
-![fig01](docs/images/small/01_ja.png)  
+
+[![fig01](docs/images/small/01_ja.png)](docs/images/raw/01_ja.png)  
 登録されたフォルダ内の画像ファイルをライブラリ化し、条件を指定して検索することができます。
 
 
 ---
 ### 画像の表示
 
-![fig02](docs/images/small/02_ja.png)  
+[![fig02](docs/images/small/02_ja.png)](docs/images/raw/02_ja.png)  
 画像を拡大、縮小、回転して表示できます。  
   
 画像を自動で切り替えるスライドショー機能があります。  
 スライドショーの再生中は画像をフルスクリーンで表示できます。  
 
-![fig03](docs/images/small/03.png)  
+[![fig03](docs/images/small/03.png)](docs/images/raw/03.png)  
 ウインドウの背景色は任意に設定可能です。
 
 
 ---
 ### 画像データベース
 
-![fig04](docs/images/small/04_ja.png)  
+[![fig04](docs/images/small/04_ja.png)](docs/images/raw/04_ja.png)  
 登録された画像にタグを付けて管理します。  
 キーボードショートカットを設定すると、素早くタグを設定することができます。  
 タグをタップすることで、同じタグを含む画像を抽出します。  
 
-![fig05](docs/images/small/05_ja.png)  
+[![fig05](docs/images/small/05_ja.png)](docs/images/raw/05_ja.png)  
 また、画像のグループ化を使用すると、電子書籍などの管理がより便利になります。  
 グループにもタグや評価の設定が可能です。  
   
-![fig06](docs/images/small/06_ja.png)  
+[![fig06](docs/images/small/06_ja.png)](docs/images/raw/06_ja.png)  
 画像のサイズ、作成日時、タグ、評価などの条件を指定し、一致する画像を検索します。  
 "AND/OR"を使用した詳細な条件の設定が可能です。  
   
 
-![fig07](docs/images/small/07_ja.png)  
+[![fig07](docs/images/small/07_ja.png)](docs/images/raw/07_ja.png)  
 検索結果を表示する際、複数のソート条件を設定することが可能です。  
 例えば評価が高い順番に並べたうえで、評価が同じ場合は更新日時が新しい順番に並べることができます。  
 
   
-![fig08](docs/images/small/08_ja.png)  
+[![fig08](docs/images/small/08_ja.png)](docs/images/raw/08_ja.png)  
 画像の入ったフォルダを登録します。  
 アプリの起動中はフォルダ内の画像の追加・削除を監視し、自動でライブラリを更新します。  
 
