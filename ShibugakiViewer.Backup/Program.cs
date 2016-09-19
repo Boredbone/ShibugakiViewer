@@ -41,6 +41,22 @@ namespace ShibugakiViewer.Backup
 
             var workingDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
             */
+            /*
+            args = new[]
+            {
+                "/c",
+                @"..\..\..\ShibugakiViewer\bin\Debug\ShibugakiViewer.exe",
+                Path.Combine(System.Environment.GetFolderPath
+                (Environment.SpecialFolder.LocalApplicationData),
+                "Boredbone", "ShibugakiViewer"),
+                "79509481-1f8d-44b0-a581-d0dd4fa23710",
+                "1af9b56b-4195-4b99-9893-1edfb2f84cbe",
+                "appsettings.config",
+                  Path.Combine(System.Environment.GetFolderPath
+                (Environment.SpecialFolder.LocalApplicationData),
+                  @"Packages\60037Boredbone.MikanViewer_8weh06aq8rfkj\LocalState"),
+                  "3",
+            };*/
 
 
             var modeText = args[0]?.ToLower();

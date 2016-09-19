@@ -76,7 +76,14 @@ namespace ShibugakiViewer.Backup
                     var count = 0;
 
                     await converter.Start2(data.Item1, data.Item2, data.Item3,
-                        x => count = x, x => Console.WriteLine($"Imported {x} / {count}"));
+                        x => count = x, x =>
+                        {
+                            Console.CursorLeft = 0;
+                            Console.Write($"Imported {x} / {count}");
+                        });
+
+
+                    Console.WriteLine("");
 
                     library.SaveSettings();
                 }

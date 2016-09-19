@@ -72,6 +72,8 @@ namespace LibraryConverter.Compat
 
             this.ConvertLibraryData(library);
 
+            var ignored = new HashSet<TagInformation>();
+
             var tagMax = this.Tags.Max(x => x.Key);
             for (int i = 1; i <= tagMax; i++)
             {
@@ -80,14 +82,17 @@ namespace LibraryConverter.Compat
                 {
                     tag = new TagInformation()
                     {
-                        IsIgnored = true,
+                        IsIgnored = false,
                         Name = i.ToString(),
                     };
+                    ignored.Add(tag);
                 }
-                library.Tags.SetTag(tag);
+                var newKey = library.Tags.SetTag(tag);
             }
 
             //this.Tags.OrderBy(x=>x.Key).ForEach(x => library.Tags.SetTag(x.Value));
+
+            ignored.ForEach(x => x.IsIgnored = true);
 
             await Task.Delay(1000);
 

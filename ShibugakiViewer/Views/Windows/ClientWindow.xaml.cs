@@ -47,7 +47,7 @@ namespace ShibugakiViewer.Views.Windows
             this.disposables.Dispose();
             (this.DataContext as IDisposable)?.Dispose();
         }
-        
+
         private void Window_Closed(object sender, EventArgs e)
         {
             this.Dispose();
@@ -62,7 +62,7 @@ namespace ShibugakiViewer.Views.Windows
                 vm.PopupOwner = this;
             }
         }
-        
+
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {

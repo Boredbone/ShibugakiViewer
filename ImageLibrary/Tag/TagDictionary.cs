@@ -22,7 +22,7 @@ namespace ImageLibrary.Tag
 
         private Subject<TagInformation> AddedSubject { get; }
         public IObservable<TagInformation> Added => this.AddedSubject.AsObservable();
-        
+
 
         public TagDictionary()
         {
@@ -183,13 +183,13 @@ namespace ImageLibrary.Tag
                 });
             }
         }
-        
+
 
         private int AddOrReplace(TagInformation value)
         {
             var key = 1;
             TagInformation tag = null;
-            while(this.RegisteredTags.TryGetValue(key,out tag))
+            while (this.RegisteredTags.TryGetValue(key, out tag))
             {
                 if (tag != null && tag.IsIgnored)
                 {
@@ -217,6 +217,6 @@ namespace ImageLibrary.Tag
             this.IsEdited = true;
             return key;
         }
-        
+
     }
 }
