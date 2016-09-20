@@ -7,7 +7,7 @@ namespace Database.Table
 {
     public interface ITypedTable
     {
-        string Name { get; set; }
+        string Name { get; }
         int Version { get; set; }
         DatabaseFront Parent { get; }
         Dictionary<string, string> TargetProperties { get; }

@@ -846,4 +846,13 @@
   <data name="UsePhysicalPixel" xml:space="preserve">
     <value>Use Physical Pixel</value>
   </data>
+  <data name="DeleteFile" xml:space="preserve">
+    <value>Delete File</value>
+  </data>
+  <data name="DeleteFiles" xml:space="preserve">
+    <value>Delete Files</value>
+  </data>
+  <data name="FullScreen" xml:space="preserve">
+    <value>Full-screen</value>
+  </data>
 </root>

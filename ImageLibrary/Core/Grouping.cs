@@ -30,11 +30,41 @@ namespace ImageLibrary.Core
         public TypedTable<Record, string> Table { get; }
         public Library Library { get; }
 
+        private readonly string recordSql;
+        private readonly string groupSql;
+
         public Grouping
             (TypedTable<Record, string> table, Library library)
         {
             this.Table = table;
             this.Library = library;
+
+            this.recordSql = $"SELECT DISTINCT {nameof(Record.GroupKey)} FROM {this.Table.Name}"
+                + $" WHERE ({nameof(Record.IsGroup)} == 0 AND {nameof(Record.Id)} IN @Item1)";
+
+            this.groupSql = $"SELECT DISTINCT {nameof(Record.Id)} FROM {this.Table.Name}"
+                + $" WHERE ({nameof(Record.IsGroup)} > 0 AND {nameof(Record.Id)} IN @Item1)";
+        }
+
+        public async Task<IEnumerable<string>> GetGroupIds
+            (IDbConnection connection, string[] items)
+        {
+            var list = new List<string>();
+
+            //var recordSql = $"SELECT DISTINCT {nameof(Record.GroupKey)} FROM {this.Table.Name}"
+            //    + $" WHERE ({nameof(Record.IsGroup)} == 0 AND {nameof(Record.Id)} IN @Item1)";
+
+            foreach (var ids in items.Buffer(128))
+            {
+                var param = new Tuple<string[]>(ids.ToArray());
+
+                //渡されたコレクションから設定されているグループを列挙
+                var r = await this.Table.QueryAsync<string>(connection, this.recordSql, param);
+
+                list.AddRange(r);
+            }
+
+            return list.Where(x => !x.IsNullOrWhiteSpace()).Distinct();
         }
 
 
@@ -59,25 +89,27 @@ namespace ImageLibrary.Core
             //var caseSql = $"CASE WHEN {nameof(Record.IsGroup)} == 0 THEN {nameof(Record.GroupKey)}"
             //    +$" ELSE {nameof(Record.Id)} END";
 
-            var recordSql = $"SELECT DISTINCT {nameof(Record.GroupKey)} FROM {this.Table.Name}"
-                + $" WHERE ({nameof(Record.IsGroup)} == 0 AND {nameof(Record.Id)} IN @Item1)";
-
-            var groupSql = $"SELECT DISTINCT {nameof(Record.Id)} FROM {this.Table.Name}"
-                + $" WHERE ({nameof(Record.IsGroup)} > 0 AND {nameof(Record.Id)} IN @Item1)";
 
             using (var connection = this.Table.Parent.Connect())
             {
                 var relatedGroupsList = new List<string[]>();
+
+
+                //var recordSql = $"SELECT DISTINCT {nameof(Record.GroupKey)} FROM {this.Table.Name}"
+                //    + $" WHERE ({nameof(Record.IsGroup)} == 0 AND {nameof(Record.Id)} IN @Item1)";
+                //
+                //var groupSql = $"SELECT DISTINCT {nameof(Record.Id)} FROM {this.Table.Name}"
+                //    + $" WHERE ({nameof(Record.IsGroup)} > 0 AND {nameof(Record.Id)} IN @Item1)";
 
                 foreach (var ids in items.Buffer(128))
                 {
                     var param = new Tuple<string[]>(ids.ToArray());
 
                     //渡されたコレクションから設定されているグループを列挙
-                    var r = await this.Table.QueryAsync<string>(connection, recordSql, param);
+                    var r = await this.Table.QueryAsync<string>(connection, this.recordSql, param);
 
                     //対象に含まれているグループを列挙
-                    var g = await this.Table.QueryAsync<string>(connection, groupSql, param);
+                    var g = await this.Table.QueryAsync<string>(connection, this.groupSql, param);
 
                     oldGroupsList.Add(r.ToArray());
                     relatedGroupsList.Add(g.ToArray());
@@ -210,6 +242,11 @@ namespace ImageLibrary.Core
         }
         public async Task RefreshGroupPropertiesAsync(IDbConnection connection, params string[] groups)
         {
+            if (groups.Length <= 0)
+            {
+                return;
+            }
+
             using (var transaction = connection.BeginTransaction())
             {
 
@@ -217,6 +254,11 @@ namespace ImageLibrary.Core
                 {
                     foreach (var group in groups)
                     {
+                        if (group == null)
+                        {
+                            continue;
+                        }
+
                         //IsGroup==0の場合はスキップ
                         var isGroup = await this.Table
                             .GetColumnsFromKeyAsync<int>(connection, group, nameof(Record.IsGroup));

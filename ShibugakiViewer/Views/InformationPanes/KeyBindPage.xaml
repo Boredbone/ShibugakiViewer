@@ -464,8 +464,20 @@
                                 </StackPanel>
                             </Border>
 
-
                             <Border Grid.Column="1" Grid.Row="21">
+                                <StackPanel>
+                                    <TextBlock Text="F11"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="0" Grid.Row="21">
+                                <StackPanel>
+                                    <TextBlock
+                                        Text="{x:Static properties:Resources.FullScreen}"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="1" Grid.Row="22">
                                 <StackPanel>
                                     <TextBlock>
                                 <Run Text="Alt + "/>
@@ -474,20 +486,20 @@
                                 </StackPanel>
                             </Border>
 
-                            <Border Grid.Column="0" Grid.Row="21">
+                            <Border Grid.Column="0" Grid.Row="22">
                                 <StackPanel>
                                     <TextBlock 
                                         Text="{x:Static properties:Resources.BackHelp_Text}"/>
                                 </StackPanel>
                             </Border>
 
-                            <Border Grid.Column="1" Grid.Row="22">
+                            <Border Grid.Column="1" Grid.Row="23">
                                 <StackPanel>
                                     <TextBlock Text="Alt + &quot;Q&quot;"/>
                                 </StackPanel>
                             </Border>
 
-                            <Border Grid.Column="0" Grid.Row="22">
+                            <Border Grid.Column="0" Grid.Row="23">
                                 <StackPanel>
                                     <TextBlock 
                                         Text="{x:Static properties:Resources.ExitApp}"/>

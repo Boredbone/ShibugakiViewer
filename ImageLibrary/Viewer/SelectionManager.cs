@@ -410,14 +410,16 @@ namespace ImageLibrary.Viewer
             IEnumerable<int> tags;
             string[] ids;
 
-            tags = this.GetCommonTagsFromCache();
+            var items = this.ItemsSet.ToArray();
+
+            tags = this.GetCommonTagsFromCache(items);
 
             int rating;
-            var ratingResult = this.GetCommonRatingFromCache(out rating);
+            var ratingResult = this.GetCommonRatingFromCache(items, out rating);
 
             if (tags == null || !ratingResult)
             {
-                ids = this.ItemsSet.Select(x => x.Key).ToArray();
+                ids = items.Select(x => x.Key).ToArray();
 
                 if (tags == null)
                 {
@@ -442,9 +444,9 @@ namespace ImageLibrary.Viewer
 
         }
 
-        private int[] GetCommonTagsFromCache()
+        private int[] GetCommonTagsFromCache(KeyValuePair<string, Record>[] items)
         {
-            var items = this.ItemsSet.ToArray();
+            //var items = this.ItemsSet.ToArray();
 
             if (items.Length <= 0)
             {
@@ -462,9 +464,9 @@ namespace ImageLibrary.Viewer
                 .ToArray();
         }
 
-        private bool GetCommonRatingFromCache(out int rating)
+        private bool GetCommonRatingFromCache(KeyValuePair<string, Record>[] items, out int rating)
         {
-            var items = this.ItemsSet.ToArray();
+            //var items = this.ItemsSet.ToArray();
 
             if (items.Length <= 0)
             {

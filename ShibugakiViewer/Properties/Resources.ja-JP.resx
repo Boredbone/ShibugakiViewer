@@ -846,4 +846,13 @@
   <data name="UsePhysicalPixel" xml:space="preserve">
     <value>物理ピクセルを使用</value>
   </data>
+  <data name="DeleteFile" xml:space="preserve">
+    <value>ファイルを削除</value>
+  </data>
+  <data name="DeleteFiles" xml:space="preserve">
+    <value>ファイルを削除</value>
+  </data>
+  <data name="FullScreen" xml:space="preserve">
+    <value>フルスクリーン</value>
+  </data>
 </root>

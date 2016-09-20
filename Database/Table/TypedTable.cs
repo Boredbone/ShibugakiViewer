@@ -21,7 +21,7 @@ namespace Database.Table
     {
 
         public DatabaseFront Parent { get; }
-        public string Name { get; set; }
+        public string Name { get; }
         public int Version { get; set; } = 1;
         public int BufferSize { get; set; } = 256;
         public int ArrayParameterMaxLength { get; set; } = 128;
@@ -422,7 +422,7 @@ namespace Database.Table
         /// <param name="transaction"></param>
         public Task AddAsync(TRecord item, IDbConnection connection, IDbTransaction transaction)
             => this.AddMainAsync(item, connection, transaction, false);
-        
+
 
         /// <summary>
         /// Add records
@@ -559,12 +559,12 @@ namespace Database.Table
             {
                 return;
             }
-            
+
             await connection.ExecuteAsync
                 ($"UPDATE {this.Name} SET {text} WHERE Id = @Id",
                 target, transaction);
         }
-        
+
 
         /// <summary>
         /// Remove a record
@@ -603,10 +603,10 @@ namespace Database.Table
         /// </summary>
         /// <param name="items"></param>
         /// <param name="context"></param>
-        public void RemoveRange(IEnumerable<TRecord> items,
+        private void RemoveRange(IEnumerable<TKey> ids,
             DatabaseFront.ThreadSafeTransactionContext context)
         {
-            this.RemoveRange(items, context.Connection.Value, context.Transaction);
+            this.RemoveRange(ids.Distinct(), context.Connection.Value, context.Transaction);
         }
 
         /// <summary>
@@ -615,26 +615,32 @@ namespace Database.Table
         /// <param name="items"></param>
         /// <param name="connection"></param>
         /// <param name="transaction"></param>
-        public void RemoveRange(IEnumerable<TRecord> items,
+        private void RemoveRange(IEnumerable<TKey> ids,
             IDbConnection connection, IDbTransaction transaction)
         {
-            var array = items.ToArray();
+            var param = new Tuple<TKey[]>(ids.ToArray());
 
-            items.Distinct(x => x.Id).ForEach(item =>
-            {
-                connection.Execute
-                    ($"DELETE FROM {this.Name} WHERE Id = @Id",
-                    item, transaction);
-            });
+            connection.Execute
+                ($"DELETE FROM {this.Name} WHERE Id IN @Item1", param, transaction);
+
+
+            //var array = items.ToArray();
+            //
+            //items.Distinct(x => x.Id).ForEach(item =>
+            //{
+            //    connection.Execute
+            //        ($"DELETE FROM {this.Name} WHERE Id = @Id",
+            //        item, transaction);
+            //});
         }
 
         /// <summary>
         /// Remove a lot of records
         /// </summary>
         /// <param name="items"></param>
-        public void RemoveRangeBuffered(IDbConnection connection, IEnumerable<TRecord> items)
+        public void RemoveRangeBuffered(IDbConnection connection, IEnumerable<TKey> ids)
         {
-            foreach (var buffer in items.Buffer(this.BufferSize))
+            foreach (var buffer in ids.Distinct().Buffer(this.BufferSize))
             {
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -651,11 +657,43 @@ namespace Database.Table
                 }
             }
         }
+        public void RemoveRangeBuffered(IDbConnection connection, IEnumerable<TRecord> items)
+            => this.RemoveRangeBuffered(connection, items.Select(x => x.Id));
+
         public void RemoveRangeBuffered(IEnumerable<TRecord> items)
         {
             using (var connection = this.Parent.ConnectAsThreadSafe())
             {
                 this.RemoveRangeBuffered(connection.Value, items);
+            }
+        }
+
+        /// <summary>
+        /// Remove a lot of records
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <param name="ids"></param>
+        public async Task RemoveRangeBufferedWithFilter
+            (IDbConnection connection, IEnumerable<TKey> ids, string filter)
+        {
+            foreach (var buffer in ids.Distinct().Buffer(this.BufferSize))
+            {
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        var param = new Tuple<TKey[]>(buffer.ToArray());
+
+                        await connection.ExecuteAsync
+                            ($"DELETE FROM {this.Name} WHERE ((Id IN @Item1) AND ({filter}))", param, transaction);
+
+                        transaction.Commit();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                    }
+                }
             }
         }
 
@@ -787,7 +825,7 @@ namespace Database.Table
         /// <returns></returns>
         public async Task<TRecord[]> GetAllAsync(IDbConnection connection)
             => await this.AsQueryable(connection).ToArrayAsync();
-        
+
 
         /// <summary>
         /// Get a record from ID
@@ -802,7 +840,14 @@ namespace Database.Table
                     ($@"SELECT * FROM {this.Name} WHERE Id = @Id LIMIT 1", new IdContainer(key)))
                 .FirstOrDefault();
         }
-        
+
+        public async Task<IEnumerable<TRecord>> GetRecordsFromKeyAsync(IDbConnection connection, TKey[] ids)
+        {
+            var sql = $"SELECT * FROM {this.Name} WHERE Id IN @Item1";
+            var param = new Tuple<TKey[]>(ids);
+            return await connection.QueryAsync<TRecord>(sql, param);
+        }
+
         public async Task<T> GetColumnsFromKeyAsync<T>(IDbConnection connection, TKey key, params string[] columns)
         {
             var selectText = columns.Join(", ");
@@ -881,7 +926,7 @@ namespace Database.Table
         {
             await Task.Run(() => this.Parent.RequestTransaction(action));
         }
-        
+
 
         public Task<IEnumerable<T>> QueryAsync<T>
             (IDbConnection connection, string sql, object param = null, IDbTransaction transaction = null)

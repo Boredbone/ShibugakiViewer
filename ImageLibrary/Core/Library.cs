@@ -683,6 +683,76 @@ namespace ImageLibrary.Core
         }
 
         /// <summary>
+        /// データベースからアイテムを削除
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <param name="preAction"></param>
+        /// <returns></returns>
+        public async Task<bool> DeleteItemsAsync
+            (IEnumerable<KeyValuePair<string, Record>> files, Func<IEnumerable<string>, int> preAction)
+        {
+            if (files == null)
+            {
+                return false;
+            }
+
+            var items = files
+                .Where(x => !x.Key.IsNullOrWhiteSpace())
+                .ToDictionary(x => x.Key, x => x.Value);
+
+            if (items.Count <= 0)
+            {
+                return false;
+            }
+
+            using (var locking = await asyncLock.LockAsync())
+            {
+                var ids = items.Select(x => x.Key).ToArray();
+                var groups = new HashSet<string>(items.Select(x => x.Value?.GroupKey).Distinct());
+
+                if (preAction != null)
+                {
+                    if (preAction(ids) > 0)
+                    {
+                        return false;
+                    }
+                }
+
+                using (var connection = this.Database.Connect())
+                {
+                    //実体のないアイテムの所属グループをデータベースに問い合わせ
+                    var emptyKeys = items
+                        .Where(x => x.Value == null)
+                        .Select(x => x.Key)
+                        .ToArray();
+
+                    if (emptyKeys.Length > 0)
+                    {
+                        var values = await this.Grouping.GetGroupIds(connection, emptyKeys);
+                        foreach(var item in values)
+                        {
+                            groups.Add(item);
+                        }
+                    }
+
+                    //削除
+                    await this.Records.RemoveRangeBufferedWithFilter(connection, ids,
+                        DatabaseFunction.IsFalse(nameof(Record.IsGroup)));
+
+                    //関連するグループの情報を更新
+                    await this.Grouping.RefreshGroupPropertiesAsync(connection, groups.ToArray());
+                }
+            }
+            this.DatabaseUpdatedSubject.OnNext(new DatabaseUpdatedEventArgs()
+            {
+                Sender = this,
+                Action = DatabaseAction.Delete,
+            });
+
+            return true;
+        }
+
+        /// <summary>
         /// 設定をXMLに保存
         /// </summary>
         public void SaveSettings()

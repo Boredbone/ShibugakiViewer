@@ -724,6 +724,17 @@ namespace ImageLibrary.Viewer
             }
         }
 
+        public async Task<bool> DeleteItemsAsync
+            (IEnumerable<KeyValuePair<string, Record>> items, Func<IEnumerable<string>, int> preAction)
+        {
+            var result = await this.library.DeleteItemsAsync(items, preAction);
+            if (result)
+            {
+                this.Refresh();
+            }
+            return result;
+        }
+
         public async Task<Record> GetItemByIdAsync(string id)
         {
             var item = this.GetFromCacheById(id).Value;

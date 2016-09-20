@@ -389,6 +389,13 @@ namespace ShibugakiViewer.ViewModels
             keyReceiver.Register(k => k >= Key.A && k <= Key.Z,
                 (t, key) => this.SetTag(((char)(key - Key.A + 'a')).ToString()),
                 cursorFilter);
+
+
+            keyReceiver.Register(Key.Delete,
+                async (t, key) => await this.client.DeleteSelectedFiles(),
+                cursorFilter);
+
+            keyReceiver.Register(Key.F5, (t, key) => this.client.Refresh(), cursorFilter);
         }
     }
 }

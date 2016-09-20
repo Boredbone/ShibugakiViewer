@@ -367,6 +367,24 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
+        ///   Delete File に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string DeleteFile {
+            get {
+                return ResourceManager.GetString("DeleteFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Delete Files に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string DeleteFiles {
+            get {
+                return ResourceManager.GetString("DeleteFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Descending に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Descending {
@@ -777,6 +795,15 @@ namespace ShibugakiViewer.Properties {
         public static string FullPath {
             get {
                 return ResourceManager.GetString("FullPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Full-screen に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FullScreen {
+            get {
+                return ResourceManager.GetString("FullScreen", resourceCulture);
             }
         }
         

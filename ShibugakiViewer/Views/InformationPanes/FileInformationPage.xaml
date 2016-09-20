@@ -126,16 +126,17 @@
                                                             Text="{x:Static
                                                             properties:Resources.OpenWith}"/>
                                                     </cc:FlatButton>
-                                                    
-                                                    <!--
-                                                    <Button Content="copy" HorizontalAlignment="Stretch"
-                                                            Click="copyButton_Click"/>
 
-                                                    <Button Content="explorer" HorizontalAlignment="Stretch"
-                                                            Click="explorerButton_Click"/>
-
-                                                    <Button Content="another app" HorizontalAlignment="Stretch"
-                                                            Click="anotherAppButton_Click"/>-->
+                                                    <cc:FlatButton
+                                                        Style="{StaticResource contextMenuButtonStyle}"
+                                                        Click="FlatButton_Click">
+                                                        <TextBlock 
+                                                            Style="{StaticResource contextMenuTextStyle}"
+                                                            Margin="16,0"
+                                                            Text="{x:Static
+                                                            properties:Resources.DeleteFile}"
+                                                            Foreground="Red"/>
+                                                    </cc:FlatButton>
                                                     
                                                 </StackPanel>
                                             </Border>
@@ -373,6 +374,24 @@
 
                     <TextBlock Text="{Binding DateModified, StringFormat={}{0:G}}"
                                Style="{StaticResource propertyValue}" />
+
+
+
+                    <!--
+                    <Grid Style="{StaticResource informationPaneButtonGridStyle}">
+                        <cc:FlatButton
+                            Style="{StaticResource informationPaneButtonStyle}"
+                            Click="FlatButton_Click"
+                            ToolTip="{x:Static properties:Resources.DeleteFile}">
+                            <cc:LabeledIcon
+                                Style="{StaticResource informationPaneContentStyle}"
+                                IconText="{StaticResource RemoveSymbol}"
+                                Text="{x:Static properties:Resources.DeleteFile}"
+                                Foreground="Red"/>
+                        </cc:FlatButton>
+                    </Grid>-->
+
+
                 </StackPanel>
 
 

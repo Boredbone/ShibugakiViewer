@@ -926,10 +926,18 @@ namespace ShibugakiViewer.ViewModels
             keyReceiver.Register(Key.Apps, (t, key) => this.TogglePane(), cursorFilter);
 
 
-
-
             keyReceiver.Register(Key.G, (t, key) => this.client.DisplayGroup(0),
                 cursorFilter, modifier: ModifierKeys.Control);
+
+
+            keyReceiver.Register(Key.Delete,
+                async (t, key) => await this.client.DeleteDisplayingFile(),
+                cursorFilter);
+
+
+            keyReceiver.Register(Key.F5, (t, key) => this.client.Refresh(), cursorFilter);
+
+            keyReceiver.Register(Key.F11, (t, key) => this.parent.IsFullScreen.Toggle(), cursorFilter);
 
             keyReceiver.Register(Key.Divide, async (t, key) =>
             {

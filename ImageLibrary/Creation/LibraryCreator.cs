@@ -248,13 +248,15 @@ namespace ImageLibrary.Creation
 
                 using (var connection = this.Records.Parent.Connect())
                 {
-                    var sql = $"SELECT * FROM {this.Records.Name}"
-                        + $" WHERE {nameof(Record.Id)} IN @Item1";
-
                     var items = added.Concat(removed).Distinct().ToArray();
-                    var param = new Tuple<string[]>(items);
+                    var r = await this.Records.GetRecordsFromKeyAsync(connection, items);
 
-                    var r = await this.Records.QueryAsync<Record>(connection, sql, param);
+                    //var sql = $"SELECT * FROM {this.Records.Name}"
+                    //    + $" WHERE {nameof(Record.Id)} IN @Item1";
+                    //
+                    //var param = new Tuple<string[]>(items);
+                    //
+                    //var r = await this.Records.QueryAsync<Record>(connection, sql, param);
 
                     relatedFiles = new ReadOnlyDictionary<string, Record>
                         (r.ToDictionary(x => x.Id, x => x));
@@ -404,6 +406,7 @@ namespace ImageLibrary.Creation
                 var groups = addedFiles.Select(x => x.Value.GroupKey)
                     .Union(updatedFiles.Select(x => x.Value.GroupKey))
                     .Union(removedFiles.Select(x => x.Value.GroupKey))
+                    .Where(x => !x.IsNullOrWhiteSpace())
                     .ToArray();
 
                 await library.Grouping.RefreshGroupPropertiesAsync(connection.Value, groups);

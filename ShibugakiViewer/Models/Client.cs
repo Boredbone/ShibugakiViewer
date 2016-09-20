@@ -133,6 +133,8 @@ namespace ShibugakiViewer.Models
         private readonly LibraryFront front;
         public ISearchResult SearchResult => this.front;
 
+        public Func<string[], int> FileDeleteFunction { get; set; }
+
         private bool viewerImageChangeGate;
 
 
@@ -528,7 +530,12 @@ namespace ShibugakiViewer.Models
             this.IsStateChangingSubject.OnNext(false);
         }
 
-
+        /// <summary>
+        /// 検索結果一覧用データベースアクセス
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="viewSize"></param>
+        /// <param name="baseDirection"></param>
         private void SearchForCatalog(long index, int viewSize, int baseDirection)
         {
             var offset = Math.Max(index - (viewSize / 2), 0);
@@ -565,18 +572,6 @@ namespace ShibugakiViewer.Models
         /// <param name="search"></param>
         public void SetNewSearch(SearchInformation search)
         {
-
-            //var catalogIndex = 0L;
-            //var viewerIndex = 0L;
-            //
-            //if (this.front.FeaturedGroup == null
-            //    && this.front.SearchInformation != null
-            //    && this.front.SearchInformation.SettingEquals(search))
-            //{
-            //    catalogIndex = this.CatalogIndex.Value;
-            //    viewerIndex = this.ViewerIndex.Value;
-            //}
-
             this.History.MoveNew(new ViewState()
             {
                 Search = search,
@@ -604,17 +599,6 @@ namespace ShibugakiViewer.Models
                     Mode = mode,
                 }
             });
-
-            //var search = new SearchInformation(new ComplexSearch(false));
-            //search.Root.Add(new UnitSearch()
-            //{
-            //    Property = property,
-            //    Reference = reference,
-            //    Mode = mode,
-            //});
-            //
-            //this.SetNewSearch(search);
-            //this.ChangePage(PageType.Catalog, null, 0);
         }
 
         /// <summary>
@@ -882,7 +866,29 @@ namespace ShibugakiViewer.Models
         /// <param name="client"></param>
         private void SetRecord(bool ignoreIfDifferent)
         {
+            var length = this.front.Length.Value;
+
+            if (length <= 0)
+            {
+                if (!ignoreIfDifferent)
+                {
+                    this.ViewerDisplayingInner.Value = Record.Empty;
+                }
+                return;
+            }
+
+            if (length == 1)
+            {
+                ignoreIfDifferent = false;
+            }
+
             var index = this.ViewerIndex.Value;
+
+            if (length > 0 && index >= length && index > 0 && !ignoreIfDifferent)
+            {
+                this.ViewerIndex.Value = index - 1;
+                return;
+            }
 
             var result = this.front.GetRecords(index, 1, 0, false);
 
@@ -894,7 +900,7 @@ namespace ShibugakiViewer.Models
                     || current == null
                     || current == Record.Empty)
                 {
-                    this.ViewerDisplayingInner.Value = result[0];
+                    this.ViewerDisplayingInner.Value = result[0] ?? Record.Empty;
                 }
                 else
                 {
@@ -912,7 +918,7 @@ namespace ShibugakiViewer.Models
                     }
                 }
             }
-            else
+            else if(!ignoreIfDifferent)
             {
                 this.ViewerDisplayingInner.Value = Record.Empty;
             }
@@ -936,7 +942,11 @@ namespace ShibugakiViewer.Models
         public void MoveToCatalog() => this.MoveToPage(PageType.Catalog, false);
 
 
-
+        /// <summary>
+        /// ページを移動
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="force"></param>
         private void MoveToPage(PageType type, bool force = false)
         {
             if (this.SelectedPage.Value == type && !force)
@@ -957,6 +967,12 @@ namespace ShibugakiViewer.Models
             }
         }
 
+        /// <summary>
+        /// ページを移動
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="viewerIndex"></param>
+        /// <param name="catalogIndex"></param>
         private void ChangePage(PageType type, long? viewerIndex, long? catalogIndex)
         {
             //var i = viewerIndex ?? this.ViewerIndex.Value;
@@ -1022,8 +1038,88 @@ namespace ShibugakiViewer.Models
             //}
         }
 
+        /// <summary>
+        /// 戻る
+        /// </summary>
         public void Back() => this.History.MoveBack();
+
+        /// <summary>
+        /// 進む
+        /// </summary>
         public void Forward() => this.History.MoveForward();
+
+        /// <summary>
+        /// ビューアで表示中のファイルを削除
+        /// </summary>
+        /// <returns></returns>
+        public Task<bool> DeleteDisplayingFile()
+            => this.DeleteFilesAsync(this.ToSingleDictionary(this.ViewerDisplaying.Value));
+
+        /// <summary>
+        /// プロパティ表示中のファイルを削除
+        /// </summary>
+        /// <returns></returns>
+        public Task<bool> DeleteSelectedSingleFile()
+            => this.DeleteFilesAsync(this.ToSingleDictionary(this.SelectedRecord.Value));
+
+        private KeyValuePair<string, Record>[] ToSingleDictionary(Record value)
+            => new[] { new KeyValuePair<string, Record>(value?.Id, value) };
+        
+
+        /// <summary>
+        /// 選択されたファイルをすべて削除
+        /// </summary>
+        /// <returns></returns>
+        public Task<bool> DeleteSelectedFiles()
+            => this.DeleteFilesAsync(this.SelectedItems.GetAll());
+
+        /// <summary>
+        /// ファイルの削除
+        /// </summary>
+        /// <param name="files"></param>
+        /// <returns></returns>
+        private async Task<bool> DeleteFilesAsync(IEnumerable<KeyValuePair<string, Record>> items)
+        {
+            //if (items == null)
+            //{
+            //    return false;
+            //}
+            //
+            //files = files.Where(x => !x.IsNullOrWhiteSpace()).ToArray();
+            //
+            //if (files.IsNullOrEmpty())
+            //{
+            //    return false;
+            //}
+
+            //var messageBoxTitle = "Delete Files";
+            //var messaBoxText = (files.Length == 1) ? $"delete {files[0]}" : $"delete {files.Length} files";
+            //
+            //var result = MessageBox.Show(messaBoxText, messageBoxTitle,
+            //    MessageBoxButton.YesNo,
+            //    MessageBoxImage.Question);
+            //
+            //if (result != MessageBoxResult.Yes && result != MessageBoxResult.OK)
+            //{
+            //    return;
+            //}
+
+            var result = await this.front.DeleteItemsAsync(items,
+                x => this.FileDeleteFunction?.Invoke(x.ToArray()) ?? 0);
+
+            //_ => Boredbone.Utility.Tools.ShellFileOperation.DeleteFiles(true, files));
+
+            if (result)
+            {
+                this.SelectedItems.Clear();
+
+                if (this.SelectedPage.Value == PageType.Viewer)
+                {
+                    this.SetRecord(false);
+                }
+            }
+            return result;
+        }
 
 
         /// <summary>
@@ -1099,10 +1195,17 @@ namespace ShibugakiViewer.Models
             }
         }
 
+        /// <summary>
+        /// 最新の情報に更新
+        /// </summary>
         public void Refresh()
         {
             this.core.ImageBuffer.ClearAll();
             this.front.Refresh();
+            if (this.SelectedPage.Value == PageType.Viewer)
+            {
+                this.SetRecord(false);
+            }
         }
 
 

@@ -119,6 +119,15 @@
                                                 Text="{x:Static properties:Resources.CopyPath}"/>
                                         </cc:FlatButton>
 
+                                        <cc:FlatButton
+                                            Style="{StaticResource contextMenuButtonStyle}"
+                                            Click="FlatButton_Click">
+                                            <TextBlock 
+                                                Style="{StaticResource contextMenuTextStyle}"
+                                                Margin="16,0"
+                                                Text="{x:Static properties:Resources.DeleteFiles}"
+                                                Foreground="Red"/>
+                                        </cc:FlatButton>
 
                                     </StackPanel>
                                 </Border>

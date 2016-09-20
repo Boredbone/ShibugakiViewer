@@ -136,22 +136,6 @@ namespace ShibugakiViewer.Views.InformationPanes
             var control = sender as FrameworkElement;
 
             clientViewModel.ShowTagSelector(control);
-
-            //var window = Window.GetWindow(this) as IPopupDialogOwner;
-            ////var clientViewModel = this.DataContext as ClientWindowViewModel;
-            //var control = sender as FrameworkElement;
-            //
-            //if (window != null && control!=null)
-            //{
-            //    var content = new TagSelector()
-            //    {
-            //        Target = this.Source,
-            //    };
-            //
-            //    window.PopupDialog.Show(content,
-            //        new Thickness(10.0, 10.0, double.NaN, double.NaN),
-            //        HorizontalAlignment.Right, VerticalAlignment.Center, control);
-            //}
         }
 
         private void copyButton_Click(object sender, RoutedEventArgs e)
@@ -175,6 +159,16 @@ namespace ShibugakiViewer.Views.InformationPanes
         private void HideFileOperationDialog()
         {
             this.fileOperationDialog.IsEnabled = false;
+        }
+
+        private async void FlatButton_Click(object sender, RoutedEventArgs e)
+        {
+            var clientViewModel = this.DataContext as ClientWindowViewModel;
+            if (clientViewModel != null)
+            {
+                var result = await clientViewModel.Client.DeleteSelectedSingleFile();
+            }
+            this.HideFileOperationDialog();
         }
     }
 
