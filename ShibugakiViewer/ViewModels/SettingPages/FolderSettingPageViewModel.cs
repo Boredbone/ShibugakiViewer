@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -50,7 +51,18 @@ namespace ShibugakiViewer.ViewModels.SettingPages
                 .ToReactiveProperty()
                 .AddTo(this.Disposables);
 
-            this.IsInitializeMode = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
+            this.IsInitializeMode = new ReactiveProperty<bool>(false);//.AddTo(this.Disposables);
+
+            Disposable.Create(() =>
+            {
+                if (!this.IsInitializeMode.Value && this.library.HasRefreshWaitingFolder())
+                {
+                    this.library.RefreshLibraryAsync(true).FireAndForget();
+                }
+
+                this.IsInitializeMode.Dispose();
+            })
+            .AddTo(this.Disposables);
 
 
             this.IsProfessionalFolderSettingEnabled = core
@@ -103,10 +115,10 @@ namespace ShibugakiViewer.ViewModels.SettingPages
                     {
                         this.previousSelectedDirectory = folderPath;
                     }
-                    if (result && !this.IsInitializeMode.Value)
-                    {
-                        this.library.RefreshLibraryAsync(true).FireAndForget();
-                    }
+                    //if (result && !this.IsInitializeMode.Value)
+                    //{
+                    //    this.library.RefreshLibraryAsync(true).FireAndForget();
+                    //}
 
                     /*
                     string folderPath = null;

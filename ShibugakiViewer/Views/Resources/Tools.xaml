@@ -15,6 +15,7 @@
 
     <converters:BooleanToVisibilityConverter x:Key="TrueToVisibleConverter" />
     <converters:BooleanToVisibilityConverter x:Key="FalseToVisibleConverter" IsReversed="True" />
+    <converters:BoolInvertingConverter x:Key="BoolInvertingConverter" />
     <converters:MultiplyConverter x:Key="MultiplyConverter" />
     <sc:ComplexSearchModeConverter x:Key="ComplexSearchModeConverter" />
     <sc:SizeConverter x:Key="FileSizeConverter" />

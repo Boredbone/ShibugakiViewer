@@ -855,4 +855,25 @@
   <data name="FullScreen" xml:space="preserve">
     <value>フルスクリーン</value>
   </data>
+  <data name="DeleteFileText1" xml:space="preserve">
+    <value>ファイルの削除</value>
+  </data>
+  <data name="DeleteFileText2" xml:space="preserve">
+    <value>このファイルを削除しますか?</value>
+  </data>
+  <data name="DeleteFileText3" xml:space="preserve">
+    <value>複数ファイルの削除</value>
+  </data>
+  <data name="DeleteFileText4" xml:space="preserve">
+    <value>これらの</value>
+  </data>
+  <data name="DeleteFileText5" xml:space="preserve">
+    <value>個の項目を削除しますか?</value>
+  </data>
+  <data name="DeleteFileText6" xml:space="preserve">
+    <value>グループは削除できません。</value>
+  </data>
+  <data name="DeleteFileText7" xml:space="preserve">
+    <value>グループを含んでいるため、削除できません。</value>
+  </data>
 </root>

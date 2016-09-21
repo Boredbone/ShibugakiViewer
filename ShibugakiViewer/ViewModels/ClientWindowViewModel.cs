@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Interop;
 using Boredbone.Utility.Extensions;
 using Boredbone.Utility.Notification;
 using Database.Search;
@@ -22,7 +21,6 @@ using Reactive.Bindings.Extensions;
 using ShibugakiViewer.Models;
 using ShibugakiViewer.Models.Utility;
 using ShibugakiViewer.Views.Controls;
-using ShibugakiViewer.Views.Windows;
 using WpfTools;
 using WpfTools.Controls;
 
@@ -556,12 +554,12 @@ namespace ShibugakiViewer.ViewModels
                     }
                 }, this.Disposables);
 
-            //ファイル削除ダイアログ
-            client.FileDeleteFunction = x =>
-            {
-                var handle = new WindowInteropHelper(this.View).Handle;
-                return Boredbone.Utility.Tools.ShellFileOperation.DeleteFiles(true, handle, x);
-            };
+            ////ファイル削除ダイアログ
+            //client.FileDeleteFunction = x =>
+            //{
+            //    var handle = new WindowInteropHelper(this.View).Handle;
+            //    return Boredbone.Utility.Tools.ShellFileOperation.DeleteFiles(true, handle, x);
+            //};
 
             //Keyboard
             this.RegisterKeyReceiver(client);
@@ -612,10 +610,11 @@ namespace ShibugakiViewer.ViewModels
                 (_, __) => ((App)Application.Current).ExitAll(),
                 0, modifier: ModifierKeys.Alt);
 
-
+#if DEBUG
             this.KeyReceiver.Register(Key.NumPad5,
                 (_, __) => { },
                 0);//, modifier: ModifierKeys.Shift);
+#endif
 
         }
 

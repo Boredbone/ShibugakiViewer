@@ -724,10 +724,9 @@ namespace ImageLibrary.Viewer
             }
         }
 
-        public async Task<bool> DeleteItemsAsync
-            (IEnumerable<KeyValuePair<string, Record>> items, Func<IEnumerable<string>, int> preAction)
+        public async Task<bool> DeleteItemsAsync(IEnumerable<KeyValuePair<string, Record>> items)
         {
-            var result = await this.library.DeleteItemsAsync(items, preAction);
+            var result = await this.library.DeleteItemsAsync(items);
             if (result)
             {
                 this.Refresh();

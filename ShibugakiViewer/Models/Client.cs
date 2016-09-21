@@ -132,9 +132,7 @@ namespace ShibugakiViewer.Models
         private readonly ApplicationCore core;
         private readonly LibraryFront front;
         public ISearchResult SearchResult => this.front;
-
-        public Func<string[], int> FileDeleteFunction { get; set; }
-
+        
         private bool viewerImageChangeGate;
 
 
@@ -1071,41 +1069,61 @@ namespace ShibugakiViewer.Models
         /// </summary>
         /// <returns></returns>
         public Task<bool> DeleteSelectedFiles()
-            => this.DeleteFilesAsync(this.SelectedItems.GetAll());
+            => this.DeleteFilesAsync(this.SelectedItems.GetAll().ToArray());
 
         /// <summary>
         /// ファイルの削除
         /// </summary>
         /// <param name="files"></param>
         /// <returns></returns>
-        private async Task<bool> DeleteFilesAsync(IEnumerable<KeyValuePair<string, Record>> items)
+        private async Task<bool> DeleteFilesAsync(IEnumerable< KeyValuePair<string, Record>> files)
         {
-            //if (items == null)
-            //{
-            //    return false;
-            //}
-            //
-            //files = files.Where(x => !x.IsNullOrWhiteSpace()).ToArray();
-            //
-            //if (files.IsNullOrEmpty())
-            //{
-            //    return false;
-            //}
+            if (files == null)
+            {
+                return false;
+            }
+            
+            var items = files.Where(x => !x.Key.IsNullOrWhiteSpace()).ToArray();
+            
+            if (items.IsNullOrEmpty())
+            {
+                return false;
+            }
 
-            //var messageBoxTitle = "Delete Files";
-            //var messaBoxText = (files.Length == 1) ? $"delete {files[0]}" : $"delete {files.Length} files";
-            //
-            //var result = MessageBox.Show(messaBoxText, messageBoxTitle,
-            //    MessageBoxButton.YesNo,
-            //    MessageBoxImage.Question);
-            //
-            //if (result != MessageBoxResult.Yes && result != MessageBoxResult.OK)
-            //{
-            //    return;
-            //}
+            if (items.Any(x => x.Value?.IsGroup ?? false))
+            {
+                MessageBox.Show((items.Length == 1) 
+                    ? this.core.GetResourceString("DeleteFileText6") 
+                    : this.core.GetResourceString("DeleteFileText7"));
+                return false;
+            }
 
-            var result = await this.front.DeleteItemsAsync(items,
-                x => this.FileDeleteFunction?.Invoke(x.ToArray()) ?? 0);
+            string messageBoxTitle;// = "Delete Files";
+            string messaBoxText;// = (files.Length == 1) ? $"delete {files[0]}" : $"delete {files.Length} files";
+
+            if (items.Length == 1)
+            {
+                messageBoxTitle = this.core.GetResourceString("DeleteFileText1");
+                messaBoxText = this.core.GetResourceString("DeleteFileText2")
+                    + "\n" + items[0].Key;
+            }
+            else
+            {
+                messageBoxTitle = this.core.GetResourceString("DeleteFileText3");
+                messaBoxText = this.core.GetResourceString("DeleteFileText4")
+                    + items.Length.ToString() + this.core.GetResourceString("DeleteFileText5");
+            }
+            
+            var userOperation = MessageBox.Show(messaBoxText, messageBoxTitle,
+                MessageBoxButton.OKCancel,
+                MessageBoxImage.Question);
+            
+            if (userOperation != MessageBoxResult.Yes && userOperation != MessageBoxResult.OK)
+            {
+                return false;
+            }
+
+            var result = await this.front.DeleteItemsAsync(items);
 
             //_ => Boredbone.Utility.Tools.ShellFileOperation.DeleteFiles(true, files));
 

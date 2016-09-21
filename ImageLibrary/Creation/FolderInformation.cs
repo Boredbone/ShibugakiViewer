@@ -103,6 +103,10 @@ namespace ImageLibrary.Creation
                 if (_fieldIsTopDirectoryOnly != value)
                 {
                     _fieldIsTopDirectoryOnly = value;
+                    if (!value)
+                    {
+                        this.RefreshEnable = true;
+                    }
                     RaisePropertyChanged(nameof(IsTopDirectoryOnly));
                 }
             }

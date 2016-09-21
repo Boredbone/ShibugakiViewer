@@ -385,6 +385,69 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
+        ///   Delete File に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string DeleteFileText1 {
+            get {
+                return ResourceManager.GetString("DeleteFileText1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Are you sure you want to delete this file? に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string DeleteFileText2 {
+            get {
+                return ResourceManager.GetString("DeleteFileText2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Delete Multiple Items に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string DeleteFileText3 {
+            get {
+                return ResourceManager.GetString("DeleteFileText3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Are you sure you want to delete these に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string DeleteFileText4 {
+            get {
+                return ResourceManager.GetString("DeleteFileText4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   items? に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string DeleteFileText5 {
+            get {
+                return ResourceManager.GetString("DeleteFileText5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Group can not be deleted. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string DeleteFileText6 {
+            get {
+                return ResourceManager.GetString("DeleteFileText6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   They can not be deleted because they contains group. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string DeleteFileText7 {
+            get {
+                return ResourceManager.GetString("DeleteFileText7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Descending に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Descending {
@@ -2014,7 +2077,7 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
-        ///   Ignore Sub-Folders に類似しているローカライズされた文字列を検索します。
+        ///   Exclude Subfolders に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string TopDirectolyOnlyLabel {
             get {

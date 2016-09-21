@@ -585,6 +585,14 @@ namespace ImageLibrary.Core
         }
 
         /// <summary>
+        /// 更新待ちフォルダあり
+        /// </summary>
+        /// <returns></returns>
+        public bool HasRefreshWaitingFolder()
+            => this.Folders.GetAvailable().Any(x => x.RefreshEnable);
+        
+
+        /// <summary>
         /// 特定フォルダのファイルを列挙
         /// </summary>
         /// <param name="folder"></param>
@@ -689,7 +697,7 @@ namespace ImageLibrary.Core
         /// <param name="preAction"></param>
         /// <returns></returns>
         public async Task<bool> DeleteItemsAsync
-            (IEnumerable<KeyValuePair<string, Record>> files, Func<IEnumerable<string>, int> preAction)
+            (IEnumerable<KeyValuePair<string, Record>> files)
         {
             if (files == null)
             {
@@ -710,12 +718,12 @@ namespace ImageLibrary.Core
                 var ids = items.Select(x => x.Key).ToArray();
                 var groups = new HashSet<string>(items.Select(x => x.Value?.GroupKey).Distinct());
 
-                if (preAction != null)
+                //ストレージのファイルを削除
+                var result = Boredbone.Utility.Tools.ShellFileOperation.DeleteFiles(false, null, ids);
+
+                if (result > 0)
                 {
-                    if (preAction(ids) > 0)
-                    {
-                        return false;
-                    }
+                    return false;
                 }
 
                 using (var connection = this.Database.Connect())

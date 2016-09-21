@@ -939,11 +939,13 @@ namespace ShibugakiViewer.ViewModels
 
             keyReceiver.Register(Key.F11, (t, key) => this.parent.IsFullScreen.Toggle(), cursorFilter);
 
+#if DEBUG
             keyReceiver.Register(Key.Divide, async (t, key) =>
             {
                 var index = await this.client.FindIndexFromDatabaseAsync(this.Record.Value);
                 MessageBox.Show((index + 1).ToString());
             }, cursorFilter);
+#endif
 
 
 
