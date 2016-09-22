@@ -11,7 +11,7 @@
         mc:Ignorable="d"
         Style="{StaticResource DefaultWindowStyle}"
         ShowActivated="True" WindowStartupLocation="CenterOwner"
-        Title="About" Height="380" Width="500">
+        Title="About" Height="380" Width="550">
 
     <Window.Resources>
         <Style x:Key="normalTextStyle" TargetType="TextBlock">
@@ -77,6 +77,10 @@
                                     <Run Text="Version "/>
                                     <Run Name="versionText" Text="1.0"/>
                                 </TextBlock>
+                                
+                                <TextBlock Style="{StaticResource normalTextStyle}">
+                                    <Run Text="Copyright 2016 Boredbone"/>
+                                </TextBlock>
 
                                 <TextBlock Style="{StaticResource normalTextStyle}">
                                     <Hyperlink NavigateUri="https://boredbone.github.io/ShibugakiViewer/"
@@ -103,7 +107,7 @@
                                                tb:HyperlinkBehavior.NavigateByClick="True">
                                         <Run Text="Reactive Extensions" FontWeight="Bold"/>
                                     </Hyperlink>
-                                    <Run Text=" "/>
+                                    <Run Text=" (c) .NET Foundation and Contributors "/>
                                     <Hyperlink NavigateUri="http://www.apache.org/licenses/LICENSE-2.0"
                                                tb:HyperlinkBehavior.NavigateByClick="True">
                                         <Run Text="Apache License"/>
@@ -117,7 +121,7 @@
                                                tb:HyperlinkBehavior.NavigateByClick="True">
                                         <Run Text="ReactiveProperty" FontWeight="Bold"/>
                                     </Hyperlink>
-                                    <Run Text=" "/>
+                                    <Run Text=" (c) 2016 neuecc, xin9le, okazuki "/>
                                     <Hyperlink
                                         NavigateUri="https://github.com/runceel/ReactiveProperty/blob/master/LICENSE.txt"
                                         tb:HyperlinkBehavior.NavigateByClick="True">
@@ -133,7 +137,7 @@
                                                tb:HyperlinkBehavior.NavigateByClick="True">
                                         <Run Text="XamlAnimatedGif" FontWeight="Bold"/>
                                     </Hyperlink>
-                                    <Run Text=" "/>
+                                    <Run Text=" by Thomas Levesque "/>
                                     <Hyperlink NavigateUri="http://www.apache.org/licenses/LICENSE-2.0"
                                                tb:HyperlinkBehavior.NavigateByClick="True">
                                         <Run Text="Apache License"/>
@@ -147,7 +151,7 @@
                                         tb:HyperlinkBehavior.NavigateByClick="True">
                                         <Run Text="SQLite " FontWeight="Bold"/>
                                     </Hyperlink>
-                                    <Run Text=" "/>
+                                    <Run Text=" by SQLite Development Team "/>
                                     <Hyperlink NavigateUri="http://www.sqlite.org/copyright.html"
                                                tb:HyperlinkBehavior.NavigateByClick="True">
                                         <Run Text="Public Domain"/>
@@ -160,7 +164,7 @@
                                                tb:HyperlinkBehavior.NavigateByClick="True">
                                         <Run Text="Dapper" FontWeight="Bold"/>
                                     </Hyperlink>
-                                    <Run Text=" "/>
+                                    <Run Text=" (c) 2016 Stack Exchange, Inc. "/>
                                     <Hyperlink NavigateUri="http://www.apache.org/licenses/LICENSE-2.0"
                                                tb:HyperlinkBehavior.NavigateByClick="True">
                                         <Run Text="Apache License"/>
@@ -173,7 +177,7 @@
                                                tb:HyperlinkBehavior.NavigateByClick="True">
                                         <Run Text="Entity Framework" FontWeight="Bold"/>
                                     </Hyperlink>
-                                    <Run Text=" "/>
+                                    <Run Text=" by Microsoft "/>
                                     <Hyperlink NavigateUri="https://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm"
                                                tb:HyperlinkBehavior.NavigateByClick="True">
                                         <Run Text="MICROSOFT SOFTWARE LICENSE TERMS"/>
@@ -186,13 +190,25 @@
                                                tb:HyperlinkBehavior.NavigateByClick="True">
                                         <Run Text="Windows API Code Pack" FontWeight="Bold"/>
                                     </Hyperlink>
-                                    <Run Text=" "/>
+                                    <Run Text=" by Microsoft, Aybe "/>
                                     <Hyperlink NavigateUri="https://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm"
                                                tb:HyperlinkBehavior.NavigateByClick="True">
                                         <Run Text="MICROSOFT SOFTWARE LICENSE TERMS"/>
                                     </Hyperlink>
                                 </TextBlock>
 
+                                <!-- Material design icons -->
+                                <TextBlock Style="{StaticResource normalTextStyle}">
+                                    <Hyperlink NavigateUri="http://google.github.io/material-design-icons/"
+                                               tb:HyperlinkBehavior.NavigateByClick="True">
+                                        <Run Text="Material Design Icons" FontWeight="Bold"/>
+                                    </Hyperlink>
+                                    <Run Text=" by Google "/>
+                                    <Hyperlink NavigateUri="http://www.apache.org/licenses/LICENSE-2.0"
+                                               tb:HyperlinkBehavior.NavigateByClick="True">
+                                        <Run Text="Apache License"/>
+                                    </Hyperlink>
+                                </TextBlock>
                                 
                                 <!-- Material Icons -->
                                 <TextBlock Style="{StaticResource normalTextStyle}">
@@ -200,7 +216,7 @@
                                                tb:HyperlinkBehavior.NavigateByClick="True">
                                         <Run Text="Material Design Icons" FontWeight="Bold"/>
                                     </Hyperlink>
-                                    <Run Text=" "/>
+                                    <Run Text=" (c) 2014, Austin Andrews "/>
                                     <Hyperlink
                                         NavigateUri="https://github.com/Templarian/MaterialDesign/blob/master/license.txt"
                                         tb:HyperlinkBehavior.NavigateByClick="True">
@@ -219,7 +235,7 @@
         <Button
             Content="{x:Static properties:Resources.OkButton_Content}"
             Grid.Row="1" Margin="8,8,32,16" HorizontalAlignment="Right"
-            Width="86" Height="30"
+            Width="86" Height="30" IsDefault="True" IsCancel="True"
             Click="Button_Click"/>
     </Grid>
 </Window>

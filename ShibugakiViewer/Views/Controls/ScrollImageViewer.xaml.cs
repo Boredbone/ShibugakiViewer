@@ -1610,7 +1610,7 @@ namespace ShibugakiViewer.Views.Controls
                         }
                         else if (currentScale > fitScale * th)//Fitより大きい
                         {
-                            newScale = fillScale;// fitScale;
+                            newScale = fitScale;//fillScale;// 
                         }
                         else if (currentScale > fitScale / th)//ほぼFit
                         {

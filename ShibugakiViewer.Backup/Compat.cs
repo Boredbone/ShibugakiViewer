@@ -39,7 +39,7 @@ namespace ShibugakiViewer.Backup
                 return;
             }
 
-            Console.WriteLine($"Loading");
+            Console.WriteLine($"Loading...");
 
             var config = new LibraryConfiguration(saveDirectory)
             {
@@ -79,7 +79,7 @@ namespace ShibugakiViewer.Backup
                         x => count = x, x =>
                         {
                             Console.CursorLeft = 0;
-                            Console.Write($"Imported {x} / {count}");
+                            Console.Write($"Importing {x} / {count}");
                         });
 
 

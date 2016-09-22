@@ -152,6 +152,10 @@ namespace ImageLibrary.Viewer
                     this.RefreshSearchList();
                 }
             }
+            else
+            {
+                this.SearchInformation = null;
+            }
 
             if (clearFlag)
             {

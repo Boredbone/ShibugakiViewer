@@ -45,7 +45,7 @@ namespace ShibugakiViewer.Views.Behaviors
         private double maxTime = 2000.0;
 
         private const double _maxDamping = 7.0e-3;
-        private const double _minDamping = 5.0e-4;
+        private const double _minDamping = 3.0e-4;
 
         private const double _maxDampingVelocity = 0.5;
         private const double _minDampingVelocity = 15.0;

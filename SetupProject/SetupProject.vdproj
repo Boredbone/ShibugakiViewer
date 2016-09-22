@@ -148,13 +148,13 @@
         "Entry"
         {
         "MsmKey" = "8:_18DA0172358C40B16C4F065659F9FDD1"
-        "OwnerKey" = "8:_DB2E50CC28D9F0A208C3AFDF095C9012"
+        "OwnerKey" = "8:_955134DB3EA24A6784E2D2E19FDDA2CF"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_18DA0172358C40B16C4F065659F9FDD1"
-        "OwnerKey" = "8:_955134DB3EA24A6784E2D2E19FDDA2CF"
+        "OwnerKey" = "8:_DB2E50CC28D9F0A208C3AFDF095C9012"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -2327,7 +2327,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:ShibugakiViewer.Launcher, Version=1.0.0.40277, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:ShibugakiViewer.Launcher, Version=1.0.0.35196, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_14628242C53F4B88AA2E6CCE93276CEC"
@@ -2420,7 +2420,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:ShibugakiViewer.Settings, Version=1.0.6106.40276, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:ShibugakiViewer.Settings, Version=1.0.6109.35196, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_18DA0172358C40B16C4F065659F9FDD1"
@@ -2699,7 +2699,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:ShibugakiViewer.resources, Version=1.0.0.40279, Culture=ja-JP, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:ShibugakiViewer.resources, Version=1.0.0.35198, Culture=ja-JP, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_31D391B39408474BAAA28D131C85C629"
@@ -3576,7 +3576,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Database, Version=1.0.6106.40277, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Database, Version=1.0.6109.35196, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_5D49BB64B00B16057FAC367258E44336"
@@ -3824,7 +3824,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:ImageLibrary, Version=1.0.6106.40277, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:ImageLibrary, Version=1.0.6109.35196, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_719687D89B2B122787B6328F363841BE"
@@ -3906,7 +3906,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:WpfTools, Version=1.0.6106.40278, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:WpfTools, Version=1.0.6109.35197, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_7546B2151EC0AFD60AFE913B48358163"
@@ -4278,7 +4278,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:ShibugakiViewer.Backup, Version=1.0.6106.40278, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:ShibugakiViewer.Backup, Version=1.0.6109.35198, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_955134DB3EA24A6784E2D2E19FDDA2CF"
@@ -5042,7 +5042,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:LibraryConverter, Version=1.0.6106.40278, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:LibraryConverter, Version=1.0.6109.35197, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_DB2E50CC28D9F0A208C3AFDF095C9012"
@@ -5290,7 +5290,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:CsCommon, Version=1.0.6106.40276, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:CsCommon, Version=1.0.6109.35196, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_F83BF84251630E3D058E648C1A335FC2"
@@ -5612,7 +5612,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:ShibugakiViewer"
         "ProductCode" = "8:{2CA43E39-44E9-4D76-B0D1-FFA60FF9173C}"
-        "PackageCode" = "8:{5197B865-DDA9-4212-94F2-3953C9099A90}"
+        "PackageCode" = "8:{F365827B-9F20-42BE-9255-8E3C5A8FC514}"
         "UpgradeCode" = "8:{71E2EB31-9ABF-44A3-98A8-D70DDA10AD24}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
