@@ -11,7 +11,7 @@
         mc:Ignorable="d"
         Style="{StaticResource DefaultWindowStyle}"
         ShowActivated="True" WindowStartupLocation="CenterOwner"
-        Title="About" Height="380" Width="550">
+        Title="About" Height="380" Width="500">
 
     <Window.Resources>
         <Style x:Key="normalTextStyle" TargetType="TextBlock">

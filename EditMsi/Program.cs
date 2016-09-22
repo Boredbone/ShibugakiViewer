@@ -38,6 +38,8 @@ namespace EditMsi
 
             Update(database, "InstallExecuteSequence", $@"Action = '{ExitAppName}'", 3, "1399");
             Update(database, "CustomAction", $@"Action = '{ExitAppName}'", 2, "1");
+
+            
             Update(database, "CustomAction", $@"Action = '{LaunchAppName}'", 2, "6");
 
             Update(database, "ControlEvent", $@"Dialog_ = 'FinishedForm' AND Argument = 'Return'", 6, "1");
