@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -12,6 +13,7 @@ using Boredbone.Utility.Extensions;
 using Boredbone.Utility.Notification;
 using Database.Search;
 using ImageLibrary.Core;
+using ImageLibrary.Exif;
 using ImageLibrary.File;
 using ImageLibrary.SearchProperty;
 using ImageLibrary.Tag;
@@ -132,6 +134,9 @@ namespace ShibugakiViewer.ViewModels
         public double TagSelectorScrollOffset { get; set; }
         public TagInformation TagSelectorLastSelected { get; set; }
         public ReactiveProperty<int> TagSelectorSortMode { get; }
+
+        public IReadOnlyList<ExifVisibilityItem> TagVisibilityList
+            => this.Core.Library.ExifManager.TagVisibilityList;
 
         public KeyReceiver<object> KeyReceiver { get; }
 

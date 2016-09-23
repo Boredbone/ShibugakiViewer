@@ -330,6 +330,15 @@ namespace ShibugakiViewer.Views.Controls
                 return;
             }
 
+            //if (this.mainContent.ActualHeight > this.rootGrid.ActualHeight)
+            //{
+            //    //this.mainContent.Height = this.rootGrid.ActualHeight - 4;
+            //}
+            //if (this.mainContent.ActualWidth > this.rootGrid.ActualWidth)
+            //{
+            //    //this.mainContent.Width = this.rootGrid.ActualWidth - 4;
+            //}
+
             if (this.DockControl == null)
             {
 
@@ -347,8 +356,14 @@ namespace ShibugakiViewer.Views.Controls
                         Canvas.SetLeft(this.mainContent, this.Position.Left);
                         break;
                     case HorizontalAlignment.Stretch:
-                        Canvas.SetRight(this.mainContent, 0.0);
-                        Canvas.SetLeft(this.mainContent, 0.0);
+
+                        var length = this.rootGrid.ActualWidth;
+
+                        this.mainContent.Width = length - this.Position.Right - this.Position.Left;
+
+                        Canvas.SetLeft(this.mainContent, double.NaN);
+                        Canvas.SetRight(this.mainContent, -length / 2 + this.Position.Right);
+
                         break;
                     case HorizontalAlignment.Center:
 
@@ -368,8 +383,13 @@ namespace ShibugakiViewer.Views.Controls
                         Canvas.SetBottom(this.mainContent, this.Position.Bottom);
                         break;
                     case VerticalAlignment.Stretch:
-                        Canvas.SetTop(this.mainContent, 0.0);
-                        Canvas.SetBottom(this.mainContent, 0.0);
+
+                        var length = this.rootGrid.ActualHeight;
+
+                        this.mainContent.Height = length - this.Position.Top - this.Position.Bottom;
+
+                        Canvas.SetBottom(this.mainContent, double.NaN);
+                        Canvas.SetTop(this.mainContent, -length / 2 + this.Position.Top);
                         break;
                     case VerticalAlignment.Center:
                         Canvas.SetBottom(this.mainContent, double.NaN);
@@ -523,7 +543,7 @@ namespace ShibugakiViewer.Views.Controls
                 var color = Application.Current.Resources["PopupMaskColor"];
                 this.maskBrush = color as Brush;
             }
-            
+
             this.rootGrid.Background = (isEnabled && this.maskBrush != null)
                 ? this.maskBrush : this.transparentBrush;
         }

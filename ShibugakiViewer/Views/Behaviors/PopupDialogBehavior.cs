@@ -142,6 +142,20 @@ namespace ShibugakiViewer.Views.Behaviors
 
         #endregion
 
+        #region IsDockToWindow
+
+        public bool IsDockToWindow
+        {
+            get { return (bool)GetValue(IsDockToWindowProperty); }
+            set { SetValue(IsDockToWindowProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsDockToWindowProperty =
+            DependencyProperty.Register(nameof(IsDockToWindow), typeof(bool),
+                typeof(PopupDialogBehavior), new PropertyMetadata(false));
+
+        #endregion
+
 
 
         public event Action<object, EventArgs> Opening;
@@ -198,7 +212,7 @@ namespace ShibugakiViewer.Views.Behaviors
 
             this.parent.PopupDialog.Show(this.Content, position,
                 this.HorizontalContentAlignment, this.VerticalContentAlignment,
-                this.AssociatedObject, this.IsMaskVisible);
+                this.IsDockToWindow ? null : this.AssociatedObject, this.IsMaskVisible);
         }
 
         private void SubscriveToggle(FrameworkElement content)

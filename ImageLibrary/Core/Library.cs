@@ -25,6 +25,7 @@ using Reactive.Bindings.Extensions;
 using Boredbone.Utility.Tools;
 using Boredbone.Utility.Notification;
 using System.Data;
+using ImageLibrary.Exif;
 
 namespace ImageLibrary.Core
 {
@@ -62,13 +63,27 @@ namespace ImageLibrary.Core
 
 
         public SearchSortManager Searcher { get; }
+
         public TagDictionary Tags { get; }
         public FolderDictionary Folders { get; }
+        public ExifManager ExifManager { get; }
+
         public LibraryQueryHelper QueryHelper { get; }
         public RecordQuery RecordQuery { get; }
         public GroupQuery GroupQuery { get; }
         public Grouping Grouping { get; }
 
+        private DatabaseFront Database { get; }
+
+        private TypedTable<Record, string> Records { get; }
+        private TypedTable<TagInformation, int> TagDatabase { get; }
+        private TypedTable<FolderInformation, int> FolderDatabase { get; }
+        private TypedTable<ExifVisibilityItem, int> ExifVisibilityDatabase { get; }
+
+        private Tracker<Record, string> RecordTracker { get; }
+        private Tracker<TagInformation, int> TagTracker { get; }
+        private Tracker<FolderInformation, int> FolderTracker { get; }
+        private Tracker<ExifVisibilityItem, int> ExifVisibilityTracker { get; }
 
         private LibraryCreator Creator { get; }
 
@@ -100,21 +115,9 @@ namespace ImageLibrary.Core
             }
         }
 
-
         public bool IsLibrarySettingsLoaded { get; set; }
 
-
-        private DatabaseFront Database { get; }
-        private TypedTable<Record, string> Records { get; }
-        private TypedTable<TagInformation, int> TagDatabase { get; }
-        private TypedTable<FolderInformation, int> FolderDatabase { get; }
-        private Tracker<Record, string> RecordTracker { get; }
-        private Tracker<TagInformation, int> TagTracker { get; }
-        private Tracker<FolderInformation, int> FolderTracker { get; }
-
-
         private static AsyncLock asyncLock = new AsyncLock();
-        
 
         public bool IsLoaded { get; private set; } = false;
 
@@ -165,9 +168,18 @@ namespace ImageLibrary.Core
                 Version = databaseVersion,
             };
 
+            this.ExifVisibilityDatabase = new TypedTable<ExifVisibilityItem, int>
+                (this.Database, nameof(ExifVisibilityDatabase))
+            {
+                IsIdAuto = false,
+                Version = databaseVersion,
+            };
+
             this.RecordTracker = new Tracker<Record, string>(this.Records).AddTo(this.Disposables);
             this.TagTracker = new Tracker<TagInformation, int>(this.TagDatabase).AddTo(this.Disposables);
             this.FolderTracker = new Tracker<FolderInformation, int>(this.FolderDatabase).AddTo(this.Disposables);
+            this.ExifVisibilityTracker = new Tracker<ExifVisibilityItem, int>(this.ExifVisibilityDatabase)
+                .AddTo(this.Disposables);
 
             this.DefineMigration();
 
@@ -177,6 +189,11 @@ namespace ImageLibrary.Core
 
             this.Folders = new FolderDictionary().AddTo(this.Disposables);
             Helper.TrackAdded(this.Folders.Added, trackIntervalTime, this.FolderDatabase, this.FolderTracker)
+                .AddTo(this.Disposables);
+
+            this.ExifManager = new ExifManager().AddTo(this.Disposables);
+            Helper.TrackAdded(this.ExifManager.Added, trackIntervalTime, 
+                this.ExifVisibilityDatabase, this.ExifVisibilityTracker)
                 .AddTo(this.Disposables);
 
             this.Folders.FileTypeFilter = this.config.FileTypeFilter;
@@ -242,6 +259,7 @@ namespace ImageLibrary.Core
 
             TagInformation[] tags;
             FolderInformation[] folders;
+            ExifVisibilityItem[] exifItems;
 
             using (var connection = this.Database.Connect())
             {
@@ -249,6 +267,7 @@ namespace ImageLibrary.Core
 
                 tags = this.TagDatabase.GetAll(connection);
                 folders = this.FolderDatabase.GetAll(connection);
+                exifItems = this.ExifVisibilityDatabase.GetAll(connection);
 
                 //loading test
                 this.Records.AsQueryable(connection).FirstOrDefault();
@@ -259,6 +278,9 @@ namespace ImageLibrary.Core
 
             folders.ForEach(folder => this.FolderTracker.Track(folder));
             this.Folders.SetSource(folders);
+
+            exifItems.ForEach(exif => this.ExifVisibilityTracker.Track(exif));
+            this.ExifManager.SetSource(exifItems);
 
             if (folders.Length <= 0 && this.config.IsKnownFolderEnabled)
             {

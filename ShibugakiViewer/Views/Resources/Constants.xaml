@@ -174,6 +174,7 @@
 
     <system:String x:Key="DatabaseSymbol">&#xf1b8;</system:String>
     <system:String x:Key="FolderSymbol">&#xf256;</system:String>
+    <system:String x:Key="EyeSymbol">&#xf208;</system:String>
     <!--
     <system:String x:Key="UpArSymbol">&#x2191;</system:String>
     <system:String x:Key="DownArSymbol">&#x2193;</system:String>

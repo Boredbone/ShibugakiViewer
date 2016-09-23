@@ -876,4 +876,13 @@
   <data name="DeleteFileText7" xml:space="preserve">
     <value>They can not be deleted because they contains group.</value>
   </data>
+  <data name="All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="ExifData" xml:space="preserve">
+    <value>Exif Data</value>
+  </data>
+  <data name="ExifToDisplay" xml:space="preserve">
+    <value>Exif Data to Display</value>
+  </data>
 </root>

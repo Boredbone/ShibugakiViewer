@@ -97,6 +97,15 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
+        ///   All に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string All {
+            get {
+                return ResourceManager.GetString("All", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Play Animated GIF に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string AnimatedGifSwitch_Text {
@@ -561,6 +570,24 @@ namespace ShibugakiViewer.Properties {
         public static string EqualsTo {
             get {
                 return ResourceManager.GetString("EqualsTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Exif Data に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ExifData {
+            get {
+                return ResourceManager.GetString("ExifData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Exif Data to Display に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ExifToDisplay {
+            get {
+                return ResourceManager.GetString("ExifToDisplay", resourceCulture);
             }
         }
         

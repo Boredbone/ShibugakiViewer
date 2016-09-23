@@ -32,6 +32,10 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ExifLib, Version=1.7.0.0, Culture=neutral, PublicKeyToken=30284005913968db, processorArchitecture=MSIL">
+      <HintPath>..\packages\ExifLib.1.7.0.0\lib\net45\ExifLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Interop.Shell32">
       <HintPath>..\Cui\obj\Debug\Interop.Shell32.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -106,6 +110,7 @@
     <Compile Include="Creation\FileSystem.cs" />
     <Compile Include="Creation\IFolderContainer.cs" />
     <Compile Include="Creation\ImageFileInformation.cs" />
+    <Compile Include="Exif\ExifVisibility.cs" />
     <Compile Include="File\SequenceNumber.cs" />
     <Compile Include="File\SortHelper.cs" />
     <Compile Include="SearchProperty\FileProperty.cs" />
@@ -147,6 +152,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
