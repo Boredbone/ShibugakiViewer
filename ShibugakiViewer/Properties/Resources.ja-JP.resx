@@ -226,7 +226,8 @@
     <value>相対パス(連番)</value>
   </data>
   <data name="RemoveButton_Label" xml:space="preserve">
-    <value>グループから外す</value>
+    <value>グループから
+外す</value>
   </data>
   <data name="RemoveButton_ToolTip" xml:space="preserve">
     <value>グループから外す</value>
@@ -772,7 +773,8 @@
     <value>ファイルの場所</value>
   </data>
   <data name="SetThumbnail" xml:space="preserve">
-    <value>サムネイルに設定</value>
+    <value>サムネイルに
+設定</value>
   </data>
   <data name="StopSlideshow" xml:space="preserve">
     <value>スライドショーの停止</value>

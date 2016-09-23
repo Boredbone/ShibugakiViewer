@@ -1681,7 +1681,7 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
-        ///   Remove に類似しているローカライズされた文字列を検索します。
+        ///   Remove from Group に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string RemoveButton_Label {
             get {

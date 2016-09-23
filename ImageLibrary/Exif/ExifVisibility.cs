@@ -20,15 +20,17 @@ namespace ImageLibrary.Exif
 {
     public class ExifManager : DisposableBase
     {
-        private Dictionary<int, ExifVisibilityItem> Items { get; set; }
+        //private Dictionary<int, ExifVisibilityItem> Items { get; set; }
 
         private Subject<ExifVisibilityItem> AddedSubject { get; }
         public IObservable<ExifVisibilityItem> Added => this.AddedSubject.AsObservable();
 
         //public IReadOnlyList<KeyValuePair<ushort, string>> Tags { get; }
 
-        private readonly Lazy<IReadOnlyList<ExifVisibilityItem>> tagVisibilityList;
-        public IReadOnlyList<ExifVisibilityItem> TagVisibilityList => this.tagVisibilityList.Value;
+        private ObservableCollection<ExifVisibilityItem> tagVisibilityList;
+        public IReadOnlyList<ExifVisibilityItem> TagVisibilityList => this.tagVisibilityList;
+
+        private readonly KeyValuePair<ushort, string>[] tags;
 
         internal int VisibleItemsCount
         {
@@ -58,7 +60,7 @@ namespace ImageLibrary.Exif
         }
         private int _fieldVisibleItemsCount;
 
-        private Subject<bool> HasVisibleItemSubject { get; }
+        private BehaviorSubject<bool> HasVisibleItemSubject { get; }
         public IObservable<bool> HasVisibleItem => this.HasVisibleItemSubject.AsObservable();
        
 
@@ -66,11 +68,12 @@ namespace ImageLibrary.Exif
         public ExifManager()
         {
             this.AddedSubject = new Subject<ExifVisibilityItem>().AddTo(this.Disposables);
-            this.Items = new Dictionary<int, ExifVisibilityItem>();
+            this.HasVisibleItemSubject = new BehaviorSubject<bool>(false).AddTo(this.Disposables);
+            //this.Items = new Dictionary<int, ExifVisibilityItem>();
 
             var tagIds = Enum.GetValues(typeof(ExifTags)).Cast<ushort>().OrderBy(x => x).ToArray();
 
-            var tags = tagIds.Where(x => x > 0x1F && (x < 0x9C9B || x > 0x9C9F))
+            this.tags = tagIds.Where(x => x > 0x1F && (x < 0x9C9B || x > 0x9C9F))
                 .Concat(tagIds.Where(x => x <= 0x1F))
                 .Concat(tagIds.Where(x => x >= 0x9C9B && x <= 0x9C9F))
                 .Distinct()
@@ -87,20 +90,28 @@ namespace ImageLibrary.Exif
                     }
                     return new KeyValuePair<ushort, string>(x, name);
                 })
-                .ToList();
+                .ToArray();
 
-            this.tagVisibilityList = new Lazy<IReadOnlyList<ExifVisibilityItem>>
-                (() => new ObservableCollection<ExifVisibilityItem>(tags.Select(x =>
-                {
-                    ExifVisibilityItem item = null;
-                    if (!this.Items.TryGetValue(x.Key, out item) || item == null)
-                    {
-                        item = this.Add(x.Key);
-                    }
-
-                    item.Name = x.Value;
-                    return item;
-                })));
+            //this.tagVisibilityList = new Lazy<IReadOnlyList<ExifVisibilityItem>>
+            //    (() => new ObservableCollection<ExifVisibilityItem>(tags.Select(x =>
+            //    {
+            //        ExifVisibilityItem item = null;
+            //        if (!this.Items.TryGetValue(x.Key, out item) || item == null)
+            //        {
+            //
+            //            item = new ExifVisibilityItem()
+            //            {
+            //                Id = x.Key,
+            //                IsEnabled = false,
+            //                Manager = this,
+            //            };
+            //            this.Items[x.Key] = item;
+            //            this.AddedSubject.OnNext(item);
+            //        }
+            //
+            //        item.Name = x.Value;
+            //        return item;
+            //    })));
 
         }
 
@@ -108,55 +119,73 @@ namespace ImageLibrary.Exif
         /// 辞書を初期化
         /// </summary>
         /// <param name="source"></param>
-        public IReadOnlyList<ExifVisibilityItem> SetSource(IEnumerable<ExifVisibilityItem> source)
+        public void SetSource(IEnumerable<ExifVisibilityItem> source)
         {
             if (source == null)
             {
-                this.Items.Clear();
+                return;
             }
-            else
-            {
-                this.Items = source
-                    .Where(x => x != null)
-                    .Select(x =>
-                    {
-                        x.Manager = this;
-                        if (x.IsEnabled)
-                        {
-                            this.VisibleItemsCount++;
-                        }
-                        return x;
-                    })
-                    .ToDictionary(x => x.Id, x => x);
-            }
-            return this.TagVisibilityList;
-        }
 
-        private ExifVisibilityItem Add(ushort key)
-        {
-            var item = new ExifVisibilityItem()
-            {
-                Id = key,
-                IsEnabled = false,
-                Manager = this,
-            };
-            this.Items[key] = item;
-            this.AddedSubject.OnNext(item);
-            return item;
-        }
-
-        public bool IsVisible(int key)
-        {
-            ExifVisibilityItem result;
-            if (this.Items.TryGetValue(key, out result))
-            {
-                if (result != null)
+            var items = source
+                .Where(x => x != null)
+                .Select(x =>
                 {
-                    return result.IsEnabled;
-                }
-            }
-            return false;
+                    x.Manager = this;
+                    if (x.IsEnabled)
+                    {
+                        this.VisibleItemsCount++;
+                    }
+                    return x;
+                })
+                .ToDictionary(x => x.Id, x => x);
+
+            this.tagVisibilityList = new ObservableCollection<ExifVisibilityItem>(this.tags.Select(x =>
+                {
+                    ExifVisibilityItem item = null;
+                    if (!items.TryGetValue(x.Key, out item) || item == null)
+                    {
+
+                        item = new ExifVisibilityItem()
+                        {
+                            Id = x.Key,
+                            IsEnabled = false,
+                            Manager = this,
+                        };
+                        items[x.Key] = item;
+                        this.AddedSubject.OnNext(item);
+                    }
+
+                    item.Name = x.Value;
+                    return item;
+                }));
+
         }
+
+        //private ExifVisibilityItem Add(ushort key)
+        //{
+        //    var item = new ExifVisibilityItem()
+        //    {
+        //        Id = key,
+        //        IsEnabled = false,
+        //        Manager = this,
+        //    };
+        //    this.Items[key] = item;
+        //    this.AddedSubject.OnNext(item);
+        //    return item;
+        //}
+
+        //public bool IsVisible(int key)
+        //{
+        //    ExifVisibilityItem result;
+        //    if (this.Items.TryGetValue(key, out result))
+        //    {
+        //        if (result != null)
+        //        {
+        //            return result.IsEnabled;
+        //        }
+        //    }
+        //    return false;
+        //}
 
 
         public ExifInformation LoadExif(string path)
@@ -169,7 +198,7 @@ namespace ImageLibrary.Exif
                 using (var reader = new ExifReader(path))
                 {
                     // Parse through all available fields and generate key-value labels
-                    foreach(var item in this.tagVisibilityList.Value)
+                    foreach(var item in this.tagVisibilityList)
                     {
                         var key = (ushort)item.Id;
                         string text = null;
@@ -206,7 +235,7 @@ namespace ImageLibrary.Exif
             catch
             {
                 // Something didn't work!
-                return null;
+                return new ExifInformation();
             }
         }
         private string RenderTag(object tagValue)
@@ -223,6 +252,14 @@ namespace ImageLibrary.Exif
             }
 
             return tagValue.ToString();
+        }
+
+        public void EnableAll(bool value)
+        {
+            foreach(var item in this.tagVisibilityList)
+            {
+                item.IsEnabled = value;
+            }
         }
     }
 
@@ -288,6 +325,10 @@ namespace ImageLibrary.Exif
         public ExifInformation(IEnumerable<KeyValuePair<ExifVisibilityItem, string>> items)
         {
             this.Items = new ObservableCollection<KeyValuePair<ExifVisibilityItem, string>>(items);
+        }
+        public ExifInformation()
+        {
+            this.Items = new ObservableCollection<KeyValuePair<ExifVisibilityItem, string>>();
         }
     }
 }

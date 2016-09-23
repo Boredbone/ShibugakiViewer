@@ -48,10 +48,11 @@
 
 
                 <!-- File Property -->
-                <Grid
+                <StackPanel
                     Visibility="{Binding IsGroup,
                     Converter={StaticResource FalseToVisibleConverter}}">
-                    <StackPanel>
+                    <StackPanel
+                        Visibility="{Binding FileCommonVisibility,ElementName=controlRoot}">
 
                         <TextBlock 
                             Text="{x:Static properties:Resources.FilePropertyText_Text}"
@@ -72,7 +73,12 @@
                             </ToolTipService.ToolTip>
                         </TextBlock>
 
-                        <Grid Style="{StaticResource informationPaneButtonGridStyle}">
+
+                    </StackPanel>
+
+                    <!-- File Operation -->
+                    <Grid Style="{StaticResource informationPaneButtonGridStyle}"
+                        Visibility="{Binding FileMainVisibility,ElementName=controlRoot}">
                             <cc:FlatButton
                                 Style="{StaticResource informationPaneButtonStyle}"
                                 ToolTip="{x:Static properties:Resources.FileOperation}">
@@ -145,43 +151,13 @@
                                     </b:PopupDialogBehavior>
                                 </i:Interaction.Behaviors>
 
-                                <!--
-                                <b:PopupMenuBehavior.PopupMenu>
-                                    <ContextMenu Placement="Bottom"  HasDropShadow="False">
-                                        <ContextMenu.Template>
-                                            <ControlTemplate>
-                                                <Border Background="White" Width="200"
-                                                        BorderBrush="Gray"
-                                                        BorderThickness="1"
-                                                        Margin="4">
-                                                    <StackPanel Margin="4" Background="White" >
-
-                                                        <Button Content="copy" HorizontalAlignment="Stretch"
-                                                                Click="copyButton_Click"/>
-
-                                                        <Button Content="explorer" HorizontalAlignment="Stretch"
-                                                                Click="explorerButton_Click"/>
-
-                                                        <Button Content="another app" HorizontalAlignment="Stretch"
-                                                                Click="anotherAppButton_Click"/>
-
-                                                    </StackPanel>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </ContextMenu.Template>
-                                    </ContextMenu>
-                                </b:PopupMenuBehavior.PopupMenu>-->
                             </cc:FlatButton>
-                        </Grid>
+                    </Grid>
 
-
-                    </StackPanel>
-
-                </Grid>
+                </StackPanel>
                 <!-- Group Property -->
                 <StackPanel
-                    Visibility="{Binding IsGroup,
-                    Converter={StaticResource TrueToVisibleConverter}}">
+                    Visibility="{Binding GroupVisibility,ElementName=controlRoot}">
 
                     <TextBlock 
                         Text="{x:Static properties:Resources.GroupProperty}"
@@ -202,7 +178,11 @@
                 </StackPanel>
 
 
+                <!-- Common -->
 
+                <StackPanel 
+                    Visibility="{Binding CommonMainVisibility,ElementName=controlRoot}">
+                    
                 <!-- Rating -->
                 <TextBlock Style="{StaticResource propertyName}" >
                     <Run Text="{StaticResource RatingLabel}"/>
@@ -211,27 +191,6 @@
                 <cc:Rating HorizontalAlignment="Left"
                            Value="{Binding Rating,Mode=TwoWay,
                     Converter={StaticResource RatingConverter}}"/>
-
-
-                <!--<Slider Maximum="5.49"
-                        TickFrequency="1"
-                        IsMoveToPointEnabled="True"
-                        IsSnapToTickEnabled="False"
-                        AutoToolTipPlacement="TopLeft"
-                        AutoToolTipPrecision="0"
-                        tb:SliderBehavior.MoveToPointOnDrag="True"
-                        LargeChange="1"
-                        SmallChange="1"
-                        Margin="0,8,0,0"
-                        HorizontalAlignment="Stretch"/>-->
-                <!--<control:Rate x:Name="star" SymbolSize="30" Max="5"
-                              Margin="0,8,0,0"
-                              Value="{Binding Rating,Mode=TwoWay}"
-                              VerticalAlignment="Top" HorizontalAlignment="Left"
-                              SymbolColor="{StaticResource ViewerRateFillColor}"
-                              BorderColor="{StaticResource ViewerRateEdgeColor}"
-                              OverBackGround="{StaticResource ViewerRateBackColor}"/>-->
-
 
 
                 <!-- Tag -->
@@ -294,10 +253,10 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
+                </StackPanel>
 
                 <StackPanel
-                    Visibility="{Binding IsGroup,
-                    Converter={StaticResource FalseToVisibleConverter}}">
+                    Visibility="{Binding FileMainVisibility,ElementName=controlRoot}">
 
                     <!-- Directory -->
                     <ItemsControl
@@ -391,6 +350,35 @@
                                 Foreground="Red"/>
                         </cc:FlatButton>
                     </Grid>-->
+
+                </StackPanel>
+                
+                <StackPanel
+                        Visibility="{Binding FileCommonVisibility,ElementName=controlRoot}">
+
+                    <Grid Style="{StaticResource informationPaneButtonGridStyle}"
+                          x:Name="expandButtonGrid">
+                        <cc:FlatToggleButton
+                            x:Name="expandButton"
+                            Style="{StaticResource informationPaneToggleButtonStyle}"
+                            IsChecked="{Binding ElementName=controlRoot,Path=IsMainClosed,Mode=TwoWay}">
+                            <Grid>
+                                <TextBlock 
+                                    Style="{StaticResource symbolTextStyle}"
+                                    Text="{StaticResource DownSymbol}"
+                                    Visibility="{Binding ElementName=expandButton,Path=IsChecked,
+                                    Converter={StaticResource TrueToVisibleConverter}}"/>
+
+                                <TextBlock 
+                                    Style="{StaticResource symbolTextStyle}"
+                                    Text="{StaticResource UpSymbol}"
+                                    Visibility="{Binding ElementName=expandButton,Path=IsChecked,
+                                    Converter={StaticResource FalseToVisibleConverter}}"/>
+                            </Grid>
+                            
+                        </cc:FlatToggleButton>
+                    </Grid>
+                    
                     
                     <!-- Exif -->
                     <TextBlock Style="{StaticResource propertyName}" >
@@ -444,14 +432,15 @@
                                                     <CheckBox
                                                         Margin="11,4,0,0"
                                                         Content="{x:Static properties:Resources.All}"
-                                                        FontSize="{StaticResource SubTitleTextSize}"/>
+                                                        FontSize="{StaticResource SubTitleTextSize}"
+                                                        IsChecked="{Binding ExifVisibilityCheck.Value,Mode=TwoWay}"/>
 
                                                 </StackPanel>
 
                                                 <ListView
                                                     Grid.Row="1"
                                                     Margin="4"
-                                                    ItemsSource="{Binding TagVisibilityList}"
+                                                    ItemsSource="{Binding ExifVisibilityList}"
                                                     VirtualizingPanel.ScrollUnit="Pixel"
                                                     SelectionMode="Single"
                                                     VerticalAlignment="Stretch"
@@ -485,6 +474,47 @@
                         </cc:FlatButton>
                     </Grid>
 
+
+                    <ItemsControl
+                        ItemsSource="{Binding Exif.Items,Mode=OneWay}"
+                        Margin="8,0,0,0"
+                        Visibility="{Binding Exif,Converter={StaticResource NullToVisibleConverter}}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid
+                                    Visibility="{Binding Key.IsEnabled,
+                                    Converter={StaticResource TrueToVisibleConverter}}"
+                                    Margin="2">
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock 
+                                        Grid.Column="0"
+                                        Style="{StaticResource propertyName}" 
+                                        Margin="0"
+                                        TextWrapping="Wrap"
+                                        VerticalAlignment="Top"
+                                        Text="-">
+                                    </TextBlock>
+
+                                    <TextBlock 
+                                        Grid.Column="1"
+                                        Style="{StaticResource propertyName}" 
+                                        Margin="0"
+                                        VerticalAlignment="Top"
+                                        TextWrapping="Wrap">
+                                        <Run Text="{Binding Key.Name,Mode=OneWay}"/>
+                                        <Run Text=" : "/>
+                                        <Run Text="{Binding Value,Mode=OneWay}"/>
+                                    </TextBlock>
+                                    
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </StackPanel>
 
 
@@ -493,8 +523,7 @@
 
                 <!-- Flip Direction -->
                 <StackPanel
-                    Visibility="{Binding IsGroup,
-                    Converter={StaticResource TrueToVisibleConverter}}">
+                    Visibility="{Binding GroupVisibility,ElementName=controlRoot}">
 
                     <TextBlock Style="{StaticResource propertyName}" >
                         <Run Text="{x:Static properties:Resources.PageTurning}"/>

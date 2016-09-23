@@ -357,13 +357,21 @@ namespace ShibugakiViewer.Views.Controls
                         break;
                     case HorizontalAlignment.Stretch:
 
-                        var length = this.rootGrid.ActualWidth;
+                        var innerContent = this.mainContent.Content as FrameworkElement;
+                        if (innerContent == null)
+                        {
+                            Canvas.SetRight(this.mainContent, 0.0);
+                            Canvas.SetLeft(this.mainContent, 0.0);
+                        }
+                        else
+                        {
+                            var length = this.rootGrid.ActualWidth;
 
-                        this.mainContent.Width = length - this.Position.Right - this.Position.Left;
+                            innerContent.Width = length - this.Position.Right - this.Position.Left;
 
-                        Canvas.SetLeft(this.mainContent, double.NaN);
-                        Canvas.SetRight(this.mainContent, -length / 2 + this.Position.Right);
-
+                            Canvas.SetLeft(this.mainContent, double.NaN);
+                            Canvas.SetRight(this.mainContent, -length / 2 + this.Position.Right);
+                        }
                         break;
                     case HorizontalAlignment.Center:
 
@@ -384,12 +392,21 @@ namespace ShibugakiViewer.Views.Controls
                         break;
                     case VerticalAlignment.Stretch:
 
-                        var length = this.rootGrid.ActualHeight;
+                        var innerContent = this.mainContent.Content as FrameworkElement;
+                        if (innerContent == null)
+                        {
+                            Canvas.SetTop(this.mainContent, 0.0);
+                            Canvas.SetBottom(this.mainContent, 0.0);
+                        }
+                        else
+                        {
+                            var length = this.rootGrid.ActualHeight;
 
-                        this.mainContent.Height = length - this.Position.Top - this.Position.Bottom;
+                            innerContent.Height = length - this.Position.Top - this.Position.Bottom;
 
-                        Canvas.SetBottom(this.mainContent, double.NaN);
-                        Canvas.SetTop(this.mainContent, -length / 2 + this.Position.Top);
+                            Canvas.SetBottom(this.mainContent, double.NaN);
+                            Canvas.SetTop(this.mainContent, -length / 2 + this.Position.Top);
+                        }
                         break;
                     case VerticalAlignment.Center:
                         Canvas.SetBottom(this.mainContent, double.NaN);

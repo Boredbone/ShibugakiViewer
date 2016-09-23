@@ -219,7 +219,8 @@
                                     BorderBrush="Gray"
                                     Source="{Binding SelectedRecord.Value,Mode=OneWay}"
                                     SelectedPath="{Binding PaneSelectedPath.Value,Mode=OneWayToSource}"
-                                    SelectedTag="{Binding PaneSelectedTag.Value,Mode=OneWayToSource}"/>
+                                    SelectedTag="{Binding PaneSelectedTag.Value,Mode=OneWayToSource}"
+                                    IsExifEnabled="{Binding IsExifEnabled.Value,Mode=OneWay}"/>
                             </TabItem>
 
                             <TabItem Header="Selected" Style="{StaticResource noHeaderTabItemStyle}">

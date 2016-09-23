@@ -135,8 +135,10 @@ namespace ShibugakiViewer.ViewModels
         public TagInformation TagSelectorLastSelected { get; set; }
         public ReactiveProperty<int> TagSelectorSortMode { get; }
 
-        public IReadOnlyList<ExifVisibilityItem> TagVisibilityList
+        public IReadOnlyList<ExifVisibilityItem> ExifVisibilityList
             => this.Core.Library.ExifManager.TagVisibilityList;
+        public ReactiveProperty<bool> ExifVisibilityCheck { get; }
+        public ReadOnlyReactiveProperty<bool> IsExifEnabled { get; }
 
         public KeyReceiver<object> KeyReceiver { get; }
 
@@ -501,10 +503,17 @@ namespace ShibugakiViewer.ViewModels
                 })
                 .AddTo(this.Disposables);
 
-            this.TagSelectorSortMode = this.Core
+            this.TagSelectorSortMode = core
                 .ToReactivePropertyAsSynchronized(x => x.TagSelectorSortMode)
                 .AddTo(this.Disposables);
 
+            this.ExifVisibilityCheck = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
+            this.ExifVisibilityCheck
+                .Skip(1)
+                .Subscribe(x => core.Library.ExifManager.EnableAll(x)).AddTo(this.Disposables);
+
+            this.IsExifEnabled = core.Library.ExifManager.HasVisibleItem
+                .ToReadOnlyReactiveProperty().AddTo(this.Disposables);
 
 
             this.BackCommand = client.BackHistoryCount

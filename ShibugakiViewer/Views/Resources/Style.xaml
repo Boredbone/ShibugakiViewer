@@ -255,11 +255,12 @@
                     TextAlignment="Center"
                     VerticalAlignment="Center"
                     TextOptions.TextFormattingMode="Ideal"/>
-                <TextBlock x:Name="PART_Label" Grid.Row="1"
-                           HorizontalAlignment="Center"
-                           TextAlignment="Center"
-                           TextWrapping="Wrap"
-                           VerticalAlignment="Top"/>
+                <TextBlock
+                    x:Name="PART_Label" Grid.Row="1"
+                    HorizontalAlignment="Center"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap"
+                    VerticalAlignment="Top"/>
             </Grid>
         </Border>
     </ControlTemplate>
@@ -446,6 +447,36 @@
         <Setter Property="DisabledForeground" Value="LightGray"/>
     </Style>
 
+    <!-- Information Pane Toggle Button -->
+    <Style TargetType="{x:Type cc:FlatToggleButton}" x:Key="informationPaneToggleButtonStyle"
+           BasedOn="{StaticResource flatToggleButtonStyle}">
+        <!--<Setter Property="Template" Value="{StaticResource flatButton5}"/>-->
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Background" Value="{StaticResource ButtonBackground}"/>
+        <Setter Property="BorderBrush" Value="Gray"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+
+        <Setter Property="PointerHoverBackground" Value="{StaticResource ButtonHoverBackground}"/>
+        <Setter Property="PointerHoverBorderBrush" Value="#FF606060"/>
+
+        <Setter Property="PressedBackground" Value="{StaticResource ButtonPressedBackground}"/>
+        <Setter Property="PressedBorderBrush" Value="#FF606060"/>
+        <Setter Property="PressedBorderThickness" Value="2"/>
+
+        <Setter Property="DisabledBackground" Value="#FFEFEFEF"/>
+        <Setter Property="DisabledBorderBrush" Value="LightGray"/>
+        <Setter Property="DisabledForeground" Value="LightGray"/>
+        
+        <Setter Property="CheckedForeground" Value="Black"/>
+        <Setter Property="CheckedBackground" Value="{StaticResource ButtonBackground}"/>
+        <Setter Property="CheckedPointerHoverBackground"
+                Value="{StaticResource ButtonHoverBackground}"/>
+    </Style>
+    
     <!-- Information Pane Button Content -->
     <Style TargetType="{x:Type cc:LabeledIcon}" x:Key="informationPaneContentStyle"
                BasedOn="{StaticResource labeledIconStyle}">

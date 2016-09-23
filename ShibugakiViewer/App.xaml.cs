@@ -556,7 +556,7 @@ namespace ShibugakiViewer
                     FileName = Path.Combine(directory, "ShibugakiViewer.Backup.exe"),
                     WorkingDirectory = directory,
                     UseShellExecute = false,
-                    Arguments = args.Join(" "),
+                    Arguments = args.Select(x => $"\"{x}\"").Join(" "),
                 };
 
                 System.Diagnostics.Process.Start(psi);

@@ -431,7 +431,8 @@
                     <cc:LabeledIcon
                         IconText="{StaticResource RemoveGroupSymbol}"
                         Style="{StaticResource verticalLabeledIconStyle}"
-                        Text="{x:Static properties:Resources.RemoveButton_ToolTip}"/>
+                        Text="{x:Static properties:Resources.RemoveButton_Label}"
+                        ToolTip="{x:Static properties:Resources.RemoveButton_ToolTip}"/>
                 </cc:FlatButton>
 
 
@@ -488,11 +489,6 @@
             IsRenderingEnabled="{Binding IsRenderingEnabled.Value,Mode=OneWay}"
             ScrollToIndexAction="{Binding ScrollToIndexAction,Mode=OneWayToSource}">
 
-            <!--
-            behaviors:ScrollHelperBehavior.ScrollSpeed="12.0"
-            behaviors:ScrollHelperBehavior.AnimationTime="100"
-            behaviors:ScrollHelperBehavior.IsAnimationEnabled="True"-->
-
             <i:Interaction.Behaviors>
                 <behaviors:ScrollHelperBehavior
                     ScrollSpeed="6.0"
@@ -503,58 +499,5 @@
 
         </cc:VirtualizedGridView>
 
-        <!--
-        <StackPanel Orientation="Horizontal"
-                    HorizontalAlignment="Left"
-                    Grid.Row="2">
-
-            <StackPanel.Resources>
-                <Style TargetType="Button">
-                    <Style.Triggers>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Trigger.Setters>
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                            </Trigger.Setters>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </StackPanel.Resources>
-
-            <Button 
-                    MinWidth="64"
-                    Height="64"
-                    Margin="0"
-                    Command="{Binding SelectAllCommand}"
-                    Content="Select All"/>
-            
-            <Button 
-                    MinWidth="64"
-                    Height="64"
-                    Margin="0"
-                    Command="{Binding SelectionClearCommand}"
-                    Content="Clear Selection"/>
-
-            <Button 
-                    MinWidth="64"
-                    Height="64"
-                    Margin="0"
-                    Command="{Binding GroupingCommand}"
-                    Content="Grouping"/>
-            <Button 
-                    MinWidth="64"
-                    Height="64"
-                    Margin="0"
-                    Command="{Binding RemoveFromGroupCommand}"
-                    Content="Remove"/>
-
-            <Button 
-                    MinWidth="64"
-                    Height="64"
-                    Margin="0"
-                    Command="{Binding SetToLeaderCommand}"
-                    Content="Set to thumbnail"/>
-
-
-        </StackPanel>-->
     </Grid>
 </UserControl>

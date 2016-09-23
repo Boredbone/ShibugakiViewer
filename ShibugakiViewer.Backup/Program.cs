@@ -58,6 +58,14 @@ namespace ShibugakiViewer.Backup
                   "3",
             };*/
 
+            args = args.Select(x =>
+            {
+                if (x.StartsWith("\"") && x.EndsWith("\""))
+                {
+                    x = x.Substring(1, x.Length - 2);
+                }
+                return x;
+            }).ToArray();
 
             var modeText = args[0]?.ToLower();
             var serverFullPath = args[1];
@@ -197,6 +205,10 @@ namespace ShibugakiViewer.Backup
             {
 
                 Console.WriteLine(e.ToString());
+                //foreach (var l in args)
+                //{
+                //    Console.WriteLine(l);
+                //}
                 Console.ReadLine();
                 return;
             }

@@ -122,7 +122,6 @@ namespace LibraryConverter.Compat
             target.IsSlideshowRandom = false;// this.oldSettings.IsSlideshowRandom;
             target.IsSlideshowFullScreen = this.oldSettings.IsSlideshowFullScreen;
             //target.IsAutoInformationPaneDisabled = false;
-
         }
 
 
@@ -173,7 +172,8 @@ namespace LibraryConverter.Compat
 
             foreach (var tag in oldTags)
             {
-                if (this.oldLibrary.FileDictionary.Any(x => x.Value.Tags.Contains(tag.Key)))
+                if (this.oldLibrary.FileDictionary.Any(x => x.Value.Tags.Contains(tag.Key))
+                    || this.oldSettings.Searcher.GroupLeaderDictionary.Any(x=>x.Value.Tags.Contains(tag.Key)))
                 {
                     var shortcut = tag.Value.Shortcut;
 

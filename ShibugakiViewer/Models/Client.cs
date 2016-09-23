@@ -268,6 +268,15 @@ namespace ShibugakiViewer.Models
                 .ToReadOnlyReactiveProperty()
                 .AddTo(this.Disposables);
 
+            //Exif
+            this.SelectedRecord
+                .CombineLatest(this.core.Library.ExifManager.HasVisibleItem, (r, h) => h ? r : null)
+                .Throttle(TimeSpan.FromMilliseconds(300))
+                .Where(x => x != null && !x.IsGroup && x.Exif == null)
+                .Select(x => new { R = x, E = this.core.Library.ExifManager.LoadExif(x.FullPath) })
+                .ObserveOnUIDispatcher()
+                .Subscribe(x => x.R.Exif = x.E)
+                .AddTo(this.Disposables);
 
 
             this.PageSize = this.ColumnLength.Where(x => x > 0)

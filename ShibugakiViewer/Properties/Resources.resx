@@ -226,7 +226,7 @@
     <value>Relative Path (Sequence Number)</value>
   </data>
   <data name="RemoveButton_Label" xml:space="preserve">
-    <value>Remove</value>
+    <value>Remove from Group</value>
   </data>
   <data name="RemoveButton_ToolTip" xml:space="preserve">
     <value>Remove from Group</value>

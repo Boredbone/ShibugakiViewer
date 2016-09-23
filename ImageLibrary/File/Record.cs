@@ -10,6 +10,7 @@ using Boredbone.Utility.Extensions;
 using Boredbone.Utility.Tools;
 using Database.Table;
 using ImageLibrary.Core;
+using ImageLibrary.Exif;
 using ImageLibrary.Search;
 using ImageLibrary.Tag;
 
@@ -374,7 +375,7 @@ namespace ImageLibrary.File
                         = await LibraryOwner.GetCurrent().GroupQuery.CountAsync(this);
                 }).ContinueWith(t =>
                 {
-                    context.Post(state =>
+                    context?.Post(state =>
                     {
                         RaisePropertyChanged(nameof(this.MemberCount));
                     }, null);
@@ -515,7 +516,22 @@ namespace ImageLibrary.File
 
         #endregion
 
-        
+        public ExifInformation Exif
+        {
+            get { return this.IsGroup ? null : _fieldExif; }
+            set
+            {
+                if (_fieldExif != value && !this.IsGroup)
+                {
+                    _fieldExif = value;
+                    RaisePropertyChanged(nameof(Exif));
+                }
+            }
+        }
+        private ExifInformation _fieldExif;
+
+
+
 
         bool ITrackable.IsLoaded { get; set; } = false;
 
