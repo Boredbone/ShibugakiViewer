@@ -184,6 +184,19 @@
                                     </Hyperlink>
                                 </TextBlock>
 
+                                <!-- ExifLib -->
+                                <TextBlock Style="{StaticResource normalTextStyle}">
+                                    <Hyperlink NavigateUri="http://www.codeproject.com/KB/graphics/exiflib.aspx"
+                                               tb:HyperlinkBehavior.NavigateByClick="True">
+                                        <Run Text="ExifLib" FontWeight="Bold"/>
+                                    </Hyperlink>
+                                    <Run Text=" by Simon McKenzie "/>
+                                    <Hyperlink NavigateUri="http://www.codeproject.com/info/cpol10.aspx"
+                                               tb:HyperlinkBehavior.NavigateByClick="True">
+                                        <Run Text="CPOL"/>
+                                    </Hyperlink>
+                                </TextBlock>
+                                
                                 <!-- Windows API Code Pack -->
                                 <TextBlock Style="{StaticResource normalTextStyle}">
                                     <Hyperlink NavigateUri="https://github.com/aybe/Windows-API-Code-Pack-1.1"

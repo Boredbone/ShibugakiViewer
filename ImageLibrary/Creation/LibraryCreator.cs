@@ -109,19 +109,26 @@ namespace ImageLibrary.Creation
             this.removedFilesResult = null;
             this.updatedFilesResult = null;
 
-            await Task.Factory.StartNew(() => this.RefreshLibraryMainAsync(addedFiles, removedFiles),
-                cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
-
-            await Task.Delay(100);
-
-            this.LoadedSubject.OnNext(new LibraryLoadResult()
+            try
             {
-                AddedFiles = addedFilesResult,
-                RemovedFiles = removedFilesResult,
-                UpdatedFiles = updatedFilesResult,
-                Action = action,
-                DateTime = DateTimeOffset.Now,
-            });
+                await Task.Factory.StartNew(() => this.RefreshLibraryMainAsync(addedFiles, removedFiles),
+                    cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
+
+                await Task.Delay(100);
+
+                this.LoadedSubject.OnNext(new LibraryLoadResult()
+                {
+                    AddedFiles = addedFilesResult,
+                    RemovedFiles = removedFilesResult,
+                    UpdatedFiles = updatedFilesResult,
+                    Action = action,
+                    DateTime = DateTimeOffset.Now,
+                });
+            }
+            catch
+            {
+
+            }
 
             this.addedFilesResult = null;
             this.removedFilesResult = null;
@@ -221,7 +228,8 @@ namespace ImageLibrary.Creation
             {
                 var notFoundRecords = await this.Records
                     .AsQueryable(connection)
-                    .Where(DatabaseFunction.IsTrue(nameof(Record.IsNotFound)))
+                    .Where(DatabaseFunction.And(DatabaseFunction.IsTrue(nameof(Record.IsNotFound)),
+                        DatabaseFunction.IsFalse(nameof(Record.IsGroup))))
                     .ToArrayAsync();
 
                 foreach (var f in notFoundRecords)

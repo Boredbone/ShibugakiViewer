@@ -1,73 +1,77 @@
+[Japanese](README_ja.md)
+
 ShibugakiViewer
 ===========
 
-画像ファイルの管理・表示アプリ
+Manager and Viewer App for Image Files
 
 
 for Windows 7/8/8.1/10
 
-.NET Framework 4.6.2以上が必要です。
+.NET Framework 4.6.2 or higher is required.
 
 ---
 
 
-[![fig01](docs/images/small/01_ja.png)](docs/images/raw/01_ja.png)  
-登録されたフォルダ内の画像ファイルをライブラリ化し、条件を指定して検索することができます。
+[![fig01](docs/images/small/01_en.png)](docs/images/raw/01_en.png)  
+This app makes library from image files in registered folders.  
+You can find images in a custom criteria.
 
 
 ---
-### 画像の表示
+### View Images
 
-[![fig02](docs/images/small/02_ja.png)](docs/images/raw/02_ja.png)  
-画像を拡大、縮小、回転して表示できます。  
+[![fig02](docs/images/small/02_en.png)](docs/images/raw/02_en.png)  
+Image scaling, rotation, and management  
   
-画像を自動で切り替えるスライドショー機能があります。  
-スライドショーの再生中は画像をフルスクリーンで表示できます。  
+There is the slideshow mode whitch change the image automatically.  
+You can view the image in full screen during slideshow.  
 
 [![fig03](docs/images/small/03.png)](docs/images/raw/03.png)  
-ビューアの背景色は任意に設定可能です。
+Choose a favorite color for the background of viewer.
 
 
 ---
-### 画像データベース
+### Image Database
 
-[![fig08](docs/images/small/08_ja.png)](docs/images/raw/08_ja.png)  
+[![fig08](docs/images/small/08_en.png)](docs/images/raw/08_en.png)  
 画像の入ったフォルダを登録します。  
 アプリの起動中はフォルダ内の画像の追加・削除を監視し、自動でライブラリを更新します。  
   
-[![fig04](docs/images/small/04_ja.png)](docs/images/raw/04_ja.png)  
+[![fig04](docs/images/small/04_en.png)](docs/images/raw/04_en.png)  
 登録された画像にタグを付けて管理します。  
 キーボードショートカットを設定すると、素早くタグを設定することができます。  
-タグをタップすることで、同じタグを含む画像を抽出します。  
+By tapping the tag, images with the same tag will be enumerated.  
   
-[![fig05](docs/images/small/05_ja.png)](docs/images/raw/05_ja.png)  
-また、画像のグループ化を使用すると、電子書籍などの管理がより便利になります。  
-グループにもタグや評価の設定が可能です。  
+[![fig05](docs/images/small/05_en.png)](docs/images/raw/05_en.png)  
+Management of images will be more convenient by grouping of items such as e-books.  
+You can also set tags or rating to the group.  
   
-[![fig06](docs/images/small/06_ja.png)](docs/images/raw/06_ja.png)  
-画像のサイズ、作成日時、タグ、評価などの条件を指定し、一致する画像を検索します。  
-"AND/OR"を使用した詳細な条件の設定が可能です。  
+[![fig06](docs/images/small/06_en.png)](docs/images/raw/06_en.png)  
+Search for your images by size, created date, tag, rating or other file properties.  
+To set more detailed condition, use the "AND/OR" operator.  
+By saving the search criteria to the album, you can use it again.  
   
-[![fig07](docs/images/small/07_ja.png)](docs/images/raw/07_ja.png)  
-検索結果を表示する際、複数のソート条件を設定することが可能です。  
-例えば評価が高い順番に並べたうえで、評価が同じ場合は更新日時が新しい順番に並べることができます。  
+[![fig07](docs/images/small/07_en.png)](docs/images/raw/07_en.png)  
+You can set multiple sort conditions when displaying the search results.  
+For example, sort images first by rating and then by modified date in each group of same rating.  
 
 
 
 ---
-### 対応ファイル形式
+### Supported file formats
 
-以下の画像形式に対応しています。  
+It supports the image format of the following:  
 ` ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".wmf", ".emf", ".tif", ".tiff"`  
   
-GIFアニメーションの再生が可能です。  
+Animated GIF is supported.  
   
-ベクタ形式画像(`".wmf", ".emf"`)を、品質を保ったまま拡大して表示することができます。
+Vector image formats(`".wmf", ".emf"`) can be enlarged while maintaining the quality.
 
 
 
 ---
-### リリースノート
+### Release Notes
 
 * Version 1.0.0 (2016/09/22)
 	* 1st Release
