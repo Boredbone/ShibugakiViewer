@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Boredbone.Utility;
+using Boredbone.Utility.Extensions;
 using Boredbone.Utility.Tools;
 using ImageLibrary.Creation;
 using ImageLibrary.File;
@@ -113,7 +114,7 @@ namespace ShibugakiViewer.Models.ImageViewer
 
             this.FullPath = fullPath;
 
-            if (fullPath == null)
+            if (fullPath.IsNullOrWhiteSpace())
             {
                 return false;
             }

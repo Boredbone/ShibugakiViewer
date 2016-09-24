@@ -24,7 +24,7 @@ You can find images in a custom criteria.
 [![fig02](docs/images/small/02_en.png)](docs/images/raw/02_en.png)  
 Image scaling, rotation, and management  
   
-There is the slideshow mode whitch change the image automatically.  
+There is the slideshow mode which change the image automatically.  
 You can view the image in full screen during slideshow.  
 
 [![fig03](docs/images/small/03.png)](docs/images/raw/03.png)  
@@ -35,13 +35,13 @@ Choose a favorite color for the background of viewer.
 ### Image Database
 
 [![fig08](docs/images/small/08_en.png)](docs/images/raw/08_en.png)  
-画像の入ったフォルダを登録します。  
-アプリの起動中はフォルダ内の画像の追加・削除を監視し、自動でライブラリを更新します。  
+Register folders containing images.  
+While the app is running, it monitors the addition and removal of the images in the folder, and updates the library automatically.
   
 [![fig04](docs/images/small/04_en.png)](docs/images/raw/04_en.png)  
-登録された画像にタグを付けて管理します。  
-キーボードショートカットを設定すると、素早くタグを設定することができます。  
+Use tags to manage registered images.  
 By tapping the tag, images with the same tag will be enumerated.  
+By using a keyboard shortcut, you can set the tag quickly.  
   
 [![fig05](docs/images/small/05_en.png)](docs/images/raw/05_en.png)  
 Management of images will be more convenient by grouping of items such as e-books.  
@@ -73,6 +73,6 @@ Vector image formats(`".wmf", ".emf"`) can be enlarged while maintaining the qua
 ---
 ### Release Notes
 
-* Version 1.0.0 (2016/09/22)
+* Version 1.0.0 (2016/09/24)
 	* 1st Release
 
