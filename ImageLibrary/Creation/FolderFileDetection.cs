@@ -85,7 +85,7 @@ namespace ImageLibrary.Creation
                     : !completely,
 
                 ContainsChildren = !information.IsTopDirectoryOnly,
-                Level = PropertiesLevel.Basic,
+                Level = level,//PropertiesLevel.Basic,
             };
             
 
@@ -130,7 +130,7 @@ namespace ImageLibrary.Creation
         /// <param name="prospectedTags"></param>
         /// <returns></returns>
         public async Task<bool> CheckFolderUpdateAsync(
-            string[] files,
+            string[] files, PropertiesLevel level,
             IReadOnlyDictionary<string, Record> relatedFiles,
             ConcurrentDictionary<string, ConcurrentBag<TagManager>> prospectedTags)
         {
@@ -143,7 +143,7 @@ namespace ImageLibrary.Creation
             {
                 LightMode = true,
                 ContainsChildren = false,
-                Level = PropertiesLevel.Basic,
+                Level = level,// PropertiesLevel.Basic,
             };
 
 

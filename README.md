@@ -73,6 +73,8 @@ Vector image formats(`".wmf", ".emf"`) can be enlarged while maintaining the qua
 ---
 ### Release Notes
 
+* Version 1.0.1 (2016/09/25)
+	* Fix graphic rendering error
 * Version 1.0.0 (2016/09/24)
 	* 1st Release
 

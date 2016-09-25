@@ -62,7 +62,24 @@ namespace ImageLibrary.Core
             }
         }
         private bool _fieldRefreshLibraryCompletely;
-        
+
+
+        [DataMember]
+        public bool CheckFileShellInformation
+        {
+            get { return _fieldCheckFileShellInformation; }
+            set
+            {
+                if (_fieldCheckFileShellInformation != value)
+                {
+                    _fieldCheckFileShellInformation = value;
+                    this.isChanged = true;
+                }
+            }
+        }
+        private bool _fieldCheckFileShellInformation;
+
+
 
         private bool isChanged;
 

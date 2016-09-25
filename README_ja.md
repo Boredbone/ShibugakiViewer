@@ -72,6 +72,8 @@ GIFアニメーションの再生が可能です。
 ---
 ### リリースノート
 
+* Version 1.0.1 (2016/09/25)
+	* Fix graphic rendering error
 * Version 1.0.0 (2016/09/24)
 	* 1st Release
 

@@ -278,7 +278,7 @@ namespace ImageLibrary.Creation
                 tf.FileLoaded += x => this.FileLoadedSubject.OnNext(x);
                 tf.FileEnumerated += x => this.FileEnumeratedSubject.OnNext(x);
 
-                var result = await tf.CheckFolderUpdateAsync(added, relatedFiles, prospectedTags)
+                var result = await tf.CheckFolderUpdateAsync(added, this.Level, relatedFiles, prospectedTags)
                     .ConfigureAwait(false);
                 
                     //見つかったファイルを登録，重複していたら上書き

@@ -35,6 +35,8 @@ namespace ShibugakiViewer.Models.ImageViewer
 
         public string FullPath { get; private set; }
 
+        private const int maxSize = 4096;
+
         public ImageSourceContainer()
         {
 
@@ -143,7 +145,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                     }
 
                     //Debug.WriteLine($"cc:{Thread.CurrentThread.ManagedThreadId}");
-
+                    //return false;
 
                     var image = new BitmapImage();
 
@@ -169,6 +171,21 @@ namespace ShibugakiViewer.Models.ImageViewer
                     }
                     else
                     {
+
+                        if (information != null
+                            && (information.GraphicSize.Height > maxSize || information.GraphicSize.Width > maxSize))
+                        {
+                            if (information.GraphicSize.Height > information.GraphicSize.Width)
+                            {
+                                image.DecodePixelHeight = maxSize;
+                            }
+                            else
+                            {
+                                image.DecodePixelWidth = maxSize;
+                            }
+
+                        }
+
                         this.Quality = ImageQuality.OriginalSize;
                     }
 
@@ -256,7 +273,11 @@ namespace ShibugakiViewer.Models.ImageViewer
                 this.IsNotFound = true;
                 return false;
             }
-            //});
+            catch (NotSupportedException)
+            {
+                //this.IsNotFound = true;
+                return false;
+            }
         }
 #pragma warning restore 1998
 #if false

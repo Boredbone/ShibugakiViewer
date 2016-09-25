@@ -20,13 +20,10 @@ namespace ImageLibrary.Exif
 {
     public class ExifManager : DisposableBase
     {
-        //private Dictionary<int, ExifVisibilityItem> Items { get; set; }
 
         private Subject<ExifVisibilityItem> AddedSubject { get; }
         public IObservable<ExifVisibilityItem> Added => this.AddedSubject.AsObservable();
-
-        //public IReadOnlyList<KeyValuePair<ushort, string>> Tags { get; }
-
+        
         private ObservableCollection<ExifVisibilityItem> tagVisibilityList;
         public IReadOnlyList<ExifVisibilityItem> TagVisibilityList => this.tagVisibilityList;
 
@@ -69,7 +66,6 @@ namespace ImageLibrary.Exif
         {
             this.AddedSubject = new Subject<ExifVisibilityItem>().AddTo(this.Disposables);
             this.HasVisibleItemSubject = new BehaviorSubject<bool>(false).AddTo(this.Disposables);
-            //this.Items = new Dictionary<int, ExifVisibilityItem>();
 
             var tagIds = Enum.GetValues(typeof(ExifTags)).Cast<ushort>().OrderBy(x => x).ToArray();
 
@@ -91,28 +87,6 @@ namespace ImageLibrary.Exif
                     return new KeyValuePair<ushort, string>(x, name);
                 })
                 .ToArray();
-
-            //this.tagVisibilityList = new Lazy<IReadOnlyList<ExifVisibilityItem>>
-            //    (() => new ObservableCollection<ExifVisibilityItem>(tags.Select(x =>
-            //    {
-            //        ExifVisibilityItem item = null;
-            //        if (!this.Items.TryGetValue(x.Key, out item) || item == null)
-            //        {
-            //
-            //            item = new ExifVisibilityItem()
-            //            {
-            //                Id = x.Key,
-            //                IsEnabled = false,
-            //                Manager = this,
-            //            };
-            //            this.Items[x.Key] = item;
-            //            this.AddedSubject.OnNext(item);
-            //        }
-            //
-            //        item.Name = x.Value;
-            //        return item;
-            //    })));
-
         }
 
         /// <summary>
@@ -160,32 +134,7 @@ namespace ImageLibrary.Exif
                 }));
 
         }
-
-        //private ExifVisibilityItem Add(ushort key)
-        //{
-        //    var item = new ExifVisibilityItem()
-        //    {
-        //        Id = key,
-        //        IsEnabled = false,
-        //        Manager = this,
-        //    };
-        //    this.Items[key] = item;
-        //    this.AddedSubject.OnNext(item);
-        //    return item;
-        //}
-
-        //public bool IsVisible(int key)
-        //{
-        //    ExifVisibilityItem result;
-        //    if (this.Items.TryGetValue(key, out result))
-        //    {
-        //        if (result != null)
-        //        {
-        //            return result.IsEnabled;
-        //        }
-        //    }
-        //    return false;
-        //}
+        
 
 
         public ExifInformation LoadExif(string path)

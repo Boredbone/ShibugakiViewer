@@ -115,6 +115,24 @@ namespace ImageLibrary.Core
             }
         }
 
+        public bool CheckFileShellInformation
+        {
+            get { return this.librarySettings.CheckFileShellInformation; }
+            set
+            {
+                if (this.librarySettings.CheckFileShellInformation != value)
+                {
+                    this.librarySettings.CheckFileShellInformation = value;
+                    RaisePropertyChanged(nameof(CheckFileShellInformation));
+                }
+            }
+        }
+
+        private PropertiesLevel FileCheckLevel
+            => this.CheckFileShellInformation ? PropertiesLevel.Shell : PropertiesLevel.Basic;
+
+
+
         public bool IsLibrarySettingsLoaded { get; set; }
 
         private static AsyncLock asyncLock = new AsyncLock();
@@ -596,7 +614,7 @@ namespace ImageLibrary.Core
                     .ToArray();
                 this.Creator.IgnoredFolders = ignored;
                 this.Creator.Completely = this.RefreshLibraryCompletely;
-                this.Creator.Level = PropertiesLevel.Basic;
+                this.Creator.Level = this.FileCheckLevel;// PropertiesLevel.Basic;
 
 
                 await this.Creator.RefreshLibraryAsync
@@ -628,7 +646,7 @@ namespace ImageLibrary.Core
                 this.Creator.Folders = folders;
                 this.Creator.IgnoredFolders = new string[0];
                 this.Creator.Completely = false;
-                this.Creator.Level = PropertiesLevel.None;
+                this.Creator.Level = this.FileCheckLevel;// PropertiesLevel.Basic;
 
                 await this.Creator.RefreshLibraryAsync(LibraryLoadAction.Activation);
 
@@ -652,7 +670,7 @@ namespace ImageLibrary.Core
                 {
                     this.Creator.IgnoredFolders = null;
                     this.Creator.Completely = this.RefreshLibraryCompletely;
-                    this.Creator.Level = PropertiesLevel.Basic;
+                    this.Creator.Level = this.FileCheckLevel;// PropertiesLevel.Basic;
 
                     if (args.AddedFiles.Length + args.RemovedFiles.Length >= 128)
                     {
