@@ -47,6 +47,7 @@
                                 FilePath="{Binding ThumbnailFilePath}"
                                 DecodeHeight="96"
                                 DecodeWidth="256"
+                                IsFill="True"
                                 Quality="ThumbNail"
                                 />
                         </i:Interaction.Behaviors>

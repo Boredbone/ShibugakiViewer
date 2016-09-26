@@ -936,6 +936,10 @@ namespace ShibugakiViewer.Views.Controls
             this.imageBehabior.AddTo(this.dispsables);
             this.gifBehabior.AddTo(this.dispsables);
 
+
+            //RenderOptions.SetBitmapScalingMode(this.image, BitmapScalingMode.Unspecified);//default
+            //RenderOptions.SetBitmapScalingMode(this.image, BitmapScalingMode.Linear);
+
             var buffer = ((App)Application.Current).Core.ImageBuffer;
             buffer.Updated
                 .ObserveOnUIDispatcher()

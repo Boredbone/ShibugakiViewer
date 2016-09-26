@@ -216,6 +216,35 @@ namespace ShibugakiViewer.Views.Behaviors
 
         #endregion
 
+        #region IsFill
+
+        public bool IsFill
+        {
+            get { return (bool)GetValue(IsFillProperty); }
+            set { SetValue(IsFillProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsFillProperty =
+            DependencyProperty.Register(nameof(IsFill), typeof(bool), typeof(ImageBehavior),
+            new PropertyMetadata(false, new PropertyChangedCallback(OnIsFillChanged)));
+
+        private static void OnIsFillChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as ImageBehavior;
+            var value = e.NewValue as bool?;
+            if (thisInstance != null && value.HasValue)
+            {
+                thisInstance.isFill = value.Value;
+            }
+        }
+
+        private bool isFill = false;
+
+        #endregion
+
+
+
+
 
         #region HasPriority
 
@@ -395,13 +424,8 @@ namespace ShibugakiViewer.Views.Behaviors
             }
 
 
-            var option = new ImageLoadingOptions()
-            {
-                FrameHeight = height,
-                FrameWidth = width,
-                Quality = quality,
-                CmsEnable = cms,
-            };
+            var option = new ImageLoadingOptions
+                (width, height, this.IsFill, quality, cms);
 
             var tokenSource = new ObservableCancellationTokenSource();
 

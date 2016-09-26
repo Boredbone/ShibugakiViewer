@@ -147,25 +147,34 @@ namespace ShibugakiViewer.Models.ImageViewer
                     //Debug.WriteLine($"cc:{Thread.CurrentThread.ManagedThreadId}");
                     //return false;
 
-                    var image = new BitmapImage();
+                    var width = -1.0;
+                    var height = -1.0;
+                    var rewrite = false;
 
-                    image.BeginInit();
-                    image.CacheOption = BitmapCacheOption.OnLoad;
-                    image.CreateOptions = BitmapCreateOptions.None;
 
                     if (frameWidth > 0)
                     {
-                        image.DecodePixelWidth = frameWidth;
+                        width = frameWidth;
                         this.Quality = ImageQuality.Resized;
+                        rewrite = true;
                     }
                     else if (frameHeight > 0)
                     {
-                        image.DecodePixelHeight = frameHeight;
+                        height = frameHeight;
                         this.Quality = ImageQuality.Resized;
+                        rewrite = true;
                     }
                     else if (asThumbNail)
                     {
-                        image.DecodePixelWidth = thumbNailSize;
+                        if (file != null && file.Height > file.Width)
+                        {
+                            width = thumbNailSize;
+                        }
+                        else
+                        {
+                            height = thumbNailSize;
+                        }
+                        //image.DecodePixelWidth = thumbNailSize;
                         //image.DecodePixelHeight = thumbNailSize;
                         this.Quality = ImageQuality.LowQuality;
                     }
@@ -177,17 +186,33 @@ namespace ShibugakiViewer.Models.ImageViewer
                         {
                             if (information.GraphicSize.Height > information.GraphicSize.Width)
                             {
-                                image.DecodePixelHeight = maxSize;
+                                height = maxSize;
                             }
                             else
                             {
-                                image.DecodePixelWidth = maxSize;
+                                width = maxSize;
                             }
-
+                            rewrite = true;
                         }
 
                         this.Quality = ImageQuality.OriginalSize;
                     }
+
+                    var image = new BitmapImage();
+
+                    image.BeginInit();
+                    image.CacheOption = BitmapCacheOption.OnLoad;
+                    image.CreateOptions = BitmapCreateOptions.None;
+
+                    if (width > 0)
+                    {
+                        image.DecodePixelWidth = (int)width;
+                    }
+                    else if (height > 0)
+                    {
+                        image.DecodePixelHeight = (int)height;
+                    }
+
 
                     if (information.BlankHeaderLength == 0)
                     {
@@ -219,6 +244,8 @@ namespace ShibugakiViewer.Models.ImageViewer
                     }
 
                     this.Image = image;
+
+
                     //Debug.WriteLine($"dd:{Thread.CurrentThread.ManagedThreadId}");
 
                 }
@@ -279,6 +306,8 @@ namespace ShibugakiViewer.Models.ImageViewer
                 return false;
             }
         }
+
+
 #pragma warning restore 1998
 #if false
         private async Task<Windows.UI.Xaml.Media.Imaging.BitmapSource> LoadImageCmsAsync

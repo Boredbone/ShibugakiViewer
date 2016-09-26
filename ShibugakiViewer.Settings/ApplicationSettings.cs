@@ -86,6 +86,8 @@ namespace ShibugakiViewer.Models
 
         [DataMember]
         public bool UseLogicalPixel { get; set; }
+        [DataMember]
+        public bool DelayLoadingOriginalQuality { get; set; }
 
 
         public ApplicationSettings()
@@ -118,6 +120,7 @@ namespace ShibugakiViewer.Models
             this.IsDarkTheme = false;
 
             this.UseLogicalPixel = false;
+            this.DelayLoadingOriginalQuality = false;
         }
     }
 }

@@ -234,6 +234,7 @@
                                 FilePath="{Binding CurrentSearch.Value.ThumbnailFilePath,Mode=OneWay}"
                                 DecodeHeight="96"
                                 DecodeWidth="256"
+                                IsFill="True"
                                 Quality="ThumbNail"/>
                         </i:Interaction.Behaviors>
                     </Image>

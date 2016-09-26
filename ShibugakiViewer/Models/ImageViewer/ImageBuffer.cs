@@ -44,7 +44,7 @@ namespace ShibugakiViewer.Models.ImageViewer
 
         private Subject<string> UpdatedSubject { get; }
         public IObservable<string> Updated => this.UpdatedSubject.AsObservable();
-        
+
         private readonly ConcurrentQueue<CommandPacket> currentFileLoadRequest
             = new ConcurrentQueue<CommandPacket>();
         private readonly ConcurrentQueue<CommandPacket> lowQualityPreLoadRequest
@@ -77,7 +77,7 @@ namespace ShibugakiViewer.Models.ImageViewer
             this.ActionQueueSubject = new Subject<Unit>().AddTo(this.Disposables);
 
             var scheduler = new EventLoopScheduler();
-            
+
 
             //読み込み要求を処理
             var subscription = this.ActionQueueSubject
@@ -119,7 +119,7 @@ namespace ShibugakiViewer.Models.ImageViewer
             (Record file, string path, ImageLoadingOptions option, bool hasPriority,
             ObservableCancellationTokenSource tokenSource)
         {
-            
+
             ImageSourceContainer image;
             if (this.TryGetImage(path, option.Quality, out image))
             {
@@ -157,7 +157,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                     {
                         this.RequestLoading(path, option, observer, hasPriority, token);
                     }
-                    
+
                     image = null;
 
                     if (!tokenSource.IsDisposed)
@@ -292,7 +292,7 @@ namespace ShibugakiViewer.Models.ImageViewer
             bool hasPriority, CancellationToken token)
         {
             //Task.Run(() =>
-                this.RequestLoadingMain(file, path, option, observer, hasPriority, token);
+            this.RequestLoadingMain(file, path, option, observer, hasPriority, token);
         }
 
         private void RequestLoadingToTask
@@ -405,7 +405,6 @@ namespace ShibugakiViewer.Models.ImageViewer
             }
 
 
-
             using (var locked = await this.asyncLock.LockAsync())
             {
                 var image = new ImageSourceContainer();
@@ -453,14 +452,30 @@ namespace ShibugakiViewer.Models.ImageViewer
                     || file.Height > option.FrameHeight * resizeThreshold))
                 {
 
-                    if (file.Width / option.FrameWidth
-                        > file.Height / option.FrameHeight)
+                    var verticalRate = file.Height / option.FrameHeight;
+                    var horizontalRate = file.Width / option.FrameWidth;
+
+                    if (option.IsFill)
                     {
-                        frameWidth = (int)option.FrameWidth;
+                        if (horizontalRate > verticalRate)
+                        {
+                            frameHeight = (int)option.FrameHeight;
+                        }
+                        else
+                        {
+                            frameWidth = (int)option.FrameWidth;
+                        }
                     }
                     else
                     {
-                        frameHeight = (int)option.FrameHeight;
+                        if (horizontalRate > verticalRate)
+                        {
+                            frameWidth = (int)option.FrameWidth;
+                        }
+                        else
+                        {
+                            frameHeight = (int)option.FrameHeight;
+                        }
                     }
                 }
 
@@ -614,7 +629,7 @@ namespace ShibugakiViewer.Models.ImageViewer
             this.ClearThumbNailRequests();
             this.thumbNailImages.ClearBuffer();
         }
-        
+
 
         private void ClearQueue(ConcurrentQueue<CommandPacket> queue)
         {
@@ -646,7 +661,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 => (this.path != null) ? this.path : this.File?.FullPath;
 
             private string path;
-            
+
 
             public CommandPacket(Record file, ImageLoadingOptions option, IObserver<ImageSourceContainer> observer)
             {
@@ -736,22 +751,30 @@ namespace ShibugakiViewer.Models.ImageViewer
     /// </summary>
     public class ImageLoadingOptions
     {
-        public double FrameWidth { get; set; }
-        public double FrameHeight { get; set; }
-        public ImageQuality Quality { get; set; }
-        public bool CmsEnable { get; set; }
+        public double FrameWidth { get; }
+        public double FrameHeight { get; }
+        public bool IsFill { get; }
+        public ImageQuality Quality { get; }
+        public bool CmsEnable { get; }
+
+        public ImageLoadingOptions(double width, double height, bool fill, ImageQuality quality, bool cms)
+        {
+            this.FrameWidth = width;
+            this.FrameHeight = height;
+            this.IsFill = fill;
+            this.Quality = quality;
+            this.CmsEnable = cms;
+        }
 
 
         public ImageLoadingOptions Clone()
         {
-            return new ImageLoadingOptions()
-            {
-                FrameHeight = this.FrameHeight,
-                FrameWidth = this.FrameWidth,
-                Quality = this.Quality,
-                CmsEnable = this.CmsEnable,
-
-            };
+            return new ImageLoadingOptions(
+                this.FrameWidth,
+                this.FrameHeight,
+                this.IsFill,
+                this.Quality,
+                this.CmsEnable);
         }
     }
 

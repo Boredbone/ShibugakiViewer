@@ -91,8 +91,9 @@
                             <i:Interaction.Behaviors>
                                 <behaviors:ImageBehavior
                                     Record="{Binding}"
-                                    DecodeHeight="256"
-                                    DecodeWidth="256"
+                                    DecodeHeight="128"
+                                    DecodeWidth="128"
+                                    IsFill="True"
                                     Quality="ThumbNail"
                                     Trigger="{Binding
                                     Source={StaticResource rootControl},

@@ -117,16 +117,17 @@
                         <!-- RenderTransformOrigin="0.5,0.5" Canvas.ZIndex="0"-->
                         <i:Interaction.Behaviors>
                             <b:ImageBehavior
-                            x:Name="imageBehabior"
-                            Record="{Binding}"
-                            DecodeHeight="{Binding ElementName=scrollImageViewer,Path=ActualHeight}"
-                            DecodeWidth="{Binding ElementName=scrollImageViewer,Path=ActualWidth}"
-                            Quality="LowQuality"
-                            Trigger="{Binding ElementName=scrollImageViewer,Path=ImageLoadingTrigger}"
-                            SourceChanged="ImageBehavior_SourceChanged"
-                            ZoomFactor="{Binding ElementName=scrollImageViewer,
-                            Path=MetaImageZoomFactorDp,Mode=OneWay}"
-                            IsGifAnimationEnabled="False"/>
+                                x:Name="imageBehabior"
+                                Record="{Binding}"
+                                DecodeHeight="{Binding ElementName=scrollImageViewer,Path=ActualHeight}"
+                                DecodeWidth="{Binding ElementName=scrollImageViewer,Path=ActualWidth}"
+                                Quality="LowQuality"
+                                IsFill="{Binding ElementName=scrollImageViewer,Path=IsFill}"
+                                Trigger="{Binding ElementName=scrollImageViewer,Path=ImageLoadingTrigger}"
+                                SourceChanged="ImageBehavior_SourceChanged"
+                                ZoomFactor="{Binding ElementName=scrollImageViewer,
+                                Path=MetaImageZoomFactorDp,Mode=OneWay}"
+                                IsGifAnimationEnabled="False"/>
                         </i:Interaction.Behaviors>
                     </Image>
 

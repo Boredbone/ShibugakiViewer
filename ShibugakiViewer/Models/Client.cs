@@ -132,7 +132,7 @@ namespace ShibugakiViewer.Models
         private readonly ApplicationCore core;
         private readonly LibraryFront front;
         public ISearchResult SearchResult => this.front;
-        
+
         private bool viewerImageChangeGate;
 
 
@@ -387,6 +387,7 @@ namespace ShibugakiViewer.Models
 
             this.ChangeToViewerSubject = new Subject<long>().AddTo(this.Disposables);
 
+            //this.ChangeToViewerSubject.Subscribe(x => Debug.WriteLine($"change to viewer {x}")).AddTo(this.Disposables);
 
             var cacheUpdated = front.CacheUpdated
                 .Where(x => this.ViewerIndex.Value >= x.Start && this.ViewerIndex.Value < x.Start + x.Length)
@@ -403,17 +404,23 @@ namespace ShibugakiViewer.Models
                 .Subscribe(x => LoadImagesMain(x, ImageQuality.LowQuality,
                     ListOrderFlags.Current | ListOrderFlags.Next | ListOrderFlags.Previous))
                 .AddTo(this.Disposables);
-
+            
             viewerIndexChanged
                 .Throttle(TimeSpan.FromMilliseconds(resizedImageLoadDelayMillisec))
+                .Merge(ChangeToViewerSubject)
+                .DistinctUntilChanged()
                 .ObserveOn(SynchronizationContext.Current)
                 .Subscribe(x => LoadImagesMain(x, ImageQuality.Resized,
                     ListOrderFlags.Current | ListOrderFlags.Next | ListOrderFlags.Previous))
                 .AddTo(this.Disposables);
 
             //表示中の画像のみ最高画質ロード
-            viewerIndexChanged
-                .Throttle(TimeSpan.FromMilliseconds(originalImageLoadDelayMillisec))
+
+            var viewerIndexChangedFiltered = core.DelayLoadingOriginalQuality
+                ? viewerIndexChanged.Throttle(TimeSpan.FromMilliseconds(originalImageLoadDelayMillisec))
+                : viewerIndexChanged.Restrict(TimeSpan.FromMilliseconds(originalImageLoadDelayMillisec));
+
+            viewerIndexChangedFiltered
                 .ObserveOn(SynchronizationContext.Current)
                 .Subscribe(x => LoadImagesMain(x, ImageQuality.OriginalSize,
                     ListOrderFlags.Current))
@@ -753,7 +760,7 @@ namespace ShibugakiViewer.Models
             {
                 return;
             }
-            
+
             if (record.IsGroup)
             {
                 this.SetNewGroupSearch(record);
@@ -830,13 +837,12 @@ namespace ShibugakiViewer.Models
             }
 
 
-            var option = new ImageLoadingOptions()
-            {
-                FrameHeight = this.ViewHeight,
-                FrameWidth = this.ViewWidth,
-                Quality = quality,
-                CmsEnable = this.core.IsCmsEnabled,
-            };
+            var option = new ImageLoadingOptions(
+                this.ViewWidth,
+                this.ViewHeight,
+                this.core.IsSlideshowResizeToFill,
+                quality,
+                this.core.IsCmsEnabled);
 
 
             if (order.HasFlag(ListOrderFlags.Current))
@@ -925,7 +931,7 @@ namespace ShibugakiViewer.Models
                     }
                 }
             }
-            else if(!ignoreIfDifferent)
+            else if (!ignoreIfDifferent)
             {
                 this.ViewerDisplayingInner.Value = Record.Empty;
             }
@@ -1071,7 +1077,7 @@ namespace ShibugakiViewer.Models
 
         private KeyValuePair<string, Record>[] ToSingleDictionary(Record value)
             => new[] { new KeyValuePair<string, Record>(value?.Id, value) };
-        
+
 
         /// <summary>
         /// 選択されたファイルをすべて削除
@@ -1085,15 +1091,15 @@ namespace ShibugakiViewer.Models
         /// </summary>
         /// <param name="files"></param>
         /// <returns></returns>
-        private async Task<bool> DeleteFilesAsync(IEnumerable< KeyValuePair<string, Record>> files)
+        private async Task<bool> DeleteFilesAsync(IEnumerable<KeyValuePair<string, Record>> files)
         {
             if (files == null)
             {
                 return false;
             }
-            
+
             var items = files.Where(x => !x.Key.IsNullOrWhiteSpace()).ToArray();
-            
+
             if (items.IsNullOrEmpty())
             {
                 return false;
@@ -1101,8 +1107,8 @@ namespace ShibugakiViewer.Models
 
             if (items.Any(x => x.Value?.IsGroup ?? false))
             {
-                MessageBox.Show((items.Length == 1) 
-                    ? this.core.GetResourceString("DeleteFileText6") 
+                MessageBox.Show((items.Length == 1)
+                    ? this.core.GetResourceString("DeleteFileText6")
                     : this.core.GetResourceString("DeleteFileText7"));
                 return false;
             }
@@ -1122,11 +1128,11 @@ namespace ShibugakiViewer.Models
                 messaBoxText = this.core.GetResourceString("DeleteFileText4")
                     + items.Length.ToString() + this.core.GetResourceString("DeleteFileText5");
             }
-            
+
             var userOperation = MessageBox.Show(messaBoxText, messageBoxTitle,
                 MessageBoxButton.OKCancel,
                 MessageBoxImage.Question);
-            
+
             if (userOperation != MessageBoxResult.Yes && userOperation != MessageBoxResult.OK)
             {
                 return false;
@@ -1198,7 +1204,7 @@ namespace ShibugakiViewer.Models
 
                     state.Search = search;
                     this.History.Current.Search = search;
-                    
+
 
                     var index = await core.Library.FindIndexAsync(search, record);
 
