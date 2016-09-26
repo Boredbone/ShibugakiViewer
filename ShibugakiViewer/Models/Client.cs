@@ -416,10 +416,10 @@ namespace ShibugakiViewer.Models
 
             //表示中の画像のみ最高画質ロード
 
-            var viewerIndexChangedFiltered = core.DelayLoadingOriginalQuality
-                ? viewerIndexChanged.Throttle(TimeSpan.FromMilliseconds(originalImageLoadDelayMillisec))
-                : viewerIndexChanged.Restrict(TimeSpan.FromMilliseconds(originalImageLoadDelayMillisec));
-
+            var viewerIndexChangedFiltered = core.LoadingOriginalQualityQuick
+                ? viewerIndexChanged.Restrict(TimeSpan.FromMilliseconds(originalImageLoadDelayMillisec))
+                : viewerIndexChanged.Throttle(TimeSpan.FromMilliseconds(originalImageLoadDelayMillisec));
+            
             viewerIndexChangedFiltered
                 .ObserveOn(SynchronizationContext.Current)
                 .Subscribe(x => LoadImagesMain(x, ImageQuality.OriginalSize,

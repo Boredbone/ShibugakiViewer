@@ -450,15 +450,15 @@ namespace ShibugakiViewer.Models
             }
         }
 
-        public bool DelayLoadingOriginalQuality
+        public bool LoadingOriginalQualityQuick
         {
-            get { return this.Settings.DelayLoadingOriginalQuality; }
+            get { return this.Settings.LoadingOriginalQualityQuick; }
             set
             {
-                if (this.Settings.DelayLoadingOriginalQuality != value)
+                if (this.Settings.LoadingOriginalQualityQuick != value)
                 {
-                    this.Settings.DelayLoadingOriginalQuality = value;
-                    RaisePropertyChanged(nameof(DelayLoadingOriginalQuality));
+                    this.Settings.LoadingOriginalQualityQuick = value;
+                    RaisePropertyChanged(nameof(LoadingOriginalQualityQuick));
                 }
             }
         }
