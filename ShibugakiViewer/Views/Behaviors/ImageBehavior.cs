@@ -82,7 +82,7 @@ namespace ShibugakiViewer.Views.Behaviors
                 if (oldPath != record.FullPath)
                 {
                     thisInstance.CancelLoading(text);
-                    thisInstance.Load2(element, record, record.FullPath);
+                    thisInstance.LoadMain(element, record, record.FullPath);
                 }
 
             }
@@ -127,7 +127,7 @@ namespace ShibugakiViewer.Views.Behaviors
                     return;
                 }
 
-                thisInstance.Load2(element, null, value);
+                thisInstance.LoadMain(element, null, value);
 
             }
         }
@@ -325,14 +325,14 @@ namespace ShibugakiViewer.Views.Behaviors
                 var record = thisInstance.RecordInner;
                 if (record != null)
                 {
-                    thisInstance.Load2(thisInstance.AssociatedObject, record, record.FullPath);
+                    thisInstance.LoadMain(thisInstance.AssociatedObject, record, record.FullPath);
                 }
                 else
                 {
                     var path = thisInstance.FilePathInner;
                     if (path != null)
                     {
-                        thisInstance.Load2(thisInstance.AssociatedObject, null, path);
+                        thisInstance.LoadMain(thisInstance.AssociatedObject, null, path);
                     }
                 }
             }
@@ -395,18 +395,10 @@ namespace ShibugakiViewer.Views.Behaviors
 
         private void CancelLoading(string oldPath)
         {
-            //if (oldPath == record.FullPath)
-            //{
-            //    Debug.WriteLine(text);
-            //}
-            //if (this.disposables.Count > 0)
-            //{
-            //    //Debug.WriteLine($"canceled:{oldPath}");
-            //}
             this.disposables.Clear();
         }
 
-        private void Load2(Image element, Record record, string path)
+        private void LoadMain(Image element, Record record, string path)
         {
             //this.disposables.Clear();
 
@@ -418,7 +410,6 @@ namespace ShibugakiViewer.Views.Behaviors
 
             if (core.MetaImageExtention.Contains(System.IO.Path.GetExtension(path).ToLower()))
             {
-                //Debug.WriteLine(path);
                 this.ChangeToMetaImage(record, path, width, height).FireAndForget();
                 return;
             }
@@ -583,14 +574,7 @@ namespace ShibugakiViewer.Views.Behaviors
 
 
             this.StopGifAnimation();
-
-            ////前にGifアニメを再生していたら破棄
-            //var prevStream = AnimationBehavior.GetSourceStream(element);
-            //if (prevStream != null)
-            //{
-            //    AnimationBehavior.SetSourceStream(element, null);
-            //    prevStream.Dispose();
-            //}
+            
 
             if (this.IsGifAnimationEnabled && isGifAnimation && pathChanged && path != null)
             {
@@ -600,7 +584,6 @@ namespace ShibugakiViewer.Views.Behaviors
                 {
                     stream = File.OpenRead(path);
                     AnimationBehavior.SetSourceStream(element, stream);
-                    //AnimationBehavior.SetSourceUri(element, new Uri(path));
                 }
                 catch
                 {
@@ -614,11 +597,6 @@ namespace ShibugakiViewer.Views.Behaviors
                 element.Source = source;
 
             }
-            //else
-            //{
-            //    //AnimationBehavior.SetSourceUri(element, null);
-            //    //element.Source = source;
-            //}
         }
 
         private void Load()
@@ -626,14 +604,14 @@ namespace ShibugakiViewer.Views.Behaviors
             var record = this.RecordInner;
             if (record != null)
             {
-                this.Load2(this.AssociatedObject, record, record.FullPath);
+                this.LoadMain(this.AssociatedObject, record, record.FullPath);
             }
             else
             {
                 var path = this.FilePathInner;
                 if (path != null)
                 {
-                    this.Load2(this.AssociatedObject, null, path);
+                    this.LoadMain(this.AssociatedObject, null, path);
                 }
             }
         }

@@ -27,10 +27,7 @@ namespace ShibugakiViewer.Models.ImageViewer
         public bool IsNotFound { get; set; }
 
         public GraphicInformation Information { get; private set; }
-
-        //public int LoadedWidth { get; set; }
-        //public int LoadedHeight { get; set; }
-
+        
         public string FullPath { get; private set; }
 
         private const int maxSize = 4096;
@@ -127,17 +124,11 @@ namespace ShibugakiViewer.Models.ImageViewer
             {
                 return false;
             }
-
-            //var asThumbNail = (thumbNailSize > 0);
+            
             try
             {
-                //Debug.WriteLine(fullPath);
-
                 GraphicInformation information = null;
-
-                //Debug.WriteLine($"aa:{Thread.CurrentThread.ManagedThreadId}");
-                //await Task.Delay(1);
-                //Debug.WriteLine($"bb:{Thread.CurrentThread.ManagedThreadId}");
+                
                 using (var stream = File.OpenRead(fullPath))
                 {
                     this.IsNotFound = false;
@@ -150,10 +141,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                     {
                         return false;
                     }
-
-                    //Debug.WriteLine($"cc:{Thread.CurrentThread.ManagedThreadId}");
-                    //return false;
-
+                    
                     //描画領域サイズ
                     var frameWidth = (!frameSize.HasValue || frameSize.Value.Width < 1)
                         ? 16.0 : frameSize.Value.Width;
@@ -227,52 +215,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                         this.Quality = ImageQuality.OriginalSize;
 
                     }
-
-                    /*
-                    if (frameWidth > 0)
-                    {
-                        width = frameWidth;
-                        this.Quality = ImageQuality.Resized;
-                        rewrite = true;
-                    }
-                    else if (frameHeight > 0)
-                    {
-                        height = frameHeight;
-                        this.Quality = ImageQuality.Resized;
-                        rewrite = true;
-                    }
-                    else if (asThumbNail)
-                    {
-                        if (information.GraphicSize.Height > information.GraphicSize.Width)
-                        {
-                            width = thumbNailSize;
-                        }
-                        else
-                        {
-                            height = thumbNailSize;
-                        }
-                        //image.DecodePixelWidth = thumbNailSize;
-                        //image.DecodePixelHeight = thumbNailSize;
-                        this.Quality = ImageQuality.LowQuality;
-                    }
-                    else
-                    {
-
-                        if (information.GraphicSize.Height > maxSize || information.GraphicSize.Width > maxSize)
-                        {
-                            if (information.GraphicSize.Height > information.GraphicSize.Width)
-                            {
-                                height = maxSize;
-                            }
-                            else
-                            {
-                                width = maxSize;
-                            }
-                            rewrite = true;
-                        }
-
-                        this.Quality = ImageQuality.OriginalSize;
-                    }*/
+                    
 
                     var image = new BitmapImage();
 
@@ -295,7 +238,6 @@ namespace ShibugakiViewer.Models.ImageViewer
                         stream.Position = 0;
 
                         image.StreamSource = stream;
-                        //image.UriSource = new Uri(fullPath);
 
                         image.EndInit();
                         image.Freeze();
@@ -307,7 +249,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                         {
 
                             stream.Position = information.BlankHeaderLength;
-                            //stream.Seek(information.BlankHeaderLength, System.IO.SeekOrigin.Begin);
+
                             ms.Position = 0;
                             stream.CopyTo(ms);
                             ms.Position = 0;
@@ -320,41 +262,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                     }
 
                     this.Image = image;
-                    
-                    //Debug.WriteLine($"dd:{Thread.CurrentThread.ManagedThreadId}");
-
                 }
-
-
-
-                //リサイズされた画像サイズ
-                //this.LoadedHeight = image.PixelHeight;
-                //this.LoadedWidth = image.PixelWidth;
-                /*
-                if (file != null && information != null)
-                {
-
-                    if ((file.Width != information.GraphicSize.Width)
-                        || (file.Height != information.GraphicSize.Height)
-                        || (file.Size != information.FileSize))
-                    {
-                        if (information.GraphicSize.Height > 0)
-                        {
-                            file.Width = information.GraphicSize.Width;
-                        }
-                        if (information.GraphicSize.Height > 0)
-                        {
-                            file.Height = information.GraphicSize.Height;
-                        }
-                        if (information.FileSize > 0)
-                        {
-                            file.Size = information.FileSize;
-                        }
-
-                        ImageFileUtility.UpdateInformation(file, false, true);
-
-                    }
-                }*/
 
                 return true;
 

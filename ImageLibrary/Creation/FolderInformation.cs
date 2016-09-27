@@ -159,20 +159,7 @@ namespace ImageLibrary.Creation
 
 
         public bool RefreshEnable { get; set; }
-
-        //public bool RefreshTrigger
-        //{
-        //    get { return _fieldRefreshTrigger; }
-        //    set
-        //    {
-        //        if (_fieldRefreshTrigger != value)
-        //        {
-        //            _fieldRefreshTrigger = value;
-        //            RaisePropertyChanged(nameof(RefreshTrigger));
-        //        }
-        //    }
-        //}
-        //private bool _fieldRefreshTrigger;
+        
         
         
 
@@ -210,7 +197,6 @@ namespace ImageLibrary.Creation
                     AutoRefreshEnable = true,
                     Ignored = false,
                     RefreshEnable = true,
-                    //RefreshTrigger = false,
                 };
             })
             .Where(x => x.Path != null && x.Path.Length > 0);

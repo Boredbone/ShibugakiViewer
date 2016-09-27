@@ -449,74 +449,6 @@ namespace ShibugakiViewer.Models.ImageViewer
 
                 var asThumbnail = option.Quality <= ImageQuality.LowQuality;
 
-
-                /*
-                int thumbNailSize = -1;
-                int frameWidth = -1;
-                int frameHeight = -1;
-
-
-                if (option.Quality == ImageQuality.ThumbNail)
-                {
-                    thumbNailSize = (int)((option.FrameWidth > option.FrameHeight)
-                        ? option.FrameWidth
-                        : option.FrameHeight);
-                    if (thumbNailSize < 1)
-                    {
-                        thumbNailSize = 16;
-                    }
-                }
-                else if (file == null)
-                {
-                    if (option.Quality == ImageQuality.LowQuality)
-                    {
-                        thumbNailSize = thumbnailThreshold;
-                    }
-                    else if (option.Quality == ImageQuality.Resized)
-                    {
-                        frameWidth = (int)option.FrameWidth;
-                    }
-                }
-                else if (option.Quality == ImageQuality.LowQuality
-                    && (file.Width > thumbnailThreshold
-                    || file.Height > thumbnailThreshold))
-                {
-                    thumbNailSize = thumbnailThreshold;
-                }
-                else if (option.Quality == ImageQuality.Resized
-                    && option.FrameWidth > 10 && option.FrameHeight > 10
-                    && (file.Width > option.FrameWidth * resizeThreshold
-                    || file.Height > option.FrameHeight * resizeThreshold))
-                {
-
-                    var verticalRate = file.Height / option.FrameHeight;
-                    var horizontalRate = file.Width / option.FrameWidth;
-
-                    if (option.IsFill)
-                    {
-                        if (horizontalRate > verticalRate)
-                        {
-                            frameHeight = (int)option.FrameHeight;
-                        }
-                        else
-                        {
-                            frameWidth = (int)option.FrameWidth;
-                        }
-                    }
-                    else
-                    {
-                        if (horizontalRate > verticalRate)
-                        {
-                            frameWidth = (int)option.FrameWidth;
-                        }
-                        else
-                        {
-                            frameHeight = (int)option.FrameHeight;
-                        }
-                    }
-                }*/
-
-
                 try
                 {
                     if (file != null)
@@ -573,23 +505,6 @@ namespace ShibugakiViewer.Models.ImageViewer
                         //サイズ小さめ
                         frameSize = failedLoadingSize;
                     }
-                    /*
-                    if (file == null)
-                    {
-                        frameWidth = (int)option.FrameWidth;
-                    }
-                    else if (thumbNailSize <= 0)
-                    {
-                        if (file.Width / option.FrameWidth
-                            > file.Height / option.FrameHeight)
-                        {
-                            frameWidth = (int)option.FrameWidth;
-                        }
-                        else
-                        {
-                            frameHeight = (int)option.FrameHeight;
-                        }
-                    }*/
 
                     var reloadOption = command.Option.Clone();
 
@@ -614,7 +529,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                     }
                 }
 
-                if (image.HasImage())// && !image.IsError())
+                if (image.HasImage())
                 {
                     if (option.Quality == ImageQuality.ThumbNail || image.Quality == ImageQuality.LowQuality)
                     {
