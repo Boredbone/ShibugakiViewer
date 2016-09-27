@@ -415,7 +415,7 @@ namespace ShibugakiViewer.Models
                 .AddTo(this.Disposables);
 
             //表示中の画像のみ最高画質ロード
-
+            
             var viewerIndexChangedFiltered = core.LoadingOriginalQualityQuick
                 ? viewerIndexChanged.Restrict(TimeSpan.FromMilliseconds(originalImageLoadDelayMillisec))
                 : viewerIndexChanged.Throttle(TimeSpan.FromMilliseconds(originalImageLoadDelayMillisec));

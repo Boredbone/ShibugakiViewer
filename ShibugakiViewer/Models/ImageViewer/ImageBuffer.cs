@@ -426,7 +426,14 @@ namespace ShibugakiViewer.Models.ImageViewer
                     case ImageQuality.ThumbNail:
                     case ImageQuality.Resized:
                         //リサイズ
-                        frameSize = new Size(option.FrameWidth, option.FrameHeight);
+                        if (option.FrameWidth > 1 && option.FrameHeight > 1)
+                        {
+                            frameSize = new Size(option.FrameWidth, option.FrameHeight);
+                        }
+                        else if (option.Quality == ImageQuality.ThumbNail)
+                        {
+                            frameSize = this.lowQualitySize;
+                        }
                         break;
                     case ImageQuality.LowQuality:
                         //低画質読み込み

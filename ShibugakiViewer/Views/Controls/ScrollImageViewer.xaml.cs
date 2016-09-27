@@ -938,7 +938,7 @@ namespace ShibugakiViewer.Views.Controls
 
 
             //RenderOptions.SetBitmapScalingMode(this.image, BitmapScalingMode.Unspecified);//default
-            //RenderOptions.SetBitmapScalingMode(this.image, BitmapScalingMode.Linear);
+            RenderOptions.SetBitmapScalingMode(this.image, BitmapScalingMode.Fant);
 
             var buffer = ((App)Application.Current).Core.ImageBuffer;
             buffer.Updated

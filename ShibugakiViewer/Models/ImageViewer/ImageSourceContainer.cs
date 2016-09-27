@@ -320,8 +320,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                     }
 
                     this.Image = image;
-
-
+                    
                     //Debug.WriteLine($"dd:{Thread.CurrentThread.ManagedThreadId}");
 
                 }
