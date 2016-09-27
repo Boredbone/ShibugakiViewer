@@ -31,8 +31,11 @@ namespace ShibugakiViewer.Models.ImageViewer
 
         private const int bufferSize = 16;
         private const int thumbNailbufferSize = 256;
-        private const int thumbnailThreshold = 128;
-        private const double resizeThreshold = 1.5;
+        //private const int thumbnailThreshold = 128;
+        //private const double resizeThreshold = 1.5;
+        private const int failedLoadingLength = 1024;
+        private readonly Size failedLoadingSize = new Size(failedLoadingLength, failedLoadingLength);
+
 
         private const int mainQueueCapacity = 8;
         private const int preloadQueueCapacity = 8;
@@ -40,6 +43,8 @@ namespace ShibugakiViewer.Models.ImageViewer
 
         public int ThumbnailRequestCapacity { get; set; } = 64;
         public HashSet<string> MetaImageExtention { get; set; }
+
+        private readonly Size lowQualitySize = new Size(128, 128);
 
 
         private Subject<string> UpdatedSubject { get; }
@@ -414,6 +419,31 @@ namespace ShibugakiViewer.Models.ImageViewer
                 var option = command.Option;
                 var file = command.File;
 
+                Size? frameSize = null;
+
+                switch (option.Quality)
+                {
+                    case ImageQuality.ThumbNail:
+                    case ImageQuality.Resized:
+                        //リサイズ
+                        frameSize = new Size(option.FrameWidth, option.FrameHeight);
+                        break;
+                    case ImageQuality.LowQuality:
+                        //低画質読み込み
+                        frameSize = this.lowQualitySize;
+                        break;
+                    case ImageQuality.OriginalSize:
+                        //オリジナルサイズで読み込み
+                        frameSize = null;
+                        break;
+                    default:
+                        break;
+                }
+
+                var asThumbnail = option.Quality <= ImageQuality.LowQuality;
+
+
+                /*
                 int thumbNailSize = -1;
                 int frameWidth = -1;
                 int frameHeight = -1;
@@ -477,7 +507,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                             frameHeight = (int)option.FrameHeight;
                         }
                     }
-                }
+                }*/
 
 
                 try
@@ -485,12 +515,12 @@ namespace ShibugakiViewer.Models.ImageViewer
                     if (file != null)
                     {
                         var t = await image.LoadImageAsync
-                            (file, thumbNailSize, frameWidth, frameHeight, option.CmsEnable);
+                            (file, frameSize, asThumbnail, option.IsFill, option.CmsEnable);
                     }
                     else
                     {
                         await image.LoadImageAsync
-                            (key, thumbNailSize, frameWidth, frameHeight, option.CmsEnable);
+                            (key, frameSize, asThumbnail, option.IsFill, option.CmsEnable);
                     }
                 }
                 catch (OutOfMemoryException e)
@@ -529,6 +559,14 @@ namespace ShibugakiViewer.Models.ImageViewer
 
                     image = new ImageSourceContainer();
 
+                    if (!frameSize.HasValue
+                        || frameSize.Value.Width > failedLoadingLength
+                        || frameSize.Value.Height > failedLoadingLength)
+                    {
+                        //サイズ小さめ
+                        frameSize = failedLoadingSize;
+                    }
+                    /*
                     if (file == null)
                     {
                         frameWidth = (int)option.FrameWidth;
@@ -544,7 +582,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                         {
                             frameHeight = (int)option.FrameHeight;
                         }
-                    }
+                    }*/
 
                     var reloadOption = command.Option.Clone();
 
@@ -553,12 +591,12 @@ namespace ShibugakiViewer.Models.ImageViewer
                         if (file != null)
                         {
                             var t2 = await image.LoadImageAsync
-                               (file, thumbNailSize, frameWidth, frameHeight, option.CmsEnable);
+                               (file, frameSize, asThumbnail, option.IsFill, option.CmsEnable);
                         }
                         else
                         {
                             await image.LoadImageAsync
-                                (key, thumbNailSize, frameWidth, frameHeight, option.CmsEnable);
+                                (key, frameSize, asThumbnail, option.IsFill, option.CmsEnable);
                         }
 
                     }

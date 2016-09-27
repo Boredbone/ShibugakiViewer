@@ -1,6 +1,4 @@
-﻿//using SharpDX;
-//using SharpDX.WIC;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -36,6 +34,7 @@ namespace ShibugakiViewer.Models.ImageViewer
         public string FullPath { get; private set; }
 
         private const int maxSize = 4096;
+        private const double resizeThreshold = 1.5;
 
         public ImageSourceContainer()
         {
@@ -60,15 +59,13 @@ namespace ShibugakiViewer.Models.ImageViewer
         }
 
         public Task<bool> LoadImageAsync
-            (string fullPath, int thumbNailSize, int frameWidth,
-            int frameHeight, bool cmsEnable)
+            (string fullPath, Size? frameSize, bool asThumbnail, bool isFill, bool cmsEnable)
         {
-            return this.LoadImageMainAsync(null, fullPath, thumbNailSize, frameWidth, frameHeight, cmsEnable);
+            return this.LoadImageMainAsync(fullPath, frameSize, asThumbnail, isFill, cmsEnable);
         }
 
         public async Task<bool> LoadImageAsync
-            (Record file, int thumbNailSize, int frameWidth,
-            int frameHeight, bool cmsEnable)
+            (Record file, Size? frameSize, bool asThumbnail, bool isFill, bool cmsEnable)
         {
             if (file == null)
             {
@@ -76,7 +73,32 @@ namespace ShibugakiViewer.Models.ImageViewer
             }
 
             var result = await this.LoadImageMainAsync
-                (file, file.FullPath, thumbNailSize, frameWidth, frameHeight, cmsEnable);
+                (file.FullPath, frameSize, asThumbnail, isFill, cmsEnable);
+
+            if (result && this.Information != null)
+            {
+
+                if ((file.Width != this.Information.GraphicSize.Width)
+                    || (file.Height != this.Information.GraphicSize.Height)
+                    || (file.Size != this.Information.FileSize))
+                {
+                    if (this.Information.GraphicSize.Height > 0)
+                    {
+                        file.Width = this.Information.GraphicSize.Width;
+                    }
+                    if (this.Information.GraphicSize.Height > 0)
+                    {
+                        file.Height = this.Information.GraphicSize.Height;
+                    }
+                    if (this.Information.FileSize > 0)
+                    {
+                        file.Size = this.Information.FileSize;
+                    }
+
+                    ImageFileUtility.UpdateInformation(file, false, true);
+
+                }
+            }
 
             if (this.IsNotFound)
             {
@@ -88,25 +110,10 @@ namespace ShibugakiViewer.Models.ImageViewer
 
         }
 
-        //private async Task<bool> LoadImageAsync
-        //    (Record file, int thumbNailSize, int frameWidth,
-        //    int frameHeight, bool cmsEnable)
-        //{
-        //    if (file == null)
-        //    {
-        //        return false;
-        //    }
-        //
-        //    return await Task.Run(() =>
-        //    {
-        //        return this.LoadImageMain(file, thumbNailSize, frameWidth, frameHeight, cmsEnable);
-        //    });
-        //
-        //}
+
 #pragma warning disable 1998
         private async Task<bool> LoadImageMainAsync
-            (Record file, string fullPath, int thumbNailSize, int frameWidth,
-            int frameHeight, bool cmsEnable)
+            (string fullPath, Size? frameSize, bool asThumbnail, bool isFill, bool cmsEnable)
         {
 
 
@@ -121,7 +128,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 return false;
             }
 
-            var asThumbNail = (thumbNailSize > 0);
+            //var asThumbNail = (thumbNailSize > 0);
             try
             {
                 //Debug.WriteLine(fullPath);
@@ -147,11 +154,81 @@ namespace ShibugakiViewer.Models.ImageViewer
                     //Debug.WriteLine($"cc:{Thread.CurrentThread.ManagedThreadId}");
                     //return false;
 
-                    var width = -1.0;
-                    var height = -1.0;
+                    //描画領域サイズ
+                    var frameWidth = (!frameSize.HasValue || frameSize.Value.Width < 1)
+                        ? 16.0 : frameSize.Value.Width;
+                    var frameHeight = (!frameSize.HasValue || frameSize.Value.Height < 1)
+                        ? 16.0 : frameSize.Value.Height;
+
+                    //画像サイズ
+                    var imageWidth = information.GraphicSize.Width;
+                    var imageHeight = information.GraphicSize.Height;
+
+                    //デコードサイズ
+                    var loadWidth = -1.0;
+                    var loadHeight = -1.0;
+
                     var rewrite = false;
 
+                    if (frameSize.HasValue
+                        && (imageWidth > frameWidth * resizeThreshold
+                        || imageHeight > frameHeight * resizeThreshold
+                        || asThumbnail))
+                    {
+                        //Resize
 
+                        var verticalRate = imageHeight / frameHeight;
+                        var horizontalRate = imageWidth / frameWidth;
+
+                        if (isFill)
+                        {
+                            if (horizontalRate > verticalRate)
+                            {
+                                loadHeight = frameHeight;
+                            }
+                            else
+                            {
+                                loadWidth = frameWidth;
+                            }
+                        }
+                        else
+                        {
+                            if (horizontalRate > verticalRate)
+                            {
+                                loadWidth = frameWidth;
+                            }
+                            else
+                            {
+                                loadHeight = frameHeight;
+                            }
+                        }
+
+                        this.Quality = (asThumbnail)
+                            ? ImageQuality.LowQuality : ImageQuality.Resized;
+                        rewrite = true;
+                    }
+                    else
+                    {
+                        //Original size
+
+                        if (imageHeight > maxSize || imageWidth > maxSize)
+                        {
+                            if (imageHeight > imageWidth)
+                            {
+                                loadHeight = maxSize;
+                            }
+                            else
+                            {
+                                loadWidth = maxSize;
+                            }
+                            rewrite = true;
+                        }
+
+                        this.Quality = ImageQuality.OriginalSize;
+
+                    }
+
+                    /*
                     if (frameWidth > 0)
                     {
                         width = frameWidth;
@@ -166,7 +243,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                     }
                     else if (asThumbNail)
                     {
-                        if (file != null && file.Height > file.Width)
+                        if (information.GraphicSize.Height > information.GraphicSize.Width)
                         {
                             width = thumbNailSize;
                         }
@@ -181,8 +258,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                     else
                     {
 
-                        if (information != null
-                            && (information.GraphicSize.Height > maxSize || information.GraphicSize.Width > maxSize))
+                        if (information.GraphicSize.Height > maxSize || information.GraphicSize.Width > maxSize)
                         {
                             if (information.GraphicSize.Height > information.GraphicSize.Width)
                             {
@@ -196,7 +272,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                         }
 
                         this.Quality = ImageQuality.OriginalSize;
-                    }
+                    }*/
 
                     var image = new BitmapImage();
 
@@ -204,13 +280,13 @@ namespace ShibugakiViewer.Models.ImageViewer
                     image.CacheOption = BitmapCacheOption.OnLoad;
                     image.CreateOptions = BitmapCreateOptions.None;
 
-                    if (width > 0)
+                    if (loadWidth > 0)
                     {
-                        image.DecodePixelWidth = (int)width;
+                        image.DecodePixelWidth = (int)Math.Round(loadWidth);
                     }
-                    else if (height > 0)
+                    else if (loadHeight > 0)
                     {
-                        image.DecodePixelHeight = (int)height;
+                        image.DecodePixelHeight = (int)Math.Round(loadHeight);
                     }
 
 
@@ -255,7 +331,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 //リサイズされた画像サイズ
                 //this.LoadedHeight = image.PixelHeight;
                 //this.LoadedWidth = image.PixelWidth;
-
+                /*
                 if (file != null && information != null)
                 {
 
@@ -279,7 +355,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                         ImageFileUtility.UpdateInformation(file, false, true);
 
                     }
-                }
+                }*/
 
                 return true;
 
@@ -306,96 +382,8 @@ namespace ShibugakiViewer.Models.ImageViewer
                 return false;
             }
         }
-
-
 #pragma warning restore 1998
-#if false
-        private async Task<Windows.UI.Xaml.Media.Imaging.BitmapSource> LoadImageCmsAsync
-            (StorageFile file)
-        {
-            if (file == null)
-            {
-                return null;
-            }
-            //this.currentFile = file;
 
-            //// カラマネする場合
-            // モニタプロファイルのStreamを作成
-            // ※物理モニタがない環境だと例外を吐く
-            IRandomAccessStream profileStream;
-            try
-            {
-                var view = DisplayInformation.GetForCurrentView();
-                profileStream = await view.GetColorProfileAsync();
-            }
-            catch
-            {
-                return null;
-            }
-
-            // Stream → Bytes
-            var profileBytes = new byte[profileStream.Size];
-            var reader = new DataReader(profileStream);
-            await reader.LoadAsync((uint)profileStream.Size);
-            reader.ReadBytes(profileBytes);
-
-            // モニタプロファイルのColorContextを作成
-            var factory = new ImagingFactory(); // 割とあちこちで使う
-            var displayProfile = new ColorContext(factory);
-            displayProfile.InitializeFromMemory(DataStream.Create(profileBytes, true, false));
-
-            using (var stream = await file.OpenAsync(FileAccessMode.Read))
-            {
-                // デコーダーでファイルからフレームを取得
-                var decoder = new BitmapDecoder(factory, stream.AsStream(), DecodeOptions.CacheOnDemand);
-                if (decoder.FrameCount < 1)
-                {
-                    return null;
-                }
-                var frame = decoder.GetFrame(0);
-
-                // 埋め込みプロファイル取得
-                var srcColorContexts = frame.TryGetColorContexts(factory);
-                var untaggedOrUnsupported = srcColorContexts == null || srcColorContexts.Length < 1;
-                // プロファイルが読み込めなかった場合はsRGBとみなす
-                var sourceProfile = !untaggedOrUnsupported ? srcColorContexts[0] : sRGBContext.Value;
-
-                SharpDX.WIC.BitmapSource transformSource = frame;
-                if (untaggedOrUnsupported)
-                {
-                    // プロファイルが読み込めなかった場合はsRGBを適用したいので、FormatConverterで32bppPBGRAへ変換
-                    // 変換しなかった場合、色変換時にCMYK画像をsRGBとして扱ってしまうことでエラーが発生する
-                    var converter = new FormatConverter(factory);
-                    converter.Initialize(frame, PixelFormat.Format32bppPBGRA);
-                    transformSource = converter;
-                }
-                // ColorTransformを通すことで色変換ができる
-                var transform = new ColorTransform(factory);
-                transform.Initialize(transformSource, sourceProfile, displayProfile, PixelFormat.Format32bppPBGRA);
-
-                var stride = transform.Size.Width * 4;    // 横1行のバイト数
-                var size = stride * transform.Size.Height;
-                var bytes = new byte[size];
-                transform.CopyPixels(bytes, stride); // Byte配列にピクセルデータをコピー
-
-                // ピクセルデータをWriteableBitmapに書き込み
-                var bitmap = new WriteableBitmap(transform.Size.Width, transform.Size.Height);
-                using (var s = bitmap.PixelBuffer.AsStream())
-                {
-                    await s.WriteAsync(bytes, 0, size);
-                }
-
-                return bitmap;
-            }
-
-            ////// カラマネしない場合
-            //var bitmapImage = new BitmapImage();
-            //var fileStream = await file.OpenStreamForReadAsync();
-            //await bitmapImage.SetSourceAsync(fileStream.AsRandomAccessStream());
-            //this.Image1.Source = bitmapImage;
-
-        }
-#endif
 
     }
 
