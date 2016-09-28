@@ -216,6 +216,9 @@
     <Compile Include="Views\InformationPanes\ToolsPage.xaml.cs">
       <DependentUpon>ToolsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SettingPages\AppSettingPage.xaml.cs">
+      <DependentUpon>AppSettingPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SettingPages\FolderSettingPage.xaml.cs">
       <DependentUpon>FolderSettingPage.xaml</DependentUpon>
     </Compile>
@@ -343,6 +346,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Resources\Tools.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SettingPages\AppSettingPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

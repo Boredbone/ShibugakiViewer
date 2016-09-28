@@ -34,17 +34,6 @@ namespace ShibugakiViewer.Views.SettingPages
 
     public class CheckModeConverter : IValueConverter
     {
-        //private static Lazy<Dictionary<FolderCheckMode, string>> dictionary
-        //    = new Lazy<Dictionary<FolderCheckMode, string>>(() =>
-        //    {
-        //        var core = ((App)Application.Current).Core;
-        //        return new Dictionary<FolderCheckMode, string>
-        //        {
-        //            [FolderCheckMode.None] = core.GetResourceString("RefreshModeDefault"),
-        //            [FolderCheckMode.Light] = core.GetResourceString("RefreshModeFast"),
-        //            [FolderCheckMode.Detail] = core.GetResourceString("RefreshModeSlow"),
-        //        };
-        //    });
 
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -53,11 +42,6 @@ namespace ShibugakiViewer.Views.SettingPages
             {
                 return null;
             }
-            //string str;
-            //if (dictionary.Value.TryGetValue(key.Value, out str))
-            //{
-            //    return str;
-            //}
 
             var core = ((App)Application.Current).Core;
             

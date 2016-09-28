@@ -505,7 +505,7 @@
     <value>Key Binds</value>
   </data>
   <data name="KeyboardHelp_Text" xml:space="preserve">
-    <value>Enabled when keyboard is connected_</value>
+    <value>Enabled when keyboard is connected</value>
   </data>
   <data name="LibRefreshModeHelp_Header" xml:space="preserve">
     <value>Library Update Mode</value>
@@ -884,5 +884,26 @@
   </data>
   <data name="ExifToDisplay" xml:space="preserve">
     <value>Exif Data to Display</value>
+  </data>
+  <data name="AppSetting" xml:space="preserve">
+    <value>Application Options</value>
+  </data>
+  <data name="Performance" xml:space="preserve">
+    <value>Performance</value>
+  </data>
+  <data name="ProjectHomeUrl" xml:space="preserve">
+    <value>https://boredbone.github.io/ShibugakiViewer/</value>
+  </data>
+  <data name="Quality" xml:space="preserve">
+    <value>Quality</value>
+  </data>
+  <data name="ScalingMode" xml:space="preserve">
+    <value>Scaling Mode</value>
+  </data>
+  <data name="UpdateCheck" xml:space="preserve">
+    <value>Update Check</value>
+  </data>
+  <data name="VersionCheckLabel" xml:space="preserve">
+    <value>Check the new version of this app when launched</value>
   </data>
 </root>

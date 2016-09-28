@@ -90,6 +90,12 @@ namespace ShibugakiViewer.Models
         public bool LoadingOriginalQualityQuick { get; set; }
 
 
+        [DataMember]
+        public int ScalingMode { get; set; }
+        [DataMember]
+        public bool SkipVersionCheck { get; set; }
+
+
         public ApplicationSettings()
         {
             this.IsOpenNavigationWithSingleTapEnabled = true;

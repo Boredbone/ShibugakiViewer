@@ -887,4 +887,25 @@
   <data name="ExifToDisplay" xml:space="preserve">
     <value>表示するExif情報</value>
   </data>
+  <data name="AppSetting" xml:space="preserve">
+    <value>アプリケーションの設定</value>
+  </data>
+  <data name="Performance" xml:space="preserve">
+    <value>Performance</value>
+  </data>
+  <data name="ProjectHomeUrl" xml:space="preserve">
+    <value>https://boredbone.github.io/ShibugakiViewer/index_ja.html</value>
+  </data>
+  <data name="Quality" xml:space="preserve">
+    <value>Quality</value>
+  </data>
+  <data name="ScalingMode" xml:space="preserve">
+    <value>拡大縮小のモード</value>
+  </data>
+  <data name="UpdateCheck" xml:space="preserve">
+    <value>アップデートチェック</value>
+  </data>
+  <data name="VersionCheckLabel" xml:space="preserve">
+    <value>起動時にアプリの新しいバージョンを確認</value>
+  </data>
 </root>

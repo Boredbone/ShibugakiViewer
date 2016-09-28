@@ -52,6 +52,9 @@ namespace ShibugakiViewer.ViewModels.SettingPages
 
         public ReactiveProperty<Color> BackColor { get; }
 
+        public ReactiveProperty<bool> IsVersionCheckEnabled { get; }
+        public ReactiveProperty<int> ScalingMode { get; }
+
 
         public ViewerSettingPageViewModel()
         {
@@ -140,6 +143,12 @@ namespace ShibugakiViewer.ViewModels.SettingPages
             this.CursorKeyBind = core
                 .ToReactivePropertyAsSynchronized(x => x.CursorKeyBind).AddTo(this.Disposables);
 
+            this.IsVersionCheckEnabled = core.ToReactivePropertyAsSynchronized
+                (x => x.SkipVersionCheck, x => !x, x => !x).AddTo(this.Disposables);
+
+            this.ScalingMode = core
+                .ToReactivePropertyAsSynchronized(x => x.ScalingMode)
+                .AddTo(this.Disposables);
 
             //this.GenerateNewClientCommand = new ReactiveCommand()
             //    .WithSubscribe(_ => core.ShowNewClient(null), this.Disposables);

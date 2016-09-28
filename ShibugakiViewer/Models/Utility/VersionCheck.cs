@@ -11,6 +11,8 @@ namespace ShibugakiViewer.Models.Utility
     public class VersionCheck
     {
         public Version LastVersion { get; private set; }
+        public Version CurrentVersion { get; private set; }
+
 
         private bool TryExtractVersion(string text, out Version version, out string prereleaseText)
         {
@@ -79,7 +81,12 @@ namespace ShibugakiViewer.Models.Utility
 
         public async Task<bool> CheckAsync(string url)
         {
+#if DEBUG
+            return false;
+#endif
+
             var assemblyVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            this.CurrentVersion = assemblyVersion;
 
             var last = await this.GetLastVersionAsync(url);
 

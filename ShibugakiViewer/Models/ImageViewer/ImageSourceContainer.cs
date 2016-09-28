@@ -156,7 +156,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                     var loadWidth = -1.0;
                     var loadHeight = -1.0;
 
-                    var rewrite = false;
+                    //var rewrite = false;
 
                     if (frameSize.HasValue
                         && (imageWidth > frameWidth * resizeThreshold
@@ -193,7 +193,7 @@ namespace ShibugakiViewer.Models.ImageViewer
 
                         this.Quality = (asThumbnail)
                             ? ImageQuality.LowQuality : ImageQuality.Resized;
-                        rewrite = true;
+                        //rewrite = true;
                     }
                     else
                     {
@@ -209,7 +209,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                             {
                                 loadWidth = maxSize;
                             }
-                            rewrite = true;
+                            //rewrite = true;
                         }
 
                         this.Quality = ImageQuality.OriginalSize;

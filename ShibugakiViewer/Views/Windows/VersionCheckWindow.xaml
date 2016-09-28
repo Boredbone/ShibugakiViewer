@@ -14,6 +14,7 @@
         mc:Ignorable="d"
         Title="new release"
         Height="300" Width="300"
+        Closed="Window_Closed"
         SizeToContent="WidthAndHeight" ResizeMode="NoResize">
     <Grid>
         <StackPanel>
@@ -21,6 +22,11 @@
             x:Name="text" Margin="4" Text="text"
             HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
+            <CheckBox 
+                Margin="8"
+                Content="SkipVersionCheck" 
+                IsChecked="{Binding SkipVersionCheck,Mode=TwoWay}"/>
+            
             <Grid Margin="32,8,32,16">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>

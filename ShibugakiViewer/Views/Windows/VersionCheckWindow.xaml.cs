@@ -24,7 +24,15 @@ namespace ShibugakiViewer.Views.Windows
         {
             InitializeComponent();
 
-            this.text.Text = ((App)Application.Current).Core.LastReleasedVersion.ToString();
+            var core = ((App)Application.Current).Core;
+
+            this.DataContext = core;
+
+            //var current = core.AppCurrentVersion;
+            //var currentBuild = new Version(current.Major, current.Minor, current.Build);
+            var last = core.LastReleasedVersion;
+
+            this.text.Text = $"{last} is available";
         }
 
         private void DownloadButton_Click(object sender, RoutedEventArgs e)
@@ -35,6 +43,11 @@ namespace ShibugakiViewer.Views.Windows
         private void SkipButton_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = false;
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+
         }
     }
 }

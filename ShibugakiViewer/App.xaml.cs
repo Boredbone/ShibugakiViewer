@@ -164,31 +164,42 @@ namespace ShibugakiViewer
                 this.StartPipeServer();
             }
 
-            Task.Run(async () =>
+            if (!this.Core.SkipVersionCheck)
             {
-                await this.Core.CheckNewVersionAsync();
-                bool? dialogResult = null;
-                this.Dispatcher.Invoke(() =>
-                {
-                    var dialog = new VersionCheckWindow()
-                    {
-                        WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                        Owner = window,
-                    };
+                this.CheckNewVersionAsync(window).FireAndForget();
+            }
+        }
 
-                    dialogResult = dialog.ShowDialog();
-                    //if (window != null)
-                    //{
-                    //    window.PopupDialog.Show(new VersionCheckPopup(), new Thickness(0),
-                    //        HorizontalAlignment.Stretch, VerticalAlignment.Center, null, true);
-                    //}
+        private async Task CheckNewVersionAsync(Window window)
+        {
 
-                    if (dialogResult == true)
-                    {
-                        this.ExitAllAfterLibraryUnLockedAsync().FireAndForget();
-                    }
-                });
-            });
+            var available = await this.Core.CheckNewVersionAsync();
+
+            if (!available)
+            {
+                return;
+            }
+
+            bool? dialogResult = null;
+
+            var dialog = new VersionCheckWindow()
+            {
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                Owner = window,
+            };
+
+            dialogResult = dialog.ShowDialog();
+            //if (window != null)
+            //{
+            //    window.PopupDialog.Show(new VersionCheckPopup(), new Thickness(0),
+            //        HorizontalAlignment.Stretch, VerticalAlignment.Center, null, true);
+            //}
+
+            if (dialogResult == true)
+            {
+                Process.Start(this.Core.ProjectHomeUrl);
+                await this.ExitAllAfterLibraryUnLockedAsync();
+            }
         }
 
 
@@ -384,7 +395,7 @@ namespace ShibugakiViewer
             {
                 window.Close();
             }
-            
+
             (await this.Core.Library.LockAsync()).Dispose();
             this.ExitAll();
         }

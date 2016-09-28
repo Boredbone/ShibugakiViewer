@@ -23,7 +23,7 @@
         </Style>
         <Style TargetType="GroupBox">
             <Setter Property="Margin" Value="4"/>
-            <Setter Property="Padding" Value="4"/>
+            <Setter Property="Padding" Value="16,4,4,4"/>
         </Style>
         <Style TargetType="CheckBox">
             <Setter Property="Margin" Value="0,4,4,4"/>
@@ -237,6 +237,7 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             
                             <TextBlock 
@@ -254,14 +255,29 @@
                                 <ComboBoxItem
                                     Content="{x:Static properties:Resources.UseLogicalPixel}"/>
                             </ComboBox>
-                            
+
                             <TextBlock 
                                 Grid.Row="1" 
                                 Style="{StaticResource headerTextStyle}"
                                 TextWrapping="Wrap"
-                                Text="{x:Static properties:Resources.ResizeMethodText_Text}"/>
+                                Text="{x:Static properties:Resources.ScalingMode}"/>
                             <ComboBox
                                 Grid.Row="1" Grid.Column="1"
+                                Style="{StaticResource comboBoxStyle}"
+                                SelectedIndex="{Binding ScalingMode.Value,Mode=TwoWay}">
+                                <ComboBoxItem
+                                    Content="{x:Static properties:Resources.Quality}"/>
+                                <ComboBoxItem
+                                    Content="{x:Static properties:Resources.Performance}"/>
+                            </ComboBox>
+                            
+                            <TextBlock 
+                                Grid.Row="2" 
+                                Style="{StaticResource headerTextStyle}"
+                                TextWrapping="Wrap"
+                                Text="{x:Static properties:Resources.ResizeMethodText_Text}"/>
+                            <ComboBox
+                                Grid.Row="2" Grid.Column="1"
                                 Style="{StaticResource comboBoxStyle}"
                                 SelectedIndex="{Binding IsFill.Value,Mode=TwoWay,
                                 Converter={StaticResource BoolIntConverter}}">
@@ -270,6 +286,7 @@
                                 <ComboBoxItem
                                     Content="{x:Static properties:Resources.FillText_Content}"/>
                             </ComboBox>
+                            
                         </Grid>
 
                         <CheckBox

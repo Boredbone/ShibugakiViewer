@@ -35,7 +35,7 @@ namespace ShibugakiViewer.Views.Windows
 
             this.versionText.Text = ver.ToString();
 
-            this.projectHomeLink.NavigateUri = new Uri(ApplicationCore.projectHomeUrl);
+            this.projectHomeLink.NavigateUri = new Uri(core.ProjectHomeUrl);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

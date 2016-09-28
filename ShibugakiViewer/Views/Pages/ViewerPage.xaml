@@ -51,6 +51,7 @@
                 IsZoomoutOnly="{Binding IsZoomoutOnly.Value,Mode=OneWay}"
                 IsFill="{Binding IsFill.Value,Mode=OneWay}"
                 ScaleToPhysicalPixel="{Binding UsePhysicalPixel.Value,Mode=OneWay}"
+                ScalingMode="{Binding ScalingMode.Value,Mode=OneWay}"
                 >
                 <!--
                 ActualOffset="{Binding LimitedDesiredOffset.Value,Mode=TwoWay}"

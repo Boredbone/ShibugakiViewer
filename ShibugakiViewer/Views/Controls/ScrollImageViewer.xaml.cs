@@ -891,6 +891,31 @@ namespace ShibugakiViewer.Views.Controls
 
         #endregion
 
+        #region ScalingMode
+
+        public int ScalingMode
+        {
+            get { return (int)GetValue(ScalingModeProperty); }
+            set { SetValue(ScalingModeProperty, value); }
+        }
+
+        public static readonly DependencyProperty ScalingModeProperty =
+            DependencyProperty.Register(nameof(ScalingMode), typeof(int), typeof(ScrollImageViewer),
+            new PropertyMetadata(0, new PropertyChangedCallback(OnScalingModeChanged)));
+
+        private static void OnScalingModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as ScrollImageViewer;
+            var value = e.NewValue as int?;
+
+            if (thisInstance != null && value.HasValue)
+            {
+                thisInstance.SetScalingMode(value.Value);
+            }
+        }
+
+        #endregion
+
 
 
 
@@ -935,10 +960,8 @@ namespace ShibugakiViewer.Views.Controls
             this.tapBehavior.AddTo(this.dispsables);
             this.imageBehabior.AddTo(this.dispsables);
             this.gifBehabior.AddTo(this.dispsables);
-
-
-            //RenderOptions.SetBitmapScalingMode(this.image, BitmapScalingMode.Unspecified);//default
-            RenderOptions.SetBitmapScalingMode(this.image, BitmapScalingMode.Fant);
+            
+            this.SetScalingMode(0);
 
             var buffer = ((App)Application.Current).Core.ImageBuffer;
             buffer.Updated
@@ -1015,7 +1038,18 @@ namespace ShibugakiViewer.Views.Controls
         //    this.OnDoubleTapped(e);
         //}
 
-
+        private void SetScalingMode(int mode)
+        {
+            //RenderOptions.SetBitmapScalingMode(this.image, BitmapScalingMode.Unspecified);//default
+            if (mode == 1)
+            {
+                RenderOptions.SetBitmapScalingMode(this.image, BitmapScalingMode.Linear);
+            }
+            else
+            {
+                RenderOptions.SetBitmapScalingMode(this.image, BitmapScalingMode.Fant);
+            }
+        }
 
         /// <summary>
         /// ダブルクリックでアニメーション付き自動スケーリング

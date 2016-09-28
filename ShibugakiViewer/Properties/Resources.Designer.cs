@@ -124,6 +124,15 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
+        ///   Application Options に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string AppSetting {
+            get {
+                return ResourceManager.GetString("AppSetting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ascending に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Ascending {
@@ -1123,7 +1132,7 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
-        ///   Enabled when keyboard is connected_ に類似しているローカライズされた文字列を検索します。
+        ///   Enabled when keyboard is connected に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string KeyboardHelp_Text {
             get {
@@ -1483,6 +1492,15 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
+        ///   Performance に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Performance {
+            get {
+                return ResourceManager.GetString("Performance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Play Slideshow に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string PlaySlideShow {
@@ -1506,6 +1524,15 @@ namespace ShibugakiViewer.Properties {
         public static string PrivacyPolicy_Text {
             get {
                 return ResourceManager.GetString("PrivacyPolicy_Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   https://boredbone.github.io/ShibugakiViewer/ に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ProjectHomeUrl {
+            get {
+                return ResourceManager.GetString("ProjectHomeUrl", resourceCulture);
             }
         }
         
@@ -1542,6 +1569,15 @@ namespace ShibugakiViewer.Properties {
         public static string PurchaseFlyoutTitle_Text {
             get {
                 return ResourceManager.GetString("PurchaseFlyoutTitle_Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Quality に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Quality {
+            get {
+                return ResourceManager.GetString("Quality", resourceCulture);
             }
         }
         
@@ -1794,6 +1830,15 @@ namespace ShibugakiViewer.Properties {
         public static string RotateRightHelp_Text {
             get {
                 return ResourceManager.GetString("RotateRightHelp_Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Scaling Mode に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ScalingMode {
+            get {
+                return ResourceManager.GetString("ScalingMode", resourceCulture);
             }
         }
         
@@ -2221,6 +2266,15 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
+        ///   Update Check に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string UpdateCheck {
+            get {
+                return ResourceManager.GetString("UpdateCheck", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Updated に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string UpdatedText {
@@ -2289,6 +2343,15 @@ namespace ShibugakiViewer.Properties {
         public static string Version_Text {
             get {
                 return ResourceManager.GetString("Version_Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Check the new version of this app when launched に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VersionCheckLabel {
+            get {
+                return ResourceManager.GetString("VersionCheckLabel", resourceCulture);
             }
         }
         

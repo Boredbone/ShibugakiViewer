@@ -70,6 +70,7 @@ namespace ShibugakiViewer.ViewModels
         public ReactiveProperty<double> ViewWidth { get; }
         public ReactiveProperty<double> ViewHeight { get; }
         public ReadOnlyReactiveProperty<bool> UsePhysicalPixel { get; }
+        public ReadOnlyReactiveProperty<int> ScalingMode { get; }
 
         public ReactiveProperty<bool> IsTopBarOpen { get; }
         public ReactiveProperty<bool> IsTopBarFixed { get; }
@@ -194,6 +195,11 @@ namespace ShibugakiViewer.ViewModels
             this.UsePhysicalPixel = parent.Core
                 .ObserveProperty(x => x.UseLogicalPixel)
                 .Select(x => !x)
+                .ToReadOnlyReactiveProperty()
+                .AddTo(this.Disposables);
+
+            this.ScalingMode = parent.Core
+                .ObserveProperty(x => x.ScalingMode)
                 .ToReadOnlyReactiveProperty()
                 .AddTo(this.Disposables);
 

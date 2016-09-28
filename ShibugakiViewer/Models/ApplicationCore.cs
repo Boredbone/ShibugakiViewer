@@ -32,7 +32,7 @@ namespace ShibugakiViewer.Models
     public class ApplicationCore : NotificationBase
     {
         public const string settingsFileName = "appsettings.config";
-        public const string projectHomeUrl = @"https://boredbone.github.io/ShibugakiViewer/";
+        //public const string projectHomeUrl = @"https://boredbone.github.io/ShibugakiViewer/";
         public const string projectReleaseRssUrl = @"https://github.com/Boredbone/ShibugakiViewer/releases.atom";
 
 
@@ -62,6 +62,7 @@ namespace ShibugakiViewer.Models
 
         private readonly VersionCheck versionCheck = new VersionCheck();
         public Version LastReleasedVersion => this.versionCheck.LastVersion;
+        public Version AppCurrentVersion => this.versionCheck.CurrentVersion;
 
 
         public string AppName
@@ -76,6 +77,20 @@ namespace ShibugakiViewer.Models
             }
         }
         private string _fieldAppName;
+
+        public string ProjectHomeUrl
+        {
+            get 
+            {
+                if (_fieldProjectHomeUrl == null)
+                {
+                    _fieldProjectHomeUrl = this.GetResourceString("ProjectHomeUrl");
+                }
+                return _fieldProjectHomeUrl;
+            }
+        }
+        private string _fieldProjectHomeUrl;
+
 
 
         public bool IsSVOLanguage { get; private set; }
@@ -468,6 +483,34 @@ namespace ShibugakiViewer.Models
                 }
             }
         }
+
+        public int ScalingMode
+        {
+            get { return this.Settings.ScalingMode; }
+            set
+            {
+                if (this.Settings.ScalingMode != value)
+                {
+                    this.Settings.ScalingMode = value;
+                    RaisePropertyChanged(nameof(ScalingMode));
+                }
+            }
+        }
+
+        public bool SkipVersionCheck
+        {
+            get { return this.Settings.SkipVersionCheck; }
+            set
+            {
+                if (this.Settings.SkipVersionCheck != value)
+                {
+                    this.Settings.SkipVersionCheck = value;
+                    RaisePropertyChanged(nameof(SkipVersionCheck));
+                }
+            }
+        }
+
+
 
 
         public bool IsSettingsLoaded { get; set; }
