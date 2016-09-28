@@ -407,10 +407,11 @@ namespace ShibugakiViewer.Views.Behaviors
             var quality = this.ImageQualityInner;
             var cms = this.IsCmsEnabledInner;
             var priority = this.HasPriorityInner;
+            var zoom = this.ZoomFactor;
 
             if (core.MetaImageExtention.Contains(System.IO.Path.GetExtension(path).ToLower()))
             {
-                this.ChangeToMetaImage(record, path, width, height).FireAndForget();
+                this.ChangeToMetaImage(record, path, zoom, width, height).FireAndForget();
                 return;
             }
 
@@ -422,7 +423,7 @@ namespace ShibugakiViewer.Views.Behaviors
 
             var subject = new Subject<ImageSourceContainer>();
 
-            
+
 
             subject
                 .LastOrDefaultAsync()
@@ -452,7 +453,7 @@ namespace ShibugakiViewer.Views.Behaviors
                         {
                             this.ChangeSource(null, null, false);
                         }
-                        else if(p.Equals(image?.FullPath))
+                        else if (p.Equals(image?.FullPath))
                         {
                             this.ChangeSource(image.Image, image.FullPath,
                                 image.Information != null
@@ -464,7 +465,7 @@ namespace ShibugakiViewer.Views.Behaviors
                     {
                         //this.ChangeSource(null, null, false);
                     }
-                    
+
                     this.disposables.Clear();
 
                 });
@@ -477,7 +478,7 @@ namespace ShibugakiViewer.Views.Behaviors
 
             }).AddTo(this.disposables);
 
-            
+
 
             if (record != null)
             {
@@ -499,7 +500,8 @@ namespace ShibugakiViewer.Views.Behaviors
 
         }
 
-        private async Task ChangeToMetaImage(Record record, string path, double width, double height)
+        private async Task ChangeToMetaImage(Record record, string path,
+            double? zoomFactor, double width, double height)
         {
 
             using (var meta = new MetaImage())
@@ -517,7 +519,9 @@ namespace ShibugakiViewer.Views.Behaviors
                     //return meta.DecodeImage(null, width, height);
                 });
 
-                var image = meta.DecodeImage(null, width, height);
+                var image = await (zoomFactor.HasValue
+                   ? meta.DecodeImageAsync(zoomFactor, null, null)
+                   : meta.DecodeImageAsync(null, width, height));
 
                 this.ChangeSource(image, meta.Path, false);
                 return;
@@ -540,7 +544,7 @@ namespace ShibugakiViewer.Views.Behaviors
                         meta.LoadImage(record);
                     });
 
-                    var image = meta.DecodeImage(zoomFactor, null, null);
+                    var image = await meta.DecodeImageAsync(zoomFactor, null, null);
 
                     this.ChangeSource(image, meta.Path, false);
                     return;
@@ -574,7 +578,7 @@ namespace ShibugakiViewer.Views.Behaviors
 
 
             this.StopGifAnimation();
-            
+
 
             if (this.IsGifAnimationEnabled && isGifAnimation && pathChanged && path != null)
             {

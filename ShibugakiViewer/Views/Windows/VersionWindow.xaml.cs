@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using ShibugakiViewer.Models;
 
 namespace ShibugakiViewer.Views.Windows
 {
@@ -21,18 +22,20 @@ namespace ShibugakiViewer.Views.Windows
     /// </summary>
     public partial class VersionWindow : Window
     {
-        
-
         public VersionWindow()
         {
             InitializeComponent();
 
-            var appName = ((App)Application.Current).Core.AppName;
+            var core = ((App)Application.Current).Core;
+
+            var appName = core.AppName;
             this.Title = $"About {appName}";
             
             var ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
             this.versionText.Text = ver.ToString();
+
+            this.projectHomeLink.NavigateUri = new Uri(ApplicationCore.projectHomeUrl);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -40,5 +43,4 @@ namespace ShibugakiViewer.Views.Windows
             this.Close();
         }
     }
-    
 }

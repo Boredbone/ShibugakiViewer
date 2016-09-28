@@ -88,6 +88,10 @@ namespace ImageLibrary.Core
             {
                 criteria.ThumbnailFilePath = records[0].FullPath;
             }
+            else if (skip == 0 && take > 0 && records.Length <= 0)
+            {
+                criteria.ThumbnailFilePath = null;
+            }
 
             return records;
         }

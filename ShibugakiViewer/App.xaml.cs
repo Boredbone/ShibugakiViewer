@@ -24,6 +24,7 @@ using System.Threading;
 using System.Diagnostics;
 using System.Text;
 using Boredbone.Utility.Extensions;
+using ShibugakiViewer.Views.Controls;
 
 namespace ShibugakiViewer
 {
@@ -36,7 +37,7 @@ namespace ShibugakiViewer
 
         private const string companyName = @"Boredbone";
         private const string productName = @"ShibugakiViewer";
-        private const string settingsFileName = "appsettings.config";
+        //private const string settingsFileName = "appsettings.config";
         private const string placementFileName = "placement.config";
 
 
@@ -150,15 +151,44 @@ namespace ShibugakiViewer
             //Model初期化
             var hasItem = this.Core.Initialize(saveDirectory);
 
+            Window window = null;
+
             if (hasItem)
             {
-                this.ShowFirstClient(false, e.Args);
+                window = this.ShowFirstClient(false, e.Args);
             }
             else
             {
-                new WelcomeWindow() { ShowActivated = true }.Show();
+                window = new WelcomeWindow() { ShowActivated = true };
+                window.Show();
                 this.StartPipeServer();
             }
+
+            Task.Run(async () =>
+            {
+                await this.Core.CheckNewVersionAsync();
+                bool? dialogResult = null;
+                this.Dispatcher.Invoke(() =>
+                {
+                    var dialog = new VersionCheckWindow()
+                    {
+                        WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                        Owner = window,
+                    };
+
+                    dialogResult = dialog.ShowDialog();
+                    //if (window != null)
+                    //{
+                    //    window.PopupDialog.Show(new VersionCheckPopup(), new Thickness(0),
+                    //        HorizontalAlignment.Stretch, VerticalAlignment.Center, null, true);
+                    //}
+
+                    if (dialogResult == true)
+                    {
+                        this.ExitAllAfterLibraryUnLockedAsync().FireAndForget();
+                    }
+                });
+            });
         }
 
 
@@ -236,7 +266,7 @@ namespace ShibugakiViewer
         /// Client表示
         /// </summary>
         /// <param name="files"></param>
-        public void ShowClientWindow(IEnumerable<string> files)
+        public ClientWindow ShowClientWindow(IEnumerable<string> files)
         {
             var window = new ClientWindow() { ShowActivated = true };
 
@@ -251,12 +281,13 @@ namespace ShibugakiViewer
             }
 
             window.Show();
+            return window;
         }
 
         /// <summary>
         /// ClientをCatalogPageで表示
         /// </summary>
-        private void ShowClientWindowWithCatalog()
+        private ClientWindow ShowClientWindowWithCatalog()
         {
             var window = new ClientWindow() { ShowActivated = true };
 
@@ -267,27 +298,31 @@ namespace ShibugakiViewer
             }
 
             window.Show();
+            return window;
         }
 
-        public void ShowFirstClient(bool withCatalog, string[] files)
+        public ClientWindow ShowFirstClient(bool withCatalog, string[] files)
         {
 
             //通知アイコン
             this.ShowNotifyIcon()?.AddTo(this.disposables);
 
+            ClientWindow window;
+
             //ウィンドウ
             if (withCatalog)
             {
-                this.ShowClientWindowWithCatalog();
+                window = this.ShowClientWindowWithCatalog();
             }
             else
             {
-                this.ShowClientWindow((files.IsNullOrEmpty()) ? null : files);
+                window = this.ShowClientWindow((files.IsNullOrEmpty()) ? null : files);
             }
 
             this.StartPipeServer();
 
             this.isInitialized = true;
+            return window;
         }
 
         private void StartPipeServer()
@@ -341,6 +376,17 @@ namespace ShibugakiViewer
                 window.Close();
             }
             this.Shutdown();
+        }
+
+        public async Task ExitAllAfterLibraryUnLockedAsync()
+        {
+            foreach (var window in this.Windows.OfType<Window>())
+            {
+                window.Close();
+            }
+            
+            (await this.Core.Library.LockAsync()).Dispose();
+            this.ExitAll();
         }
 
         /// <summary>
@@ -478,7 +524,7 @@ namespace ShibugakiViewer
             return subscription;
 
         }
-        
+
         /// <summary>
         /// 保存データのインポート・エクスポート
         /// </summary>

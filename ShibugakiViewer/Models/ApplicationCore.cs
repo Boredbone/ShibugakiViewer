@@ -32,6 +32,9 @@ namespace ShibugakiViewer.Models
     public class ApplicationCore : NotificationBase
     {
         public const string settingsFileName = "appsettings.config";
+        public const string projectHomeUrl = @"https://boredbone.github.io/ShibugakiViewer/";
+        public const string projectReleaseRssUrl = @"https://github.com/Boredbone/ShibugakiViewer/releases.atom";
+
 
         public string[] FileTypeFilter { get; }
             = new[] { ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".wmf", ".emf", ".bhf", ".tif", ".tiff" };
@@ -56,6 +59,9 @@ namespace ShibugakiViewer.Models
         public IObservable<string> SystemNotification { get; private set; }
 
         public ReactiveCollection<LibraryUpdateHistoryItem> LibraryUpdateHistory { get; private set; }
+
+        private readonly VersionCheck versionCheck = new VersionCheck();
+        public Version LastReleasedVersion => this.versionCheck.LastVersion;
 
 
         public string AppName
@@ -870,6 +876,11 @@ namespace ShibugakiViewer.Models
             }
 
             return this.Library.Folders.RegisterFolders(folders.ToArray());
+        }
+
+        public Task<bool> CheckNewVersionAsync()
+        {
+            return this.versionCheck.CheckAsync(projectReleaseRssUrl);
         }
     }
 

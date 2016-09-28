@@ -26,7 +26,7 @@ namespace ShibugakiViewer.Models.ImageViewer
         public MetaImage()
         {
         }
-        
+
         /// <summary>
         /// Load image from file
         /// </summary>
@@ -69,7 +69,7 @@ namespace ShibugakiViewer.Models.ImageViewer
             }
         }
 
-        public ImageSource DecodeImage(double? zoomFactor, double? width, double? height)
+        public async Task<ImageSource> DecodeImageAsync(double? zoomFactor, double? width, double? height)
         {
             if (this.Source == null)
             {
@@ -99,13 +99,18 @@ namespace ShibugakiViewer.Models.ImageViewer
                     }
                 }
 
-                var imageWidth = (int)(this.Source.Width * zoomFactor);
-                var imageHeight = (int)(this.Source.Height * zoomFactor);
+                var imageWidth = (int)Math.Round(this.Source.Width * zoomFactor.Value);
+                var imageHeight = (int)Math.Round(this.Source.Height * zoomFactor.Value);
 
                 using (var canvas = new Bitmap(imageWidth, imageHeight))
-                using (var graphics = Graphics.FromImage(canvas))
                 {
-                    graphics.DrawImage(this.Source, 0, 0, imageWidth, imageHeight);
+                    await Task.Run(() =>
+                    {
+                        using (var graphics = Graphics.FromImage(canvas))
+                        {
+                            graphics.DrawImage(this.Source, 0, 0, imageWidth, imageHeight);
+                        }
+                    });
                     return canvas.ToWPFBitmap();
                 }
             }

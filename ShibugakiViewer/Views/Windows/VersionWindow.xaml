@@ -83,7 +83,7 @@
                                 </TextBlock>
 
                                 <TextBlock Style="{StaticResource normalTextStyle}">
-                                    <Hyperlink NavigateUri="https://boredbone.github.io/ShibugakiViewer/"
+                                    <Hyperlink x:Name="projectHomeLink"
                                                tb:HyperlinkBehavior.NavigateByClick="True">
                                         <Run Text="Project Home"/>
                                     </Hyperlink>
