@@ -36,7 +36,8 @@ namespace EditMsi
             var ExitAppName = "_2548E01E_23FC_4621_9D97_67C658AC7578";
             var LaunchAppName = "_E7893FAB_E790_4DDD_B0B5_DC7AACC28A69";
 
-            Update(database, "InstallExecuteSequence", $@"Action = '{ExitAppName}'", 3, "1399");
+            Update(database, "InstallExecuteSequence", $@"Action = '{ExitAppName}'", 3, "789");
+            Update(database, "InstallExecuteSequence", $@"Action = '{ExitAppName}'", 2, "");
             Update(database, "CustomAction", $@"Action = '{ExitAppName}'", 2, "1");
 
             
