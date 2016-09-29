@@ -556,6 +556,15 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
+        ///   Download に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Download {
+            get {
+                return ResourceManager.GetString("Download", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Duration に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string DurationText_Text {
@@ -1020,6 +1029,15 @@ namespace ShibugakiViewer.Properties {
         public static string HistoryText_Text {
             get {
                 return ResourceManager.GetString("HistoryText_Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ignore に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Ignore {
+            get {
+                return ResourceManager.GetString("Ignore", resourceCulture);
             }
         }
         
@@ -2352,6 +2370,42 @@ namespace ShibugakiViewer.Properties {
         public static string VersionCheckLabel {
             get {
                 return ResourceManager.GetString("VersionCheckLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Do not show this message again に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VersionCheckSkipLabel {
+            get {
+                return ResourceManager.GetString("VersionCheckSkipLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   A new version of ShibugakiViewer ( に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VersionCheckText1 {
+            get {
+                return ResourceManager.GetString("VersionCheckText1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   ) is available. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VersionCheckText2 {
+            get {
+                return ResourceManager.GetString("VersionCheckText2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   New Version Available に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VersionCheckTitle {
+            get {
+                return ResourceManager.GetString("VersionCheckTitle", resourceCulture);
             }
         }
         

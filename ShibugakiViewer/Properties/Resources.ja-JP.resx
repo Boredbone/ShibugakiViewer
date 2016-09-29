@@ -908,4 +908,22 @@
   <data name="VersionCheckLabel" xml:space="preserve">
     <value>起動時にアプリの新しいバージョンを確認</value>
   </data>
+  <data name="Download" xml:space="preserve">
+    <value>ダウンロード</value>
+  </data>
+  <data name="Ignore" xml:space="preserve">
+    <value>無視</value>
+  </data>
+  <data name="VersionCheckSkipLabel" xml:space="preserve">
+    <value>今後、この通知を表示しない</value>
+  </data>
+  <data name="VersionCheckText1" xml:space="preserve">
+    <value>ShibugakiViewerの新しいバージョン(</value>
+  </data>
+  <data name="VersionCheckText2" xml:space="preserve">
+    <value>)が公開されています。</value>
+  </data>
+  <data name="VersionCheckTitle" xml:space="preserve">
+    <value>新しいバージョンがあります</value>
+  </data>
 </root>

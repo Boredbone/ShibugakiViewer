@@ -1287,6 +1287,16 @@ namespace ShibugakiViewer.Views.Controls
             //var horizontalRate = view.ViewportWidth / image.ActualWidth;
             //var verticalRate = view.ViewportHeight / image.ActualHeight;
 
+
+            if (scale < float.Epsilon)
+            {
+                scale = float.Epsilon;
+            }
+            if (scale > maxZoomFactor)
+            {
+                scale = maxZoomFactor;
+            }
+
             var oldScale = this.ZoomFactor;
 
             if (this.HasAnimatedProperties)
@@ -1832,7 +1842,7 @@ namespace ShibugakiViewer.Views.Controls
         private void RefreshScale()
         {
             var zoom = this.ZoomFactor;
-            if (zoom <= 0 || zoom > maxZoomFactor)
+            if (zoom <= 0)// || zoom > maxZoomFactor)
             {
                 return;
             }

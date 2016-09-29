@@ -152,6 +152,7 @@ namespace ShibugakiViewer
             var hasItem = this.Core.Initialize(saveDirectory);
 
             Window window = null;
+            var exitApp = false;
 
             if (hasItem)
             {
@@ -162,15 +163,25 @@ namespace ShibugakiViewer
                 window = new WelcomeWindow() { ShowActivated = true };
                 window.Show();
                 this.StartPipeServer();
+                exitApp = true;
             }
 
-            if (!this.Core.SkipVersionCheck)
+#if DEBUG
+            //new VersionCheckWindow()
+            //{
+            //    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            //    Owner = window,
+            //}.ShowDialog();
+
+#endif
+
+            if (this.Core.IsVersionCheckEnabled())
             {
-                this.CheckNewVersionAsync(window).FireAndForget();
+                this.CheckNewVersionAsync(window, exitApp).FireAndForget();
             }
         }
 
-        private async Task CheckNewVersionAsync(Window window)
+        private async Task CheckNewVersionAsync(Window window, bool exitApp)
         {
 
             var available = await this.Core.CheckNewVersionAsync();
@@ -198,7 +209,10 @@ namespace ShibugakiViewer
             if (dialogResult == true)
             {
                 Process.Start(this.Core.ProjectHomeUrl);
-                await this.ExitAllAfterLibraryUnLockedAsync();
+                if (exitApp)
+                {
+                    await this.ExitAllAfterLibraryUnLockedAsync();
+                }
             }
         }
 

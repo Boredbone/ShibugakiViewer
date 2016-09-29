@@ -251,7 +251,7 @@ namespace ImageLibrary.Viewer
 
                     if (takes >= 0)
                     {
-                        Debug.WriteLine($"Search At({offset}) Takes({takes})");
+                        //Debug.WriteLine($"Search At({offset}) Takes({takes})");
 
                         await this.SearchMainAsync(offset, takes);
                     }

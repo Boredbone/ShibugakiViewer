@@ -94,6 +94,10 @@ namespace ShibugakiViewer.Models
         public int ScalingMode { get; set; }
         [DataMember]
         public bool SkipVersionCheck { get; set; }
+        [DataMember]
+        public DateTimeOffset LastVersionCheckedDate { get; set; }
+
+
 
 
         public ApplicationSettings()

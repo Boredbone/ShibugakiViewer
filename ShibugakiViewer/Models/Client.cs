@@ -505,7 +505,7 @@ namespace ShibugakiViewer.Models
             if (state.Type == PageType.Catalog)
             {
                 this.CatalogScrollIndexSubject.OnNext(catalogIndex);
-                Debug.WriteLine($"catalog:{catalogIndex}");
+                //Debug.WriteLine($"catalog:{catalogIndex}");
             }
             //Catalog再描画
             this.IsCatalogRenderingEnabledSubject.OnNext(true);

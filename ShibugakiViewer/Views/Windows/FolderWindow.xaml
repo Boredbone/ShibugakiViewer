@@ -11,7 +11,7 @@
         ResizeMode="CanResizeWithGrip"
         Closed="Window_Closed"
         mc:Ignorable="d"
-        Title="{x:Static properties:Resources.FolderManagement}" Height="600" Width="550">
+        Title="{x:Static properties:Resources.FolderManagement}" Height="600" Width="600">
 
     <Grid>
 

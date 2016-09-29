@@ -32,7 +32,10 @@ namespace ShibugakiViewer.Views.Windows
             //var currentBuild = new Version(current.Major, current.Minor, current.Build);
             var last = core.LastReleasedVersion;
 
-            this.text.Text = $"{last} is available";
+            this.versionText.Text = last?.ToString() ?? "0.0.0";
+
+            // core.GetResourceString("VersionCheckText1")
+            //    + last.ToString() + core.GetResourceString("VersionCheckText2");
         }
 
         private void DownloadButton_Click(object sender, RoutedEventArgs e)

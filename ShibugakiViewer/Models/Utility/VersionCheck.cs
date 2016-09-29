@@ -81,10 +81,6 @@ namespace ShibugakiViewer.Models.Utility
 
         public async Task<bool> CheckAsync(string url)
         {
-#if DEBUG
-            return false;
-#endif
-
             var assemblyVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             this.CurrentVersion = assemblyVersion;
 

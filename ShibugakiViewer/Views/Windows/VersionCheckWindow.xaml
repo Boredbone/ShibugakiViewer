@@ -12,22 +12,27 @@
         ShowActivated="True"
         ShowInTaskbar="False"
         mc:Ignorable="d"
-        Title="new release"
+        Title="{x:Static properties:Resources.VersionCheckTitle}"
         Height="300" Width="300"
         Closed="Window_Closed"
         SizeToContent="WidthAndHeight" ResizeMode="NoResize">
     <Grid>
-        <StackPanel>
+        <StackPanel MaxWidth="300" Margin="8">
             <TextBlock 
-            x:Name="text" Margin="4" Text="text"
-            HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                x:Name="text" Margin="4" TextWrapping="Wrap"
+                HorizontalAlignment="Center" VerticalAlignment="Center">
+                
+                <Run Text="{x:Static properties:Resources.VersionCheckText1}"/>
+                <Run x:Name="versionText"/>
+                <Run Text="{x:Static properties:Resources.VersionCheckText2}"/>
+            </TextBlock>
 
             <CheckBox 
                 Margin="8"
-                Content="SkipVersionCheck" 
+                Content="{x:Static properties:Resources.VersionCheckSkipLabel}" 
                 IsChecked="{Binding SkipVersionCheck,Mode=TwoWay}"/>
             
-            <Grid Margin="32,8,32,16">
+            <Grid Margin="32,8,32,8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -35,13 +40,13 @@
 
 
                 <Button
-                Content="download"
+                Content="{x:Static properties:Resources.Download}"
                 Grid.Column="0" Margin="8" HorizontalAlignment="Center"
                 Width="86" Height="30" IsDefault="True"
                 Click="DownloadButton_Click"/>
 
                 <Button
-                Content="ignore"
+                Content="{x:Static properties:Resources.Ignore}"
                 Grid.Column="1" Margin="8" HorizontalAlignment="Center"
                 Width="86" Height="30" IsCancel="True"
                 Click="SkipButton_Click"/>

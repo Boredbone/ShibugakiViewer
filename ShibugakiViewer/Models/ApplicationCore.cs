@@ -509,6 +509,18 @@ namespace ShibugakiViewer.Models
                 }
             }
         }
+        public DateTimeOffset LastVersionCheckedDate
+        {
+            get { return this.Settings.LastVersionCheckedDate; }
+            set
+            {
+                if (this.Settings.LastVersionCheckedDate != value)
+                {
+                    this.Settings.LastVersionCheckedDate = value;
+                    RaisePropertyChanged(nameof(LastVersionCheckedDate));
+                }
+            }
+        }
 
 
 
@@ -921,9 +933,21 @@ namespace ShibugakiViewer.Models
             return this.Library.Folders.RegisterFolders(folders.ToArray());
         }
 
-        public Task<bool> CheckNewVersionAsync()
+        public bool IsVersionCheckEnabled()
         {
-            return this.versionCheck.CheckAsync(projectReleaseRssUrl);
+#if DEBUG
+            //return true;
+#endif
+            return !this.SkipVersionCheck && (DateTimeOffset.Now - this.LastVersionCheckedDate > TimeSpan.FromDays(3));
+        }
+
+        public async Task<bool> CheckNewVersionAsync()
+        {
+            this.LastVersionCheckedDate = DateTimeOffset.Now;
+#if DEBUG
+            //return false;
+#endif
+            return await this.versionCheck.CheckAsync(projectReleaseRssUrl);
         }
     }
 

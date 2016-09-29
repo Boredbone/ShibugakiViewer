@@ -13,7 +13,7 @@
         Closed="Window_Closed"
         mc:Ignorable="d"
         MinWidth="360"
-        Title="{x:Static properties:Resources.Options}" Height="590" Width="400">
+        Title="{x:Static properties:Resources.Options}" Height="590" Width="450">
     <Window.DataContext>
         <viewModels:SettingWindowViewModel/>
     </Window.DataContext>
