@@ -18,10 +18,6 @@ namespace ShibugakiViewer.ViewModels.SettingPages
 {
     class ViewerSettingPageViewModel : DisposableBase
     {
-        //public ReactiveCommand GenerateNewClientCommand { get; }
-        //public ReactiveCommand ConvertCommand { get; }
-
-        //public ReactiveProperty<string> Text { get; }
 
         public ReactiveProperty<int> CursorKeyBind { get; }
         [Range(64, 512)]

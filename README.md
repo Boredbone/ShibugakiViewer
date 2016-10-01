@@ -10,6 +10,8 @@ for Windows 7/8/8.1/10
 
 .NET Framework 4.6.2 or higher is required.
 
+[Release Notes](ReleaseNotes.md)
+
 ---
 
 
@@ -68,13 +70,4 @@ Animated GIF is supported.
   
 Vector image formats(`".wmf", ".emf"`) can be enlarged while maintaining the quality.
 
-
-
----
-### Release Notes
-
-* Version 1.0.1 (2016/09/25)
-	* Fix graphic rendering error
-* Version 1.0.0 (2016/09/24)
-	* 1st Release
 

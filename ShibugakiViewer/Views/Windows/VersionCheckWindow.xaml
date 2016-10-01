@@ -14,7 +14,6 @@
         mc:Ignorable="d"
         Title="{x:Static properties:Resources.VersionCheckTitle}"
         Height="300" Width="300"
-        Closed="Window_Closed"
         SizeToContent="WidthAndHeight" ResizeMode="NoResize">
     <Grid>
         <StackPanel MaxWidth="300" Margin="8">

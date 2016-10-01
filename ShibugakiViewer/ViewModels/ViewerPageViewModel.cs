@@ -131,17 +131,12 @@ namespace ShibugakiViewer.ViewModels
             })
             .AddTo(this.Disposables);
 
-            // image
-            //this.Record = new ReactiveProperty<Record>();//.AddTo(this.Disposables);
-
             this.Length = client.Length.ToReadOnlyReactiveProperty().AddTo(this.Disposables);
 
             this.randomNumber = new RandomNumber();
             this.IsRandom = parent.Core
                 .ToReactivePropertyAsSynchronized(x => x.IsSlideshowRandom).AddTo(this.Disposables);
-
-            //this.Length.Subscribe(x => this.randomNumber.Length = (int)x).AddTo(this.Disposables);
-
+            
             this.IsRandom.Select(_ => Unit.Default)
                 .Merge(this.Length.Select(_ => Unit.Default))
                 .Subscribe(x =>
@@ -178,18 +173,7 @@ namespace ShibugakiViewer.ViewModels
             this.DisplayZoomFactor = this.CurrentZoomFactorPercent.ToReactiveProperty().AddTo(this.Disposables);
 
             this.DisplayZoomFactor.Where(x => x != this.CurrentZoomFactorPercent.Value)
-                .Subscribe(x =>
-                {
-                    this.ChangeZoomFactor(x / 100.0);
-                    //var value = x / 100.0;
-                    //if (this.DesiredZoomFactor.Value == value)
-                    //{
-                    //    value += 0.00001;
-                    //    //this.DesiredZoomFactor.Value = this.CurrentZoomFactorPercent.Value / 200.0;
-                    //    //return;
-                    //}
-                    //this.DesiredZoomFactor.Value = value;
-                })
+                .Subscribe(x => this.ChangeZoomFactor(x / 100.0))
                 .AddTo(this.Disposables);
 
             this.UsePhysicalPixel = parent.Core
@@ -445,8 +429,7 @@ namespace ShibugakiViewer.ViewModels
                 .ToReadOnlyReactiveProperty()
                 .AddTo(this.Disposables);
 
-
-            //this.IsPointerMoving = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
+            
             this.IsLeftButtonEnter = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
             this.IsRightButtonEnter = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
             this.IsLeftButtonPressed = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
@@ -615,7 +598,6 @@ namespace ShibugakiViewer.ViewModels
 
         private void ZoomImage(double coefficient)
             => this.ChangeZoomFactor(this.ZoomFactor.Value * coefficient);
-        //this.DesiredZoomFactor.Value = this.ZoomFactor.Value * coefficient;
 
         private void ChangeZoomFactor(double value)
         {
@@ -862,9 +844,6 @@ namespace ShibugakiViewer.ViewModels
 
             keyReceiver.Register(new[] { Key.Space, Key.Enter },
                 (t, key) => this.StartAutoScaling(), buttonFilter);
-
-            //keyReceiver.Register(new[] { Key.Space, Key.Enter },
-            //    (t, key) => this.StartAutoScaling(), cursorFilter);
             //keyReceiver.Register(k => (int)k == 190, (t, key) => this.StartAutoScaling(), pageFilter);
 
             keyReceiver.Register(new[] { Key.Decimal, Key.OemPeriod },
@@ -981,7 +960,6 @@ namespace ShibugakiViewer.ViewModels
                         return;
                 }
             }
-
         }
     }
 }

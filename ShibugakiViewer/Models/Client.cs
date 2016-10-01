@@ -404,7 +404,7 @@ namespace ShibugakiViewer.Models
                 .Subscribe(x => LoadImagesMain(x, ImageQuality.LowQuality,
                     ListOrderFlags.Current | ListOrderFlags.Next | ListOrderFlags.Previous))
                 .AddTo(this.Disposables);
-            
+
             viewerIndexChanged
                 .Throttle(TimeSpan.FromMilliseconds(resizedImageLoadDelayMillisec))
                 .Merge(ChangeToViewerSubject)
@@ -415,11 +415,11 @@ namespace ShibugakiViewer.Models
                 .AddTo(this.Disposables);
 
             //表示中の画像のみ最高画質ロード
-            
+
             var viewerIndexChangedFiltered = core.LoadingOriginalQualityQuick
                 ? viewerIndexChanged.Restrict(TimeSpan.FromMilliseconds(originalImageLoadDelayMillisec))
                 : viewerIndexChanged.Throttle(TimeSpan.FromMilliseconds(originalImageLoadDelayMillisec));
-            
+
             viewerIndexChangedFiltered
                 .ObserveOn(SynchronizationContext.Current)
                 .Subscribe(x => LoadImagesMain(x, ImageQuality.OriginalSize,
@@ -558,7 +558,7 @@ namespace ShibugakiViewer.Models
 
             var length = this.front.Length.Value;
 
-            if (length * offset * viewSize > 0 && offset + viewSize > length)
+            if (length > 0 && offset > 0 && viewSize > 0 && offset + viewSize > length)
             {
                 offset = length - viewSize * 3 / 2;
             }

@@ -13,7 +13,13 @@ namespace ShibugakiViewer.Models.Utility
         public Version LastVersion { get; private set; }
         public Version CurrentVersion { get; private set; }
 
-
+        /// <summary>
+        /// Extract numerical version from text
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="version"></param>
+        /// <param name="prereleaseText"></param>
+        /// <returns></returns>
         private bool TryExtractVersion(string text, out Version version, out string prereleaseText)
         {
             var startIndex = 0;
@@ -47,6 +53,11 @@ namespace ShibugakiViewer.Models.Utility
             return Version.TryParse(versionText, out version);
         }
 
+        /// <summary>
+        /// Download RSS/Atom from url and get last version
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
         private async Task<Version> GetLastVersionAsync(string url)
         {
             try
@@ -79,6 +90,11 @@ namespace ShibugakiViewer.Models.Utility
             return null;
         }
 
+        /// <summary>
+        /// Compare last released version and current version of the executing assembly
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
         public async Task<bool> CheckAsync(string url)
         {
             var assemblyVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;

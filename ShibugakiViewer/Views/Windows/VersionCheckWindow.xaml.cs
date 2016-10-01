@@ -33,9 +33,6 @@ namespace ShibugakiViewer.Views.Windows
             var last = core.LastReleasedVersion;
 
             this.versionText.Text = last?.ToString() ?? "0.0.0";
-
-            // core.GetResourceString("VersionCheckText1")
-            //    + last.ToString() + core.GetResourceString("VersionCheckText2");
         }
 
         private void DownloadButton_Click(object sender, RoutedEventArgs e)
@@ -46,11 +43,6 @@ namespace ShibugakiViewer.Views.Windows
         private void SkipButton_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = false;
-        }
-
-        private void Window_Closed(object sender, EventArgs e)
-        {
-
         }
     }
 }

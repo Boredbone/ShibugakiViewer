@@ -31,8 +31,6 @@ namespace ShibugakiViewer.Models.ImageViewer
 
         private const int bufferSize = 16;
         private const int thumbNailbufferSize = 256;
-        //private const int thumbnailThreshold = 128;
-        //private const double resizeThreshold = 1.5;
         private const int failedLoadingLength = 1024;
         private readonly Size failedLoadingSize = new Size(failedLoadingLength, failedLoadingLength);
 

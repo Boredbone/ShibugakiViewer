@@ -10,6 +10,8 @@ for Windows 7/8/8.1/10
 
 .NET Framework 4.6.2以上が必要です。
 
+[リリースノート](ReleaseNotes.md)
+
 ---
 
 
@@ -67,13 +69,4 @@ GIFアニメーションの再生が可能です。
   
 ベクタ形式画像(`".wmf", ".emf"`)を、品質を保ったまま拡大して表示することができます。
 
-
-
----
-### リリースノート
-
-* Version 1.0.1 (2016/09/25)
-	* Fix graphic rendering error
-* Version 1.0.0 (2016/09/24)
-	* 1st Release
 
