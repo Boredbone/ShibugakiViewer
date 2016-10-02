@@ -61,7 +61,7 @@ namespace ShibugakiViewer.Models
         public ReactiveCollection<LibraryUpdateHistoryItem> LibraryUpdateHistory { get; private set; }
 
         private readonly VersionCheck versionCheck = new VersionCheck();
-        public Version LastReleasedVersion => this.versionCheck.LastVersion;
+        public Version LatestReleasedVersion => this.versionCheck.LatestVersion;
         public Version AppCurrentVersion => this.versionCheck.CurrentVersion;
 
 

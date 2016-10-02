@@ -10,7 +10,7 @@ namespace ShibugakiViewer.Models.Utility
 {
     public class VersionCheck
     {
-        public Version LastVersion { get; private set; }
+        public Version LatestVersion { get; private set; }
         public Version CurrentVersion { get; private set; }
 
         /// <summary>
@@ -54,11 +54,11 @@ namespace ShibugakiViewer.Models.Utility
         }
 
         /// <summary>
-        /// Download RSS/Atom from url and get last version
+        /// Download RSS/Atom from url and get latest version
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        private async Task<Version> GetLastVersionAsync(string url)
+        private async Task<Version> GetLatestVersionAsync(string url)
         {
             try
             {
@@ -91,7 +91,7 @@ namespace ShibugakiViewer.Models.Utility
         }
 
         /// <summary>
-        /// Compare last released version and current version of the executing assembly
+        /// Compare latest released version and current version of the executing assembly
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
@@ -100,15 +100,15 @@ namespace ShibugakiViewer.Models.Utility
             var assemblyVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             this.CurrentVersion = assemblyVersion;
 
-            var last = await this.GetLastVersionAsync(url);
+            var latest = await this.GetLatestVersionAsync(url);
 
-            this.LastVersion = last;
+            this.LatestVersion = latest;
 
-            if (last == null)
+            if (latest == null)
             {
                 return false;
             }
-            return (last > assemblyVersion);
+            return (latest > assemblyVersion);
         }
     }
 }

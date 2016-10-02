@@ -402,46 +402,47 @@ namespace ImageLibrary.Viewer
 
         private void RefreshCommonInformation()
         {
-            Task.Run(async () => await this.RefreshCommonInformationAsync()).FireAndForget();
+            Task.Run(async () => await this.RefreshCommonInformationAsync());
         }
 
         private async Task RefreshCommonInformationAsync()
         {
-            IEnumerable<int> tags;
+            IEnumerable<int> tagIds;
             string[] ids;
 
             var items = this.ItemsSet.ToArray();
 
-            tags = this.GetCommonTagsFromCache(items);
+            tagIds = this.GetCommonTagsFromCache(items);
 
             int rating;
             var ratingResult = this.GetCommonRatingFromCache(items, out rating);
 
-            if (tags == null || !ratingResult)
+            if (tagIds == null || !ratingResult)
             {
                 ids = items.Select(x => x.Key).ToArray();
 
-                if (tags == null)
+                if (tagIds == null)
                 {
-                    tags = await this.library.QueryHelper.GetCommonTagsAsync(ids);
+                    tagIds = await this.library.QueryHelper.GetCommonTagsAsync(ids).ConfigureAwait(false);
                 }
                 if (!ratingResult)
                 {
-                    rating = await this.library.QueryHelper.GetCommonRatingAsync(ids);
+                    rating = await this.library.QueryHelper.GetCommonRatingAsync(ids).ConfigureAwait(false);
                 }
             }
 
-            Application.Current.Dispatcher.Invoke(() =>
+            var tags = tagIds.Select(x => this.library.Tags.GetTagValue(x))
+                    .OrderBy(x => x.Name)
+                    .ToArray();
+
+            await Application.Current.Dispatcher.InvokeAsync(() =>
             {
                 this.CommonTags.Clear();
-                tags.Select(x => this.library.Tags.GetTagValue(x))
-                    .OrderBy(x => x.Name)
-                    .ForEach(x => this.CommonTags.Add(x));
+                tags.ForEach(x => this.CommonTags.Add(x));
 
                 this.CommonRatingInner = rating;
 
             }, DispatcherPriority.Background);
-
         }
 
         private int[] GetCommonTagsFromCache(KeyValuePair<string, Record>[] items)

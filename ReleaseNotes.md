@@ -1,5 +1,8 @@
 # Release Notes
 
+## Version 1.1.1 (2016/10/02)
+- Improve performance
+
 ## Version 1.1.0 (2016/10/01)
 - Change image scaling method
 - Improve installer

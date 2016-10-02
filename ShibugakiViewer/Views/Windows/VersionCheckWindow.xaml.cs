@@ -30,7 +30,7 @@ namespace ShibugakiViewer.Views.Windows
 
             //var current = core.AppCurrentVersion;
             //var currentBuild = new Version(current.Major, current.Minor, current.Build);
-            var last = core.LastReleasedVersion;
+            var last = core.LatestReleasedVersion;
 
             this.versionText.Text = last?.ToString() ?? "0.0.0";
         }
