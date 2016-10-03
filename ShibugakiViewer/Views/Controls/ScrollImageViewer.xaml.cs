@@ -158,8 +158,12 @@ namespace ShibugakiViewer.Views.Controls
                     this.DoAutoScaling();
                 }
                 this.scaleInitializeFlag = true;
-
             }
+            else
+            {
+                this.IsChanging = false;
+            }
+
 
             //this.IsChanging = false;
         }
