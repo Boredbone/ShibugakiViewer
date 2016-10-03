@@ -387,7 +387,7 @@ namespace ShibugakiViewer
             }
 
             this.Core.Save();
-            this.WindowPlacement.Save();
+            try { this.WindowPlacement.Save(); } catch { }
             this.disposables.Dispose();
         }
 
