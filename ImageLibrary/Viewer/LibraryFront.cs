@@ -62,6 +62,8 @@ namespace ImageLibrary.Viewer
 
         public ReactiveProperty<bool> IsGroupMode { get; }
 
+        public bool HasSearch => this.FeaturedGroup != null || this.SearchInformation != null;
+
         public IObservable<LibraryLoadResult> DatabaseAddedOrRemoved => this.library.Loaded;
 
         private bool isReset = false;
@@ -437,25 +439,32 @@ namespace ImageLibrary.Viewer
             //キャッシュに無いレコードがあるなら検索開始
             if (result.Start <= result.End)
             {
-                var startSearch = offset + result.Start;
-                var searchLength = result.End - result.Start + 1;
-
-                if (searchLength < searchLengthMax && startSearch < this.Length.Value)
+                if (this.HasSearch)
                 {
-                    var margin = searchLengthMax - searchLength;
-                    if (direction == 0)
-                    {
-                        margin = (searchLengthMax - searchLength) / 2;
-                        startSearch = startSearch - margin;
-                    }
-                    else if (direction < 0)
-                    {
-                        startSearch = startSearch - margin;
-                    }
-                    searchLength += margin;
-                }
+                    var startSearch = offset + result.Start;
+                    var searchLength = result.End - result.Start + 1;
 
-                this.SearchAsync(startSearch, searchLength, wait).FireAndForget();
+                    if (searchLength < searchLengthMax && startSearch < this.Length.Value)
+                    {
+                        var margin = searchLengthMax - searchLength;
+                        if (direction == 0)
+                        {
+                            margin = (searchLengthMax - searchLength) / 2;
+                            startSearch = startSearch - margin;
+                        }
+                        else if (direction < 0)
+                        {
+                            startSearch = startSearch - margin;
+                        }
+                        searchLength += margin;
+                    }
+
+                    this.SearchAsync(startSearch, searchLength, wait).FireAndForget();
+                }
+                else
+                {
+                    Debug.WriteLine("no search front");
+                }
             }
 
             return result.Result.Where(x => x != dummyRecord).ToArray();
@@ -600,6 +609,8 @@ namespace ImageLibrary.Viewer
             //long count;
             //Record[] records = new Record[files.LongLength];
 
+            this.SetSearch(null, false);
+
             lock (this.Cache)
             {
                 this.Cache.Clear();
@@ -619,7 +630,6 @@ namespace ImageLibrary.Viewer
                 //count = this.Cache.Count;
             }
 
-            this.SetSearch(null, false);
 
             this.Length.Value = records.LongLength;// this.Cache.Count;
 
