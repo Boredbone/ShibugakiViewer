@@ -40,6 +40,7 @@ namespace ShibugakiViewer.Views.Windows
 
             this.catalogPage.AddTo(this.disposables);
             this.viewerPage.AddTo(this.disposables);
+            this.fileInformation.AddTo(this.disposables);
         }
 
         public void Dispose()

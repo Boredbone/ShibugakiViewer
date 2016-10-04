@@ -626,10 +626,9 @@ namespace ImageLibrary.Viewer
             return records;
         }
 
-        public async Task ActivateFolderAsync(string file)
-        {
-            await this.library.ActivateFolderAsync(file);
-        }
+        public Task ActivateFolderAsync(string file)
+            => this.library.ActivateFolderAsync(file);
+        
 
 
         /// <summary>

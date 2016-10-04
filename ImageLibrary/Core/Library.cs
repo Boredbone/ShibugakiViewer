@@ -375,7 +375,9 @@ namespace ImageLibrary.Core
         {
             var selectorParams = SortSetting.GetReferenceSelectorSql(criteria.GetSort());
 
-            var reference = await this.Records.GetDynamicParametersAsync(connection, selectorParams, target);
+            var reference = await this.Records
+                .GetDynamicParametersAsync(connection, selectorParams, target)
+                .ConfigureAwait(false);
 
             if (reference == null)
             {

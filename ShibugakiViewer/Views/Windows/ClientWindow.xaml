@@ -214,6 +214,7 @@
 
                             <TabItem Header="File" Style="{StaticResource noHeaderTabItemStyle}">
                                 <infoPane:FileInformationPage
+                                    x:Name="fileInformation"
                                     Background="{StaticResource OptionPaneColor}"
                                     BorderThickness="0"
                                     BorderBrush="Gray"

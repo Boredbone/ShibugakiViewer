@@ -113,7 +113,12 @@ namespace ShibugakiViewer.Views.Converters
                 list.Add(new PathContainer() { Name = key, FullPath = fullPath });
             }
 
-            return list;// library.GetPathList(path).Select(x => x.GetKey()).Where(x => x != null).ToList();
+            if (list.Count == 0)
+            {
+                list.Add(new PathContainer() { Name = path, FullPath = path });
+            }
+
+            return list;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

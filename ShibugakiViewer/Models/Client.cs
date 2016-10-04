@@ -1140,8 +1140,6 @@ namespace ShibugakiViewer.Models
 
             var result = await this.front.DeleteItemsAsync(items);
 
-            //_ => Boredbone.Utility.Tools.ShellFileOperation.DeleteFiles(true, files));
-
             if (result)
             {
                 this.SelectedItems.Clear();
@@ -1183,46 +1181,42 @@ namespace ShibugakiViewer.Models
 
             this.ChangePage(PageType.Viewer, 0, 0);
 
+
+            var record = records[0];
+
+            var search = new SearchInformation(new ComplexSearch(false));
+            search.Root.Add(new UnitSearch()
+            {
+                Property = FileProperty.DirectoryPathStartsWith,
+                Reference = record.Directory,
+                Mode = CompareMode.Equal,
+            });
+
+            search.SetSort(new[]
+            {
+                new SortSetting() { Property = FileProperty.FileName, IsDescending = false }
+            });
+
+            state.Search = search;
+            this.History.Current.Search = search;
+            this.front.SetSearch(search, true);
+
             if (records.Length == 1)
             {
                 Task.Run(async () =>
                 {
-                    var record = records[0];
-                    await this.front.ActivateFolderAsync(record.FullPath);
+                    await this.front.ActivateFolderAsync(record.FullPath).ConfigureAwait(false);
 
-                    var search = new SearchInformation(new ComplexSearch(false));
-                    search.Root.Add(new UnitSearch()
+                    var index = await core.Library.FindIndexAsync(search, record).ConfigureAwait(false);
+                    
+                    this.SearchForViewer(new OldNewPair<long>(index, index), true);
+
+                    if (this.front.Length.Value > index)
                     {
-                        Property = FileProperty.DirectoryPathStartsWith,
-                        Reference = record.Directory,
-                        Mode = CompareMode.Equal,
-                    });
-                    search.SetSort(new[]
-                    {
-                        new SortSetting() { Property = FileProperty.FileName, IsDescending = false }
-                    });
-
-                    state.Search = search;
-                    this.History.Current.Search = search;
-
-
-                    var index = await core.Library.FindIndexAsync(search, record);
-
-                    this.front.Length
-                        .Where(x => x > index)
-                        .Take(1)
-                        .Subscribe(x =>
-                        {
-                            this.viewerImageChangeGate = false;
-                            this.ViewerIndexInner = index;
-                            this.viewerImageChangeGate = true;
-                        });
-
-                    await Application.Current.Dispatcher.InvokeAsync(() =>
-                    {
-                        this.front.SetSearch(search, true);
-                    });
-
+                        this.viewerImageChangeGate = false;
+                        this.ViewerIndexInner = index;
+                        this.viewerImageChangeGate = true;
+                    }
                 })
                 .FireAndForget();
             }

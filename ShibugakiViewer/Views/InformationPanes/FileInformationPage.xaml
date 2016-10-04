@@ -260,9 +260,10 @@
 
                     <!-- Directory -->
                     <ItemsControl
-                    ItemsSource="{Binding Directory,
-                    Converter={StaticResource pathConverter},Mode=OneWay}"
-                    Margin="8,0,0,0">
+                        x:Name="directoryList"
+                        ItemsSource="{Binding Directory,
+                        Converter={StaticResource pathConverter},Mode=OneWay}"
+                        Margin="8,0,0,0">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <VirtualizingStackPanel HorizontalAlignment="Stretch">

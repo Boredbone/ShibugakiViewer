@@ -828,7 +828,7 @@ namespace ImageLibrary.File
 
         public override string ToString()
         {
-            return this.Id.ToString() + "," + this.Height.ToString() + "," + this.FileName + "," + this.Rating.ToString();
+            return this.Id.ToString();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -18,6 +20,7 @@ using Boredbone.Utility.Extensions;
 using ImageLibrary.File;
 using ImageLibrary.SearchProperty;
 using ImageLibrary.Tag;
+using Reactive.Bindings.Extensions;
 using ShibugakiViewer.Models;
 using ShibugakiViewer.ViewModels;
 using ShibugakiViewer.Views.Controls;
@@ -29,7 +32,7 @@ namespace ShibugakiViewer.Views.InformationPanes
     /// <summary>
     /// FileInformationPage.xaml の相互作用ロジック
     /// </summary>
-    public partial class FileInformationPage : UserControl
+    public partial class FileInformationPage : UserControl, IDisposable
     {
 
         #region Source
@@ -210,12 +213,31 @@ namespace ShibugakiViewer.Views.InformationPanes
 
         #endregion
 
+        private CompositeDisposable disposables;
 
 
         public FileInformationPage()
         {
             InitializeComponent();
             this.Source = Record.Empty;
+
+            this.disposables = new CompositeDisposable();
+
+            var directoryBinding = this.directoryList
+                    .GetBindingExpression(ItemsControl.ItemsSourceProperty);
+
+
+            ((App)Application.Current).Core.Library.Loaded
+                .Where(x => x.Action == ImageLibrary.Core.LibraryLoadAction.Activation
+                    || x.Action == ImageLibrary.Core.LibraryLoadAction.UserOperation)
+                .ObserveOnDispatcher()
+                .Subscribe(_ => directoryBinding?.UpdateTarget())
+                .AddTo(this.disposables);
+        }
+
+        public void Dispose()
+        {
+            this.disposables.Dispose();
         }
 
         private void tagButton_Click(object sender, RoutedEventArgs e)
