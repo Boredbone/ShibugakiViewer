@@ -40,20 +40,17 @@ namespace ImageLibrary.Core
             this.Library = library;
 
             this.recordSql = $"SELECT DISTINCT {nameof(Record.GroupKey)} FROM {this.Table.Name}"
-                + $" WHERE ({nameof(Record.IsGroup)} == 0 AND {nameof(Record.Id)} IN @Item1)";
+                + $" WHERE ({nameof(Record.IsGroup)} == 0 AND {nameof(Record.Id)} IN @{nameof(Tuple<string[]>.Item1)})";
 
             this.groupSql = $"SELECT DISTINCT {nameof(Record.Id)} FROM {this.Table.Name}"
-                + $" WHERE ({nameof(Record.IsGroup)} > 0 AND {nameof(Record.Id)} IN @Item1)";
+                + $" WHERE ({nameof(Record.IsGroup)} > 0 AND {nameof(Record.Id)} IN @{nameof(Tuple<string[]>.Item1)})";
         }
 
         public async Task<IEnumerable<string>> GetGroupIds
             (IDbConnection connection, string[] items)
         {
             var list = new List<string>();
-
-            //var recordSql = $"SELECT DISTINCT {nameof(Record.GroupKey)} FROM {this.Table.Name}"
-            //    + $" WHERE ({nameof(Record.IsGroup)} == 0 AND {nameof(Record.Id)} IN @Item1)";
-
+            
             foreach (var ids in items.Buffer(128))
             {
                 var param = new Tuple<string[]>(ids.ToArray());
@@ -84,22 +81,11 @@ namespace ImageLibrary.Core
 
             //対象に含まれているグループ
             string[] relatedGroups;
-
-
-            //var caseSql = $"CASE WHEN {nameof(Record.IsGroup)} == 0 THEN {nameof(Record.GroupKey)}"
-            //    +$" ELSE {nameof(Record.Id)} END";
-
+            
 
             using (var connection = this.Table.Parent.Connect())
             {
                 var relatedGroupsList = new List<string[]>();
-
-
-                //var recordSql = $"SELECT DISTINCT {nameof(Record.GroupKey)} FROM {this.Table.Name}"
-                //    + $" WHERE ({nameof(Record.IsGroup)} == 0 AND {nameof(Record.Id)} IN @Item1)";
-                //
-                //var groupSql = $"SELECT DISTINCT {nameof(Record.Id)} FROM {this.Table.Name}"
-                //    + $" WHERE ({nameof(Record.IsGroup)} > 0 AND {nameof(Record.Id)} IN @Item1)";
 
                 foreach (var ids in items.Buffer(128))
                 {
@@ -297,13 +283,10 @@ namespace ImageLibrary.Core
                         findLeaderSqlBuilder.Append($" AND {filter}) LIMIT 1");
 
                         var findLeaderSql = findLeaderSqlBuilder.ToString();
-
-                        //Debug.WriteLine(findLeaderSql);
-
+                        
                         var leader = (await this.Table.QueryAsync<GroupInfo>(connection, findLeaderSql))
                             .FirstOrDefault();
-
-                        //Debug.WriteLine(leader?.Id ?? "no leader");
+                        
 
                         //グループ内に見つからなければ新しいリーダーを設定
                         if (leader == null)
@@ -314,17 +297,13 @@ namespace ImageLibrary.Core
                                 .OrderBy(FileProperty.FileName.ToSort(false))
                                 .Select<GroupInfo>(GroupInfo.LeaderSchema)
                                 .FirstOrDefaultAsync();
-
-                            //Debug.WriteLine(leader?.Id ?? "no leader");
                         }
 
                         if (leader == null)
                         {
                             continue;
                         }
-
-                        //var leaderReference = DatabaseFunction.ToEqualsString(leader);
-
+                        
 
                         //日付を設定
 
@@ -388,8 +367,7 @@ namespace ImageLibrary.Core
             private static string GenerateUpdateSchema()
             {
                 var groupSqlBuilder = new StringBuilder();
-
-                //groupSqlBuilder.Append($@"UPDATE {this.Table.Name} SET");
+                
                 groupSqlBuilder.Append($@" SET");
 
                 groupSqlBuilder.Append($@" {nameof(Record.GroupKey)} = @{nameof(GroupInfo.Id)},");
@@ -451,8 +429,8 @@ namespace ImageLibrary.Core
         /// <returns></returns>
         private async Task SetGroupAsync(IDbConnection connection, string groupKey, IEnumerable<string> ids)
         {
-            var newGroupSql = $"UPDATE {this.Table.Name} SET {nameof(Record.GroupKey)} = @Item1"
-                + $" WHERE (({nameof(Record.IsGroup)} == 0) AND ({nameof(Record.Id)} IN @Item2))";
+            var newGroupSql = $"UPDATE {this.Table.Name} SET {nameof(Record.GroupKey)} = @{nameof(Tuple<string, string[]>.Item1)}"
+                + $" WHERE (({nameof(Record.IsGroup)} == 0) AND ({nameof(Record.Id)} IN @{nameof(Tuple<string, string[]>.Item2)}))";
 
             await this.Table.RequestWithBufferedArrayAsync(connection, ids, newGroupSql,
                 x => new Tuple<string, string[]>(groupKey, x));

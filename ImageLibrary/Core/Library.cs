@@ -373,10 +373,10 @@ namespace ImageLibrary.Core
         private async Task<long> FindIndexMainAsync
             (IDbConnection connection, ISearchCriteria criteria, string filterSql, Record target)
         {
-            var selectorParams = SortSetting.GetReferenceSelectorSql(criteria.GetSort());
+            var sql = SortSetting.GetReferenceSelectorSql(criteria.GetSort());
 
             var reference = await this.Records
-                .GetDynamicParametersAsync(connection, selectorParams, target)
+                .GetDynamicParametersAsync(connection, sql, target)
                 .ConfigureAwait(false);
 
             if (reference == null)

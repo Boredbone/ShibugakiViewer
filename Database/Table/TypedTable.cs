@@ -34,6 +34,8 @@ namespace Database.Table
 
         public Dictionary<string, string> TargetProperties => this.properties.Value;
 
+        private const string IdName = nameof(IRecord<TKey>.Id);
+
 
         private static readonly Dictionary<string, SqliteTypeDefinition> TypeConversion
             = new Dictionary<string, SqliteTypeDefinition>()
@@ -86,7 +88,7 @@ namespace Database.Table
 
             var propertiesWithoutId = new Lazy<KeyValuePair<string, string>[]>(() =>
                  this.properties.Value
-                   .Where(x => !x.Key.Equals("Id"))
+                   .Where(x => !x.Key.Equals(IdName))
                    .OrderBy(x => x.Key)
                    .ToArray());
 
@@ -116,8 +118,8 @@ namespace Database.Table
                         })
                         .Join(",\n ");
 
-                var idType = TypeConversion[this.properties.Value["Id"]].TypeName;
-                return $"Id {idType} primary key,\n {columns}";
+                var idType = TypeConversion[this.properties.Value[IdName]].TypeName;
+                return $"{IdName} {idType} primary key,\n {columns}";
             });
 
             this.updateSchema = new Lazy<string>(() =>
@@ -284,15 +286,15 @@ namespace Database.Table
                         this.Create(connection, transaction);
 
                         var selector = this.properties.Value
-                            .Where(x => !x.Key.Equals("Id"))
+                            .Where(x => !x.Key.Equals(IdName))
                             .OrderBy(x => x.Key)
                             .Select(x => eventArg.Converters.ContainsKey(x.Key)
                                 ? eventArg.Converters[x.Key] : x.Key)
                             .Join(",\n ");
 
                         connection.Execute
-                            ($"INSERT INTO {this.Name}(Id,\n {this.targets.Value}) "
-                            + $"SELECT Id,\n {selector} FROM {tmpName}",
+                            ($"INSERT INTO {this.Name}({IdName},\n {this.targets.Value}) "
+                            + $"SELECT {IdName},\n {selector} FROM {tmpName}",
                             null, transaction);
 
                         connection.Execute($"DROP TABLE {tmpName}",
@@ -349,7 +351,7 @@ namespace Database.Table
 
             this.columnOrderedValues = columns
                 .Select(x => x.Name)
-                .Where(x => !x.Equals("Id"))
+                .Where(x => !x.Equals(IdName))
                 .Join(", @");
         }
 
@@ -514,7 +516,7 @@ namespace Database.Table
             else
             {
                 return connection.ExecuteAsync
-                    ($"{command} INTO {this.Name} VALUES (@Id, @{this.columnOrderedValues})",
+                    ($"{command} INTO {this.Name} VALUES (@{IdName}, @{this.columnOrderedValues})",
                     param, transaction);
             }
         }
@@ -561,7 +563,7 @@ namespace Database.Table
             }
 
             await connection.ExecuteAsync
-                ($"UPDATE {this.Name} SET {text} WHERE Id = @Id",
+                ($"UPDATE {this.Name} SET {text} WHERE {IdName} = @{IdName}",
                 target, transaction);
         }
 
@@ -587,15 +589,15 @@ namespace Database.Table
         public async Task RemoveAsync(TRecord item, IDbConnection connection, IDbTransaction transaction)
         {
             await connection.ExecuteAsync
-                ($"DELETE FROM {this.Name} WHERE Id = @Id",// LIMIT 1",
+                ($"DELETE FROM {this.Name} WHERE {IdName} = @{IdName}",// LIMIT 1",
                 item, transaction);
         }
 
         public async Task RemoveAsync
-            (object idContainer, string idName, IDbConnection connection, IDbTransaction transaction)
+            (object idContainer, string idPropertyName, IDbConnection connection, IDbTransaction transaction)
         {
             await connection.ExecuteAsync
-                ($"DELETE FROM {this.Name} WHERE Id = @{idName}", idContainer, transaction);
+                ($"DELETE FROM {this.Name} WHERE {IdName} = @{idPropertyName}", idContainer, transaction);
         }
 
         /// <summary>
@@ -621,17 +623,7 @@ namespace Database.Table
             var param = new Tuple<TKey[]>(ids.ToArray());
 
             connection.Execute
-                ($"DELETE FROM {this.Name} WHERE Id IN @Item1", param, transaction);
-
-
-            //var array = items.ToArray();
-            //
-            //items.Distinct(x => x.Id).ForEach(item =>
-            //{
-            //    connection.Execute
-            //        ($"DELETE FROM {this.Name} WHERE Id = @Id",
-            //        item, transaction);
-            //});
+                ($"DELETE FROM {this.Name} WHERE {IdName} IN @{nameof(param.Item1)}", param, transaction);
         }
 
         /// <summary>
@@ -685,7 +677,8 @@ namespace Database.Table
                         var param = new Tuple<TKey[]>(buffer.ToArray());
 
                         await connection.ExecuteAsync
-                            ($"DELETE FROM {this.Name} WHERE ((Id IN @Item1) AND ({filter}))", param, transaction);
+                            ($"DELETE FROM {this.Name} WHERE (({IdName} IN @{nameof(param.Item1)}) AND ({filter}))",
+                            param, transaction);
 
                         transaction.Commit();
                     }
@@ -837,14 +830,15 @@ namespace Database.Table
         {
             return (await connection
                 .QueryAsync<TRecord>
-                    ($@"SELECT * FROM {this.Name} WHERE Id = @Id LIMIT 1", new IdContainer(key)))
+                    ($@"SELECT * FROM {this.Name} WHERE {IdName} = @{nameof(IdContainer.Id)} LIMIT 1",
+                    new IdContainer(key)))
                 .FirstOrDefault();
         }
 
         public async Task<IEnumerable<TRecord>> GetRecordsFromKeyAsync(IDbConnection connection, TKey[] ids)
         {
-            var sql = $"SELECT * FROM {this.Name} WHERE Id IN @Item1";
             var param = new Tuple<TKey[]>(ids);
+            var sql = $"SELECT * FROM {this.Name} WHERE {IdName} IN @{nameof(param.Item1)}";
             return await connection.QueryAsync<TRecord>(sql, param);
         }
 
@@ -853,7 +847,8 @@ namespace Database.Table
             var selectText = columns.Join(", ");
             return await connection
                 .ExecuteScalarAsync<T>
-                    ($@"SELECT {selectText} FROM {this.Name} WHERE Id = @Id LIMIT 1", new IdContainer(key));
+                    ($@"SELECT {selectText} FROM {this.Name} WHERE {IdName} = @{nameof(IdContainer.Id)} LIMIT 1",
+                    new IdContainer(key));
         }
 
         /// <summary>
@@ -866,7 +861,8 @@ namespace Database.Table
         {
             return connection
                 .Query<TRecord>
-                    ($@"SELECT Id FROM {this.Name} WHERE Id = @Id LIMIT 1", new IdContainer(key))
+                    ($@"SELECT {IdName} FROM {this.Name} WHERE {IdName} = @{nameof(IdContainer.Id)} LIMIT 1",
+                    new IdContainer(key))
                 .FirstOrDefault() != null;
         }
 
@@ -935,9 +931,9 @@ namespace Database.Table
         }
 
         public async Task<object> GetDynamicParametersAsync
-            (IDbConnection connection, string sql, object param = null, IDbTransaction transaction = null)
+            (IDbConnection connection, string sql, TRecord param, IDbTransaction transaction = null)
         {
-            var selector = $"SELECT {sql} FROM {this.Name} WHERE Id = @Id LIMIT 1";
+            var selector = $"SELECT {sql} FROM {this.Name} WHERE {IdName} = @{IdName} LIMIT 1";
 
             var dic = (await connection.QueryAsync(selector, param, transaction)).FirstOrDefault();
 
