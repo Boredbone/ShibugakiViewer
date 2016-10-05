@@ -10,6 +10,7 @@
              xmlns:converter="clr-namespace:ShibugakiViewer.Views.Converters"
              xmlns:properties="clr-namespace:ShibugakiViewer.Properties"
              xmlns:tb="clr-namespace:WpfTools.Behaviors;assembly=WpfTools"
+             xmlns:xb="clr-namespace:Boredbone.XamlTools.Behaviors;assembly=WpfTools"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -72,7 +73,7 @@
                                 Width="70"
                                 Margin="4,0,0,0"
                                 Text="{Binding ThumbnailSize.Value,Mode=TwoWay,UpdateSourceTrigger=Explicit}"
-                                b:TextBoxBehavior.UpdateByReturn="True"/>
+                                xb:TextBoxBehavior.UpdateByReturn="True"/>
                         </Grid>
 
                         <CheckBox

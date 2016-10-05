@@ -11,6 +11,7 @@
              xmlns:converter="clr-namespace:ShibugakiViewer.Views.Converters"
              xmlns:tb="clr-namespace:WpfTools.Behaviors;assembly=WpfTools"
              xmlns:cc="clr-namespace:WpfTools.Controls;assembly=WpfTools"
+             xmlns:xb="clr-namespace:Boredbone.XamlTools.Behaviors;assembly=WpfTools"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -418,7 +419,7 @@
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Center"
                                                     FontSize="{StaticResource ContextMenuTextSize}"
-                                                b:TextBoxBehavior.UpdateByReturn="True"/>
+                                                xb:TextBoxBehavior.UpdateByReturn="True"/>
                                             <TextBlock 
                                                 Style="{StaticResource contextMenuTextStyle}"
                                                 Grid.Column="2"

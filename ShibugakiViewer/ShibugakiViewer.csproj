@@ -156,8 +156,6 @@
     <Compile Include="ViewModels\WelcomeWindowViewModel.cs" />
     <Compile Include="Views\Behaviors\AnimatedGifbehavior.cs" />
     <Compile Include="Views\Behaviors\ExtendedMouseBinding.cs" />
-    <Compile Include="Views\Behaviors\FocusBehavior.cs" />
-    <Compile Include="Views\Behaviors\FullScreenBehavior.cs" />
     <Compile Include="Views\Behaviors\HoverControlBehavior.cs" />
     <Compile Include="Views\Behaviors\HoverGridBehavior.cs" />
     <Compile Include="Views\Behaviors\IconToImageSourceBehavior.cs" />
@@ -170,8 +168,6 @@
     <Compile Include="Views\Behaviors\RecordSelectBehavior.cs" />
     <Compile Include="Views\Behaviors\ScrollHelperBehavior.cs" />
     <Compile Include="Views\Behaviors\TapBehavior.cs" />
-    <Compile Include="Views\Behaviors\TextBoxBehavior.cs" />
-    <Compile Include="Views\Behaviors\SizeBehavior.cs" />
     <Compile Include="Views\Behaviors\VisualStateBehavior.cs" />
     <Compile Include="Views\Controls\PageMoveMarker.xaml.cs">
       <DependentUpon>PageMoveMarker.xaml</DependentUpon>
@@ -396,7 +392,6 @@
     <Compile Include="ViewModels\Controls\EditSearchViewModel.cs" />
     <Compile Include="ViewModels\SearchPageViewModel.cs" />
     <Compile Include="ViewModels\ViewerPageViewModel.cs" />
-    <Compile Include="Views\Behaviors\FileDropAttachedBehavior.cs" />
     <Compile Include="Views\Behaviors\InertiaScrollViewerBehaviour.cs" />
     <Compile Include="Views\Pages\CatalogPage.xaml.cs">
       <DependentUpon>CatalogPage.xaml</DependentUpon>

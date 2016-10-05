@@ -16,7 +16,7 @@ using Reactive.Bindings.Extensions;
 namespace ShibugakiViewer.Views.Behaviors
 {
 
-    public class HoverGridBehavior : Behavior<Panel>,IDisposable
+    public class HoverGridBehavior : Behavior<Panel>, IDisposable
     {
         public Brush Background
         {
@@ -76,29 +76,10 @@ namespace ShibugakiViewer.Views.Behaviors
 
         }
 
-        /*
-        private void Panel_PointerEntered(object sender, PointerRoutedEventArgs e)
-        {
-            ((Panel)sender).Background = this.HoverBackground;
-        }
-
-        private void Panel_PointerExited(object sender, PointerRoutedEventArgs e)
-        {
-            ((Panel)sender).Background = this.Background;
-        }
-
-        private void Panel_PointerCaptureLost(object sender, PointerRoutedEventArgs e)
-        {
-            ((Panel)sender).Background = this.Background;
-        }*/
-        
 
         public void Dispose()
         {
             this.disposables.Dispose();
-            //this.AssociatedObject.PointerEntered -= this.Panel_PointerEntered;
-            //this.AssociatedObject.PointerExited -= this.Panel_PointerExited;
-            //this.AssociatedObject.PointerCaptureLost -= this.Panel_PointerCaptureLost;
         }
     }
 }

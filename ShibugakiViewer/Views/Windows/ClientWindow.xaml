@@ -14,6 +14,7 @@
         xmlns:properties="clr-namespace:ShibugakiViewer.Properties"
         xmlns:converter="clr-namespace:ShibugakiViewer.Views.Converters"
         xmlns:tb="clr-namespace:WpfTools.Behaviors;assembly=WpfTools"
+        xmlns:xb="clr-namespace:Boredbone.XamlTools.Behaviors;assembly=WpfTools"
         mc:Ignorable="d"
         Width="1280" Height="720"
         Style="{StaticResource DefaultWindowStyle}"
@@ -23,7 +24,7 @@
         ContentRendered="Window_ContentRendered"
         tb:FileDropBehavior.Command="{Binding FileDropCommand}"
         b:KeyReceiverBehavior.Receiver="{Binding KeyReceiver,Mode=OneWay}"
-        b:FullScreenBehavior.IsFullScreen="{Binding IsFullScreen.Value,Mode=OneWay}"
+        tb:FullScreenBehavior.IsFullScreen="{Binding IsFullScreen.Value,Mode=OneWay}"
         Title="{Binding WindowTitle.Value}"
         Icon="/ShibugakiViewer;component/Assets/Icons/appicon.ico">
     <Window.DataContext>
@@ -64,18 +65,11 @@
             <Setter Property="NormalForeground" Value="{StaticResource MenuTextColor}"/>
         </Style>
         
-        <!--
-        <DataTemplate x:Key="container">
-            <Border>
-                <ContentPresenter Content="{Binding}" />
-            </Border>
-        </DataTemplate>-->
-        
         
     </Window.Resources>
 
     <i:Interaction.Behaviors>
-        <b:SizeBehavior
+        <xb:SizeBehavior
             Width="{Binding FrameWidth.Value,Mode=OneWayToSource}"/>
     </i:Interaction.Behaviors>
     

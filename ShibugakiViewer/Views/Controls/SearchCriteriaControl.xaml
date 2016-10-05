@@ -35,16 +35,6 @@
               Grid.Column="0" Height="Auto"
               HorizontalAlignment="Stretch"
               MouseUp="treeItemPanel_MouseUp">
-            <!--
-              PointerReleased="ItemPanel_PointerReleased" 
-              Tapped="ItemPanel_Tapped"
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="MouseUp">
-                    <i:InvokeCommandAction 
-                        Command="{Binding ElementName=searchCriteriaItemRoot, Path=DataContext.ItemClickCommand}" 
-                        CommandParameter="{Binding}"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>-->
 
             <i:Interaction.Behaviors>
                 <b:HoverGridBehavior
@@ -106,9 +96,6 @@
                     VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,4"
                     ToolTipService.ToolTip="{x:Static properties:Resources.AddButton_ToolTip}"
                     Click="Button_Click_2"/>
-            <!--
-                    Command="{Binding ElementName=searchCriteriaItemRoot, Path=DataContext.ItemClickCommand}" 
-                    CommandParameter="{Binding}"-->
 
             <cc:FlatButton Content="{StaticResource RemoveSymbol}" 
                     Style="{StaticResource symbolButton}"

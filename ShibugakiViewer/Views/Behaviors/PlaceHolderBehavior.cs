@@ -41,40 +41,7 @@ namespace ShibugakiViewer.Views.Behaviors
                         ? (Brush)CreateVisualBrush(placeHolder)
                         : new SolidColorBrush(Colors.Transparent);
                 });
-                /*
-                var disposables = new CompositeDisposable();
 
-                var textChanged = Observable.FromEvent<TextChangedEventHandler, TextChangedEventArgs>
-                    (h => (s, ea) => h(ea),
-                    h => textBox.TextChanged += h,
-                    h => textBox.TextChanged -= h);
-
-                var gotFocus = Observable.FromEvent<RoutedEventHandler, RoutedEventArgs>
-                    (h => (s, ea) => h(ea),
-                    h => textBox.GotFocus += h,
-                    h => textBox.GotFocus -= h);
-
-                var lostFocus = Observable.FromEvent<RoutedEventHandler, RoutedEventArgs>
-                    (h => (s, ea) => h(ea),
-                    h => textBox.LostFocus += h,
-                    h => textBox.LostFocus -= h);
-
-                textChanged.Select(_ => Unit.Default)
-                    .Merge(lostFocus.Select(_ => Unit.Default))
-                    .Select(_ => string.IsNullOrEmpty(textBox.Text))
-                    .Merge(gotFocus.Select(_ => false))
-                    .Subscribe(x =>
-                    {
-                        textBox.Background = x
-                            ? (Brush)CreateVisualBrush(placeHolder)
-                            : new SolidColorBrush(Colors.Transparent);
-                    })
-                    .AddTo(disposables);
-
-                textBox.UnloadedAsObservable()
-                    .Subscribe(_ => disposables?.Dispose())
-                    .AddTo(disposables);
-                    */
                 if (string.IsNullOrEmpty(textBox.Text))
                 {
                     textBox.Background = CreateVisualBrush(placeHolder);
@@ -196,40 +163,6 @@ namespace ShibugakiViewer.Views.Behaviors
                     control.Visibility = VisibilityHelper.Set(x);
                 });
 
-                /*
-                var disposables = new CompositeDisposable();
-
-                var textChanged = Observable.FromEvent<TextChangedEventHandler, TextChangedEventArgs>
-                    (h => (s, ea) => h(ea),
-                    h => textBox.TextChanged += h,
-                    h => textBox.TextChanged -= h);
-
-                var gotFocus = Observable.FromEvent<RoutedEventHandler, RoutedEventArgs>
-                    (h => (s, ea) => h(ea),
-                    h => textBox.GotFocus += h,
-                    h => textBox.GotFocus -= h);
-
-                var lostFocus = Observable.FromEvent<RoutedEventHandler, RoutedEventArgs>
-                    (h => (s, ea) => h(ea),
-                    h => textBox.LostFocus += h,
-                    h => textBox.LostFocus -= h);
-
-                textChanged.Select(_ => Unit.Default)
-                    .Merge(lostFocus.Select(_ => Unit.Default))
-                    .Select(_ => string.IsNullOrEmpty(textBox.Text))
-                    .Merge(gotFocus.Select(_ => false))
-                    .Subscribe(x =>
-                    {
-                        control.Visibility = VisibilityHelper.Set(x);
-                    })
-                    .AddTo(disposables);
-
-                textBox.UnloadedAsObservable()
-                    .Subscribe(_ => disposables?.Dispose())
-                    .AddTo(disposables);
-                    */
-
-
                 control.Visibility = VisibilityHelper.Set(string.IsNullOrEmpty(textBox.Text));
 
             }
@@ -269,16 +202,6 @@ namespace ShibugakiViewer.Views.Behaviors
                     (h => (s, ea) => h(ea),
                     h => comboBox.SelectionChanged += h,
                     h => comboBox.SelectionChanged -= h);
-                /*
-                var gotFocus = Observable.FromEvent<RoutedEventHandler, RoutedEventArgs>
-                    (h => (s, ea) => h(ea),
-                    h => textBox.GotFocus += h,
-                    h => textBox.GotFocus -= h);
-
-                var lostFocus = Observable.FromEvent<RoutedEventHandler, RoutedEventArgs>
-                    (h => (s, ea) => h(ea),
-                    h => textBox.LostFocus += h,
-                    h => textBox.LostFocus -= h);*/
 
                 selectionChanged
                     .Select(x => x.AddedItems.Count <= 0 || string.IsNullOrWhiteSpace(x.AddedItems[0].ToString()))
@@ -292,14 +215,9 @@ namespace ShibugakiViewer.Views.Behaviors
                     .Subscribe(_ => disposables?.Dispose())
                     .AddTo(disposables);
 
-
-
                 control.Visibility = VisibilityHelper.Set(string.IsNullOrWhiteSpace(comboBox.SelectionBoxItem.ToString()));
 
             }
-
         }
-
-
     }
 }

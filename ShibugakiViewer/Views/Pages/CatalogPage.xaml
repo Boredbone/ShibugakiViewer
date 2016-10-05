@@ -24,10 +24,6 @@
 
         <DataTemplate x:Key="thumbnailTemplate">
 
-            <!--Command="{Binding 
-                RelativeSource={RelativeSource FindAncestor,
-                AncestorType={x:Type cc:VirtualizedGridView}},
-                Path=DataContext.ItemClickCommand}"-->
             <cc:FlatButton 
                 x:Name="thumbnailButtonControl"
                 Margin="2"
@@ -45,13 +41,7 @@
                 PressedBorderBrush="#FFA0B0A0"
                 PressedBorderThickness="0"
                 DisabledBorderBrush="LightGray">
-
-                <!--
-                Template="{StaticResource thumbnailButton}"
-                behaviors:ManipulationCommandBehavior.MouseRightButtonUpCommand="{Binding 
-                            RelativeSource={RelativeSource FindAncestor,
-                            AncestorType={x:Type cc:VirtualizedGridView}},
-                            Path=DataContext.ItemSelectCommand}"-->
+                
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseRightButtonUp">
                         <i:InvokeCommandAction 
@@ -79,15 +69,6 @@
                             Stretch="UniformToFill"
                             ClipToBounds="True"
                             HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <!--
-                                behaviors:ImageLoadingBehavior.Record="{Binding}"
-                                behaviors:ImageLoadingBehavior.DecodeHeight="256"
-                                behaviors:ImageLoadingBehavior.DecodeWidth="256"
-                                behaviors:ImageLoadingBehavior.Quality="ThumbNail"
-                                behaviors:ImageLoadingBehavior.Trigger="{Binding
-                        RelativeSource={RelativeSource FindAncestor,
-                        AncestorType={x:Type control:VirtualizedGridView}},
-                        Path=DataContext.RefreshTrigger}"-->
                             <i:Interaction.Behaviors>
                                 <behaviors:ImageBehavior
                                     Record="{Binding}"
@@ -97,20 +78,10 @@
                                     Quality="ThumbNail"
                                     Trigger="{Binding
                                     Source={StaticResource rootControl},
-                                    Path=DataContext.RefreshTrigger}"
-                                    />
-                                <!--
-                                    DecodeHeight="{Binding ElementName=thumbnailButtonControl,Path=ActualHeight}"
-                                    DecodeWidth="{Binding ElementName=thumbnailButtonControl,Path=ActualWidth}"-->
+                                    Path=DataContext.RefreshTrigger}"/>
                             </i:Interaction.Behaviors>
 
                         </Image>
-                        <!--
-                        <TextBlock Text="{Binding FileName,FallbackValue=''}" TextWrapping="Wrap"
-                                       Width="186"
-                                       VerticalAlignment="Bottom"/>-->
-
-
 
                         <Grid
                             VerticalAlignment="Bottom" Background="#70000000"
@@ -123,7 +94,6 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <!-- Text="{Binding FileName,Mode=OneWay,FallbackValue=''}"-->
                             <TextBlock 
                                 Grid.Row="0"
                                 Text="{Binding FileName,Mode=OneWay,FallbackValue=''}"
@@ -192,16 +162,6 @@
                                                         ScaleX="1.5"
                                                         ScaleY="1.5" />
                                     </CheckBox.LayoutTransform>
-                                    <!--
-                                              Content="" FontSize="1"
-                                              FlowDirection="RightToLeft"
-                                              Background="Transparent" 
-                                              IsChecked="{Binding IsSelected,Mode=TwoWay,Converter={StaticResource nullableBoolConverter}}"
-                                        <i:Interaction.Behaviors>
-                                            <behaviors:HoverControlBehavior
-                                                Background="{StaticResource CheckBoxBaseColor}"
-                                                HoverBackground="{StaticResource CheckBoxHoverColor}"/>
-                                        </i:Interaction.Behaviors>-->
                                 </CheckBox>
                             </Grid>
                         </Border>
