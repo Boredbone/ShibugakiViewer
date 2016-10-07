@@ -1,5 +1,9 @@
 # Release Notes
 
+## Version 1.2.0 (2016/10/07)
+- Improve performance
+- Bug fix
+
 ## Version 1.1.1 (2016/10/02)
 - Improve performance
 
