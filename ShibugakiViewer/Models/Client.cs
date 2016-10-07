@@ -407,8 +407,8 @@ namespace ShibugakiViewer.Models
 
             viewerIndexChanged
                 .Throttle(TimeSpan.FromMilliseconds(resizedImageLoadDelayMillisec))
-                .Merge(ChangeToViewerSubject)
-                .DistinctUntilChanged()
+                //.Merge(ChangeToViewerSubject.Delay(TimeSpan.FromMilliseconds(resizedImageLoadDelayMillisec / 2)))
+                //.DistinctUntilChanged()
                 .ObserveOn(SynchronizationContext.Current)
                 .Subscribe(x => LoadImagesMain(x, ImageQuality.Resized,
                     ListOrderFlags.Current | ListOrderFlags.Next | ListOrderFlags.Previous))
