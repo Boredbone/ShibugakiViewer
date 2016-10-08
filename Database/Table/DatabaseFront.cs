@@ -73,7 +73,7 @@ namespace Database.Table
         /// Initialize Database
         /// </summary>
         /// <param name="connection"></param>
-        public void Initialize(IDbConnection connection)
+        public async Task InitializeAsync(IDbConnection connection)
         {
             var obj = typeof(SqlMapper)
                 .GetField("typeMap", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
@@ -93,7 +93,7 @@ namespace Database.Table
             this.tables[0].CreateOrMigrate(connection, null);
 
 
-            var oldInformations = this.informationTable.AsQueryable(connection).ToArray();
+            var oldInformations = await this.informationTable.AsQueryable(connection).ToArrayAsync();
             var informations = oldInformations.OrderBy(x => x.Id).ToList();
 
 
@@ -116,7 +116,7 @@ namespace Database.Table
             {
                 throw new ArgumentException("Parameter mismatch");
             }
-            
+
 
             foreach (var table in this.tables.Skip(1))
             {
@@ -159,7 +159,7 @@ namespace Database.Table
                 informations[0].Version = this.Version;
             }
 
-            this.RequestTransaction(async context =>
+            await this.RequestTransactionAsync(async context =>
             {
                 foreach (var info in informations)
                 {
@@ -173,6 +173,26 @@ namespace Database.Table
                     }
                 }
             });
+        }
+        public async Task RequestTransactionAsync(Func<TransactionContext, Task> action)
+        {
+
+            using (var connection = this.Connect())
+            {
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        await action(new TransactionContext(connection, transaction));
+
+                        transaction.Commit();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                    }
+                }
+            }
         }
 
         public void RequestTransaction(Action<TransactionContext> action)
@@ -196,7 +216,7 @@ namespace Database.Table
             }
         }
 
-        public void RequestThreadSafeTransaction(Action<ThreadSafeTransactionContext> action)
+        public async Task RequestThreadSafeTransactionAsync(Func<ThreadSafeTransactionContext, Task> action)
         {
 
             using (var connection = this.ConnectAsThreadSafe())
@@ -205,7 +225,7 @@ namespace Database.Table
                 {
                     try
                     {
-                        action(new ThreadSafeTransactionContext(connection, transaction));
+                        await action(new ThreadSafeTransactionContext(connection, transaction));
 
                         transaction.Commit();
                     }

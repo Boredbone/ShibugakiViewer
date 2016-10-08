@@ -576,7 +576,7 @@ namespace ShibugakiViewer.Models
             var library = LibraryOwner.GetCurrent();
 
             library.InitSettings();
-            library.Load();
+            library.LoadAsync().Wait();
 
             library.AddTo(this.Disposables);
 

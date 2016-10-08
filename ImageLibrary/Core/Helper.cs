@@ -21,12 +21,10 @@ namespace ImageLibrary.Core
                 .Buffer(observable.Throttle(TimeSpan.FromMilliseconds(time)))
                 .Subscribe(items =>
                 {
-                    Task.Run(() =>
+                    Task.Run(async () =>
                     {
-                        table.Parent.RequestThreadSafeTransaction(async context =>
-                        {
-                            await table.AddRangeAsync(items, context.Connection, context.Transaction);
-                        });
+                        await table.Parent.RequestThreadSafeTransactionAsync
+                            (context => table.AddRangeAsync(items, context.Connection, context.Transaction));
                         items.ForEach(x => tracker.Track(x));
                     });
                 });

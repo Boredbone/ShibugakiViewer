@@ -54,7 +54,7 @@ namespace ShibugakiViewer.Backup
             {
 
                 library.InitSettings();
-                library.Load();
+                await library.LoadAsync();
 
                 //ストレージに保存する設定
                 var settingsXml = new XmlSettingManager<ApplicationSettings>

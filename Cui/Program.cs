@@ -18,27 +18,11 @@ namespace Cui
     {
         static void Main(string[] args)
         {
-            new Sample().Method1();
+            new Sample().Method1().Wait();
             Console.ReadLine();
         }
     }
-
-    public class ImageFileInformation
-    {
-        public DateTimeOffset DateCreated { get; set; }
-        public DateTimeOffset DateModified { get; set; }
-
-        public long Size { get; set; }
-        public int Height { get; set; }
-        public int Width { get; set; }
-
-        public int Rating { get; set; }
-        public HashSet<string> Keywords { get; set; }
-
-        public string Name { get; set; }
-        public string Path { get; set; }
-        
-    }
+    
 
     class Sample
     {
@@ -74,7 +58,7 @@ namespace Cui
 
         private string GetId() => Guid.NewGuid().ToString();
 
-        public void Method1()
+        public async Task Method1()
         {
 
 
@@ -82,22 +66,14 @@ namespace Cui
             Console.WriteLine("start");
             //Console.ReadLine();
 
-            /*
-            var props = typeof(TableColumnDefinition)
-                    .GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                    .ToArray();
-
-            foreach (var m in props)
-            {
-                Console.WriteLine($"{m.PropertyType} - {m.Name}");
-            }
-            */
+            
+            
 
             using (var connection = this.database.Connect())
             {
                 this.table1.Drop(connection);
 
-                this.database.Initialize(connection);
+                await this.database.InitializeAsync(connection);
             }
 
             Console.WriteLine("connected");
@@ -146,7 +122,7 @@ namespace Cui
             var testName2 = testName.Replace('_', 'f').Replace(']', '-');
             items[1].SetName(testName2);
 
-            this.database.RequestTransaction(async context =>
+            await this.database.RequestTransactionAsync(async context =>
             {
                 foreach (var item in items)
                 {
@@ -156,7 +132,7 @@ namespace Cui
                 await this.table1.AddAsync(new Record(testName), context);
                 await this.table1.AddAsync(new Record(testName2), context);
             });
-
+            Console.ReadLine();
             /*
             this.database.RequestTransaction(context =>
             {
@@ -263,7 +239,7 @@ namespace Cui
             }
 
 
-            this.database.RequestTransaction(async context =>
+            await this.database.RequestTransactionAsync(async context =>
             {
                 items2[1].SetName("Edited1");
                 items2[1].Height = 22;
@@ -288,7 +264,7 @@ namespace Cui
                 }
             }
 
-            this.database.RequestTransaction(async context =>
+            await this.database.RequestTransactionAsync(async context =>
             {
                 await this.table1.UpdateAsync(items2[2], context);
             });

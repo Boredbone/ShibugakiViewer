@@ -272,7 +272,7 @@ namespace ImageLibrary.Core
         /// <summary>
         /// データベースとの接続を初期化
         /// </summary>
-        public void Load()
+        public async Task LoadAsync()
         {
 
             TagInformation[] tags;
@@ -281,14 +281,14 @@ namespace ImageLibrary.Core
 
             using (var connection = this.Database.Connect())
             {
-                this.Database.Initialize(connection);
+                await this.Database.InitializeAsync(connection);
 
-                tags = this.TagDatabase.GetAll(connection);
-                folders = this.FolderDatabase.GetAll(connection);
-                exifItems = this.ExifVisibilityDatabase.GetAll(connection);
+                tags = await this.TagDatabase.GetAllAsync(connection);
+                folders = await this.FolderDatabase.GetAllAsync(connection);
+                exifItems = await this.ExifVisibilityDatabase.GetAllAsync(connection);
 
                 //loading test
-                this.Records.AsQueryable(connection).FirstOrDefault();
+                await this.Records.AsQueryable(connection).FirstOrDefaultAsync();
             }
 
             tags.ForEach(tag => this.TagTracker.Track(tag));
@@ -969,7 +969,7 @@ namespace ImageLibrary.Core
         /// <summary>
         /// データベース全消去
         /// </summary>
-        public void Clear()
+        public async Task ClearAsync()
         {
             using (var connection = this.Database.Connect())
             {
@@ -978,7 +978,7 @@ namespace ImageLibrary.Core
                 this.FolderDatabase.Drop(connection);
             }
 
-            this.Load();
+            await this.LoadAsync();
         }
 
     }

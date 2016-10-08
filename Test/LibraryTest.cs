@@ -619,10 +619,10 @@ namespace Test
 
             library.InitializeLibrarySettings(settings);
 
-            library.Load();
+            await library.LoadAsync();
 
 
-            library.Clear();
+            await library.ClearAsync();
 
             data.ForEach((x, c) =>
             {
