@@ -272,7 +272,7 @@ namespace Test
                     new SortSetting() {Property=FileProperty.DateTimeRegistered,IsDescending=false },
                 });
 
-                await Task.Delay(350);
+                await Task.Delay(400);
 
                 var member = await library.GroupQuery.SearchAsync(group1, 0, 1000);
 
