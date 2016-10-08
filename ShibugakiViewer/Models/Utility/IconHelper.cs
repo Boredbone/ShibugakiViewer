@@ -20,27 +20,13 @@ namespace ShibugakiViewer.Models.Utility
                 }
 
                 return CreateIcon(uri, size);
-
-                //var streamResourceInfo = Application.GetResourceStream(uri);
-                //if (streamResourceInfo == null)
-                //{
-                //    return null;
-                //}
-
-                //System.Drawing.Icon icon;
-
-                //using (var stream = streamResourceInfo.Stream)
-                //{
-                //    icon = new System.Drawing.Icon(stream, new System.Drawing.Size(size, size));
-                //}
-
-                //return icon;
             }
             catch
             {
                 return null;
             }
         }
+
         public static System.Drawing.Icon CreateIcon(Uri uri, int size)
         {
             try

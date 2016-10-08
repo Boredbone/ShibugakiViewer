@@ -588,8 +588,6 @@ namespace ImageLibrary.File
             this.FileName = name;
             this._fieldFullPath = null;
 
-            //this.FullPath = System.IO.Path.Combine(this.Directory ?? "", this.FileName ?? "");
-
             var sn = new SequenceNumber(this.FileName);
             this.PreNameLong = sn.PreNameLong;
             this.PostNameShort = sn.PostNameShort;
@@ -785,16 +783,6 @@ namespace ImageLibrary.File
             this.SortSettings = source.ToList();
             LibraryOwner.GetCurrent().Searcher.SetDefaultGroupSort(source);
             return true;
-
-
-            //if (SortSettings == null
-            //    || !SortSettings.SequenceEqual(source, (x, y) => x.Equals(y)))
-            //{
-            //    this.SortSettings = new List<SortSetting>(source);
-            //    //RaisePropertyChanged(nameof(SortEntry));
-            //    return true;
-            //}
-            //return false;
         }
 
         /// <summary>
@@ -828,7 +816,7 @@ namespace ImageLibrary.File
 
         public override string ToString()
         {
-            return this.Id.ToString();
+            return this.Id;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -37,7 +37,7 @@ namespace ShibugakiViewer
 
         private const string companyName = @"Boredbone";
         private const string productName = @"ShibugakiViewer";
-        //private const string settingsFileName = "appsettings.config";
+
         private const string placementFileName = "placement.config";
 
 
@@ -73,7 +73,7 @@ namespace ShibugakiViewer
             FrameworkElement.LanguageProperty.OverrideMetadata(
                   typeof(FrameworkElement),
                   new FrameworkPropertyMetadata(
-                      XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.Name)));//.IetfLanguageTag)));
+                      XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.Name)));
 
         }
 
@@ -101,25 +101,7 @@ namespace ShibugakiViewer
                     return;
                 }
             }
-
-            //using (var mutex = new Mutex(false, mutexId))
-            //{
-            //    try
-            //    {
-            //        if (!mutex.WaitOne(0, false))
-            //        {
-            //            //すでに起動していると判断して終了
-            //            MessageBox.Show($"{this.Core.AppName} is already launched.");
-            //            this.Shutdown();
-            //            return;
-            //        }
-            //        mutex.ReleaseMutex();
-            //        mutex.Close();
-            //    }
-            //    catch (AbandonedMutexException)
-            //    {
-            //    }
-            //}
+            
 
             this.isLaunched = true;
 
@@ -460,44 +442,7 @@ namespace ShibugakiViewer
                 MessageBoxButton.OK, MessageBoxImage.Stop);
             Environment.Exit(0);
         }
-
-        ///// <summary>
-        ///// アイコンを生成
-        ///// </summary>
-        ///// <param name="path"></param>
-        ///// <returns></returns>
-        //private System.Drawing.Icon CreateIcon(string path, int size)
-        //{
-        //    try
-        //    {
-        //        //const string iconUri = "pack://application:,,,/Assets/Icons/appicon.ico";
-
-        //        Uri uri;
-        //        if (!Uri.TryCreate(path, UriKind.Absolute, out uri))
-        //        {
-        //            return null;
-        //        }
-
-        //        var streamResourceInfo = GetResourceStream(uri);
-        //        if (streamResourceInfo == null)
-        //        {
-        //            return null;
-        //        }
-
-        //        System.Drawing.Icon icon;
-
-        //        using (var stream = streamResourceInfo.Stream)
-        //        {
-        //            icon = new System.Drawing.Icon(stream, new System.Drawing.Size(size, size));
-        //        }
-
-        //        return icon;
-        //    }
-        //    catch
-        //    {
-        //        return null;
-        //    }
-        //}
+        
 
         /// <summary>
         /// 通知アイコン表示
@@ -619,8 +564,6 @@ namespace ShibugakiViewer
         {
             try
             {
-                //var path = serverFullPath;// Path.Combine(dir, serverPath);
-
                 //アプリ起動
                 var psi = new ProcessStartInfo()
                 {

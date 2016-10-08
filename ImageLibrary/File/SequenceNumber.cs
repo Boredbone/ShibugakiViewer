@@ -8,18 +8,17 @@ using System.Threading.Tasks;
 
 namespace ImageLibrary.File
 {
-
-
+    /// <summary>
+    /// ファイルを名前の連番でソートするための情報
+    /// </summary>
     class SequenceNumber
     {
 
         public string PreNameLong { get; set; }
-        //public string NameNumberRightString { get; set; }
         public string PostNameShort { get; set; }
         public int NameNumberRight { get; set; }
 
         public string PreNameShort { get; set; }
-        //public string NameNumberLeftString { get; set; }
         public string PostNameLong { get; set; }
         public int NameNumberLeft { get; set; }
 
@@ -35,8 +34,7 @@ namespace ImageLibrary.File
         public SequenceNumber(string str)
         {
             this.Name = str;
-
-            //var sname = Path.GetFileNameWithoutExtension(str);
+            
             this.Extension = Path.GetExtension(str);
 
             var name = str.Substring(0, str.Length - this.Extension.Length);

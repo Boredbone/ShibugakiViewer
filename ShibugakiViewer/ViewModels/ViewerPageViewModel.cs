@@ -23,7 +23,6 @@ using Reactive.Bindings.Extensions;
 using ShibugakiViewer.Models;
 using ShibugakiViewer.Models.ImageViewer;
 using ShibugakiViewer.Models.Utility;
-using ShibugakiViewer.Views.Behaviors;
 using ShibugakiViewer.Views.Controls;
 using WpfTools;
 

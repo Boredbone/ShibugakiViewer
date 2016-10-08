@@ -23,10 +23,7 @@ namespace ShibugakiViewer.ViewModels.SettingPages
         public ReadOnlyReactiveProperty<int> CurrentCount { get; }
 
         public ReactiveProperty<string> Text { get; }
-
-        //public ObservableCollection<string> Added { get; }
-        //public ObservableCollection<string> Removed { get; }
-        //public ObservableCollection<string> Updated { get; }
+        
 
         public ReactiveCollection<LibraryUpdateHistoryItem> LibraryUpdateHistory 
             => this.core.LibraryUpdateHistory;
@@ -39,16 +36,9 @@ namespace ShibugakiViewer.ViewModels.SettingPages
             var library = core.Library;
 
             this.Text = new ReactiveProperty<string>().AddTo(this.Disposables);
-
-            //this.Added = new ObservableCollection<string>();
-            //this.Removed = new ObservableCollection<string>();
-            //this.Updated = new ObservableCollection<string>();
+            
 
             this.MaxCount = library.FileEnumerated
-                //.Buffer(TimeSpan.FromMilliseconds(500))
-                //.Where(x => x.Count > 0)
-                //.Select(x => x.Last())
-                //.ObserveOnUIDispatcher()
                 .ToReadOnlyReactiveProperty()
                 .AddTo(this.Disposables);
 
@@ -56,7 +46,6 @@ namespace ShibugakiViewer.ViewModels.SettingPages
                 .Buffer(TimeSpan.FromMilliseconds(500))
                 .Where(x => x.Count > 0)
                 .Select(x => x.Last())
-                //.ObserveOnUIDispatcher()
                 .ToReadOnlyReactiveProperty()
                 .AddTo(this.Disposables);
 
@@ -71,19 +60,6 @@ namespace ShibugakiViewer.ViewModels.SettingPages
                 {
                     this.Text.Value = $"Added:{x.AddedFiles.Count}"
                     + $", Removed:{x.RemovedFiles.Count}, Updated:{x.UpdatedFiles.Count}";
-
-                    //this.Added.Clear();
-                    //x.AddedFiles.Take(200).Select(y => y.Value.FullPath).OrderBy(y => y)
-                    //    .ForEach(y => this.Added.Add(y));
-                    //
-                    //this.Removed.Clear();
-                    //x.RemovedFiles.Take(200).Select(y => y.Value.FullPath).OrderBy(y => y)
-                    //    .ForEach(y => this.Removed.Add(y));
-                    //
-                    //this.Updated.Clear();
-                    //x.UpdatedFiles.Take(200).Select(y => y.Value.FullPath).OrderBy(y => y)
-                    //    .ForEach(y => this.Updated.Add(y));
-
                 })
                 .AddTo(this.Disposables);
 

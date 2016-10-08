@@ -21,10 +21,7 @@ namespace ShibugakiViewer.Models.Utility
 
         private Subject<string> LineReceivedSubject { get; }
         public IObservable<string> LineReceived => this.LineReceivedSubject.AsObservable();
-
-        //private static readonly ConcurrentDictionary<string, Mutex> mutexDictionary
-        //    = new ConcurrentDictionary<string, Mutex>();
-
+        
         public PipeServer()
         {
             this.LineReceivedSubject = new Subject<string>().AddTo(this.Disposables);
@@ -52,11 +49,6 @@ namespace ShibugakiViewer.Models.Utility
                 {
                     pipeClient.Connect(100);
                 }
-                //if (mutexDictionary.ContainsKey(mutexId))
-                //{
-                //    Mutex m;
-                //    mutexDictionary.TryRemove(mutexId, out m);
-                //}
             }).AddTo(this.Disposables);
         }
 

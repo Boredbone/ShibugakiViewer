@@ -12,7 +12,9 @@ using ImageLibrary.SearchProperty;
 
 namespace ImageLibrary.Core
 {
-
+    /// <summary>
+    /// ストレージに保存するライブラリの設定
+    /// </summary>
     [DataContract]
     [KnownType(typeof(UnitSearch))]
     [KnownType(typeof(ComplexSearch))]
@@ -22,8 +24,6 @@ namespace ImageLibrary.Core
         [DataMember]
         public int Version { get; set; }
 
-        //[DataMember]
-        //public Dictionary<string, FolderInformation> Folders { get; set; }
         [DataMember]
         public List<SearchInformation> SearchSettings { get; private set; }
         [DataMember]
@@ -47,7 +47,7 @@ namespace ImageLibrary.Core
             }
         }
         private bool _fieldIsGroupingEnabled;
-        
+
         [DataMember]
         public bool RefreshLibraryCompletely
         {
@@ -106,10 +106,14 @@ namespace ImageLibrary.Core
             this.RefreshLibraryCompletely = false;
         }
 
-
+        /// <summary>
+        /// 保存
+        /// </summary>
+        /// <param name="library"></param>
+        /// <param name="version"></param>
+        /// <param name="manager"></param>
         public void Save(Library library, int version, XmlSettingManager<LibrarySettings> manager)
         {
-
             if (!library.IsLibrarySettingsLoaded)
             {
                 return;
@@ -118,7 +122,7 @@ namespace ImageLibrary.Core
             var defaultSort = library.Searcher.GetDefaultSort().ToList();
             var defaultGroupSort = library.Searcher.GetDefaultGroupSort().ToList();
 
-            if (!this.IsChanged(library,defaultSort,defaultGroupSort))
+            if (!this.IsChanged(library, defaultSort, defaultGroupSort))
             {
                 return;
             }
@@ -127,24 +131,24 @@ namespace ImageLibrary.Core
 
             this.FavoriteSearch = library.Searcher.FavoriteSearchList.Select(x => x.Clone()).ToList();
 
-            //this.librarySettings.RegisteredTags = this.Tags.GetAll().ToDictionary(x => x.Key, x => x.Value);
-
             this.DefaultSort = defaultSort;
             this.DefaultGroupSort = defaultGroupSort;
-            //this.librarySettings.GroupSortDictionary = this.Searcher.GroupSortDictionary;
 
             this.Version = version;
 
             manager.SaveXml(this);
 
             this.isChanged = false;
-
-            //library.Tags.IsEdited = false;
-
         }
-        
 
-        private bool IsChanged(Library library,List<SortSetting> defaultSort, List<SortSetting> defaultGroupSort)
+        /// <summary>
+        /// 前回の保存以降に変化があったか確認
+        /// </summary>
+        /// <param name="library"></param>
+        /// <param name="defaultSort"></param>
+        /// <param name="defaultGroupSort"></param>
+        /// <returns></returns>
+        private bool IsChanged(Library library, List<SortSetting> defaultSort, List<SortSetting> defaultGroupSort)
         {
             if (this.isChanged)
             {
@@ -175,13 +179,12 @@ namespace ImageLibrary.Core
         }
 
 
-
+        /// <summary>
+        /// 初期化
+        /// </summary>
+        /// <param name="library"></param>
         public void Initialize(Library library)
         {
-
-            //this.Tags.SetSource(savedData.RegisteredTags);
-
-
             if (this.DefaultSort.IsNullOrEmpty())
             {
                 var sort = new List<SortSetting>();
@@ -209,11 +212,8 @@ namespace ImageLibrary.Core
 
                 this.DefaultGroupSort = sort;
             }
+
             library.Searcher.SetDefaultGroupSort(this.DefaultGroupSort);
-
-
-
-
 
             if (this.SearchSettings.IsNullOrEmpty())
             {
@@ -226,7 +226,6 @@ namespace ImageLibrary.Core
             }
 
             library.Searcher.InitializeSearchHistory(this.SearchSettings);
-            //savedData.SearchSettings.ForEach(x => this.Searcher.AddSearch(x));
 
             if (this.FavoriteSearch != null)
             {
@@ -238,6 +237,12 @@ namespace ImageLibrary.Core
             }
         }
 
+        /// <summary>
+        /// ファイルから読み込み
+        /// </summary>
+        /// <param name="manager"></param>
+        /// <param name="OnErrorOccurred"></param>
+        /// <returns></returns>
         public static LibrarySettings Load
             (XmlSettingManager<LibrarySettings> manager, Action<string> OnErrorOccurred)
         {

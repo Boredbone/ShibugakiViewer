@@ -1861,15 +1861,6 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
-        ///   Search に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string Search {
-            get {
-                return ResourceManager.GetString("Search", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Search Criteria に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SearchCriteria {

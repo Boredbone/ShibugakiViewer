@@ -18,25 +18,6 @@ namespace Cui
     {
         static void Main(string[] args)
         {
-
-            try
-            {
-                var path = @"";
-                var information = new GraphicInformation(path);
-                Console.WriteLine($"{information.Type},{information.GraphicSize}");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-
-
-
-            Console.ReadLine();
-
-
-            //var t = test();
-            //Console.ReadLine();
             new Sample().Method1();
             Console.ReadLine();
         }

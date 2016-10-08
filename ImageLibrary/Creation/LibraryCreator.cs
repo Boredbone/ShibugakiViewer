@@ -24,6 +24,9 @@ using Boredbone.Utility.Tools;
 
 namespace ImageLibrary.Creation
 {
+    /// <summary>
+    /// ストレージを検索し、ライブラリをアップデート
+    /// </summary>
     public class LibraryCreator : DisposableBase
     {
         private BehaviorSubject<string> LoadingSubject { get; }
@@ -37,8 +40,7 @@ namespace ImageLibrary.Creation
 
         private Subject<LibraryLoadResult> LoadedSubject { get; }
         public IObservable<LibraryLoadResult> Loaded => this.LoadedSubject.AsObservable();
-
-        //public string[] FileTypeFilter { get; set; }
+        
         public ILibraryConfiguration Config { get; set; }
 
         private Dictionary<string, Record> addedFilesResult = null;
@@ -239,7 +241,6 @@ namespace ImageLibrary.Creation
                         removedFiles[f.Id] = f;
                     }
                 }
-                //notFoundRecords.ForEach(x => removedFiles[x.Id] = x);
             }
 
 
@@ -258,17 +259,9 @@ namespace ImageLibrary.Creation
                 {
                     var items = added.Concat(removed).Distinct().ToArray();
                     var r = await this.Records.GetRecordsFromKeyAsync(connection, items);
-
-                    //var sql = $"SELECT * FROM {this.Records.Name}"
-                    //    + $" WHERE {nameof(Record.Id)} IN @Item1";
-                    //
-                    //var param = new Tuple<string[]>(items);
-                    //
-                    //var r = await this.Records.QueryAsync<Record>(connection, sql, param);
-
+                    
                     relatedFiles = new ReadOnlyDictionary<string, Record>
                         (r.ToDictionary(x => x.Id, x => x));
-
                 }
 
 
@@ -381,24 +374,6 @@ namespace ImageLibrary.Creation
             {
                 //削除
                 this.Records.RemoveRangeBuffered(connection.Value, removedFiles.Select(x => x.Value));
-
-                //using (var transaction = connection.Value.BeginTransaction())
-                //{
-                //    try
-                //    {
-                //        foreach (var item in updatedFiles)
-                //        {
-                //            await this.Records.UpdateAsync
-                //                (item.Value, connection.Value, transaction);
-                //        }
-                //
-                //        transaction.Commit();
-                //    }
-                //    catch
-                //    {
-                //        transaction.Rollback();
-                //    }
-                //}
 
                 //追加・更新
                 var dateNow = DateTimeOffset.Now;

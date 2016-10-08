@@ -6,21 +6,10 @@ using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 using Boredbone.Utility.Extensions;
 using Boredbone.Utility.Notification;
-using Database.Search;
-using ImageLibrary.Core;
-using ImageLibrary.File;
-using ImageLibrary.SearchProperty;
-using ImageLibrary.Tag;
-using ImageLibrary.Viewer;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
-using ShibugakiViewer.Models;
-using ShibugakiViewer.Models.Utility;
-using ShibugakiViewer.Views.Controls;
 
 namespace ShibugakiViewer.ViewModels
 {
@@ -88,8 +77,6 @@ namespace ShibugakiViewer.ViewModels
 
             this.ConvertOldLibraryCommand = Observable
                 .Return(oldConvertable)
-                //.FromAsync(() => core.IsOldConvertableAsync())
-                //.ObserveOnUIDispatcher()
                 .ToReactiveCommand()
                 .WithSubscribe(_ => application.ConvertOldLibrary(), this.Disposables);
         }

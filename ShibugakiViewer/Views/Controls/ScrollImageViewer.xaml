@@ -56,9 +56,6 @@
     </UserControl.Resources>
 
     <Grid>
-        <!-- ZoomMode="Enabled" MaxZoomFactor="8"-->
-
-
         <ScrollViewer x:Name="scrollViewer" Margin="0"
                       HorizontalScrollBarVisibility="Auto"
                       VerticalScrollBarVisibility="Auto" 
@@ -78,10 +75,6 @@
                       MouseMove="scrollViewer_MouseMove"
                       ManipulationDelta="scrollViewer_ManipulationDelta"
                       IsManipulationEnabled="True">
-            <!--
-                      MouseWheel="Grid_MouseWheel"
-                      MouseDoubleClick="scrollViewer_MouseDoubleClick"
-                      MouseLeftButtonDown="scrollViewer_MouseLeftButtonDown"-->
 
             <i:Interaction.Behaviors>
                 <b:TapBehavior
@@ -114,7 +107,6 @@
                     Width="{Binding Width,Mode=OneWay}" 
                     Margin="0"
                     HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <!-- RenderTransformOrigin="0.5,0.5" Canvas.ZIndex="0"-->
                         <i:Interaction.Behaviors>
                             <b:ImageBehavior
                                 x:Name="imageBehabior"
@@ -146,11 +138,6 @@
                     </Image>
 
                 </Grid>
-                <!--
-                        <Grid.RenderTransform>
-                            <CompositeTransform x:Name="transform"/>
-                        </Grid.RenderTransform>-->
-
             </Border>
         </ScrollViewer>
     </Grid>

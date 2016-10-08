@@ -53,11 +53,6 @@ namespace ShibugakiViewer.Models.Utility
             (Func<Key, bool> match, Action<T, Key> action,
             int preFilterIndex, int mode = 0, bool isPreview = false, ModifierKeys modifier = ModifierKeys.None)
         {
-            //if (modifiers == null || modifiers.Length <= 0)
-            //{
-            //    modifiers = new[] { ModifierKeys.None };
-            //}
-
             if (preFilterIndex < 0)
             {
                 preFilterIndex = 0;
@@ -97,25 +92,7 @@ namespace ShibugakiViewer.Models.Utility
                 this.ResetPreFilters();
             }
             this.acted = false;
-            var modifier = Keyboard.Modifiers;// ModifierKeys.None;
-
-            /*
-            if (CheckKeyDown(ModifierKeys.Shift))
-            {
-                modifier |= ModifierKeys.Shift;
-            }
-            if (CheckKeyDown(ModifierKeys.Control))
-            {
-                modifier |= ModifierKeys.Control;
-            }
-            if (CheckKeyDown(ModifierKeys.Alt))
-            {
-                modifier |= ModifierKeys.Alt;
-            }
-            if (CheckKeyDown(ModifierKeys.Windows))
-            {
-                modifier |= ModifierKeys.Windows;
-            }*/
+            var modifier = Keyboard.Modifiers;
 
             if (key == Key.System && modifier == ModifierKeys.Alt)
             {
@@ -198,16 +175,4 @@ namespace ShibugakiViewer.Models.Utility
             }
         }
     }
-
-
-    /*
-    [Flags]
-    public enum ModifierKey
-    {
-        None = 0x00,
-        Alt = 0x01,
-        Control = 0x02,
-        Shift = 0x04,
-        Command = 0x08,
-    }*/
 }

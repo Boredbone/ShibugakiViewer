@@ -115,57 +115,6 @@ namespace ShibugakiViewer.ViewModels.SettingPages
                     {
                         this.previousSelectedDirectory = folderPath;
                     }
-                    //if (result && !this.IsInitializeMode.Value)
-                    //{
-                    //    this.library.RefreshLibraryAsync(true).FireAndForget();
-                    //}
-
-                    /*
-                    string folderPath = null;
-                    using (var fbd = new FolderSelectDialog())
-                    {
-                        if (System.IO.Directory.Exists(defaultPath))
-                        {
-                            fbd.DefaultDirectory = defaultPath;
-                        }
-
-                        if (fbd.ShowDialog() == true)
-                        {
-                            folderPath = fbd.SelectedPath;
-                        }
-                    }
-
-                    if (string.IsNullOrWhiteSpace(folderPath))
-                    {
-                        return;
-                    }
-
-                    this.previousSelectedDirectory = folderPath;
-
-                    var exists = this.library.Folders.GetAll()
-                        .FirstOrDefault(x => x.Path.Equals(folderPath));
-
-                    var refresh = false;
-
-                    if (exists != null)
-                    {
-                        if (exists.Ignored)
-                        {
-                            exists.Ignored = false;
-                            exists.RefreshEnable = true;
-                            refresh = true;
-                        }
-                    }
-                    else
-                    {
-                        this.library.Folders.Add(new FolderInformation(folderPath));
-                        refresh = true;
-                    }
-
-                    if (refresh && !this.IsInitializeMode.Value)
-                    {
-                        this.library.RefreshLibraryAsync(true).FireAndForget();
-                    }*/
 
                 }, this.Disposables);
         }

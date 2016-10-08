@@ -131,7 +131,6 @@ namespace ImageLibrary.Core
         /// <returns></returns>
         public async Task<HashSet<int>> GetCommonTagsAsync(string[] ids)
         {
-            //var ids = items.ToArray();
             var filter = DatabaseFunction.In(nameof(Record.Id), $"@{nameof(Tuple<object>.Item1)}");
 
             var sqlBuilder = new StringBuilder();

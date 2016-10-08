@@ -11,8 +11,6 @@ namespace ImageLibrary.Core
         TypedTable<Record, string> Table { get; }
 
         Task<long> CountAsync(T criteria);
-        //Task<long> FindIndexAsync(T criteria, Record record);
-        //Task<string[]> GetAllIdsAsync(T criteria);
         string GetFilterString(T criteria);
         Task<Record[]> SearchAsync(T criteria, long skip, long take);
     }

@@ -419,7 +419,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         IconText="{StaticResource SearchSymbol}"
-                        Text="{x:Static properties:Resources.Search}"/>
+                        Text="{x:Static properties:Resources.SearchLabel}"/>
                 </cc:FlatButton>
             </Grid>
         </Grid>

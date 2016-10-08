@@ -235,9 +235,6 @@
   <data name="RootDirectoryAccessToken" xml:space="preserve">
     <value>RootDirectoryAccessToken</value>
   </data>
-  <data name="Search" xml:space="preserve">
-    <value>検索</value>
-  </data>
   <data name="SelectAllButton_Label" xml:space="preserve">
     <value>すべて選択</value>
   </data>

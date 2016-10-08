@@ -8,15 +8,15 @@ using ImageLibrary.Search;
 
 namespace ImageLibrary.Core
 {
-
+    /// <summary>
+    /// 検索条件
+    /// </summary>
     public interface ISearchCriteria
     {
         string GetFilterString(Library library);
 
         Task<long> CountAsync(Library library);
         Task<Record[]> SearchAsync(Library library, long skip, long take);
-        //Task<long> FindIndexAsync(Library library, Record record);
-        //Task<string[]> GetAllIdsAsync(Library library);
 
         string SortEntry { get; }
         bool SetSort(IEnumerable<SortSetting> source);

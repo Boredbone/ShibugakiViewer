@@ -21,7 +21,9 @@ using Reactive.Bindings.Extensions;
 
 namespace ImageLibrary.Viewer
 {
-
+    /// <summary>
+    /// 各クライアントからライブラリにアクセスするための窓口
+    /// </summary>
     public class LibraryFront : DisposableBase, ISearchResult
     {
         private const double updatedEventThrottleTime = 500.0;
@@ -233,9 +235,6 @@ namespace ImageLibrary.Viewer
             {
                 using (var locking = await this.asyncLock.LockAsync().ConfigureAwait(false))
                 {
-
-                    //Debug.WriteLine($"Check At({offset}) Takes({takes})");
-
                     if (takes > 0)
                     {
                         var existing = this.CheckCache(offset, takes);
@@ -253,8 +252,6 @@ namespace ImageLibrary.Viewer
 
                     if (takes >= 0)
                     {
-                        //Debug.WriteLine($"Search At({offset}) Takes({takes})");
-
                         await this.SearchMainAsync(offset, takes);
                     }
 
@@ -571,43 +568,26 @@ namespace ImageLibrary.Viewer
         public long FindIndex(Record value)
         {
             var item = this.GetFromCacheById(value.Id);
-
-            //KeyValuePair<long, Record> item;
-            //
-            //lock (this.Cache)
-            //{
-            //    item = this.Cache
-            //        .FirstOrDefault(x => x.Value?.Id != null && x.Value.Id.Equals(value.Id));
-            //}
-
-            //var item = this.Cache
-            //    .ToList()
-            //    .Find(x => x.Value?.Id != null && x.Value.Id.Equals(value.Id));
-
-            //if (item.Value == null)
-            //{
-            //    var tx = item.Key;
-            //}
-
             return (item.Value != null) ? item.Key : -1;
         }
 
 
-        public async Task<long> FindIndexFromDatabaseAsync(Record value)
-        {
-            return await this.library.FindIndexAsync(this.GetActiveSearch(), value);
-        }
+        public Task<long> FindIndexFromDatabaseAsync(Record value)
+            => this.library.FindIndexAsync(this.GetActiveSearch(), value);
+        
 
         public ISearchCriteria GetActiveSearch()
             => (ISearchCriteria)this.FeaturedGroup ?? this.SearchInformation;
 
 
+        /// <summary>
+        /// 渡されたファイルを検索結果として利用
+        /// </summary>
+        /// <param name="files"></param>
+        /// <returns></returns>
         public Record[] ActivateFiles(string[] files)
         {
             var records = files.Select(x => new Record(x)).ToArray();
-
-            //long count;
-            //Record[] records = new Record[files.LongLength];
 
             this.SetSearch(null, false);
 
@@ -619,19 +599,9 @@ namespace ImageLibrary.Viewer
                 {
                     this.Cache[c] = records[c];
                 }
-
-                //records = files.Select((x, c) =>
-                //{
-                //    var record = new Record(x);
-                //    this.Cache[(long)c] = record;
-                //    return record;
-                //}).ToArray();
-
-                //count = this.Cache.Count;
             }
-
-
-            this.Length.Value = records.LongLength;// this.Cache.Count;
+            
+            this.Length.Value = records.LongLength;
 
             return records;
         }
@@ -750,12 +720,6 @@ namespace ImageLibrary.Viewer
         public async Task<Record> GetItemByIdAsync(string id)
         {
             var item = this.GetFromCacheById(id).Value;
-            //Record item = null;
-            //
-            //lock (this.Cache)
-            //{
-            //    item = this.Cache.Select(x => x.Value).FirstOrDefault(x => x.Id.Equals(id));
-            //}
 
             if (item != null)
             {

@@ -87,10 +87,7 @@ namespace ImageLibrary.SearchProperty
                     DatabaseFunction.ToLower
                     (DatabaseFunction.Combine(nameof(Record.Directory), nameof(Record.FileName))),
                 true, o => DatabaseFunction.ToLowerEqualsString(o));
-
-            //dictionary[FileProperty.FileName] = new PropertySearch(
-            //    DatabaseFunction.ToLower(nameof(Record.FileName)), true,
-            //    o => DatabaseFunction.ToLowerEqualsString(o));
+            
             dictionary[FileProperty.FileName] = new PropertySearch(true,
                 (o,mode)=>
                 {

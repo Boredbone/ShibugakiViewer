@@ -51,14 +51,9 @@ namespace ShibugakiViewer.ViewModels
         public ReactiveProperty<TabMode> SelectedTab { get; }
         public ReadOnlyReactiveProperty<int> CurrentSearchType { get; }
         public ReadOnlyReactiveProperty<bool> IsFavoriteSearch { get; }
-
-        //private Subject<EditSearchViewModel> EditSearchRequestSubject { get; }
-        //public IObservable<EditSearchViewModel> EditSearchRequest => this.EditSearchRequestSubject.AsObservable();
-
+        
         public Window View { get; set; }
-
-        //private SearchSortManager Searcher { get; }
-
+        
         private readonly ClientWindowViewModel parent;
         private readonly Client client;
         private readonly Library library;
@@ -87,10 +82,7 @@ namespace ShibugakiViewer.ViewModels
 
             this.IsEditing = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
 
-
-            //this.SelectedTab.Where(x => x == TabMode.New)
-            //    .Subscribe(_ => this.IsEditing.Value = true).AddTo(this.Disposables);
-
+            
             this.SelectHistoryCommand = new ReactiveCommand().AddTo(this.Disposables);
             this.SelectFavoriteCommand = new ReactiveCommand().AddTo(this.Disposables);
 
@@ -100,11 +92,7 @@ namespace ShibugakiViewer.ViewModels
 
             var favoriteItem = this.SelectFavoriteCommand
                 .OfType<SearchInformation>();
-
-            //var newItem = this.SelectedTab
-            //    .Where(x => x == TabMode.New)
-            //    .Select(_ => SearchInformation.GenerateEmpty());
-
+            
             this.CurrentSearch = Observable
                 .Merge(hitoryItem, favoriteItem)//, newItem)
                 .ToReactiveProperty(SearchInformation.GenerateEmpty())
@@ -155,22 +143,7 @@ namespace ShibugakiViewer.ViewModels
                 .Select(x => x == 1)
                 .ToReadOnlyReactiveProperty()
                 .AddTo(this.Disposables);
-
-            //this.IsFavoriteSearch = this.HistoryList
-            //    .CollectionChangedAsObservable()
-            //    .Merge(this.FavoriteList.CollectionChangedAsObservable())
-            //    .Select(_ => Unit.Default)
-            //    .CombineLatest(this.CurrentSearch, (l, c) => c)
-            //    .Select(x => this.HasFavoriteSearch(x))
-            //    .ToReadOnlyReactiveProperty()
-            //    .AddTo(this.Disposables);
-
-            /*
-            this.IsFavoritePage = this.SelectedTab
-                .Select(x => x == (int)TabMode.Favorite)
-                .ToReadOnlyReactiveProperty()
-                .AddTo(this.Disposables);*/
-
+            
 
             this.ClickHistoryCommand = new ReactiveCommand().AddTo(this.Disposables);
             this.ClickFavoriteCommand = new ReactiveCommand().AddTo(this.Disposables);
@@ -212,13 +185,7 @@ namespace ShibugakiViewer.ViewModels
                     }
                 })
                 .AddTo(this.Disposables);
-
-            //this.CurrentSearch = client.HistoryChanged
-            //    .Where(x => x != null && x.Search != null)
-            //    .Select(x => x.Search.Clone())
-            //    .ToReactiveProperty(client.CurrentState.Search.Clone())
-            //    .AddTo(this.Disposables);
-
+            
             this.StartSearchCommand = new ReactiveCommand()
                 .WithSubscribe(_ => this.StartSearch(client, this.CurrentSearch.Value), this.Disposables);
 
@@ -240,13 +207,13 @@ namespace ShibugakiViewer.ViewModels
             this.AddToFavoriteCommand = new ReactiveCommand()
                 .WithSubscribe(_ =>
                 {
-                    var item = this.CurrentSearch.Value;// x as SearchInformation;
+                    var item = this.CurrentSearch.Value;
                     if (item == null)
                     {
                         return;
                     }
 
-                    if (this.HasFavoriteSearch(item))//(TabMode)this.SelectedTab.Value == TabMode.Favorite)
+                    if (this.HasFavoriteSearch(item))
                     {
                         searcher.MarkSearchUnfavorite(item);
                     }
@@ -261,7 +228,7 @@ namespace ShibugakiViewer.ViewModels
             this.SwitchModeCommand = new ReactiveCommand()
                 .WithSubscribe(_ =>
                 {
-                    var item = this.CurrentSearch.Value;// x as SearchInformation;
+                    var item = this.CurrentSearch.Value;
                     if (item == null)
                     {
                         return;
@@ -301,14 +268,11 @@ namespace ShibugakiViewer.ViewModels
 
         private void StartSearch(Client client, SearchInformation info)
         {
-            //this.library.Searcher.FavoriteSearchList.Insert(0, info);
-            //return;
-
             client.SetNewSearch(info);
             client.MoveToCatalog();
 
             this.CurrentSearch.Value = SearchInformation.GenerateEmpty();
-            if (!this.HasFavoriteSearch(info))//(this.SelectedTab.Value == TabMode.New)
+            if (!this.HasFavoriteSearch(info))
             {
                 this.SelectedTab.Value = TabMode.History;
             }
@@ -319,6 +283,5 @@ namespace ShibugakiViewer.ViewModels
     {
         History = 0,
         Favorite = 1,
-        //New = 2,
     }
 }

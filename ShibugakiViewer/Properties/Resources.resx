@@ -234,9 +234,6 @@
   <data name="RootDirectoryAccessToken" xml:space="preserve">
     <value>RootDirectoryAccessToken</value>
   </data>
-  <data name="Search" xml:space="preserve">
-    <value>Search</value>
-  </data>
   <data name="SelectAllButton_Label" xml:space="preserve">
     <value>Select All</value>
   </data>

@@ -703,7 +703,6 @@ namespace ShibugakiViewer.Models
 
         private void InitializeResourceString()
         {
-
             FilePropertyManager.InitializeLabels(x => this.GetResourceString(x));
             CompareModeManager.InitializeLabels(x => this.GetResourceString(x));
 
@@ -716,17 +715,6 @@ namespace ShibugakiViewer.Models
             {
                 this.IsSVOLanguage = true;
             }
-
-            App.Current.Resources["FileNameLabel"] = this.GetResourceString("FileName");
-            App.Current.Resources["FileSizeLabel"] = this.GetResourceString("FileSize");
-            App.Current.Resources["RatingLabel"] = this.GetResourceString("Rating");
-            App.Current.Resources["DateCreatedLabel"] = this.GetResourceString("DateCreated");
-            App.Current.Resources["DateModifiedLabel"] = this.GetResourceString("DateModified");
-            App.Current.Resources["ImageSizeLabel"] = this.GetResourceString("ImageSize");
-            App.Current.Resources["SearchLabel"] = this.GetResourceString("Search");
-            App.Current.Resources["WidthLabel"] = this.GetResourceString("Width");
-            App.Current.Resources["HeightLabel"] = this.GetResourceString("Height");
-
         }
 
         private string oldLibraryDirectory = null;

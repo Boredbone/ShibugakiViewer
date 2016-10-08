@@ -150,7 +150,6 @@ namespace ImageLibrary.Search
             this.Mode = source.Mode;
 
             this.Reference = source.Reference;
-            //TODO ディープコピーの方がいい？setterで値型に限定できると良い
 
             this._fieldReferenceLabel = null;
         }

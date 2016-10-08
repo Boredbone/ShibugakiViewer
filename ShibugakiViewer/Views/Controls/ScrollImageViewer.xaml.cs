@@ -59,6 +59,7 @@ namespace ShibugakiViewer.Views.Controls
         });
         private const double edgeTapThreshold = 0.2;
 
+        private const double maxZoomFactor = 8.0;
 
 
         #region AutoFit
@@ -113,11 +114,7 @@ namespace ShibugakiViewer.Views.Controls
 
         private void OnRecordChanged(Record record, Record oldRecord)
         {
-            //if (oldRecord == null || record == null
-            //    || record.Width != oldRecord.Width || record.Height != oldRecord.Height)
-            //{
             this.IsChanging = true;
-            //}
 
             var oldPath = oldRecord?.FullPath;
 
@@ -139,11 +136,6 @@ namespace ShibugakiViewer.Views.Controls
                 this.ImageWidth = record.Width;
             }
 
-            //if (record != null && record?.FullPath == oldPath)
-            //{
-            //    Debug.WriteLine($"same path:{oldPath}");
-            //}
-
             if (record?.FullPath != oldPath)
             {
                 this.rotateTransform.Angle = 0;
@@ -152,7 +144,6 @@ namespace ShibugakiViewer.Views.Controls
                 this.IsInHorizontalMirror = false;
                 this.IsInVerticalMirror = false;
 
-                //this.MetaImageZoomFactorSubject?.OnNext(1.0);
                 if (this.isImageLoaded)
                 {
                     this.DoAutoScaling();
@@ -163,9 +154,6 @@ namespace ShibugakiViewer.Views.Controls
             {
                 this.IsChanging = false;
             }
-
-
-            //this.IsChanging = false;
         }
 
         #endregion
@@ -210,11 +198,7 @@ namespace ShibugakiViewer.Views.Controls
                 if (_fieldImageHeight != value)
                 {
                     _fieldImageHeight = value;
-                    //this.InnerHeight = value;
-                    //this.OuterHeight = value;
-
                     RaisePropertyChanged(nameof(ImageHeight));
-                    //RaisePropertyChanged(nameof(FixedHeight));
                 }
             }
         }
@@ -229,11 +213,7 @@ namespace ShibugakiViewer.Views.Controls
                 if (_fieldImageWidth != value)
                 {
                     _fieldImageWidth = value;
-                    //this.InnerWidth = value;
-                    //this.OuterWidth = value;
-
                     RaisePropertyChanged(nameof(ImageWidth));
-                    //RaisePropertyChanged(nameof(FixedWidth));
                 }
             }
         }
@@ -536,34 +516,6 @@ namespace ShibugakiViewer.Views.Controls
         #endregion
 
 
-
-        //#region OriginalScale
-        //
-        //public double OriginalScale
-        //{
-        //    get { return (double)GetValue(OriginalScaleProperty); }
-        //    set { SetValue(OriginalScaleProperty, value); }
-        //}
-        //
-        //public static readonly DependencyProperty OriginalScaleProperty =
-        //    DependencyProperty.Register(nameof(OriginalScale), typeof(double), typeof(ScrollImageViewer),
-        //    new PropertyMetadata(1.0, new PropertyChangedCallback(OnOriginalScaleChanged)));
-        //
-        //private static void OnOriginalScaleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        //{
-        //    var thisInstance = d as ScrollImageViewer;
-        //    var value = e.NewValue as double?;
-        //
-        //    if (thisInstance != null && value.HasValue)
-        //    {
-        //        thisInstance.originalScaleField = value.Value;
-        //    }
-        //}
-        //
-        //private double originalScaleField = 1.0;
-        //
-        //#endregion
-
         #region ScaleToPhysicalPixel
 
         public bool ScaleToPhysicalPixel
@@ -590,61 +542,6 @@ namespace ShibugakiViewer.Views.Controls
         #endregion
 
 
-
-
-        #region IsAnimationEnabled
-
-        public bool IsAnimationEnabled
-        {
-            get { return (bool)GetValue(IsAnimationEnabledProperty); }
-            set { SetValue(IsAnimationEnabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsAnimationEnabledProperty =
-            DependencyProperty.Register(nameof(IsAnimationEnabled), typeof(bool), typeof(ScrollImageViewer),
-            new PropertyMetadata(false, new PropertyChangedCallback(OnIsAnimationEnabledChanged)));
-
-        private static void OnIsAnimationEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var thisInstance = d as ScrollImageViewer;
-            var value = e.NewValue as bool?;
-
-            if (value == null)
-            {
-                return;
-            }
-
-            thisInstance.SetAnimation(value.Value);
-
-        }
-
-
-        private void SetAnimation(bool enabled)
-        {
-            var path = this.Source?.FullPath;
-            /*
-            if (enabled)
-            {
-                if (uri != null)
-                {
-                    ClearAnimator();
-
-                    XamlAnimatedGif.AnimationBehavior.SetSourceUri(this.animationImage, uri);
-
-                    this.animationImage.Visibility = Visibility.Visible;
-
-                    XamlAnimatedGif.AnimationBehavior.SetAutoStart(this.animationImage, true);
-
-                    return;
-                }
-            }
-
-            ClearAnimator();
-            this.animationImage.Visibility = Visibility.Collapsed;
-            */
-        }
-
-        #endregion
 
         #region IsInHorizontalMirror
 
@@ -923,10 +820,7 @@ namespace ShibugakiViewer.Views.Controls
 
 
 
-        private const double maxZoomFactor = 8.0;
 
-        //public event Action<object, MouseButtonEventArgs> PanelTapped;
-        //public event Action<object, MouseButtonEventArgs> PanelDoubleTapped;
         public event Action<object, PointerTapEventArgs> PanelRightTapped;
 
 
@@ -939,8 +833,6 @@ namespace ShibugakiViewer.Views.Controls
         private Vector baseCenter;
         private double baseZoomFactor;
 
-
-        //private bool alwaysFit = false;
         private bool isImageLoaded = false;
         private bool scaleInitializeFlag = false;
         private bool isScrollAnimating = false;
@@ -964,7 +856,7 @@ namespace ShibugakiViewer.Views.Controls
             this.tapBehavior.AddTo(this.dispsables);
             this.imageBehabior.AddTo(this.dispsables);
             this.gifBehabior.AddTo(this.dispsables);
-            
+
             this.SetScalingMode(0);
 
             var buffer = ((App)Application.Current).Core.ImageBuffer;
@@ -974,7 +866,6 @@ namespace ShibugakiViewer.Views.Controls
                 .Subscribe(x =>
                 {
                     this.ImageLoadingTrigger = !this.ImageLoadingTrigger;
-                    //this.ImageLoadingTrigger = false;
                 })
                 .AddTo(this.dispsables);
 
@@ -1014,33 +905,15 @@ namespace ShibugakiViewer.Views.Controls
                 .AddTo(this.dispsables);
 
             this.MetaImageZoomFactorSubject = new Subject<double>().AddTo(this.dispsables);
-            //this.MetaImageZoomFactor = this.MetaImageZoomFactorSubject
-            //    .Throttle(TimeSpan.FromMilliseconds(300))
-            //    .ObserveOnUIDispatcher()
-            //    .ToReadOnlyReactiveProperty()
-            //    .AddTo(this.dispsables);
 
             this.MetaImageZoomFactorSubject
                 .Throttle(TimeSpan.FromMilliseconds(300))
                 .ObserveOnUIDispatcher()
                 .Subscribe(x => this.MetaImageZoomFactorDp = x)
                 .AddTo(this.dispsables);
-            //this.MetaImageZoomFactor.Subscribe(x => this.MetaImageZoomFactorDp = x).AddTo(this.dispsables);
 
         }
 
-        ///// <summary>
-        ///// ダブルクリックでアニメーション付き自動スケーリング
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        ////private void scrollViewer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        //private void tapBehavior_PointerDoubleTapped(object sender, PointerTapEventArgs e)
-        //{
-        //    //this.PanelDoubleTapped?.Invoke(sender, e);
-        //
-        //    this.OnDoubleTapped(e);
-        //}
 
         private void SetScalingMode(int mode)
         {
@@ -1063,13 +936,6 @@ namespace ShibugakiViewer.Views.Controls
         {
             if (this.scrollViewer != null)
             {
-
-                // タップによるスクロール位置ずれを回避
-                //if (false)//(e.PointerDeviceType != PointerDeviceType.Mouse)
-                //{
-                //    await Task.Delay(100);
-                //}
-
                 Point p = e.GetPosition(this.scrollViewer);
                 this.StartAutoScaling(p.X, p.Y);
             }
@@ -1115,10 +981,6 @@ namespace ShibugakiViewer.Views.Controls
                     }
 
                 }
-                //else if (e.Span >= TimeSpan.FromMilliseconds(shortTapTimeThreshold))
-                //{
-                //    this.PanelRightTapped?.Invoke(o, e);
-                //}
 
                 this.TapCommand?.Execute(new ViewerTapEventArgs()
                 {
@@ -1156,20 +1018,9 @@ namespace ShibugakiViewer.Views.Controls
                 this.isImageLoaded = true;
                 this.DoAutoScaling();
 
-                //var zoomed = FitImageToScrollView(true, !alwaysFit);
-                ////新しい画像に移ったときはやる、画質が変化しただけの時はやらない
-                //
-                //if (this.scaleInitializeFlag && !zoomed)
-                //{
-                //    this.ZoomImage(null, null, 1, true);
-                //}
                 this.scaleInitializeFlag = false;
                 this.IsChanging = false;
             }
-
-            //FitEnableフラグはUserControlのScrollImageViewerの依存プロパティにして
-            //Bindingでtrue,falseを切り替え
-
         }
 
         /// <summary>
@@ -1204,9 +1055,7 @@ namespace ShibugakiViewer.Views.Controls
 
             if (elm != null)
             {
-                //var image = (UIElement)sender;
-
-                double newvalue = e.Delta;// point.Properties.MouseWheelDelta;
+                double newvalue = e.Delta;
 
                 var scale = this.ZoomFactor;
 
@@ -1243,20 +1092,10 @@ namespace ShibugakiViewer.Views.Controls
         {
             var view = this.ScrollViewer;
             var image = this.Image;
-            //var size = GetOriginalImageSize();
-
-
-            //horizontalRate = view.ViewportWidth / size.Width;
-            //verticalRate = view.ViewportHeight / size.Height;
-
-            //horizontalRate = view.ViewportWidth / image.ActualWidth;
-            //verticalRate = view.ViewportHeight / image.ActualHeight;
 
             var originalWidth = image.ActualWidth;
             var originalHeight = image.ActualHeight;
-
             //DesiredSizeだとワンテンポ遅れるのでNG
-            //InnerHeight,OuterHeightはどうか？
 
             var width = originalWidth <= 0 ? this.ImageWidth : originalWidth;
             var height = originalHeight <= 0 ? this.ImageHeight : originalHeight;
@@ -1281,17 +1120,9 @@ namespace ShibugakiViewer.Views.Controls
             }
         }
 
-        //public void ZoomImage(double? centerX, double? centerY, double scale)
-        //{
-        //    this.ZoomImage(centerX, centerY, scale, autoZoomTime, true);
-        //}
         public void ZoomImage(double? centerX, double? centerY, double scale,
             double timeMilliSeconds, bool exponential, bool fixCenter)
         {
-            //var horizontalRate = view.ViewportWidth / image.ActualWidth;
-            //var verticalRate = view.ViewportHeight / image.ActualHeight;
-
-
             if (scale < float.Epsilon)
             {
                 scale = float.Epsilon;
@@ -1316,9 +1147,6 @@ namespace ShibugakiViewer.Views.Controls
             double frameWidth = this.ViewWidth;// view.ViewportWidth;
             double frameHeight = this.ViewHeight;// view.ViewportHeight;
 
-
-
-
             double imageWidth = image.ActualWidth * this.ZoomFactor;
             double imageHeight = image.ActualHeight * this.ZoomFactor;
 
@@ -1341,13 +1169,6 @@ namespace ShibugakiViewer.Views.Controls
             double oldHorizontalOffset = view.HorizontalOffset;
             double oldVerticalOffset = view.VerticalOffset;
 
-            //if (fixCenter)
-            //{
-            //    oldHorizontalOffset = 0;
-            //    oldVerticalOffset = 0;
-            //    imageWidth = this.Source?.Width * scale ?? 0.0;
-            //    imageHeight = this.Source?.Height * scale ?? 0.0;
-            //}
 
             if (imageWidth < frameWidth)
             {
@@ -1417,9 +1238,6 @@ namespace ShibugakiViewer.Views.Controls
                 verticalOffset = (newImageHeight - frameHeight) / 2;
             }
 
-            //scale = 2.0f;
-
-            //this.imageFitFlag = false;
 
             //アニメーション無効化時
             if (timeMilliSeconds < 1)
@@ -1440,49 +1258,27 @@ namespace ShibugakiViewer.Views.Controls
                 From = oldScale,
                 To = scale,
                 Duration = new Duration(TimeSpan.FromMilliseconds(timeMilliSeconds)),
-                //EasingFunction = new ExponentialEase()
-                //{
-                //    Exponent = exp,
-                //    EasingMode = EasingMode.EaseIn
-                //},
-                //EnableDependentAnimation = true,
             };
-            if (exponential)
-            {/*
-                zoomAnimation.EasingFunction = new ExponentialEase()
-                {
-                    Exponent = 3.0,
-                    EasingMode = EasingMode.EaseIn
-                };*/
-            }
-            //Storyboard.SetTarget(zoomAnimation, this);
-            //Storyboard.SetTargetProperty(zoomAnimation, new PropertyPath(AnimatedZoomFactorProperty));
 
             zoomAnimation.Completed += (o, e) =>
             {
                 this.AnimatedZoomFactor = scale;
-                //this.ZoomFactor = scale;
             };
 
 
             this.BeginAnimation(AnimatedZoomFactorProperty, zoomAnimation);
-
 
         }
 
 
         private Size GetOriginalImageSize()
         {
-            //var view = this.ScrollViewer;
             var image = this.Image;
 
             if (image == null)
             {
                 return new Size(1, 1);
             }
-            //return new Size(image.ActualWidth, image.ActualHeight);
-
-
 
             var width = this.ImageWidth;
             var height = this.ImageHeight;
@@ -1512,9 +1308,6 @@ namespace ShibugakiViewer.Views.Controls
             var view = this.ScrollViewer;
             var image = this.Image;
 
-            //return;
-            //var view = image.Parent as ScrollViewer;
-
 
             if (view != null)
             {
@@ -1522,11 +1315,6 @@ namespace ShibugakiViewer.Views.Controls
                 if (size.Width > 0 && size.Height > 0)
                 {
                     var oldScale = this.ZoomFactor;
-
-
-                    //var horizontalRate = view.ViewportWidth / image.ActualWidth;
-                    //var verticalRate = view.ViewportHeight / image.ActualHeight;
-
 
                     var newScale = GetFitOrFillScale(this.IsFill);
                     var originalScale = this.originalScale;
@@ -1536,7 +1324,6 @@ namespace ShibugakiViewer.Views.Controls
                     {
                         if (oldScale > 0.99 * originalScale && oldScale < 1.01 * originalScale)
                         {
-                            //this.IsChanging = false;
                             return false;
                         }
                         newScale = originalScale;
@@ -1544,27 +1331,13 @@ namespace ShibugakiViewer.Views.Controls
 
                     var rate = oldScale / newScale;
 
-                    //if (oldScale != newScale)
-                    {
-                        //this.imageFitFlag = false;
-
-
-                        this.ZoomImage(null, null, newScale, disableAnimation ? 0.0 : normalZoomTime, true, true);
-                        //view.ChangeView(null, null, newScale, disableAnimation);
-
-                        //this.IsChanging = false;
-                        return true;
-                    }
+                    this.ZoomImage(null, null, newScale, disableAnimation ? 0.0 : normalZoomTime, true, true);
+                    return true;
                 }
             }
             return false;
         }
 
-        //public void ChangeView(double? horizontalOffset, double? verticalOffset,
-        //    double? zoomFactor)
-        //{
-        //    this.ChangeView(horizontalOffset, verticalOffset, zoomFactor);
-        //}
 
         public void StartAutoScaling(double? x, double? y)
         {
@@ -1712,8 +1485,7 @@ namespace ShibugakiViewer.Views.Controls
 
         private void Rotate(int desiredAngle)
         {
-            var currentAngle = this.rotateTransform.Angle;// % 360;
-            //desiredAngle = desiredAngle % 360;
+            var currentAngle = this.rotateTransform.Angle;
 
             while (currentAngle < 0)
             {
@@ -1761,23 +1533,10 @@ namespace ShibugakiViewer.Views.Controls
             var zoom = this.ZoomFactor;
 
             var oldHo = this.ScrollViewer.HorizontalOffset;
-            if (imageGrid.ActualWidth < ScrollViewer.ActualWidth)
-            {
-                //oldHo -= (ScrollViewer.ActualWidth - imageGrid.ActualWidth) / 2.0;
-            }
-
             var newHo = oldHo + zoom * (width - imageGrid.ActualWidth) / 2.0;
 
             var oldVo = this.ScrollViewer.VerticalOffset;
-            if (imageGrid.ActualHeight < ScrollViewer.ActualHeight)
-            {
-                //oldVo -= (ScrollViewer.ActualHeight - imageGrid.ActualHeight) / 2.0;
-            }
-
             var newVo = oldVo + zoom * (height - imageGrid.ActualHeight) / 2.0;
-
-            //this.OuterHeight = height;
-            //this.OuterWidth = width;
 
             this.ChangeView(newHo, newVo, null);
         }
@@ -1846,7 +1605,7 @@ namespace ShibugakiViewer.Views.Controls
         private void RefreshScale()
         {
             var zoom = this.ZoomFactor;
-            if (zoom <= 0)// || zoom > maxZoomFactor)
+            if (zoom <= 0)
             {
                 return;
             }
@@ -1877,31 +1636,12 @@ namespace ShibugakiViewer.Views.Controls
             this.rotateTransform.Angle = 0;
 
             this.ZoomFactor = this.originalScale;
-
-
-            ClearAnimator();
-            //this.animationImage.Visibility = Visibility.Collapsed;
-
-
         }
 
 
 
         private void scrollImageViewer_Unloaded(object sender, RoutedEventArgs e)
         {
-            //ClearAnimator();
-            //this.DataContext = null;
-        }
-
-        private void ClearAnimator()
-        {
-            /*
-            var animator = XamlAnimatedGif.AnimationBehavior.GetAnimator(this.animationImage);
-            animator?.Dispose();
-
-            XamlAnimatedGif.AnimationBehavior.SetSourceUri(this.animationImage, null);
-            XamlAnimatedGif.AnimationBehavior.SetSourceStream(this.animationImage, null);
-            */
         }
 
 
@@ -1914,7 +1654,6 @@ namespace ShibugakiViewer.Views.Controls
 
         public void Dispose()
         {
-            ClearAnimator();
             this.DataContext = null;
             this.dispsables.Dispose();
         }
@@ -1984,17 +1723,6 @@ namespace ShibugakiViewer.Views.Controls
                 }
             }
         }
-
-        //private void imageGrid_ManipulationDelta(object sender, ManipulationDeltaEventArgs e)
-        //{
-        //    var scale = Math.Max(e.DeltaManipulation.Scale.X, e.DeltaManipulation.Scale.Y);
-        //
-        //    if (scale != 0)
-        //    {
-        //        this.ZoomImage(null, null, this.ZoomFactor * scale, 0, false);
-        //    }
-        //
-        //}
     }
 
 

@@ -322,7 +322,7 @@
 
 
                             <Border>
-                                <TextBlock Text="{StaticResource SearchLabel}"/>
+                                <TextBlock Text="{x:Static properties:Resources.SearchLabel}"/>
                             </Border>
                             <Border Grid.Column="1">
                                 <TextBlock Text="Ctrl + &quot;F&quot;"/>

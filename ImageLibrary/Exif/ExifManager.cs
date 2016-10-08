@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Database.Table;
-using System.Collections.Concurrent;
-using System.Collections.Specialized;
-using System.Diagnostics;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Boredbone.Utility.Extensions;
@@ -18,6 +14,9 @@ using ExifLib;
 
 namespace ImageLibrary.Exif
 {
+    /// <summary>
+    /// Exif情報の管理
+    /// </summary>
     public class ExifManager : DisposableBase
     {
 
@@ -136,7 +135,11 @@ namespace ImageLibrary.Exif
         }
         
 
-
+        /// <summary>
+        /// 指定パスのファイルからExif情報を取得
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public ExifInformation LoadExif(string path)
         {
 
@@ -187,6 +190,7 @@ namespace ImageLibrary.Exif
                 return new ExifInformation();
             }
         }
+
         private string RenderTag(object tagValue)
         {
             // Arrays don't render well without assistance.
@@ -203,81 +207,16 @@ namespace ImageLibrary.Exif
             return tagValue.ToString();
         }
 
+        /// <summary>
+        /// 利用できるすべてのExif情報を可視化
+        /// </summary>
+        /// <param name="value"></param>
         public void EnableAll(bool value)
         {
             foreach(var item in this.tagVisibilityList)
             {
                 item.IsEnabled = value;
             }
-        }
-    }
-
-    public class ExifVisibilityItem : INotifyPropertyChanged, IRecord<int>, ITrackable
-    {
-        [RecordMember]
-        public int Id
-        {
-            get { return _fieldId; }
-            set
-            {
-                if (_fieldId != value)
-                {
-                    _fieldId = value;
-                    RaisePropertyChanged(nameof(Id));
-                }
-            }
-        }
-        private int _fieldId;
-
-        [RecordMember]
-        public bool IsEnabled
-        {
-            get { return _fieldIsEnabled; }
-            set
-            {
-                if (_fieldIsEnabled != value)
-                {
-                    _fieldIsEnabled = value;
-                    if (this.Manager != null)
-                    {
-                        Manager.VisibleItemsCount += value ? 1 : -1;
-                    }
-                    RaisePropertyChanged(nameof(IsEnabled));
-                }
-            }
-        }
-        private bool _fieldIsEnabled;
-
-        public string Name { get; set; }
-
-
-        public bool IsLoaded { get; set; } = false;
-
-        internal ExifManager Manager { get; set; }
-
-
-        public ExifVisibilityItem()
-        {
-        }
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void RaisePropertyChanged(string propertyName)
-            => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-    }
-
-    public class ExifInformation
-    {
-        public ObservableCollection<KeyValuePair<ExifVisibilityItem, string>> Items { get; }
-
-        public ExifInformation(IEnumerable<KeyValuePair<ExifVisibilityItem, string>> items)
-        {
-            this.Items = new ObservableCollection<KeyValuePair<ExifVisibilityItem, string>>(items);
-        }
-        public ExifInformation()
-        {
-            this.Items = new ObservableCollection<KeyValuePair<ExifVisibilityItem, string>>();
         }
     }
 }

@@ -70,6 +70,7 @@
       <HintPath>..\packages\System.Data.SQLite.Linq.1.0.103\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Interactive, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Interactive.3.0.0\lib\net45\System.Interactive.dll</HintPath>
       <Private>True</Private>
@@ -111,7 +112,9 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="DatabaseTest.cs" />
     <Compile Include="FolderContainerDummy.cs" />
+    <Compile Include="GraphicTest.cs" />
     <Compile Include="LibraryTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

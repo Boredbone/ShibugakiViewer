@@ -12,8 +12,9 @@ using ImageLibrary.File;
 
 namespace ImageLibrary.Search
 {
-
-
+    /// <summary>
+    /// 検索設定
+    /// </summary>
     [DataContract]
     public class SearchInformation : INotifyPropertyChanged, ISearchCriteria
     {

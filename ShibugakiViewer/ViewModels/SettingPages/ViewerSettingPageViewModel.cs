@@ -11,8 +11,6 @@ using Boredbone.Utility.Extensions;
 using Boredbone.Utility.Notification;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
-using ShibugakiViewer.Models;
-using ShibugakiViewer.Views.Windows;
 
 namespace ShibugakiViewer.ViewModels.SettingPages
 {
@@ -56,8 +54,7 @@ namespace ShibugakiViewer.ViewModels.SettingPages
         {
             var core = ((App)Application.Current).Core;
             var library = core.Library;
-
-            //this.Text = new ReactiveProperty<string>().AddTo(this.Disposables);
+            
 
             this.ThumbnailSize = core
                 .ToReactivePropertyAsSynchronized(x => x.ThumbNailSize, ignoreValidationErrorValue: true)
@@ -145,13 +142,7 @@ namespace ShibugakiViewer.ViewModels.SettingPages
             this.ScalingMode = core
                 .ToReactivePropertyAsSynchronized(x => x.ScalingMode)
                 .AddTo(this.Disposables);
-
-            //this.GenerateNewClientCommand = new ReactiveCommand()
-            //    .WithSubscribe(_ => core.ShowNewClient(null), this.Disposables);
-            //
-            //this.ConvertCommand = new ReactiveCommand()
-            //    .WithSubscribe(_ => this.Convert(core).FireAndForget(), this.Disposables);
+            
         }
-
     }
 }

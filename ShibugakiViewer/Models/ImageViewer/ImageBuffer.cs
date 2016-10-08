@@ -698,7 +698,6 @@ namespace ShibugakiViewer.Models.ImageViewer
             }
             dictionary.AddOrUpdate(key, value,
                 (oldkey, oldvalue) => (oldvalue.Quality <= value.Quality) ? value : oldvalue);
-            //dictionary.AddOrReplace(key, value);
         }
 
     }

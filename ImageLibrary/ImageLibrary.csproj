@@ -110,7 +110,9 @@
     <Compile Include="Creation\FileSystem.cs" />
     <Compile Include="Creation\IFolderContainer.cs" />
     <Compile Include="Creation\ImageFileInformation.cs" />
-    <Compile Include="Exif\ExifVisibility.cs" />
+    <Compile Include="Exif\ExifInformation.cs" />
+    <Compile Include="Exif\ExifManager.cs" />
+    <Compile Include="Exif\ExifVisibilityItem.cs" />
     <Compile Include="File\SequenceNumber.cs" />
     <Compile Include="File\SortHelper.cs" />
     <Compile Include="SearchProperty\FileProperty.cs" />

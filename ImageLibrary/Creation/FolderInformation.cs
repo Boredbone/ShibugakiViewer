@@ -10,6 +10,9 @@ using Database.Table;
 
 namespace ImageLibrary.Creation
 {
+    /// <summary>
+    /// 登録されたフォルダの情報
+    /// </summary>
     [DataContract]
     public class FolderInformation : INotifyPropertyChanged, IRecord<int>, ITrackable
     {

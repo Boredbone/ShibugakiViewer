@@ -25,6 +25,9 @@ using System.Threading;
 
 namespace ImageLibrary.Viewer
 {
+    /// <summary>
+    /// レコードの選択を管理
+    /// </summary>
     public class SelectionManager : NotificationBase
     {
 
@@ -447,8 +450,6 @@ namespace ImageLibrary.Viewer
 
         private int[] GetCommonTagsFromCache(KeyValuePair<string, Record>[] items)
         {
-            //var items = this.ItemsSet.ToArray();
-
             if (items.Length <= 0)
             {
                 return new int[0];
@@ -467,8 +468,6 @@ namespace ImageLibrary.Viewer
 
         private bool GetCommonRatingFromCache(KeyValuePair<string, Record>[] items, out int rating)
         {
-            //var items = this.ItemsSet.ToArray();
-
             if (items.Length <= 0)
             {
                 rating = -1;

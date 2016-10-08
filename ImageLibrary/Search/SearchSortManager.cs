@@ -5,14 +5,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 using Boredbone.Utility.Extensions;
-using ImageLibrary.Core;
-using ImageLibrary.File;
 
 namespace ImageLibrary.Search
 {
-
+    /// <summary>
+    /// 検索とソートの設定
+    /// </summary>
     public class SearchSortManager
     {
         public string AlbumName { get; set; } = "Album";
@@ -96,9 +95,9 @@ namespace ImageLibrary.Search
         {
             var key = Guid.NewGuid().ToString();
             setting.Key = key;
-            //var value = setting;//.Clone();
+
             this.SearchSettings.Add(setting.Key, setting);
-            //setting.Key = key;
+
             return setting;
         }
 
@@ -112,7 +111,7 @@ namespace ImageLibrary.Search
 
                 if (resembler.Value != null)
                 {
-                    var newitem = setting;//.Clone();
+                    var newitem = setting;
 
                     if (newitem.ThumbnailFilePath == null)
                     {
@@ -130,7 +129,7 @@ namespace ImageLibrary.Search
 
             if (existing.HasSameSearch(setting))
             {
-                var item = setting;//.Clone();
+                var item = setting;
                 this.SearchSettings[setting.Key] = item;
                 item.Key = setting.Key;
                 return item;

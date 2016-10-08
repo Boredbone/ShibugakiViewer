@@ -59,7 +59,7 @@
                             Margin="8" FontSize="{StaticResource NormalTextSize}"/>
 
                         <TextBlock Style="{StaticResource propertyName}" >
-                            <Run Text="{StaticResource FileNameLabel}"/>
+                            <Run Text="{x:Static properties:Resources.FileName}"/>
                             <Run Text=" :"/>
                         </TextBlock>
 
@@ -184,8 +184,8 @@
                     Visibility="{Binding CommonMainVisibility,ElementName=controlRoot}">
                     
                 <!-- Rating -->
-                <TextBlock Style="{StaticResource propertyName}" >
-                    <Run Text="{StaticResource RatingLabel}"/>
+                <TextBlock Style="{StaticResource propertyName}">
+                    <Run Text="{x:Static properties:Resources.Rating}"/>
                     <Run Text=" :"/>
                 </TextBlock>
                 <cc:Rating HorizontalAlignment="Left"
@@ -293,7 +293,7 @@
 
                     <!-- Width -->
                     <TextBlock Style="{StaticResource propertyName}" >
-                        <Run Text="{StaticResource WidthLabel}"/>
+                        <Run Text="{x:Static properties:Resources.Width}"/>
                         <Run Text=" :"/>
                     </TextBlock>
                     <TextBlock Text="{Binding Width}"
@@ -301,7 +301,7 @@
 
                     <!-- Height -->
                     <TextBlock Style="{StaticResource propertyName}" >
-                        <Run Text="{StaticResource HeightLabel}"/>
+                        <Run Text="{x:Static properties:Resources.Height}"/>
                         <Run Text=" :"/>
                     </TextBlock>
                     <TextBlock Text="{Binding Height}"
@@ -309,7 +309,7 @@
 
                     <!-- Size -->
                     <TextBlock Style="{StaticResource propertyName}" >
-                        <Run Text="{StaticResource FileSizeLabel}"/>
+                        <Run Text="{x:Static properties:Resources.FileSize}"/>
                         <Run Text=" :"/>
                     </TextBlock>
                     <TextBlock Style="{StaticResource propertyValue}" >
@@ -322,14 +322,14 @@
 
                     <!-- Date -->
                     <TextBlock Style="{StaticResource propertyName}" >
-                        <Run Text="{StaticResource DateCreatedLabel}"/>
+                        <Run Text="{x:Static properties:Resources.DateCreated}"/>
                         <Run Text=" :"/>
                     </TextBlock>
                     <TextBlock Text="{Binding DateCreated, StringFormat={}{0:G}}"
                                        Style="{StaticResource propertyValue}" />
 
                     <TextBlock Style="{StaticResource propertyName}" >
-                        <Run Text="{StaticResource DateModifiedLabel}"/>
+                        <Run Text="{x:Static properties:Resources.DateModified}"/>
                         <Run Text=" :"/>
                     </TextBlock>
 

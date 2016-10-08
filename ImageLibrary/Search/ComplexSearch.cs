@@ -13,6 +13,9 @@ using ImageLibrary.SearchProperty;
 
 namespace ImageLibrary.Search
 {
+    /// <summary>
+    /// AND,OR検索
+    /// </summary>
     [DataContract]
     public class ComplexSearch : ISqlSearch
     {

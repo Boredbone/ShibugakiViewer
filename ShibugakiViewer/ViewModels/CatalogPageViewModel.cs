@@ -127,7 +127,6 @@ namespace ShibugakiViewer.ViewModels
 
             this.IsRefreshEnabled = this.client.IsStateChanging
                 .Select(x => !x)
-                //.ObserveOnUIDispatcher()
                 .ToReadOnlyReactiveProperty()
                 .AddTo(this.Disposables);
 

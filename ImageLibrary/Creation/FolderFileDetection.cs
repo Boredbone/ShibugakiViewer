@@ -159,19 +159,6 @@ namespace ImageLibrary.Creation
                 .Where(x => !detected.Contains(x.Key))
                 .ToDictionary(x => x.Key, x => x.Value);
 
-            /*
-            this.RemovedFiles = new Dictionary<string, Record>();
-            foreach (var item in relatedFiles)
-            {
-                if (!this.AddedFiles.ContainsKey(item.Key)
-                    && !this.UpdatedFiles.ContainsKey(item.Key)
-                    && !this.SkippedFiles.Contains(item.Key)
-                    && !this.RemovedFiles.ContainsKey(item.Key))
-                {
-                    this.RemovedFiles.Add(item.Key, item.Value);
-                }
-            }*/
-
             return true;
         }
 

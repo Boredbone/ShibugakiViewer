@@ -200,8 +200,6 @@ namespace ShibugakiViewer.ViewModels
                             return 1;
                         case PageType.Viewer:
                             return 2;
-                        //case PageType.Slideshow:
-                        //    return 3;
                         default:
                             return 0;
                     }
@@ -212,18 +210,6 @@ namespace ShibugakiViewer.ViewModels
 
             this.SelectedTab.Subscribe(x =>
             {
-                //switch (x)
-                //{
-                //    case 0:
-                //        client.MoveToPage(PageType.Search);
-                //        break;
-                //    case 1:
-                //        client.MoveToPage(PageType.Catalog);
-                //        break;
-                //    case 2:
-                //        client.MoveToPage(PageType.Viewer);
-                //        break;
-                //}
                 if (this.IsPaneOpen.Value)
                 {
                     if (this.IsPaneFixed.Value)
@@ -454,10 +440,6 @@ namespace ShibugakiViewer.ViewModels
                     }
 
                     this.ShowInformationPane();
-
-                    //this.IsPaneOpen.Value = true;
-
-
                 }
                 else if (x.OldItem > 0 && x.NewItem > 0
                     && (this.FrameWidth.Value > wideWindowWidth || this.IsPaneOpen.Value))
@@ -472,8 +454,6 @@ namespace ShibugakiViewer.ViewModels
                     {
                         this.PaneDisplayMode.Value = this.prevPaneMode;
                     }
-
-                    //this.SelectedInformationPage.Value = this.prevPaneSelected;
 
                     this.ShowInformationPane();
 
@@ -567,13 +547,7 @@ namespace ShibugakiViewer.ViewModels
                         client.Forward();
                     }
                 }, this.Disposables);
-
-            ////ファイル削除ダイアログ
-            //client.FileDeleteFunction = x =>
-            //{
-            //    var handle = new WindowInteropHelper(this.View).Handle;
-            //    return Boredbone.Utility.Tools.ShellFileOperation.DeleteFiles(true, handle, x);
-            //};
+            
 
             //Keyboard
             this.RegisterKeyReceiver(client);
@@ -581,7 +555,6 @@ namespace ShibugakiViewer.ViewModels
             this.Catalog = new CatalogPageViewModel(this).AddTo(this.Disposables);
             this.Viewer = new ViewerPageViewModel(this).AddTo(this.Disposables);
             this.Search = new SearchPageViewModel(this).AddTo(this.Disposables);
-            //this.Slideshow = new SlideshowPageViewModel(this).AddTo(this.Disposables);
         }
 
 
