@@ -71,3 +71,6 @@ Animated GIF is supported.
 Vector image formats(`".wmf", ".emf"`) can be enlarged while maintaining the quality.
 
 
+---
+[Project Home](https://boredbone.github.io/ShibugakiViewer/)
+

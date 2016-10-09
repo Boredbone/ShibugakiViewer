@@ -69,4 +69,7 @@ GIFアニメーションの再生が可能です。
   
 ベクタ形式画像(`".wmf", ".emf"`)を、品質を保ったまま拡大して表示することができます。
 
+---
+[Project Home](https://boredbone.github.io/ShibugakiViewer/index_ja.html)
+
 
