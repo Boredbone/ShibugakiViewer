@@ -25,14 +25,5 @@ namespace ShibugakiViewer.Views.Pages
         {
             InitializeComponent();
         }
-
-        private void pageRoot_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            var vm = e.NewValue as SearchPageViewModel;
-            if (vm != null)
-            {
-                vm.View = Window.GetWindow(this);
-            }
-        }
     }
 }

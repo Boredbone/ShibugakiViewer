@@ -51,19 +51,15 @@ namespace ShibugakiViewer.ViewModels
         public ReactiveProperty<TabMode> SelectedTab { get; }
         public ReadOnlyReactiveProperty<int> CurrentSearchType { get; }
         public ReadOnlyReactiveProperty<bool> IsFavoriteSearch { get; }
-        
-        public Window View { get; set; }
-        
+                
         private readonly ClientWindowViewModel parent;
-        private readonly Client client;
-        private readonly Library library;
 
 
         public SearchPageViewModel(ClientWindowViewModel parent)
         {
             this.parent = parent;
-            this.client = parent.Client;
-            this.library = parent.Library;
+            var client = parent.Client;
+            var library = parent.Library;
             var core = parent.Core;
 
             var searcher = library.Searcher;

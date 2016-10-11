@@ -45,13 +45,14 @@ namespace ShibugakiViewer.ViewModels.Controls
         public ReactiveProperty<int> EqualitySelectedIndex { get; private set; }
         public ReactiveProperty<Visibility> EqualityListVisibility { get; private set; }
 
-        public List<KeyValuePair<int, TagInformation>> RegisteredTags
-        {
-            get
-            {
-                return LibraryOwner.GetCurrent().Tags.GetAll().ToList();
-            }
-        }
+        private Lazy<ObservableCollection<KeyValuePair<int, TagInformation>>> registeredTags
+            = new Lazy<ObservableCollection<KeyValuePair<int, TagInformation>>>
+            (() => new ObservableCollection<KeyValuePair<int, TagInformation>>
+            (LibraryOwner.GetCurrent().Tags.GetAll()));
+
+        public ObservableCollection<KeyValuePair<int, TagInformation>> RegisteredTags
+            => this.registeredTags.Value;
+        
         public ReactiveProperty<Visibility> TagListVisibility { get; private set; }
         public ReactiveProperty<int> TagListSelectedIndex { get; private set; }
         public string TagComboBoxDefault { get; private set; }
@@ -70,14 +71,9 @@ namespace ShibugakiViewer.ViewModels.Controls
         public ReactiveProperty<Visibility> DateVisibility { get; private set; }
 
         private bool isSVO;
-        //public Visibility SVOVisibility
-        //{
-        //    get { return isSVO ? Visibility.Visible : Visibility.Collapsed; }
-        //}
         public Visibility SOVVisibility
-        {
-            get { return !isSVO ? Visibility.Visible : Visibility.Collapsed; }
-        }
+            => !this.isSVO ? Visibility.Visible : Visibility.Collapsed;
+        
 
         public string BelowRefString { get; private set; }
         public string IsVString { get; private set; }

@@ -22,7 +22,7 @@ namespace ShibugakiViewer.Views.Pages
     /// </summary>
     public partial class CatalogPage : UserControl, IDisposable
     {
-        private CompositeDisposable disposables = new CompositeDisposable();
+        private readonly CompositeDisposable disposables = new CompositeDisposable();
 
         public CatalogPage()
         {

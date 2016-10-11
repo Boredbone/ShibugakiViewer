@@ -14,7 +14,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Reactive.Bindings.Extensions;
-using ShibugakiViewer.ViewModels;
 
 namespace ShibugakiViewer.Views.Pages
 {
@@ -23,16 +22,12 @@ namespace ShibugakiViewer.Views.Pages
     /// </summary>
     public partial class ViewerPage : UserControl, IDisposable
     {
-        private CompositeDisposable disposables;
+        private readonly CompositeDisposable disposables = new CompositeDisposable();
 
         public ViewerPage()
         {
             InitializeComponent();
-
-            this.disposables = new CompositeDisposable();
-
             this.scrollImageViewer.AddTo(this.disposables);
-
         }
 
         public void Dispose()

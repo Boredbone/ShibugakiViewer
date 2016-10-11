@@ -59,7 +59,6 @@ namespace ShibugakiViewer.Views.Windows
             var vm = e.NewValue as ClientWindowViewModel;
             if (vm != null)
             {
-                vm.View = this;
                 vm.PopupOwner = this;
             }
         }

@@ -141,8 +141,7 @@ namespace ShibugakiViewer.ViewModels
         public ReadOnlyReactiveProperty<bool> IsExifEnabled { get; }
 
         public KeyReceiver<object> KeyReceiver { get; }
-
-        public Window View { get; set; }
+        
         public IPopupDialogOwner PopupOwner { get; set; }
 
         public Client Client { get; }

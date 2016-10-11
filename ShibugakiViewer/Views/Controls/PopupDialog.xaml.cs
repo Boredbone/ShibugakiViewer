@@ -222,33 +222,7 @@ namespace ShibugakiViewer.Views.Controls
         }
 
         #endregion
-
-        /*
-        #region MaskBrush
-
-        public Brush MaskBrush
-        {
-            get { return (Brush)GetValue(MaskBrushProperty); }
-            set { SetValue(MaskBrushProperty, value); }
-        }
-
-        public static readonly DependencyProperty MaskBrushProperty =
-            DependencyProperty.Register(nameof(MaskBrush), typeof(Brush), typeof(PopupDialog),
-            new PropertyMetadata(new SolidColorBrush(Colors.Transparent),
-                new PropertyChangedCallback(OnMaskBrushChanged)));
-
-        private static void OnMaskBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var thisInstance = d as PopupDialog;
-            var value = e.NewValue as Brush;
-
-            if (thisInstance != null && value != null)
-            {
-                thisInstance.rootGrid.Background = value;
-            }
-        }
-
-        #endregion*/
+        
 
         #region IsMasked
 
@@ -275,40 +249,7 @@ namespace ShibugakiViewer.Views.Controls
 
         #endregion
 
-
-
-
-        /*
-        #region IsLightMode
-
-        public bool IsLightMode
-        {
-            get { return (bool)GetValue(IsLightModeProperty); }
-            set { SetValue(IsLightModeProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsLightModeProperty =
-            DependencyProperty.Register(nameof(IsLightMode), typeof(bool), typeof(PopupDialog),
-            new PropertyMetadata(false, new PropertyChangedCallback(OnIsLightModeChanged)));
-
-        private static void OnIsLightModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var thisInstance = d as PopupDialog;
-            var value = e.NewValue as bool?;
-
-            if (thisInstance != null && value.HasValue)
-            {
-                thisInstance.rootGrid.Background = value.Value
-                    ? new SolidColorBrush(Colors.Transparent)
-                    : new SolidColorBrush(Color.FromArgb(0x40, 0, 0, 0));
-            }
-
-        }
-
-        #endregion
-        */
-
-
+        
 
 
 
@@ -584,11 +525,5 @@ namespace ShibugakiViewer.Views.Controls
     public interface IPopupDialogOwner
     {
         PopupDialog PopupDialog { get; }
-
-        //void OpenPopup(FrameworkElement content, Thickness position,
-        //    HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment,
-        //    FrameworkElement dock = null, bool isMaskVisible = true);
-        //
-        //void ClosePopup();
     }
 }

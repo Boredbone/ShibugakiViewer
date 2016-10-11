@@ -15,12 +15,11 @@
              xmlns:properties="clr-namespace:ShibugakiViewer.Properties"
              xmlns:converter="clr-namespace:ShibugakiViewer.Views.Converters"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" DataContextChanged="pageRoot_DataContextChanged">
+             d:DesignHeight="300" d:DesignWidth="300">
 
     <UserControl.Resources>
         <converter:SearchPageTabConverter x:Key="SearchPageTabConverter" />
         <converter:ZeroToVisibleConverter x:Key="ZeroToVisibleConverter" />
-        <!--<ResourceDictionary Source="/ShibugakiViewer;component/Views/Resources/Dictionary.xaml"/>-->
     </UserControl.Resources>
     <Grid>
         <Grid.Resources>
@@ -50,8 +49,6 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-
-        <!--BorderThickness="1" BorderBrush="Gray"-->
         <Border Grid.Column="0"
                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid Grid.Column="0"
@@ -158,32 +155,13 @@
                                 NameVisibility="Visible"/>
                         </Border>
                     </TabItem>
-                    <!--
-                    <TabItem Header="New" Style="{StaticResource tabItemStyle}"
-                     Background="{StaticResource TabColor2}">
-
-                <Border Background="{StaticResource TabColor2}"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Top"
-                        Height="64"/>
-            </TabItem>-->
                 </TabControl>
 
             </Grid>
         </Border>
 
-        <!--
-        <Button Content="New"
-                Grid.Column="0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                Command="{Binding NewSearchCommand}"/>-->
-
 
         <Grid Grid.Column="1">
-
-
-            <!--<Grid Grid.Row="0" DataContext="{Binding CurrentSearch.Value,Mode=OneWay}">-->
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -292,7 +270,6 @@
                         x:Name="togglePanel" Grid.Column="0"
                         Orientation="Horizontal" Margin="0"
                         behaviors:ManipulationCommandBehavior.MouseUpCommand="{Binding SwitchModeCommand}">
-                        <!--PointerReleased="{x:Bind ViewModel.CurrentSearch.Value.Root.ToggleMode}"-->
 
                         <i:Interaction.Behaviors>
                             <behaviors:HoverGridBehavior
@@ -376,14 +353,6 @@
                       ItemsSource="{Binding CurrentSearch.Value.Root.Children}"
                       VirtualizingPanel.ScrollUnit="Pixel"
                       Background="Transparent">
-                <!--
-                    <TreeView.Resources>
-                    </TreeView.Resources>
-                    <TreeView.ItemContainerStyle>
-                        <Style TargetType="{x:Type TreeViewItem}">
-                            <Setter Property="IsExpanded" Value="True"/>
-                        </Style>
-                    </TreeView.ItemContainerStyle>-->
                 <TreeView.ItemTemplate>
                     <HierarchicalDataTemplate
                             DataType="search:ISqlSearch" 
@@ -391,19 +360,6 @@
                         <control:SearchCriteriaControl
                             ItemClickCommand="{Binding Path=DataContext.ItemClickCommand,
                             ElementName=pageRoot}"/>
-                        <!--
-                            <Grid>
-
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="MouseUp">
-                                        <i:InvokeCommandAction 
-                                        Command="{Binding ElementName=pageRoot, Path=DataContext.ItemClickCommand}" 
-                                        CommandParameter="{Binding}"/>
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                                
-                                <TextBlock Text="{Binding}" />
-                            </Grid>-->
                     </HierarchicalDataTemplate>
                 </TreeView.ItemTemplate>
             </TreeView>
