@@ -53,7 +53,9 @@
                   AutoGenerateColumns="False"
                   SelectedIndex="-1"
                   ScrollViewer.CanContentScroll="True"
-                  VirtualizingPanel.IsVirtualizingWhenGrouping="True">
+                  VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                  VirtualizingStackPanel.IsVirtualizing="True"
+                  VirtualizingStackPanel.VirtualizationMode="Standard">
             <DataGrid.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.ContainerStyle>
