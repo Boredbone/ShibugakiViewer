@@ -19,12 +19,14 @@ EXITAPP_API int fnExitApp(void)
 			auto hPipe = CreateFile(TEXT(pipeName.c_str()),
 				GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
 
-			if (hPipe != INVALID_HANDLE_VALUE)
+			if (hPipe == INVALID_HANDLE_VALUE)
 			{
-				WriteFile(hPipe, szData, sizeof(szData), &dwResult, NULL);
-				CloseHandle(hPipe);
+				break;
 			}
-
+			
+			WriteFile(hPipe, szData, sizeof(szData), &dwResult, NULL);
+			CloseHandle(hPipe);
+			
 			Sleep(100);
 		}
 	}
