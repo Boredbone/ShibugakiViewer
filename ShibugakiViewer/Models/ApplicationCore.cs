@@ -280,7 +280,7 @@ namespace ShibugakiViewer.Models
 
         public Color BackgroundColor
         {
-            get { return ColorExtensions.FromCode(this.Settings.BackgroundColor); }
+            get { return ColorHelper.FromCode(this.Settings.BackgroundColor); }
             set
             {
                 var code = value.ToCode();
