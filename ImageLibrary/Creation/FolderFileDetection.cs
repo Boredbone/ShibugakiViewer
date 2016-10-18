@@ -230,14 +230,6 @@ namespace ImageLibrary.Creation
                     Size = file.Size,
                 };
 
-                if (file.Keywords != null)
-                {
-                    foreach (var tag in file.Keywords)
-                    {
-                        var bag = prospectedTags.GetOrAdd(tag, new ConcurrentBag<TagManager>());
-                        bag.Add(newItem.TagSet);
-                    }
-                }
                 
 
                 if (!itemExists || existingItem == null)
@@ -252,6 +244,15 @@ namespace ImageLibrary.Creation
                     this.UpdatedFiles[newItemId] = newItem;
 
                     Debug.WriteLine($"updated : {newItemId}");
+                }
+
+                if (file.Keywords != null)
+                {
+                    foreach (var tag in file.Keywords)
+                    {
+                        var bag = prospectedTags.GetOrAdd(tag, new ConcurrentBag<TagManager>());
+                        bag.Add(newItem.TagSet);
+                    }
                 }
             }
             else

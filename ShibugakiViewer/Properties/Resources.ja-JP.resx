@@ -923,4 +923,13 @@
   <data name="VersionCheckTitle" xml:space="preserve">
     <value>新しいバージョンがあります</value>
   </data>
+  <data name="CheckFileShellInformationLabel1" xml:space="preserve">
+    <value>ファイルに付加されたタグと評価をインポート</value>
+  </data>
+  <data name="CheckFileShellInformationLabel2" xml:space="preserve">
+    <value>新しいファイルの登録時に付加されたタグと評価をインポート</value>
+  </data>
+  <data name="CheckFileShellInformationLabel3" xml:space="preserve">
+    <value>(ライブラリの更新に時間がかかります)</value>
+  </data>
 </root>

@@ -232,6 +232,33 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
+        ///   Import tags and the rating owned by the file に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string CheckFileShellInformationLabel1 {
+            get {
+                return ResourceManager.GetString("CheckFileShellInformationLabel1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Import tags and the rating owned by the new file when registered に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string CheckFileShellInformationLabel2 {
+            get {
+                return ResourceManager.GetString("CheckFileShellInformationLabel2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   (It makes library updating slower) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string CheckFileShellInformationLabel3 {
+            get {
+                return ResourceManager.GetString("CheckFileShellInformationLabel3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Clear Selection に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ClearSelectionButton_Label {

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Boredbone.Utility.Tools;
+using ImageLibrary.SearchProperty;
 using Shell32;
 
 namespace ImageLibrary.Creation
@@ -183,14 +184,15 @@ namespace ImageLibrary.Creation
                     }
 
                     rating = 0;
-                    var rateArray = fileAccesser.GetDetailsOf(19)?
+                    var rateText = fileAccesser.GetDetailsOf(19);
+                    var rateArray = rateText?
                         .Select(x => x - '0')
-                        .Where(x => x > 0 && x < 5)
+                        .Where(x => x > 0 && x <= 5)
                         .ToArray();
 
                     if (rateArray != null && rateArray.Length == 1)
                     {
-                        rating = rateArray[0];
+                        rating = RateConvertingHelper.Reverse(rateArray[0]);
                     }
                 }
                 catch

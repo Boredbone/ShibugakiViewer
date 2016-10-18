@@ -404,7 +404,7 @@ namespace ImageLibrary.Creation
         private void MarkAsUpdated
             (KeyValuePair<string, Record> oldFile, KeyValuePair<string, Record> newFile)
         {
-            newFile.Value.CopyAdditionalInformation(newFile.Value);
+            newFile.Value.CopyAdditionalInformation(oldFile.Value);
 
             this.removedFilesResult.Remove(oldFile.Key);
             this.addedFilesResult.Remove(newFile.Key);

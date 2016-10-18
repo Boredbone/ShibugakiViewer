@@ -35,6 +35,7 @@ namespace ShibugakiViewer.ViewModels.SettingPages
         public ReactiveProperty<bool> IsLibraryRefreshStatusVisible { get; }
         public ReactiveProperty<bool> IsFolderUpdatedNotificationVisible { get; }
         public ReactiveProperty<bool> IsViewerMoveButtonDisabled { get; }
+        public ReactiveProperty<bool> IsCheckFileShellInformation { get; }
 
         public ReactiveProperty<bool> IsFill { get; }
         public ReactiveProperty<bool> IsResizingAlways { get; }
@@ -122,6 +123,10 @@ namespace ShibugakiViewer.ViewModels.SettingPages
 
             this.UseLogicalPixel = core
                 .ToReactivePropertyAsSynchronized(x => x.UseLogicalPixel)
+                .AddTo(this.Disposables);
+
+            this.IsCheckFileShellInformation = library
+                .ToReactivePropertyAsSynchronized(x => x.CheckFileShellInformation)
                 .AddTo(this.Disposables);
 
 

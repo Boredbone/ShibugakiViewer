@@ -74,6 +74,16 @@
                             <LineBreak/>
                             <Run Text="{x:Static properties:Resources.TutorialText2_Text}"/>
                         </TextBlock>
+                        
+                        <CheckBox 
+                            HorizontalAlignment="Center" Margin="4,8"
+                            IsChecked="{Binding IsCheckFileShellInformation.Value,Mode=TwoWay}">
+                            <TextBlock TextWrapping="Wrap">
+                                <Run Text="{x:Static properties:Resources.CheckFileShellInformationLabel1}"/>
+                                <LineBreak/>
+                                <Run Text="{x:Static properties:Resources.CheckFileShellInformationLabel3}"/>
+                            </TextBlock>
+                        </CheckBox>
 
                         <Grid Height="56" Margin="8" Width="250">
                             <cc:FlatButton

@@ -921,4 +921,13 @@
   <data name="VersionCheckTitle" xml:space="preserve">
     <value>New Version Available</value>
   </data>
+  <data name="CheckFileShellInformationLabel1" xml:space="preserve">
+    <value>Import tags and the rating owned by the file</value>
+  </data>
+  <data name="CheckFileShellInformationLabel2" xml:space="preserve">
+    <value>Import tags and the rating owned by the new file when registered</value>
+  </data>
+  <data name="CheckFileShellInformationLabel3" xml:space="preserve">
+    <value>(It makes library updating slower)</value>
+  </data>
 </root>

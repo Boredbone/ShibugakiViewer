@@ -20,6 +20,7 @@ namespace ShibugakiViewer.ViewModels
         private Subject<bool> ExitSubject { get; }
         public IObservable<bool> Exit => this.ExitSubject.AsObservable();
 
+        public ReactiveProperty<bool> IsCheckFileShellInformation { get; }
 
         public ReactiveProperty<int> SelectedTab { get; }
 
@@ -35,6 +36,10 @@ namespace ShibugakiViewer.ViewModels
             var library = core.Library;
 
             this.ExitSubject = new Subject<bool>().AddTo(this.Disposables);
+
+            this.IsCheckFileShellInformation = library
+                .ToReactivePropertyAsSynchronized(x => x.CheckFileShellInformation)
+                .AddTo(this.Disposables);
 
             var oldConvertable = core.IsOldConvertable();
 

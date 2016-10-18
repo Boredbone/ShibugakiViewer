@@ -633,10 +633,14 @@ namespace ImageLibrary.File
         public void CopyAdditionalInformation(Record source)
         {
             this.DateRegistered = source.DateRegistered;
+            this.GroupKey = source.GroupKey;
+
             this.TagEntry = source.TagEntry;
 
-            this.Rating = source.Rating;
-            this.GroupKey = source.GroupKey;
+            if (this.Rating == 0)
+            {
+                this.Rating = source.Rating;
+            }
 
             this.SortEntry = source.SortEntry;
             this.FlipDirection = source.FlipDirection;
