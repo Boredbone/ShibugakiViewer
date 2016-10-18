@@ -16,7 +16,17 @@ namespace ShibugakiViewer.Views.Converters
 
     public class PathContainer
     {
+#if DEBUG
+        private const string backSlash = "\u29F5";//"\u2216";//
+        public string Name
+        {
+            get { return this.name.Replace("\\", backSlash); }
+            set { this.name = value; }
+        }
+        private string name;
+#else
         public string Name { get; set; }
+#endif
         public string FullPath { get; set; }
     }
 
