@@ -92,6 +92,7 @@ namespace ImageLibrary.Creation
         public ImageFileInformation GetImage(string fullPath, PropertiesLevel level)
         {
             ImageFileInformation image = null;
+            var hasDecoration = true;
 
             try
             {
@@ -113,6 +114,14 @@ namespace ImageLibrary.Creation
                     length = graphicInfo.FileSize;
                     isUnknownType = graphicInfo.Type == GraphicFileType.Unknown;
 
+                    //タグ・評価を付加できないファイルの場合は情報読み取りをスキップ
+                    if (graphicInfo.Type != GraphicFileType.Jpeg
+                        && graphicInfo.Type != GraphicFileType.Tiff
+                        && graphicInfo.Type != GraphicFileType.Psd
+                        && graphicInfo.Type != GraphicFileType.Unknown)
+                    {
+                        hasDecoration = false;
+                    }
                 }
 
                 var creationTime = defaultDateTime;
@@ -148,7 +157,7 @@ namespace ImageLibrary.Creation
                     Keywords = null,
                     IsNotFound = isUnknownType,
                 };
-                
+
             }
             catch
             {
@@ -166,7 +175,7 @@ namespace ImageLibrary.Creation
             HashSet<string> tags = null;
 
             //画像の評価・キーワード(時間かかる)
-            if (level >= PropertiesLevel.Shell)
+            if (level >= PropertiesLevel.Shell && hasDecoration)
             {
                 try
                 {
