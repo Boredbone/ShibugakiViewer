@@ -1,5 +1,9 @@
 # Release Notes
 
+
+## Version 1.3.1 (2016/10/24)
+- Fix a bug in folder registration
+
 ## Version 1.3.0 (2016/10/22)
 - Import tags and the rating owned by the new file when registered
 - Improve the behavior when a file is moved
