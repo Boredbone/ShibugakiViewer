@@ -21,7 +21,7 @@ namespace ImageLibrary.Creation
         public int Id
         {
             get { return _fieldId; }
-            private set
+            set
             {
                 if (_fieldId != value)
                 {

@@ -35,6 +35,7 @@ namespace ImageLibrary.Creation
         private Subject<FolderUpdatedEventArgs> FolderUpdatedSubject { get; }
         public IObservable<FolderUpdatedEventArgs> FolderUpdated => this.FolderUpdatedSubject.AsObservable();
 
+        private int maxId = -1;
 
         public FolderDictionary()
         {
@@ -68,6 +69,8 @@ namespace ImageLibrary.Creation
             }
 
             this.Folders.ForEach(x => this.SubscribeFolderUpdate(x));
+
+            this.maxId = this.Folders.Select(x => x.Id).Append(0).Max();
         }
 
 
@@ -89,6 +92,8 @@ namespace ImageLibrary.Creation
         public void Add(FolderInformation item)
         {
             this.Folders.Add(item);
+
+            item.Id = ++this.maxId;
 
             this.SubscribeFolderUpdate(item);
 

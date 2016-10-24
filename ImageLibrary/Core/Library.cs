@@ -76,14 +76,14 @@ namespace ImageLibrary.Core
         private DatabaseFront Database { get; }
 
         private TypedTable<Record, string> Records { get; }
-        private TypedTable<TagInformation, int> TagDatabase { get; }
-        private TypedTable<FolderInformation, int> FolderDatabase { get; }
-        private TypedTable<ExifVisibilityItem, int> ExifVisibilityDatabase { get; }
+        private AutoTrackingTable<TagInformation, int> TagDatabase { get; }
+        private AutoTrackingTable<FolderInformation, int> FolderDatabase { get; }
+        private AutoTrackingTable<ExifVisibilityItem, int> ExifVisibilityDatabase { get; }
 
         private Tracker<Record, string> RecordTracker { get; }
-        private Tracker<TagInformation, int> TagTracker { get; }
-        private Tracker<FolderInformation, int> FolderTracker { get; }
-        private Tracker<ExifVisibilityItem, int> ExifVisibilityTracker { get; }
+        //private Tracker<TagInformation, int> TagTracker { get; }
+        //private Tracker<FolderInformation, int> FolderTracker { get; }
+        //private Tracker<ExifVisibilityItem, int> ExifVisibilityTracker { get; }
 
         private LibraryCreator Creator { get; }
 
@@ -174,45 +174,27 @@ namespace ImageLibrary.Core
                 Version = databaseVersion,
             };
 
-            this.TagDatabase = new TypedTable<TagInformation, int>(this.Database, nameof(TagDatabase))
-            {
-                IsIdAuto = false,
-                Version = databaseVersion,
-            };
-
-            this.FolderDatabase = new TypedTable<FolderInformation, int>(this.Database, nameof(FolderDatabase))
-            {
-                IsIdAuto = true,
-                Version = databaseVersion,
-            };
-
-            this.ExifVisibilityDatabase = new TypedTable<ExifVisibilityItem, int>
-                (this.Database, nameof(ExifVisibilityDatabase))
-            {
-                IsIdAuto = false,
-                Version = databaseVersion,
-            };
-
             this.RecordTracker = new Tracker<Record, string>(this.Records).AddTo(this.Disposables);
-            this.TagTracker = new Tracker<TagInformation, int>(this.TagDatabase).AddTo(this.Disposables);
-            this.FolderTracker = new Tracker<FolderInformation, int>(this.FolderDatabase).AddTo(this.Disposables);
-            this.ExifVisibilityTracker = new Tracker<ExifVisibilityItem, int>(this.ExifVisibilityDatabase)
-                .AddTo(this.Disposables);
 
             this.DefineMigration();
 
+
+
             this.Tags = new TagDictionary().AddTo(this.Disposables);
-            Helper.TrackAdded(this.Tags.Added, trackIntervalTime, this.TagDatabase, this.TagTracker)
+            this.TagDatabase = new AutoTrackingTable<TagInformation, int>
+                (this.Database, nameof(TagDatabase), trackIntervalTime, this.Tags.Added, databaseVersion)
                 .AddTo(this.Disposables);
 
             this.Folders = new FolderDictionary().AddTo(this.Disposables);
-            Helper.TrackAdded(this.Folders.Added, trackIntervalTime, this.FolderDatabase, this.FolderTracker)
+            this.FolderDatabase = new AutoTrackingTable<FolderInformation, int>
+                (this.Database, nameof(FolderDatabase), trackIntervalTime, this.Folders.Added, databaseVersion)
                 .AddTo(this.Disposables);
 
             this.ExifManager = new ExifManager().AddTo(this.Disposables);
-            Helper.TrackAdded(this.ExifManager.Added, trackIntervalTime, 
-                this.ExifVisibilityDatabase, this.ExifVisibilityTracker)
+            this.ExifVisibilityDatabase = new AutoTrackingTable<ExifVisibilityItem, int>
+                (this.Database, nameof(ExifVisibilityDatabase), trackIntervalTime, this.ExifManager.Added, databaseVersion)
                 .AddTo(this.Disposables);
+            
 
             this.Folders.FileTypeFilter = this.config.FileTypeFilter;
             this.Folders.FolderUpdated.Subscribe(x => this.CheckFolderUpdateAsync(x).FireAndForget())
@@ -283,21 +265,21 @@ namespace ImageLibrary.Core
             {
                 await this.Database.InitializeAsync(connection);
 
-                tags = await this.TagDatabase.GetAllAsync(connection);
-                folders = await this.FolderDatabase.GetAllAsync(connection);
-                exifItems = await this.ExifVisibilityDatabase.GetAllAsync(connection);
+                tags = await this.TagDatabase.Table.GetAllAsync(connection);
+                folders = await this.FolderDatabase.Table.GetAllAsync(connection);
+                exifItems = await this.ExifVisibilityDatabase.Table.GetAllAsync(connection);
 
                 //loading test
                 await this.Records.AsQueryable(connection).FirstOrDefaultAsync();
             }
 
-            tags.ForEach(tag => this.TagTracker.Track(tag));
+            tags.ForEach(tag => this.TagDatabase.Tracker.Track(tag));
             this.Tags.SetSource(tags.ToDictionary(x => x.Id, x => x));
 
-            folders.ForEach(folder => this.FolderTracker.Track(folder));
+            folders.ForEach(folder => this.FolderDatabase.Tracker.Track(folder));
             this.Folders.SetSource(folders);
 
-            exifItems.ForEach(exif => this.ExifVisibilityTracker.Track(exif));
+            exifItems.ForEach(exif => this.ExifVisibilityDatabase.Tracker.Track(exif));
             this.ExifManager.SetSource(exifItems);
 
             if (folders.Length <= 0 && this.config.IsKnownFolderEnabled)
@@ -974,8 +956,8 @@ namespace ImageLibrary.Core
             using (var connection = this.Database.Connect())
             {
                 this.Records.Drop(connection);
-                this.TagDatabase.Drop(connection);
-                this.FolderDatabase.Drop(connection);
+                this.TagDatabase.Table.Drop(connection);
+                this.FolderDatabase.Table.Drop(connection);
             }
 
             await this.LoadAsync();

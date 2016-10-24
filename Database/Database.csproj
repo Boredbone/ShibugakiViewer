@@ -109,6 +109,7 @@
     <Compile Include="Search\CompareMode.cs" />
     <Compile Include="Search\DatabaseFunction.cs" />
     <Compile Include="Search\PropertySearch.cs" />
+    <Compile Include="Table\AutoTrackingTable.cs" />
     <Compile Include="Table\DatabaseFront.cs" />
     <Compile Include="Table\DatabaseUpdatedEventArgs.cs" />
     <Compile Include="Table\DisposableThreadLocal.cs" />

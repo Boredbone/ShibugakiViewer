@@ -87,7 +87,6 @@
   <ItemGroup>
     <Compile Include="Core\Grouping.cs" />
     <Compile Include="Core\GroupQuery.cs" />
-    <Compile Include="Core\Helper.cs" />
     <Compile Include="Core\IRecordQuery.cs" />
     <Compile Include="Core\ISearchCriteria.cs" />
     <Compile Include="Core\LibraryConfiguration.cs" />
