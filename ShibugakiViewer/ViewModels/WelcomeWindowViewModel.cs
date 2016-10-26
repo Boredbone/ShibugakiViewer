@@ -57,7 +57,7 @@ namespace ShibugakiViewer.ViewModels
                     }
                 }, this.Disposables);
 
-            library.Loaded.Subscribe(_ =>
+            library.Loaded.ObserveOnUIDispatcher().Subscribe(_ =>
             {
                 if (library.HasItems())
                 {

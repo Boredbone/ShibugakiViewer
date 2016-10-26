@@ -53,6 +53,7 @@
                   VirtualizingPanel.ScrollUnit="Pixel"
                   Grid.Row="1" VerticalAlignment="Stretch"
                   Loaded="list_Loaded"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                   TabIndex="0">
             <ListView.Resources>
             </ListView.Resources>
@@ -75,14 +76,12 @@
                                     Grid.Column="0">
                                 <Button.Content>
                                     <TextBlock
+                                        TextWrapping="Wrap"
                                         Style="{StaticResource tagNameButtonTextStyle}"
                                         Text="{Binding Name,Mode=OneWay}"/>
 
                                 </Button.Content>
                             </cc:FlatButton>
-                            <!--
-                                             PlaceholderText="Tag Name" x:Uid="TagNameBox"
-                                              PlaceholderText="Keyboard Shortcut" x:Uid="KeyShortcutBox"-->
 
                             <StackPanel 
                                 x:Name="editField"
@@ -109,10 +108,6 @@
                                         Text="{x:Static properties:Resources.TagNameBox_PlaceholderText}"/>
                                 </Grid>
 
-
-                                <!--<TextBlock
-                                    Text="{Binding Shortcut,Mode=OneWay}"/>-->
-
                                 <Grid Margin="10" HorizontalAlignment="Stretch">
                                     <ComboBox
                                         x:Name="shortcutComboBox"
@@ -132,11 +127,6 @@
                                         Text="{x:Static properties:Resources.KeyShortcut}"/>
 
                                 </Grid>
-                                <!--
-                                        Visibility="{Binding ElementName=shortcutComboBox,Path=SelectedItem,Mode=OneWay,Converter={StaticResource ComboBoxPlaceHolderVisibilityConverter}}"
-                                          SelectedIndex="{Binding ShortCut.Value,Mode=TwoWay}" 
-                                          DropDownClosed="ComboBox_DropDownClosed"
-                                          DropDownOpened="ComboBox_DropDownOpened"-->
                             </StackPanel>
                         </StackPanel>
                     </Border>

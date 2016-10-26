@@ -72,7 +72,7 @@ namespace ShibugakiViewer.Views.Windows
             var vm = e.NewValue as WelcomeWindowViewModel;
             if (vm != null)
             {
-                this.subscription.Disposable = vm.Exit.Subscribe(x =>
+                this.subscription.Disposable = vm.Exit.ObserveOnUIDispatcher().Subscribe(x =>
                 {
                     if (x)
                     {
