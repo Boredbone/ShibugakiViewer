@@ -24,6 +24,8 @@ namespace ShibugakiViewer.ViewModels
 
         public ReactiveProperty<int> SelectedTab { get; }
 
+        public bool WaitTextVisibility { get; set; } = true;
+
         public ReactiveCommand ChangeTabCommand { get; }
         public ReactiveCommand ConvertOldLibraryCommand { get; }
 

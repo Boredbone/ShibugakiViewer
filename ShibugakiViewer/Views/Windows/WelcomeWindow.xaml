@@ -195,7 +195,8 @@
                         <TextBlock
                             x:Uid="TutorialText4"
                             Text="{x:Static properties:Resources.TutorialText4_Text}"
-                            Visibility="{Binding WaitTextVisibility}"/>
+                            Visibility="{Binding WaitTextVisibility,
+                            Converter={StaticResource TrueToVisibleConverter}}"/>
                     </StackPanel>
                     
                     <pages:LibraryCreationSmallPage
