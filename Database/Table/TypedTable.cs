@@ -32,31 +32,31 @@ namespace Database.Table
 
         public bool IsTextKey { get; private set; } = false;
 
-        public Dictionary<string, string> TargetProperties => this.properties.Value;
+        public Dictionary<string, Type> TargetProperties => this.properties.Value;
 
         private const string IdName = nameof(IRecord<TKey>.Id);
 
 
-        private static readonly Dictionary<string, SqliteTypeDefinition> TypeConversion
-            = new Dictionary<string, SqliteTypeDefinition>()
+        private static readonly Dictionary<Type, SqliteTypeDefinition> TypeConversion
+            = new Dictionary<Type, SqliteTypeDefinition>()
             {
-                [typeof(int).ToString()] = new SqliteTypeDefinition("integer", false),
-                [typeof(uint).ToString()] = new SqliteTypeDefinition("integer", false),
-                [typeof(long).ToString()] = new SqliteTypeDefinition("integer", false),
-                [typeof(ulong).ToString()] = new SqliteTypeDefinition("integer", false),
-                [typeof(float).ToString()] = new SqliteTypeDefinition("real", false),
-                [typeof(double).ToString()] = new SqliteTypeDefinition("real", false),
-                [typeof(string).ToString()] = new SqliteTypeDefinition("text", true),
-                [typeof(bool).ToString()] = new SqliteTypeDefinition("integer", false),
-                [typeof(DateTime).ToString()] = new SqliteTypeDefinition("datetime2", false),
-                [typeof(DateTimeOffset).ToString()] = new SqliteTypeDefinition("datetimeoffset", false),
-                [typeof(DateTime?).ToString()] = new SqliteTypeDefinition("datetime2", true),
-                [typeof(DateTimeOffset?).ToString()] = new SqliteTypeDefinition("datetimeoffset", true),
+                [typeof(int)] = new SqliteTypeDefinition("integer", false),
+                [typeof(uint)] = new SqliteTypeDefinition("integer", false),
+                [typeof(long)] = new SqliteTypeDefinition("integer", false),
+                [typeof(ulong)] = new SqliteTypeDefinition("integer", false),
+                [typeof(float)] = new SqliteTypeDefinition("real", false),
+                [typeof(double)] = new SqliteTypeDefinition("real", false),
+                [typeof(string)] = new SqliteTypeDefinition("text", true),
+                [typeof(bool)] = new SqliteTypeDefinition("integer", false),
+                [typeof(DateTime)] = new SqliteTypeDefinition("datetime2", false),
+                [typeof(DateTimeOffset)] = new SqliteTypeDefinition("datetimeoffset", false),
+                [typeof(DateTime?)] = new SqliteTypeDefinition("datetime2", true),
+                [typeof(DateTimeOffset?)] = new SqliteTypeDefinition("datetimeoffset", true),
             };
 
         private readonly Dictionary<string, string> columnOptions;
 
-        private readonly Lazy<Dictionary<string, string>> properties;
+        private readonly Lazy<Dictionary<string, Type>> properties;
         private readonly Lazy<string> values;
         private readonly Lazy<string> targets;
         private readonly Lazy<string> tableSchema;
@@ -79,14 +79,14 @@ namespace Database.Table
 
             this.columnOptions = new Dictionary<string, string>();
 
-            this.properties = new Lazy<Dictionary<string, string>>(() =>
+            this.properties = new Lazy<Dictionary<string, Type>>(() =>
                 typeof(TRecord)
                     .GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                     .Where(property => property.CustomAttributes.Any
                         (atr => atr.AttributeType.Equals(typeof(RecordMemberAttribute))))
-                    .ToDictionary(x => x.Name, x => x.PropertyType.ToString()));
+                    .ToDictionary(x => x.Name, x => x.PropertyType));
 
-            var propertiesWithoutId = new Lazy<KeyValuePair<string, string>[]>(() =>
+            var propertiesWithoutId = new Lazy<KeyValuePair<string, Type>[]>(() =>
                  this.properties.Value
                    .Where(x => !x.Key.Equals(IdName))
                    .OrderBy(x => x.Key)

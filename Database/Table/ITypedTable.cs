@@ -10,7 +10,7 @@ namespace Database.Table
         string Name { get; }
         int Version { get; set; }
         DatabaseFront Parent { get; }
-        Dictionary<string, string> TargetProperties { get; }
+        Dictionary<string, Type> TargetProperties { get; }
 
         bool CreateOrMigrate(IDbConnection connection, TableInformation[] tableInformations);
         void Drop(IDbConnection connection);

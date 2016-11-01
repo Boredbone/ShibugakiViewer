@@ -12,7 +12,7 @@ using ImageLibrary.Search;
 namespace ImageLibrary.SearchProperty
 {
 
-    public enum FileProperty
+    public enum FileProperty : int
     {
         Id,
         DirectoryPath,
@@ -48,29 +48,31 @@ namespace ImageLibrary.SearchProperty
         private static string andLabel;
         private static string orLabel;
 
-        private static Dictionary<FileProperty, PropertySearch> searchDictionary
+        private static Dictionary<int, PropertySearch> searchDictionary
             = MakeSearchDictionary();
 
-        private static Dictionary<FileProperty, SortDefinition> sortDictionary
+        private static Dictionary<int, SortDefinition> sortDictionary
             = MakeSortDictionary();
-        
+
+        private static Dictionary<int, string> Labels;
+
         /// <summary>
         /// 各プロパティによる検索方法の定義
         /// </summary>
         /// <returns></returns>
-        private static Dictionary<FileProperty, PropertySearch> MakeSearchDictionary()
+        private static Dictionary<int, PropertySearch> MakeSearchDictionary()
         {
-            var dictionary = new Dictionary<FileProperty, PropertySearch>();
+            var dictionary = new Dictionary<int, PropertySearch>();
 
-            dictionary[FileProperty.Id]
+            dictionary[(int)FileProperty.Id]
                 = new PropertySearch(nameof(Record.Id), true,
                 o => DatabaseFunction.ToEqualsString(o));
 
-            dictionary[FileProperty.DirectoryPath]
+            dictionary[(int)FileProperty.DirectoryPath]
                 = new PropertySearch(DatabaseFunction.ToLower(nameof(Record.Directory)), true,
                 o => DatabaseFunction.ToLowerEqualsString(o));
 
-            dictionary[FileProperty.DirectoryPathStartsWith]
+            dictionary[(int)FileProperty.DirectoryPathStartsWith]
                 = new PropertySearch(DatabaseFunction.ToLower(nameof(Record.Directory)), false, o =>
                  {
                      var str = o.ToString();
@@ -78,18 +80,18 @@ namespace ImageLibrary.SearchProperty
                      return (str.EndsWith(separator))
                          ? DatabaseFunction.Match(str) : DatabaseFunction.StartsWith(str + separator);
                  });
-            dictionary[FileProperty.DirectoryPathContains]
+            dictionary[(int)FileProperty.DirectoryPathContains]
                 = new PropertySearch(DatabaseFunction.ToLower(nameof(Record.Directory)), false,
                 o => DatabaseFunction.Contains(o.ToString()));
 
-            dictionary[FileProperty.FullPath]
+            dictionary[(int)FileProperty.FullPath]
                 = new PropertySearch(
                     DatabaseFunction.ToLower
                     (DatabaseFunction.Combine(nameof(Record.Directory), nameof(Record.FileName))),
                 true, o => DatabaseFunction.ToLowerEqualsString(o));
-            
-            dictionary[FileProperty.FileName] = new PropertySearch(true,
-                (o,mode)=>
+
+            dictionary[(int)FileProperty.FileName] = new PropertySearch(true,
+                (o, mode) =>
                 {
                     var column = DatabaseFunction.ToLower(nameof(Record.FileName));
 
@@ -113,53 +115,53 @@ namespace ImageLibrary.SearchProperty
                     }
                 });
 
-            dictionary[FileProperty.FileNameContains] = new PropertySearch(
+            dictionary[(int)FileProperty.FileNameContains] = new PropertySearch(
                 DatabaseFunction.ToLower(nameof(Record.FileName)),
                 false, o => DatabaseFunction.Contains(o.ToString()));
 
-            dictionary[FileProperty.DateTimeCreated]
+            dictionary[(int)FileProperty.DateTimeCreated]
                 = new PropertySearch(nameof(Record.DateCreated), true,
                 o => DatabaseFunction.DateTimeOffsetReference((DateTimeOffset)o));
-            dictionary[FileProperty.DateTimeModified]
+            dictionary[(int)FileProperty.DateTimeModified]
                 = new PropertySearch(nameof(Record.DateModified), true,
                 o => DatabaseFunction.DateTimeOffsetReference((DateTimeOffset)o));
-            dictionary[FileProperty.DateTimeRegistered]
+            dictionary[(int)FileProperty.DateTimeRegistered]
                 = new PropertySearch(nameof(Record.DateRegistered), true,
                 o => DatabaseFunction.DateTimeOffsetReference((DateTimeOffset)o));
 
-            dictionary[FileProperty.DateCreated]
+            dictionary[(int)FileProperty.DateCreated]
                 = new PropertySearch(DatabaseFunction.GetDate(nameof(Record.DateCreated)), true,
                 o => DatabaseFunction.DateOffsetReference((DateTimeOffset)o));
-            dictionary[FileProperty.DateModified]
+            dictionary[(int)FileProperty.DateModified]
                 = new PropertySearch(DatabaseFunction.GetDate(nameof(Record.DateModified)), true,
                 o => DatabaseFunction.DateOffsetReference((DateTimeOffset)o));
-            dictionary[FileProperty.DateRegistered]
+            dictionary[(int)FileProperty.DateRegistered]
                 = new PropertySearch(DatabaseFunction.GetDate(nameof(Record.DateRegistered)), true,
                 o => DatabaseFunction.DateOffsetReference((DateTimeOffset)o));
 
-            dictionary[FileProperty.Width]
+            dictionary[(int)FileProperty.Width]
                 = new PropertySearch(nameof(Record.Width), true);
-            dictionary[FileProperty.Height]
+            dictionary[(int)FileProperty.Height]
                 = new PropertySearch(nameof(Record.Height), true);
-            dictionary[FileProperty.Size]
+            dictionary[(int)FileProperty.Size]
                 = new PropertySearch(nameof(Record.Size), true);
-            dictionary[FileProperty.ContainsTag]
+            dictionary[(int)FileProperty.ContainsTag]
                 = new PropertySearch(nameof(Record.TagEntry), false,
                 o => DatabaseFunction.Contains($",{(int)o},"));
-            dictionary[FileProperty.HasTag]
+            dictionary[(int)FileProperty.HasTag]
                 = new PropertySearch(false, (o, c) =>
                     c.ContainsEqual()
                     ? $"length({nameof(Record.TagEntry)}) >= 2"
                     : $"length({nameof(Record.TagEntry)}) < 2");
-            dictionary[FileProperty.Rating]
+            dictionary[(int)FileProperty.Rating]
                 = new PropertySearch(nameof(Record.Rating), true,
                 o => RateConvertingHelper.Reverse((int)o).ToString());
 
-            dictionary[FileProperty.Group]
+            dictionary[(int)FileProperty.Group]
                 = new PropertySearch(nameof(Record.GroupKey), false,
                 o => DatabaseFunction.ToEqualsString(o));
 
-            dictionary[FileProperty.AspectRatio]
+            dictionary[(int)FileProperty.AspectRatio]
                 = new PropertySearch(
                     DatabaseFunction.Divide(nameof(Record.Width), nameof(Record.Height)), true);
 
@@ -170,24 +172,24 @@ namespace ImageLibrary.SearchProperty
         /// 各プロパティによるソート方法の定義
         /// </summary>
         /// <returns></returns>
-        private static Dictionary<FileProperty, SortDefinition> MakeSortDictionary()
+        private static Dictionary<int, SortDefinition> MakeSortDictionary()
         {
-            var dictionary = new Dictionary<FileProperty, SortDefinition>();
+            var dictionary = new Dictionary<int, SortDefinition>();
 
-            dictionary[FileProperty.Id] = new SortDefinition(nameof(Record.Id));
+            dictionary[(int)FileProperty.Id] = new SortDefinition(nameof(Record.Id));
 
-            dictionary[FileProperty.DirectoryPath] = new SortDefinition
+            dictionary[(int)FileProperty.DirectoryPath] = new SortDefinition
                 (DatabaseFunction.ToLower(nameof(Record.Directory)));
 
-            dictionary[FileProperty.FullPath] = new SortDefinition
+            dictionary[(int)FileProperty.FullPath] = new SortDefinition
                 (DatabaseFunction.ToLower
                 (DatabaseFunction.Combine(nameof(Record.Directory), nameof(Record.FileName))));
 
-            dictionary[FileProperty.FileName] = new SortDefinition
+            dictionary[(int)FileProperty.FileName] = new SortDefinition
                 (DatabaseFunction.ToLower(nameof(Record.FileName)));
 
 
-            dictionary[FileProperty.FileNameSequenceNumLeft] = new SortDefinition(
+            dictionary[(int)FileProperty.FileNameSequenceNumLeft] = new SortDefinition(
                 new[]
                 {
                     DatabaseFunction.ToLower(nameof(Record.PreNameShort)),
@@ -196,7 +198,7 @@ namespace ImageLibrary.SearchProperty
                     DatabaseFunction.ToLower(nameof(Record.PostNameLong)),
                     DatabaseFunction.ToLower(nameof(Record.Extension))
                 });
-            dictionary[FileProperty.FileNameSequenceNumRight] = new SortDefinition(
+            dictionary[(int)FileProperty.FileNameSequenceNumRight] = new SortDefinition(
                 new[]
                 {
                     DatabaseFunction.ToLower(nameof(Record.PreNameLong)),
@@ -206,15 +208,15 @@ namespace ImageLibrary.SearchProperty
                     DatabaseFunction.ToLower(nameof(Record.Extension))
                 });
 
-            dictionary[FileProperty.DateTimeCreated] = new SortDefinition(nameof(Record.DateCreated));
-            dictionary[FileProperty.DateTimeModified] = new SortDefinition(nameof(Record.DateModified));
-            dictionary[FileProperty.DateTimeRegistered] = new SortDefinition(nameof(Record.DateRegistered));
-            dictionary[FileProperty.Width] = new SortDefinition(nameof(Record.Width));
-            dictionary[FileProperty.Height] = new SortDefinition(nameof(Record.Height));
-            dictionary[FileProperty.Size] = new SortDefinition(nameof(Record.Size));
-            dictionary[FileProperty.Rating] = new SortDefinition(nameof(Record.Rating));
+            dictionary[(int)FileProperty.DateTimeCreated] = new SortDefinition(nameof(Record.DateCreated));
+            dictionary[(int)FileProperty.DateTimeModified] = new SortDefinition(nameof(Record.DateModified));
+            dictionary[(int)FileProperty.DateTimeRegistered] = new SortDefinition(nameof(Record.DateRegistered));
+            dictionary[(int)FileProperty.Width] = new SortDefinition(nameof(Record.Width));
+            dictionary[(int)FileProperty.Height] = new SortDefinition(nameof(Record.Height));
+            dictionary[(int)FileProperty.Size] = new SortDefinition(nameof(Record.Size));
+            dictionary[(int)FileProperty.Rating] = new SortDefinition(nameof(Record.Rating));
 
-            dictionary[FileProperty.AspectRatio] = new SortDefinition
+            dictionary[(int)FileProperty.AspectRatio] = new SortDefinition
                 (DatabaseFunction.Divide(nameof(Record.Width), nameof(Record.Height)));
 
             return dictionary;
@@ -249,11 +251,18 @@ namespace ImageLibrary.SearchProperty
         /// <returns></returns>
         public static bool IsComperable(this FileProperty property)
         {
-            if (!searchDictionary.ContainsKey(property))
+            PropertySearch result;
+            if (searchDictionary.TryGetValue((int)property, out result))
             {
-                return false;
+                return result.IsComparable;
             }
-            return searchDictionary[property].IsComparable;
+            return false;
+
+            //if (!searchDictionary.ContainsKey((int)property))
+            //{
+            //    return false;
+            //}
+            //return searchDictionary[(int)property].IsComparable;
         }
 
         /// <summary>
@@ -263,8 +272,8 @@ namespace ImageLibrary.SearchProperty
             = new Lazy<KeyValuePair<string, FileProperty>[]>(() =>
             {
                 return searchDictionary
-                   .Where(x => x.Key.IsSearchable())
-                   .Select(x => new KeyValuePair<string, FileProperty>(GetPropertyLabel(x.Key), x.Key))
+                   .Where(x => IsSearchable(x.Key))
+                   .Select(x => new KeyValuePair<string, FileProperty>(GetPropertyLabel(x.Key), (FileProperty)x.Key))
                    .OrderBy(x => x.Key)
                    .ToArray();
             });
@@ -276,8 +285,8 @@ namespace ImageLibrary.SearchProperty
             = new Lazy<KeyValuePair<string, FileProperty>[]>(() =>
             {
                 return sortDictionary
-                   .Where(x => x.Key.IsSortable())
-                   .Select(x => new KeyValuePair<string, FileProperty>(GetPropertyLabel(x.Key), x.Key))
+                   .Where(x => IsSortable(x.Key))
+                   .Select(x => new KeyValuePair<string, FileProperty>(GetPropertyLabel(x.Key), (FileProperty)x.Key))
                    .OrderBy(x => x.Key)
                    .ToArray();
             });
@@ -306,7 +315,7 @@ namespace ImageLibrary.SearchProperty
         public static string ToSearch
             (this FileProperty property, object threshold, CompareMode mode)
         {
-            return searchDictionary[property].ToSql(mode, threshold);
+            return searchDictionary[(int)property].ToSql(mode, threshold);
         }
 
         /// <summary>
@@ -318,7 +327,7 @@ namespace ImageLibrary.SearchProperty
         public static string ToSort(this FileProperty property, bool byDescending)
         {
             var direction = byDescending ? "DESC" : "ASC";
-            return sortDictionary[property].Columns.Select(x => $"{x} {direction}").Join(", ");
+            return sortDictionary[(int)property].Columns.Select(x => $"{x} {direction}").Join(", ");
         }
 
         /// <summary>
@@ -328,11 +337,10 @@ namespace ImageLibrary.SearchProperty
         /// <returns></returns>
         public static string[] GetSortColumns(this FileProperty property)
         {
-            return sortDictionary[property].Columns;
+            return sortDictionary[(int)property].Columns;
         }
-        
 
-        private static Dictionary<FileProperty, string> Labels;
+
 
         /// <summary>
         /// プロパティの表示名をリソースから取得
@@ -344,31 +352,31 @@ namespace ImageLibrary.SearchProperty
             {
                 return;
             }
-            Labels = new Dictionary<FileProperty, string>()
+            Labels = new Dictionary<int, string>()
             {
-                {FileProperty.Id, GetResource("FullPath")},
-                {FileProperty.DirectoryPath, GetResource("DirectoryPath")},
-                {FileProperty.DirectoryPathStartsWith, GetResource("Directory")},
-                {FileProperty.DirectoryPathContains, GetResource("DirectoryPathContains")},
-                {FileProperty.FullPath, GetResource("FullPath")},
-                {FileProperty.FileName, GetResource("FileName")},
-                {FileProperty.FileNameContains, GetResource("FileNameContains")},
-                {FileProperty.FileNameSequenceNumLeft, GetResource("FileNameSequenceNumLeft")},
-                {FileProperty.FileNameSequenceNumRight, GetResource("FileNameSequenceNumRight")},
-                {FileProperty.DateTimeCreated, GetResource("DateCreated")},
-                {FileProperty.DateTimeModified, GetResource("DateModified")},
-                {FileProperty.DateTimeRegistered, GetResource("DateRegistered")},
-                {FileProperty.DateCreated, GetResource("DateCreated")},
-                {FileProperty.DateModified, GetResource("DateModified")},
-                {FileProperty.DateRegistered, GetResource("DateRegistered")},
-                {FileProperty.Width, GetResource("Width")},
-                {FileProperty.Height, GetResource("Height")},
-                {FileProperty.Size, GetResource("FileSize")},
-                {FileProperty.ContainsTag, GetResource("Tag")},
-                {FileProperty.HasTag, GetResource("HasTag")},
-                {FileProperty.Rating, GetResource("Rating")},
-                {FileProperty.Group, GetResource("Group")},
-                {FileProperty.AspectRatio, GetResource("AspectRatio")},
+                {(int)FileProperty.Id, GetResource("FullPath")},
+                {(int)FileProperty.DirectoryPath, GetResource("DirectoryPath")},
+                {(int)FileProperty.DirectoryPathStartsWith, GetResource("Directory")},
+                {(int)FileProperty.DirectoryPathContains, GetResource("DirectoryPathContains")},
+                {(int)FileProperty.FullPath, GetResource("FullPath")},
+                {(int)FileProperty.FileName, GetResource("FileName")},
+                {(int)FileProperty.FileNameContains, GetResource("FileNameContains")},
+                {(int)FileProperty.FileNameSequenceNumLeft, GetResource("FileNameSequenceNumLeft")},
+                {(int)FileProperty.FileNameSequenceNumRight, GetResource("FileNameSequenceNumRight")},
+                {(int)FileProperty.DateTimeCreated, GetResource("DateCreated")},
+                {(int)FileProperty.DateTimeModified, GetResource("DateModified")},
+                {(int)FileProperty.DateTimeRegistered, GetResource("DateRegistered")},
+                {(int)FileProperty.DateCreated, GetResource("DateCreated")},
+                {(int)FileProperty.DateModified, GetResource("DateModified")},
+                {(int)FileProperty.DateRegistered, GetResource("DateRegistered")},
+                {(int)FileProperty.Width, GetResource("Width")},
+                {(int)FileProperty.Height, GetResource("Height")},
+                {(int)FileProperty.Size, GetResource("FileSize")},
+                {(int)FileProperty.ContainsTag, GetResource("Tag")},
+                {(int)FileProperty.HasTag, GetResource("HasTag")},
+                {(int)FileProperty.Rating, GetResource("Rating")},
+                {(int)FileProperty.Group, GetResource("Group")},
+                {(int)FileProperty.AspectRatio, GetResource("AspectRatio")},
             };
 
             isLabel = GetResource("Is");
@@ -386,6 +394,17 @@ namespace ImageLibrary.SearchProperty
         /// <returns></returns>
         public static string GetPropertyLabel(this FileProperty property)
         {
+            return GetPropertyLabel((int)property);
+            //string result;
+            //if (Labels.TryGetValue(property, out result))
+            //{
+            //    return result;
+            //}
+            //return "";
+        }
+
+        private static string GetPropertyLabel(int property)
+        {
             string result;
             if (Labels.TryGetValue(property, out result))
             {
@@ -393,6 +412,7 @@ namespace ImageLibrary.SearchProperty
             }
             return "";
         }
+
 
         public static string GetEqualityLabel(this FileProperty property, bool isNot)
         {
@@ -412,9 +432,9 @@ namespace ImageLibrary.SearchProperty
             return isOr ? orLabel : andLabel;
         }
 
-        private static bool IsSearchable(this FileProperty property)
+        private static bool IsSearchable(int property)
         {
-            switch (property)
+            switch ((FileProperty)property)
             {
                 case FileProperty.Id:
                 case FileProperty.DirectoryPath:
@@ -432,9 +452,9 @@ namespace ImageLibrary.SearchProperty
             return true;
         }
 
-        private static bool IsSortable(this FileProperty property)
+        private static bool IsSortable(int property)
         {
-            switch (property)
+            switch ((FileProperty)property)
             {
                 case FileProperty.DirectoryPathStartsWith:
                 case FileProperty.DirectoryPathContains:
