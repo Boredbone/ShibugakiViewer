@@ -24,7 +24,6 @@ using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using ShibugakiViewer.Models.ImageViewer;
 using ShibugakiViewer.Models.Utility;
-using WpfTools;
 using WpfTools.Extensions;
 
 namespace ShibugakiViewer.Models

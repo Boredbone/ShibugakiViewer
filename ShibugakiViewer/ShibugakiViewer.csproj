@@ -141,6 +141,7 @@
     </ApplicationDefinition>
     <Compile Include="Models\ImageViewer\FlipDirection.cs" />
     <Compile Include="Models\SharePathOperation.cs" />
+    <Compile Include="Models\Utility\FolderSelectDialog.cs" />
     <Compile Include="Models\Utility\IconHelper.cs" />
     <Compile Include="Models\Utility\KeyReceiver.cs" />
     <Compile Include="Models\Utility\RandomNumber.cs" />
