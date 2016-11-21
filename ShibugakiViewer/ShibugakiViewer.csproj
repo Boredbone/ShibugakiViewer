@@ -144,6 +144,8 @@
     <Compile Include="Models\Utility\FolderSelectDialog.cs" />
     <Compile Include="Models\Utility\IconHelper.cs" />
     <Compile Include="Models\Utility\KeyReceiver.cs" />
+    <Compile Include="Models\Utility\LockingDictionary.cs" />
+    <Compile Include="Models\Utility\LockingQueue.cs" />
     <Compile Include="Models\Utility\RandomNumber.cs" />
     <Compile Include="Models\Utility\VersionCheck.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.Reactive.Disposables;
 using System.Reactive.Concurrency;
 using Boredbone.Utility.Notification;
+using ShibugakiViewer.Models.Utility;
 
 namespace ShibugakiViewer.Models.ImageViewer
 {
@@ -24,8 +25,8 @@ namespace ShibugakiViewer.Models.ImageViewer
     /// </summary>
     public class ImageBuffer : DisposableBase
     {
-        private ConcurrentDictionary<string, ImageBufferItem> images;
-        private ConcurrentDictionary<string, ImageBufferItem> thumbNailImages;
+        private ImageDictionary images;
+        private ImageDictionary thumbNailImages;
 
         private ulong count = 0;
 
@@ -48,14 +49,14 @@ namespace ShibugakiViewer.Models.ImageViewer
         private Subject<string> UpdatedSubject { get; }
         public IObservable<string> Updated => this.UpdatedSubject.AsObservable();
 
-        private readonly ConcurrentQueue<CommandPacket> currentFileLoadRequest
-            = new ConcurrentQueue<CommandPacket>();
-        private readonly ConcurrentQueue<CommandPacket> lowQualityPreLoadRequest
-            = new ConcurrentQueue<CommandPacket>();
-        private readonly ConcurrentQueue<CommandPacket> highQualityPreLoadRequest
-            = new ConcurrentQueue<CommandPacket>();
-        private readonly ConcurrentQueue<CommandPacket> thumbNailLoadRequest
-            = new ConcurrentQueue<CommandPacket>();
+        private readonly LockingQueue<CommandPacket> currentFileLoadRequest
+            = new LockingQueue<CommandPacket>();
+        private readonly LockingQueue<CommandPacket> lowQualityPreLoadRequest
+            = new LockingQueue<CommandPacket>();
+        private readonly LockingQueue<CommandPacket> highQualityPreLoadRequest
+            = new LockingQueue<CommandPacket>();
+        private readonly LockingQueue<CommandPacket> thumbNailLoadRequest
+            = new LockingQueue<CommandPacket>();
 
         private readonly ConcurrentBag<ObservableCancellationTokenSource> cancellationSources
             = new ConcurrentBag<ObservableCancellationTokenSource>();
@@ -70,8 +71,8 @@ namespace ShibugakiViewer.Models.ImageViewer
 
         public ImageBuffer()
         {
-            images = new ConcurrentDictionary<string, ImageBufferItem>();
-            thumbNailImages = new ConcurrentDictionary<string, ImageBufferItem>();
+            images = new ImageDictionary();
+            thumbNailImages = new ImageDictionary();
 
             this.UpdatedSubject = new Subject<string>().AddTo(this.Disposables);
 
@@ -225,41 +226,53 @@ namespace ShibugakiViewer.Models.ImageViewer
 
             if (quality == ImageQuality.ThumbNail)
             {
-                if (thumbNailImages.TryGetValue(key, out result))
-                {
-                    if (result != null)
-                    {
-                        return true;
-                    }
-                    thumbNailImages.TryRemove(key, out result);
-                }
-                return false;
+                return this.thumbNailImages.TryGetOrRemove(key, out result);
+
+                //if (thumbNailImages.TryGetValue(key, out result))
+                //{
+                //    if (result != null)
+                //    {
+                //        return true;
+                //    }
+                //    thumbNailImages.TryRemove(key, out result);
+                //}
+                //return false;
             }
 
-            if (images.TryGetValue(key, out result))
+            if (this.images.TryGetOrRemoveWithQuality(key, quality, out result))
             {
-                if (result.Quality == ImageQuality.OriginalSize
-                    || quality == ImageQuality.Resized
-                    || quality == ImageQuality.LowQuality)
-                {
-                    if (result != null)
-                    {
-                        return true;
-                    }
-                    images.TryRemove(key, out result);
-                }
+                return true;
             }
+
+            //if (images.TryGetValue(key, out result))
+            //{
+            //    if ((result != null && result.Quality == ImageQuality.OriginalSize)
+            //        || quality == ImageQuality.Resized
+            //        || quality == ImageQuality.LowQuality)
+            //    {
+            //        if (result != null)
+            //        {
+            //            return true;
+            //        }
+            //        images.TryRemove(key, out result);
+            //    }
+            //}
 
             if (quality == ImageQuality.LowQuality)
             {
-                if (thumbNailImages.TryGetValue(key, out result))
+                if (this.thumbNailImages.TryGetOrRemove(key, out result))
                 {
-                    if (result != null)
-                    {
-                        return true;
-                    }
-                    thumbNailImages.TryRemove(key, out result);
+                    return true;
                 }
+
+                //if (thumbNailImages.TryGetValue(key, out result))
+                //{
+                //    if (result != null)
+                //    {
+                //        return true;
+                //    }
+                //    thumbNailImages.TryRemove(key, out result);
+                //}
             }
 
             result = null;
@@ -598,6 +611,15 @@ namespace ShibugakiViewer.Models.ImageViewer
             }
         }
 
+        private void ClearQueue(LockingQueue<CommandPacket> queue)
+        {
+            CommandPacket item;
+            while (queue.TryDequeue(out item))
+            {
+                item.Observer.OnCompleted();
+            }
+        }
+
         public override void Dispose()
         {
             this.ClearAll();
@@ -638,6 +660,100 @@ namespace ShibugakiViewer.Models.ImageViewer
             }
         }
 
+
+        private class ImageDictionary : LockingDictionary<string, ImageBufferItem>
+        {
+            public bool TryGetOrRemove(string key, out ImageBufferItem result)
+            {
+                lock (this.gate)
+                {
+                    if (this.dictionary.TryGetValue(key, out result))
+                    {
+                        if (result != null)
+                        {
+                            return true;
+                        }
+                        this.dictionary.Remove(key);
+                    }
+                    return false;
+                }
+            }
+
+            public bool TryGetOrRemoveWithQuality(string key, ImageQuality quality, out ImageBufferItem result)
+            {
+
+                lock (this.gate)
+                {
+                    if (this.dictionary.TryGetValue(key, out result))
+                    {
+                        if ((result != null && result.Quality == ImageQuality.OriginalSize)
+                            || quality == ImageQuality.Resized
+                            || quality == ImageQuality.LowQuality)
+                        {
+                            if (result != null)
+                            {
+                                return true;
+                            }
+                            this.dictionary.Remove(key);
+                        }
+                    }
+                    return false;
+                }
+            }
+            public void ClearBuffer()
+            {
+                lock (this.gate)
+                {
+                    foreach (var e in this.dictionary)
+                    {
+                        e.Value.Dispose();
+                    }
+                    this.dictionary.Clear();
+                }
+            }
+
+            public void AddOrExtrude(string key, ImageBufferItem value, int size)
+            {
+
+                lock (this.gate)
+                {
+                    if (this.dictionary.Count > size)
+                    {
+                        this.ReleaseOldImage();
+                    }
+
+                    ImageBufferItem result;
+                    if (this.dictionary.TryGetValue(key, out result))
+                    {
+                        if (result.Quality > value.Quality)
+                        {
+                            return;
+                        }
+                    }
+                    this.dictionary[key] = value;
+                }
+            }
+
+            private void ReleaseOldImage()
+            {
+                ulong min = ulong.MaxValue;
+                string minKey = null;
+                foreach (var val in this.dictionary)
+                {
+                    if (val.Value.LastLoadedCount < min)
+                    {
+                        minKey = val.Key;
+                        min = val.Value.LastLoadedCount;
+                    }
+                }
+
+                if (minKey != null)
+                {
+                    this.dictionary[minKey]?.Dispose();
+                    this.dictionary.Remove(minKey);
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -768,6 +884,7 @@ namespace ShibugakiViewer.Models.ImageViewer
             image.Dispose();
         }
     }
+    
 
 
     internal static class QueueExtensions
