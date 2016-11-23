@@ -419,7 +419,7 @@ namespace ShibugakiViewer.Views.Behaviors
             var option = new ImageLoadingOptions
                 (width, height, this.IsFill, quality, cms);
 
-            var tokenSource = new ObservableCancellationTokenSource();
+            var tokenSource = new CancellationTokenSource();
 
             var subject = new Subject<ImageSourceContainer>();
 
@@ -474,7 +474,6 @@ namespace ShibugakiViewer.Views.Behaviors
             Disposable.Create(() =>
             {
                 tokenSource?.Cancel(true);
-                tokenSource?.Dispose();
 
             }).AddTo(this.disposables);
 
@@ -482,18 +481,18 @@ namespace ShibugakiViewer.Views.Behaviors
 
             if (record != null)
             {
-                if (quality == ImageQuality.ThumbNail)
-                {
-                    this.Buffer.RequestLoading(record, option, subject, priority, tokenSource);
-                }
-                else
-                {
-                    this.Buffer.RequestLoading(record, option, subject, priority, tokenSource.Token);
-                }
+                //if (quality == ImageQuality.ThumbNail)
+                //{
+                //    this.Buffer.RequestLoading(record, option, subject, priority, tokenSource);
+                //}
+                //else
+                //{
+                this.Buffer.RequestLoading(record, option, subject, priority, tokenSource.Token);
+                //}
             }
             else
             {
-                this.Buffer.RequestLoading(path, option, subject, priority, tokenSource);
+                this.Buffer.RequestLoading(path, option, subject, priority, tokenSource.Token);
             }
 
 

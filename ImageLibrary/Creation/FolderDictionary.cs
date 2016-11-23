@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
@@ -19,7 +18,7 @@ namespace ImageLibrary.Creation
     public class FolderDictionary : DisposableBase,
         INotifyCollectionChanged, IEnumerable<FolderInformation>
     {
-        private ConcurrentBag<FolderInformation> Folders { get; set; }
+        private List<FolderInformation> registeredFolders;
         public bool IsEdited { get; set; }
 
         private Subject<FolderInformation> AddedSubject { get; }
@@ -27,7 +26,7 @@ namespace ImageLibrary.Creation
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
-        public int Count => this.Folders.Count;
+        public int Count => this.registeredFolders.Count;
 
         private FolderWatcher FolderWatcher { get; }
         public HashSet<string> FileTypeFilter { get; set; }
@@ -37,11 +36,13 @@ namespace ImageLibrary.Creation
 
         private int maxId = -1;
 
+        private object gate = new object();
+
         public FolderDictionary()
         {
             this.AddedSubject = new Subject<FolderInformation>().AddTo(this.Disposables);
 
-            this.Folders = new ConcurrentBag<FolderInformation>();
+            this.registeredFolders = new List<FolderInformation>();
             this.IsEdited = false;
 
             this.FolderUpdatedSubject = new Subject<FolderUpdatedEventArgs>().AddTo(this.Disposables);
@@ -59,39 +60,47 @@ namespace ImageLibrary.Creation
 
         public void SetSource(IEnumerable<FolderInformation> source)
         {
-            if (source == null)
+            lock (this.gate)
             {
-                this.Folders = new ConcurrentBag<FolderInformation>();
-            }
-            else
-            {
-                this.Folders = new ConcurrentBag<FolderInformation>(source);
-            }
+                if (source == null)
+                {
+                    this.registeredFolders = new List<FolderInformation>();
+                }
+                else
+                {
+                    this.registeredFolders = new List<FolderInformation>(source.Distinct(x => x.Path));
+                }
 
-            this.Folders.ForEach(x => this.SubscribeFolderUpdate(x));
+                this.registeredFolders.ForEach(x => this.SubscribeFolderUpdate(x));
 
-            this.maxId = this.Folders.Select(x => x.Id).Append(0).Max();
+                this.maxId = this.registeredFolders.Select(x => x.Id).Append(0).Max();
+            }
         }
 
 
-        public IEnumerable<FolderInformation> GetAvailable()
+        public FolderInformation[] GetAvailable()
         {
-            return this.Folders.Where(x => !x.Ignored);
+            lock (this.gate)
+            {
+                return this.registeredFolders.Where(x => !x.Ignored).ToArray();
+            }
         }
 
         public FolderInformation[] GetIgnored()
         {
-            return this.Folders.Where(x => x.Ignored).ToArray();
+            lock (this.gate)
+            {
+                return this.registeredFolders.Where(x => x.Ignored).ToArray();
+            }
         }
 
-        public IEnumerable<FolderInformation> GetAll()
-        {
-            return this.Folders;
-        }
 
         public void Add(FolderInformation item)
         {
-            this.Folders.Add(item);
+            lock (this.gate)
+            {
+                this.registeredFolders.Add(item);
+            }
 
             item.Id = ++this.maxId;
 
@@ -108,8 +117,6 @@ namespace ImageLibrary.Creation
         /// <returns>登録された場合はtrue</returns>
         public bool RegisterFolders(params string[] folders)
         {
-            var existingFolders = this.GetAll().ToArray();
-
             var registered = false;
 
             foreach (var folderPath in folders)
@@ -118,8 +125,11 @@ namespace ImageLibrary.Creation
                 {
                     continue;
                 }
-
-                var exists = existingFolders.FirstOrDefault(x => x.Path.Equals(folderPath));
+                FolderInformation exists;
+                lock (this.gate)
+                {
+                    exists = this.registeredFolders.FirstOrDefault(x => x.Path.Equals(folderPath));
+                }
 
                 if (exists != null)
                 {
@@ -189,13 +199,22 @@ namespace ImageLibrary.Creation
 
         public void TryAddItems(IEnumerable<FolderInformation> items)
         {
-            foreach (var item in items)
-            {
-                if (!this.Folders.Any(x => x.Path.Equals(item.Path)))
-                {
-                    this.Add(item);
-                }
+            List<FolderInformation> newItems = new List<FolderInformation>();
 
+            lock (this.gate)
+            {
+                foreach (var item in items.Distinct(x => x.Path))
+                {
+                    if (!this.registeredFolders.Any(x => x.Path.Equals(item.Path)))
+                    {
+                        newItems.Add(item);
+                    }
+                }
+            }
+
+            foreach (var item in newItems)
+            {
+                this.Add(item);
             }
         }
 

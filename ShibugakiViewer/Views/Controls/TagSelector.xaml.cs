@@ -35,7 +35,7 @@ namespace ShibugakiViewer.Views.Controls
             = Enumerable.Range('A', 'Z' - 'A' + 1)
             .Select(x => Convert.ToChar(x).ToString()).Append(" ").ToArray();
 
-        private readonly Dictionary<string,IDisposable> disposables;
+        private readonly Dictionary<string, IDisposable> disposables;
 
         public Action<TagInformation> TagSelectedCallBack { get; set; }
         public Record Target { get; set; }
@@ -78,7 +78,7 @@ namespace ShibugakiViewer.Views.Controls
             this.tagDictionary = library.Tags;
 
             this.Tags = new ObservableCollection<TagInformation>();
-                //(this.tagDictionary.GetAll().Select(x => x.Value));
+            //(this.tagDictionary.GetAll().Select(x => x.Value));
 
             this.CloseEdit();
 
@@ -327,7 +327,7 @@ namespace ShibugakiViewer.Views.Controls
             }
             else if (e.Key == Key.Enter)
             {
-                var focused = FocusManager.GetFocusedElement(this) ?? Keyboard.FocusedElement; 
+                var focused = FocusManager.GetFocusedElement(this) ?? Keyboard.FocusedElement;
                 if (focused is TextBox)
                 {
                     return;
@@ -363,7 +363,7 @@ namespace ShibugakiViewer.Views.Controls
             var item = sender as UIElement;
             //item?.Focus();
         }
-        
+
 
         private void LoadList(int mode)
         {
@@ -371,18 +371,18 @@ namespace ShibugakiViewer.Views.Controls
 
             this.Tags.Clear();
 
-            var source = this.tagDictionary.GetAll();
+            IEnumerable<KeyValuePair<int, TagInformation>> source = this.tagDictionary.GetAll();
 
-            if (mode==1)
+            if (mode == 1)
             {
                 source = source.OrderByDescending(x => x.Value.LastUsed);
             }
 
-            foreach(var t in source)
+            foreach (var t in source)
             {
                 this.Tags.Add(t.Value);
             }
-            
+
             this.CloseEdit();
 
             this.isSelectionInitialized = false;
@@ -401,7 +401,7 @@ namespace ShibugakiViewer.Views.Controls
                 {
                     this.LoadList(x);
                 })
-                .AddTo(this.disposables,"SortMode");
+                .AddTo(this.disposables, "SortMode");
         }
     }
 }

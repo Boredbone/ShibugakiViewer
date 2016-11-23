@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Boredbone.Utility;
 using Boredbone.Utility.Extensions;
+using Boredbone.Utility.LockingCollection;
 using Boredbone.Utility.Tools;
 using ImageLibrary.Core;
 using ImageLibrary.File;
@@ -24,10 +25,12 @@ namespace ImageLibrary.Creation
         private string TopPath { get; set; }
         public ILibraryConfiguration Config { get; set; }
 
-        public ConcurrentDictionary<string, Record> AddedFiles { get; }
         public Dictionary<string, Record> RemovedFiles { get; private set; }
-        private ConcurrentBag<string> DetectedFiles { get; }
+
+        public ConcurrentDictionary<string, Record> AddedFiles { get; }
         public ConcurrentDictionary<string, Record> UpdatedFiles { get; }
+
+        private ConcurrentBag<string> DetectedFiles { get; }
         public ConcurrentBag<string> SkippedFiles { get; }
 
         public event Action<string> ChildFolderLoaded;

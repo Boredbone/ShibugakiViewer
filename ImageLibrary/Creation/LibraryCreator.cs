@@ -113,9 +113,17 @@ namespace ImageLibrary.Creation
 
             try
             {
+#if DEBUG
+                var sw = new Stopwatch();
+                sw.Start();
+#endif
                 await Task.Factory.StartNew(() => this.RefreshLibraryMainAsync(addedFiles, removedFiles),
                     cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
 
+#if DEBUG
+                sw.Stop();
+                Debug.WriteLine($"elapsed:{sw.ElapsedMilliseconds}");
+#endif
                 await Task.Delay(100);
 
                 this.LoadedSubject.OnNext(new LibraryLoadResult()

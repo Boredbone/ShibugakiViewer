@@ -20,7 +20,7 @@ namespace ShibugakiViewer.Models.Utility
 
         private Subject<string> LineReceivedSubject { get; }
         public IObservable<string> LineReceived => this.LineReceivedSubject.AsObservable();
-        
+
         public PipeServer()
         {
             this.LineReceivedSubject = new Subject<string>().AddTo(this.Disposables);
@@ -55,7 +55,7 @@ namespace ShibugakiViewer.Models.Utility
             CancellationTokenSource cancellationTokenSource)
         {
             var cancellationToken = cancellationTokenSource.Token;
-            return Task.Run(() =>
+            return Task.Run(async () =>
             {
                 try
                 {
@@ -83,8 +83,8 @@ namespace ShibugakiViewer.Models.Utility
                                     new NamedPipeServerStream(pipeId, PipeDirection.In))
                                 {
                                     // Wait for a client to connect
-                                    //await pipeServer.WaitForConnectionAsync(cancellationToken);
-                                    pipeServer.WaitForConnection();
+                                    await pipeServer.WaitForConnectionAsync(cancellationToken);
+                                    //pipeServer.WaitForConnection();
                                     cancellationToken.ThrowIfCancellationRequested();
 
                                     try

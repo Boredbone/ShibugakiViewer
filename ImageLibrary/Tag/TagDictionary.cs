@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -17,18 +16,19 @@ namespace ImageLibrary.Tag
 
     public class TagDictionary : DisposableBase
     {
-        private ConcurrentDictionary<int, TagInformation> RegisteredTags { get; set; }
+        private Dictionary<int, TagInformation> registeredTags;
         public bool IsEdited { get; set; }
 
         private Subject<TagInformation> AddedSubject { get; }
         public IObservable<TagInformation> Added => this.AddedSubject.AsObservable();
 
+        private object gate = new object();
 
         public TagDictionary()
         {
             this.AddedSubject = new Subject<TagInformation>().AddTo(this.Disposables);
 
-            this.RegisteredTags = new ConcurrentDictionary<int, TagInformation>();
+            this.registeredTags = new Dictionary<int, TagInformation>();
             this.IsEdited = false;
         }
 
@@ -38,13 +38,16 @@ namespace ImageLibrary.Tag
         /// <param name="source"></param>
         public void SetSource(IEnumerable<KeyValuePair<int, TagInformation>> source)
         {
-            if (source == null)
+            lock (this.gate)
             {
-                this.RegisteredTags = new ConcurrentDictionary<int, TagInformation>();
-            }
-            else
-            {
-                this.RegisteredTags = new ConcurrentDictionary<int, TagInformation>(source);
+                if (source == null)
+                {
+                    this.registeredTags = new Dictionary<int, TagInformation>();
+                }
+                else
+                {
+                    this.registeredTags = source.ToDictionary(x => x.Key, x => x.Value);
+                }
             }
         }
 
@@ -52,9 +55,12 @@ namespace ImageLibrary.Tag
         /// 全てのタグを取得
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<int, TagInformation>> GetAll()
+        public KeyValuePair<int, TagInformation>[] GetAll()
         {
-            return this.RegisteredTags.Where(x => !x.Value.IsIgnored).OrderBy(x => x.Value.Name);
+            lock (this.gate)
+            {
+                return this.registeredTags.Where(x => !x.Value.IsIgnored).OrderBy(x => x.Value.Name).ToArray();
+            }
         }
 
         /// <summary>
@@ -64,22 +70,29 @@ namespace ImageLibrary.Tag
         /// <returns></returns>
         public TagInformation GetTagValue(int key)
         {
-            TagInformation result;
-            if (this.RegisteredTags.TryGetValue(key, out result))
+            TagInformation tag;
+
+            lock (this.gate)
             {
-                return result;
-            }
-            else
-            {
-                var tag = new TagInformation() { Name = key.ToString(), Shortcut = "" };
-                if (this.RegisteredTags.TryAdd(key, tag))
+                if (this.registeredTags.TryGetValue(key, out tag))
                 {
-                    tag.Id = key;
-                    this.AddedSubject.OnNext(tag);
+                    return tag;
                 }
-                this.IsEdited = true;
-                return tag;
+
+                tag = new TagInformation()
+                {
+                    Name = key.ToString(),
+                    Shortcut = "",
+                    Id = key,
+                };
+
+                this.registeredTags.Add(key, tag);
             }
+
+            this.AddedSubject.OnNext(tag);
+
+            this.IsEdited = true;
+            return tag;
         }
 
         /// <summary>
@@ -89,26 +102,28 @@ namespace ImageLibrary.Tag
         /// <returns></returns>
         public KeyValuePair<int, TagInformation> GetTag(string shortcut)
         {
-            var result = this.RegisteredTags
-                .FirstOrNull(x => x.Value.Shortcut.Equals(shortcut, StringComparison.OrdinalIgnoreCase));
-
-            if (result != null)
+            lock (this.gate)
             {
-                return result.Value;
+                var result = this.registeredTags
+                    .FirstOrNull(x => x.Value.Shortcut.Equals(shortcut, StringComparison.OrdinalIgnoreCase));
+
+                if (result != null)
+                {
+                    return result.Value;
+                }
+
+                var sc = shortcut.ToUpper();
+                var res2 = this.registeredTags
+                    .Where(x => x.Value.Shortcut.Contains(sc))
+                    .OrderBy(x => x.Value.Shortcut.Length)
+                    .FirstOrNull();
+
+                if (res2 != null)
+                {
+                    res2.Value.Value.Shortcut = sc;
+                    return res2.Value;
+                }
             }
-
-            var sc = shortcut.ToUpper();
-            var res2 = this.RegisteredTags
-                .Where(x => x.Value.Shortcut.Contains(sc))
-                .OrderBy(x => x.Value.Shortcut.Length)
-                .FirstOrNull();
-
-            if (res2 != null)
-            {
-                res2.Value.Value.Shortcut = sc;
-                return res2.Value;
-            }
-
             return new KeyValuePair<int, TagInformation>(-1, null);
         }
 
@@ -120,25 +135,31 @@ namespace ImageLibrary.Tag
         {
             if (!tag.Shortcut.IsNullOrWhiteSpace())
             {
+                TagInformation[] tags;
 
-                this.RegisteredTags
-                    .Where(x =>
-                    {
-                        return x.Value != tag
-                            && x.Value.Shortcut != null
-                            && x.Value.Shortcut.Length > 0
-                            && x.Value.Shortcut.Equals(tag.Shortcut,
-                            StringComparison.OrdinalIgnoreCase);
-                    })
-                    .ForEach(x =>
-                    {
-                        x.Value.Shortcut = "_" + x.Value.Shortcut;
+                lock (this.gate)
+                {
+                    tags = this.registeredTags
+                        .Where(x =>
+                        {
+                            return x.Value != tag
+                                && x.Value.Shortcut != null
+                                && x.Value.Shortcut.Length > 0
+                                && x.Value.Shortcut.Equals(tag.Shortcut,
+                                StringComparison.OrdinalIgnoreCase);
+                        })
+                        .Select(x => x.Value)
+                        .ToArray();
+                }
+
+                foreach (var x in tags)
+                {
+                    x.Shortcut = "_" + x.Shortcut;
 #if DEBUG
-                        System.Windows.MessageBox.Show(x.Value.Shortcut);
+                    System.Windows.MessageBox.Show(x.Shortcut);
 #endif
-                    });
+                }
             }
-
         }
 
         /// <summary>
@@ -150,16 +171,21 @@ namespace ImageLibrary.Tag
         {
             this.SetShortcut(newTag);
 
-            var existingTag = this.RegisteredTags
-                .FirstOrNull(x => x.Value.Name.Equals(newTag.Name));
+            KeyValuePair<int, TagInformation> existingTag;
 
-            if (existingTag != null)
+            lock (this.gate)
+            {
+                existingTag = this.registeredTags
+                    .FirstOrDefault(x => x.Value.Name.Equals(newTag.Name));
+            }
+
+            if (existingTag.Value != null)
             {
                 if (!newTag.Shortcut.IsNullOrWhiteSpace())
                 {
-                    existingTag.Value.Value.Shortcut = newTag.Shortcut;
+                    existingTag.Value.Shortcut = newTag.Shortcut;
                 }
-                return existingTag.Value.Key;
+                return existingTag.Key;
             }
 
             return this.AddOrReplace(newTag);
@@ -188,32 +214,41 @@ namespace ImageLibrary.Tag
         private int AddOrReplace(TagInformation value)
         {
             var key = 1;
-            TagInformation tag = null;
-            while (this.RegisteredTags.TryGetValue(key, out tag))
-            {
-                if (tag != null && tag.IsIgnored)
-                {
-                    break;
-                }
-                tag = null;
-                key++;
-            }
-            if (tag != null)
-            {
-                tag.CopyFrom(value);
-                tag.Id = key;
-                tag.IsIgnored = false;
-            }
-            else
-            {
-                var isAdded = this.RegisteredTags.TryAdd(key, value);
 
-                if (isAdded)
+            var added = false;
+
+            lock (this.gate)
+            {
+                TagInformation tag = null;
+                while (this.registeredTags.TryGetValue(key, out tag))
                 {
+                    if (tag != null && tag.IsIgnored)
+                    {
+                        break;
+                    }
+                    tag = null;
+                    key++;
+                }
+                if (tag != null)
+                {
+                    tag.CopyFrom(value);
+                    tag.Id = key;
+                    tag.IsIgnored = false;
+                }
+                else
+                {
+                    this.registeredTags.Add(key, value);
                     value.Id = key;
-                    this.AddedSubject.OnNext(value);
+                    added = true;
+                    //this.AddedSubject.OnNext(value);
+
                 }
             }
+            if (added)
+            {
+                this.AddedSubject.OnNext(value);
+            }
+
             this.IsEdited = true;
             return key;
         }
