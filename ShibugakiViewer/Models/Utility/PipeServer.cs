@@ -55,7 +55,7 @@ namespace ShibugakiViewer.Models.Utility
             CancellationTokenSource cancellationTokenSource)
         {
             var cancellationToken = cancellationTokenSource.Token;
-            return Task.Run(async () =>
+            return Task.Run(() =>
             {
                 try
                 {
@@ -83,8 +83,8 @@ namespace ShibugakiViewer.Models.Utility
                                     new NamedPipeServerStream(pipeId, PipeDirection.In))
                                 {
                                     // Wait for a client to connect
-                                    await pipeServer.WaitForConnectionAsync(cancellationToken);
-                                    //pipeServer.WaitForConnection();
+                                    //await pipeServer.WaitForConnectionAsync(cancellationToken);
+                                    pipeServer.WaitForConnection();
                                     cancellationToken.ThrowIfCancellationRequested();
 
                                     try
