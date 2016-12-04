@@ -1,6 +1,9 @@
 # Release Notes
 
 
+## Version 1.3.2 (2016/12/04)
+- Improve performance
+
 ## Version 1.3.1 (2016/10/29)
 - Fix a bug in folder registration
 
