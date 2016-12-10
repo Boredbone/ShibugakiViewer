@@ -135,6 +135,7 @@ namespace ShibugakiViewer.Models
         public ISearchResult SearchResult => this.front;
 
         private bool viewerImageChangeGate;
+        private bool isCatalogLoaded = false;
 
 
 
@@ -552,6 +553,11 @@ namespace ShibugakiViewer.Models
         /// <param name="baseDirection"></param>
         private void SearchForCatalog(long index, int viewSize, int baseDirection)
         {
+            if (viewSize <= 0 && !isCatalogLoaded)
+            {
+                isCatalogLoaded = true;
+                return;
+            }
             var offset = Math.Max(index - (viewSize / 2), 0);
             var takes = viewSize * 2;
             var direction = (index == 0) ? 1 : baseDirection;
