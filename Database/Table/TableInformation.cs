@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Boredbone.Utility.Tools;
 
 namespace Database.Table
 {
@@ -18,10 +19,10 @@ namespace Database.Table
         public string TableName { get; set; }
 
         [RecordMember]
-        public DateTimeOffset Created { get; set; }
+        public DateTimeOffset Created { get; set; } = UnixTime.DefaultDateTimeOffsetLocal;
 
         [RecordMember]
-        public DateTimeOffset Modified { get; set; }
-        
+        public DateTimeOffset Modified { get; set; } = UnixTime.DefaultDateTimeOffsetLocal;
+
     }
 }

@@ -114,7 +114,7 @@ namespace ImageLibrary.File
                 }
             }
         }
-        private DateTimeOffset _fieldDateModified;
+        private DateTimeOffset _fieldDateModified = UnixTime.DefaultDateTimeOffsetLocal;
 
 
         [RecordMember]
@@ -131,7 +131,7 @@ namespace ImageLibrary.File
                 }
             }
         }
-        private DateTimeOffset _fieldDateCreated;
+        private DateTimeOffset _fieldDateCreated = UnixTime.DefaultDateTimeOffsetLocal;
 
 
         [RecordMember]
@@ -148,7 +148,7 @@ namespace ImageLibrary.File
                 }
             }
         }
-        private DateTimeOffset _fieldDateRegistered;
+        private DateTimeOffset _fieldDateRegistered = UnixTime.DefaultDateTimeOffsetLocal;
 
 
 

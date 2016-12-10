@@ -34,7 +34,7 @@ namespace ImageLibrary.Core
     public class Library : NotificationBase
     {
         private const int xmlVersion = 5;
-        private const int databaseVersion = 4;
+        private const int databaseVersion = 5;
 
         private const double trackIntervalTime = 500.0;
         

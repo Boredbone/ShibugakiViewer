@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Boredbone.Utility.Tools;
 using Database.Table;
 
 namespace ImageLibrary.Tag
@@ -86,7 +87,7 @@ namespace ImageLibrary.Tag
                 }
             }
         }
-        private DateTimeOffset _fieldLastUsed;
+        private DateTimeOffset _fieldLastUsed = UnixTime.DefaultDateTimeOffsetLocal;
 
         public bool IsOpen
         {

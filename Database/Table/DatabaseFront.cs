@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Boredbone.Utility.Tools;
 using Dapper;
 using Database.Search;
 
@@ -75,15 +76,20 @@ namespace Database.Table
         /// <param name="connection"></param>
         public async Task InitializeAsync(IDbConnection connection)
         {
+            // Replace TypeHandler for DateTime
             var obj = typeof(SqlMapper)
                 .GetField("typeMap", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
                 .GetValue(null);
 
             var typeMap = (Dictionary<Type, DbType>)obj;
 
+            typeMap.Remove(typeof(DateTime));
+            typeMap.Remove(typeof(DateTime?));
             typeMap.Remove(typeof(DateTimeOffset));
             typeMap.Remove(typeof(DateTimeOffset?));
 
+            SqlMapper.AddTypeHandler(new DateTimeHandler());
+            SqlMapper.AddTypeHandler(new NullableDateTimeHandler());
             SqlMapper.AddTypeHandler(new DateTimeOffsetHandler());
             SqlMapper.AddTypeHandler(new NullableDateTimeOffsetHandler());
 
@@ -245,17 +251,40 @@ namespace Database.Table
             }
         }
 
+        #region TypeHandler
 
         private class DateTimeOffsetHandler : SqlMapper.TypeHandler<DateTimeOffset>
         {
             public override void SetValue(IDbDataParameter parameter, DateTimeOffset value)
             {
-                parameter.Value = DatabaseFunction.DateTimeOffsetToString(value);
+                parameter.Value = UnixTime.FromDateTime(value);
             }
 
             public override DateTimeOffset Parse(object value)
             {
-                return DateTimeOffset.Parse(value.ToString());
+                try
+                {
+                    return UnixTime.ToLocalDateTime((long)value);
+                }
+                catch
+                {
+                    try
+                    {
+                        return DateTimeOffset.Parse(value.ToString());
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            return UnixTime.ToLocalDateTime(long.Parse(value.ToString()));
+                        }
+                        catch
+                        {
+                            return UnixTime.DefaultDateTimeOffsetLocal;
+                        }
+
+                    }
+                }
             }
         }
         private class NullableDateTimeOffsetHandler : SqlMapper.TypeHandler<DateTimeOffset?>
@@ -268,7 +297,7 @@ namespace Database.Table
                 }
                 else
                 {
-                    parameter.Value = DatabaseFunction.DateTimeOffsetToString(value.Value);
+                    parameter.Value = UnixTime.FromDateTime(value.Value);
                 }
             }
 
@@ -278,11 +307,115 @@ namespace Database.Table
                 {
                     return null;
                 }
-                DateTimeOffset result;
-                DateTimeOffset.TryParse(value.ToString(), out result);
-                return result;
+                try
+                {
+                    return UnixTime.ToLocalDateTime((long)value);
+                }
+                catch
+                {
+                    try
+                    {
+                        return DateTimeOffset.Parse(value.ToString());
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            return UnixTime.ToLocalDateTime(long.Parse(value.ToString()));
+                        }
+                        catch
+                        {
+                            return null;
+                        }
+
+                    }
+                }
             }
         }
+
+        private class DateTimeHandler : SqlMapper.TypeHandler<DateTime>
+        {
+            public override void SetValue(IDbDataParameter parameter, DateTime value)
+            {
+                parameter.Value = UnixTime.FromDateTime(value);
+            }
+
+            public override DateTime Parse(object value)
+            {
+                DateTime date;
+                try
+                {
+                    date = UnixTime.ToDateTime((long)value);
+                }
+                catch
+                {
+                    try
+                    {
+                        date = DateTime.Parse(value.ToString());
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            date = UnixTime.ToDateTime(long.Parse(value.ToString()));
+                        }
+                        catch
+                        {
+                            date = UnixTime.DefaultDateTimeUtc;
+                        }
+                    }
+                }
+                return date.ToLocalTime();
+            }
+        }
+        private class NullableDateTimeHandler : SqlMapper.TypeHandler<DateTime?>
+        {
+            public override void SetValue(IDbDataParameter parameter, DateTime? value)
+            {
+                if (value == null)
+                {
+                    parameter.Value = null;
+                }
+                else
+                {
+                    parameter.Value = UnixTime.FromDateTime(value.Value);
+                }
+            }
+
+            public override DateTime? Parse(object value)
+            {
+                if (value == null)
+                {
+                    return null;
+                }
+                DateTime date;
+                try
+                {
+                    date = UnixTime.ToDateTime((long)value);
+                }
+                catch
+                {
+                    try
+                    {
+                        date = DateTime.Parse(value.ToString());
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            date = UnixTime.ToDateTime(long.Parse(value.ToString()));
+                        }
+                        catch
+                        {
+                            return null;
+                        }
+                    }
+                }
+                return date.ToLocalTime();
+            }
+        }
+
+        #endregion
 
         public class TransactionContext
         {

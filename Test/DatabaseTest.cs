@@ -335,45 +335,57 @@ namespace Test
 
             using (var connection = this.database.Connect())
             {
+                Console.WriteLine("a");
                 //0001-01-01 00:00:00 +00:00
-                Assert.AreEqual("0001-01-01 00:00:00 +00:00", 
+                Assert.AreEqual("0",//"0001-01-01 00:00:00 +00:00", 
                     this.table1.AsQueryable(connection)
-                    .Select<string>($"{nameof(Record.DateModified)}")
+                    .Select<string>(nameof(Record.DateModified))
                     .ToArray()
                     .First());
 
+                Console.WriteLine("b");
                 //0001-01-01
-                Assert.AreEqual("0001-01-01",
+                Assert.AreEqual((-DateTimeOffset.Now.Offset.TotalSeconds).ToString(),
                     this.table1.AsQueryable(connection)
-                    .Select<string>($"date({nameof(Record.DateModified)})")
+                    .Select<string>(DatabaseFunction.GetDate(nameof(Record.DateModified)))
                     .ToArray()
                     .First());
 
-                //00:00:00
-                Assert.AreEqual("00:00:00",
-                    this.table1.AsQueryable(connection)
-                    .Select<string>($"time({nameof(Record.DateModified)})")
-                    .ToArray()
-                    .First());
+                Console.WriteLine("c");
+                ////00:00:00
+                //Assert.AreEqual("00:00:00",
+                //    this.table1.AsQueryable(connection)
+                //    .Select<string>($"time({nameof(Record.DateModified)})")
+                //    .ToArray()
+                //    .First());
 
                 //0001/01/01 0:00:00 +00:00
-                Assert.AreEqual("0001/01/01 0:00:00 +00:00", this.table1.AsQueryable(connection)
-                    .Select<DateTimeOffset>($"date({nameof(Record.DateModified)})")
+                Assert.AreEqual(DateTimeOffset.FromUnixTimeSeconds(0), this.table1.AsQueryable(connection)
+                    .Select<DateTimeOffset>(nameof(Record.DateModified))
                     .ToArray()
-                    .First().ToString());
+                    .First());
 
 
+                Console.WriteLine("d");
                 var today = DateTimeOffset.Now.Date;
 
                 var mods = this.table1.AsQueryable(connection)
-                    .Where($"date({nameof(Record.DateModified)})=='{DatabaseFunction.DateToString(today)}'")
-                    .Select<string>($"{nameof(Record.DateModified)}")
+                    .Where($"{DatabaseFunction.GetDate(nameof(Record.DateModified))}=={UnixTime.FromDateTime(today.Date)}")
+                    .Select<DateTimeOffset>($"{nameof(Record.DateModified)}")
                     .Take(2)
                     .ToArray();
 
+                Console.WriteLine("e");
                 Assert.AreEqual(1, mods.Length);
-                Assert.AreEqual(currentTime.ToString().Replace('/','-'), mods[0]);
 
+                Console.WriteLine("f");
+                Assert.AreEqual(new DateTimeOffset(currentTime.Date)
+                    .AddHours(currentTime.Hour)
+                    .AddMinutes(currentTime.Minute)
+                    .AddSeconds(currentTime.Second),
+                    mods[0]);
+
+                Console.WriteLine("g");
             }
             
             /*

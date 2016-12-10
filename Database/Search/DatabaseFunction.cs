@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Boredbone.Utility.Extensions;
+using Boredbone.Utility.Tools;
 
 namespace Database.Search
 {
@@ -12,6 +13,18 @@ namespace Database.Search
     /// </summary>
     public static class DatabaseFunction
     {
+        private static readonly int localTimeOffsetSecond = (int)DateTimeOffset.Now.Offset.TotalSeconds;
+        private static readonly string localTimeOffsetText;
+
+        static DatabaseFunction()
+        {
+            localTimeOffsetText = localTimeOffsetSecond.ToString();
+            if (!localTimeOffsetText.StartsWith("-"))
+            {
+                localTimeOffsetText = "+" + localTimeOffsetText;
+            }
+        }
+
         public static string DateTimeOffsetToString(DateTimeOffset datetime)
             => datetime.ToString("yyyy-MM-dd HH:mm:ss zzz");
 
@@ -63,13 +76,16 @@ namespace Database.Search
             => $"GLOB '*{ToGlobReference(reference)}*'";
 
         public static string DateOffsetReference(DateTimeOffset dateTime)
-            => $"'{DateToString(dateTime.Date)}'";
+            => UnixTime.FromDateTime(dateTime.Date).ToString();
 
         public static string DateTimeOffsetReference(DateTimeOffset dateTime)
-            => $"'{DateTimeOffsetToString(dateTime)}'";
+            => UnixTime.FromDateTime(dateTime).ToString();
 
         public static string GetDate(string column)
-            => $"DATE({column})";
+        {
+            var utcUnixTime = $"({column}{localTimeOffsetText})";
+            return $"({column} - ({utcUnixTime} % 86400))";
+        }
 
         public static string Combine(params string[] columns)
             => $"({columns.Join(" || ")})";

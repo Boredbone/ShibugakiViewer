@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Boredbone.Utility.Extensions;
+using CsCommon.Utility.Extensions;
 using Dapper;
 
 namespace Database.Table
@@ -48,10 +49,10 @@ namespace Database.Table
                 [typeof(double)] = new SqliteTypeDefinition("real", false),
                 [typeof(string)] = new SqliteTypeDefinition("text", true),
                 [typeof(bool)] = new SqliteTypeDefinition("integer", false),
-                [typeof(DateTime)] = new SqliteTypeDefinition("datetime2", false),
-                [typeof(DateTimeOffset)] = new SqliteTypeDefinition("datetimeoffset", false),
-                [typeof(DateTime?)] = new SqliteTypeDefinition("datetime2", true),
-                [typeof(DateTimeOffset?)] = new SqliteTypeDefinition("datetimeoffset", true),
+                [typeof(DateTime)] = new SqliteTypeDefinition("integer", false),
+                [typeof(DateTimeOffset)] = new SqliteTypeDefinition("integer", false),
+                [typeof(DateTime?)] = new SqliteTypeDefinition("integer", true),
+                [typeof(DateTimeOffset?)] = new SqliteTypeDefinition("integer", true),
             };
 
         private readonly Dictionary<string, string> columnOptions;
@@ -211,6 +212,22 @@ namespace Database.Table
             var isModified = false;
 
             var eventArg = new MigratingEventArgs(tableInformations);
+
+            var converters = eventArg.Converters;
+
+            var convertDate = false;
+
+            // Convert DateTime representation from text to unix time
+            foreach (var column in existingColumns)
+            {
+                if (column.Type.ToLower().Contains("datetime"))
+                {
+                    converters[column.Name] = $"strftime('%s',{column.Name})";
+                    convertDate = true;
+                }
+            }
+
+
             this.Migrating?.Invoke(this, eventArg);
 
 
@@ -223,6 +240,7 @@ namespace Database.Table
             // New properties
             var addedProperties = this.properties.Value
                 .ToDictionary(x => x.Key, x => x.Value);
+
             foreach (var column in existingColumns)
             {
                 if (addedProperties.ContainsKey(column.Name))
@@ -230,11 +248,6 @@ namespace Database.Table
                     addedProperties.Remove(column.Name);
                 }
             }
-
-            // Removed properties
-            var removerProperties = existingColumns
-                .Where(x => !this.properties.Value.ContainsKey(x.Name))
-                .ToArray();
 
             // Add columns
             if (addedProperties.Count > 0)
@@ -267,8 +280,15 @@ namespace Database.Table
                 }
             }
 
+
+            //// Removed properties
+            //var removedProperties = existingColumns
+            //    .Where(x => !this.properties.Value.ContainsKey(x.Name))
+            //    .ToArray();
+
+
             // Remove columns
-            if (removerProperties.Length > 0)
+            if (convertDate || existingColumns.Any(x => !this.properties.Value.ContainsKey(x.Name)))
             {
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -283,13 +303,13 @@ namespace Database.Table
                             ($"ALTER TABLE {this.Name} RENAME TO {tmpName}",
                             null, transaction);
 
+                        // Create new table
                         this.Create(connection, transaction);
 
                         var selector = this.properties.Value
                             .Where(x => !x.Key.Equals(IdName))
                             .OrderBy(x => x.Key)
-                            .Select(x => eventArg.Converters.ContainsKey(x.Key)
-                                ? eventArg.Converters[x.Key] : x.Key)
+                            .Select(x => converters.GetValueOrAlternative(x.Key, x.Key))
                             .Join(",\n ");
 
                         connection.Execute
@@ -319,7 +339,6 @@ namespace Database.Table
                 }
 
             }
-
 
             this.MakeInsertSchema(connection);
 
