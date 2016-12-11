@@ -185,7 +185,6 @@ namespace ShibugakiViewer.Models
             .AddTo(this.Disposables);
 
             this.Length = this.front.Length
-                //.ObserveOnUIDispatcher()
                 .ToReadOnlyReactiveProperty()
                 .AddTo(this.Disposables);
 
@@ -242,18 +241,13 @@ namespace ShibugakiViewer.Models
                 .Select(_ => this.SelectedItems.GetAll().FirstOrDefault())
                 .Where(x => x.Key != null)
                 .Publish().RefCount();
-
-            //selectedChangedTrigger.Subscribe(x => Debug.WriteLine(x.Value?.Id??"trigger null"));
-
+            
             //DBに問い合わせ
             var selectedChanged = selectedChangedTrigger
                 .Where(x => x.Value == null)
                 .SelectMany(x => core.Library.GetRecordAsync(x.Key))
-                //.SelectMany(x => Observable.FromAsync(() => core.Library.GetRecordAsync(x.Key)))
                 .Merge(selectedChangedTrigger.Where(x => x.Value != null).Select(x => x.Value));
-
-
-            //this.SelectedItems.SelectedItemChanged.Subscribe(x => Debug.WriteLine(x?.Id ?? "selected null"));
+            
 
             //Catalogで選択中のRecord
             var catalogDisplaying = this.SelectedItems.SelectedItemChanged
@@ -290,17 +284,15 @@ namespace ShibugakiViewer.Models
 
             //データベース更新
             var databaseUpdatedForCatalog = this.front.CacheCleared
-                    .Where(x => x.Action == CacheClearAction.DatabaseUpdated)
-                    .Buffer(this.SelectedPage.Where(x => x == PageType.Catalog))
-                    .Where(x => x.Count > 0)
-                    .Select(_ => this.CatalogIndex.Value);
+                .Where(x => x.Action == CacheClearAction.DatabaseUpdated)
+                .Buffer(this.SelectedPage.Where(x => x == PageType.Catalog))
+                .Where(x => x.Count > 0)
+                .Select(_ => this.CatalogIndex.Value);
 
             //キャッシュクリア
             var catalogReset = this.front.CacheCleared
-                    .Where(x => this.SelectedPage.Value == PageType.Catalog)
-                    //.Where(x => x.Action != CacheClearAction.SearchChanged
-                    //    && this.SelectedPage.Value == PageType.Catalog)
-                    .Select(_ => this.CatalogIndex.Value);
+                .Where(x => this.SelectedPage.Value == PageType.Catalog)
+                .Select(_ => this.CatalogIndex.Value);
 
 
             //Catalog用DB問い合わせ
@@ -347,8 +339,6 @@ namespace ShibugakiViewer.Models
             //キャッシュクリア時のViewer再読み込み
 
             this.lastViewerImageIndex = new OldNewPair<long>(0, 0);
-            //this.LastViewerImage = new BehaviorSubject<OldNewPair<long>>(new OldNewPair<long>(0, 0))
-            //    .AddTo(this.Disposables);
             viewerImage.Subscribe(x => this.lastViewerImageIndex = x).AddTo(this.Disposables);
 
             this.ViewerCacheClearedTrigger = this.front.CacheCleared
@@ -387,9 +377,7 @@ namespace ShibugakiViewer.Models
             //画像読み込みリクエスト
 
             this.ChangeToViewerSubject = new Subject<long>().AddTo(this.Disposables);
-
-            //this.ChangeToViewerSubject.Subscribe(x => Debug.WriteLine($"change to viewer {x}")).AddTo(this.Disposables);
-
+            
             var cacheUpdated = front.CacheUpdated
                 .Where(x => this.ViewerIndex.Value >= x.Start && this.ViewerIndex.Value < x.Start + x.Length)
                 .Select(_ => this.ViewerIndex.Value);
@@ -408,8 +396,6 @@ namespace ShibugakiViewer.Models
 
             viewerIndexChanged
                 .Throttle(TimeSpan.FromMilliseconds(resizedImageLoadDelayMillisec))
-                //.Merge(ChangeToViewerSubject.Delay(TimeSpan.FromMilliseconds(resizedImageLoadDelayMillisec / 2)))
-                //.DistinctUntilChanged()
                 .ObserveOn(SynchronizationContext.Current)
                 .Subscribe(x => LoadImagesMain(x, ImageQuality.Resized,
                     ListOrderFlags.Current | ListOrderFlags.Next | ListOrderFlags.Previous))
@@ -506,7 +492,6 @@ namespace ShibugakiViewer.Models
             if (state.Type == PageType.Catalog)
             {
                 this.CatalogScrollIndexSubject.OnNext(catalogIndex);
-                //Debug.WriteLine($"catalog:{catalogIndex}");
             }
             //Catalog再描画
             this.IsCatalogRenderingEnabledSubject.OnNext(true);
@@ -1005,33 +990,13 @@ namespace ShibugakiViewer.Models
 
                 this.History.MoveNew(state);
             }
-
-            //if (this.ViewerIndex.Value != i)
-            //{
-            //    Debug.WriteLine($"5:{i} to {this.ViewerIndex.Value}");
-            //}
-            //if (this.front.SearchInformation?.Key != id)
-            //{
-            //    Debug.WriteLine($"6:{id} to {this.front.SearchInformation?.Key}");
-            //}
-
+            
             this.PageChangeRequestSubject.OnNext(type);
 
             if (type == PageType.Catalog && catalogIndex.HasValue)
             {
                 this.CatalogScrollIndexSubject.OnNext(catalogIndex.Value);
             }
-
-
-
-            //if (this.ViewerIndex.Value != i)
-            //{
-            //    Debug.WriteLine($"7:{i} to {this.ViewerIndex.Value}");
-            //}
-            //if (this.front.SearchInformation?.Key != id)
-            //{
-            //    Debug.WriteLine($"8:{id} to {this.front.SearchInformation?.Key}");
-            //}
         }
 
         /// <summary>
@@ -1096,8 +1061,8 @@ namespace ShibugakiViewer.Models
                 return false;
             }
 
-            string messageBoxTitle;// = "Delete Files";
-            string messaBoxText;// = (files.Length == 1) ? $"delete {files[0]}" : $"delete {files.Length} files";
+            string messageBoxTitle;
+            string messaBoxText;
 
             if (items.Length == 1)
             {
