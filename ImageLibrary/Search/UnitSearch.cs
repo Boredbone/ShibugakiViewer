@@ -27,6 +27,7 @@ namespace ImageLibrary.Search
                 if (_fieldMode != value)
                 {
                     _fieldMode = value;
+                    this.IsEdited = true;
                     RaisePropertyChanged(nameof(Mode));
                 }
             }
@@ -42,6 +43,7 @@ namespace ImageLibrary.Search
                 if (_fieldReference != value)
                 {
                     _fieldReference = value;
+                    this.IsEdited = true;
                     RaisePropertyChanged(nameof(Reference));
                 }
             }
@@ -58,6 +60,7 @@ namespace ImageLibrary.Search
                 if (_fieldProperty != value)
                 {
                     _fieldProperty = value;
+                    this.IsEdited = true;
                     RaisePropertyChanged(nameof(Property));
                 }
             }
@@ -91,6 +94,7 @@ namespace ImageLibrary.Search
         }
         private string _fieldReferenceLabel;
 
+        public bool IsEdited { get; private set; }
 
 
         public UnitSearch()
@@ -175,7 +179,13 @@ namespace ImageLibrary.Search
                 && this.Mode == ot.Mode
                 && this.ReferenceLabel.Equals(ot.ReferenceLabel);
         }
-        
+
+        public void DownEdited()
+        {
+            this.IsEdited = false;
+        }
+
+
         public override string ToString()
         {
             return this.Property.ToString() + "," + this.Mode.ToString() + "," + this.ReferenceLabel;

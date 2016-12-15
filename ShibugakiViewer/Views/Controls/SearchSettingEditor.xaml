@@ -72,7 +72,13 @@
                       x:Uid="NumericTextBox"
                      behavior:PlaceHolderBehavior.PlaceHolderText="{x:Static properties:Resources.NumericTextBox_PlaceholderText}"
                      InputScope="Number"/>
-                <!--PlaceholderText="Value"-->
+                
+                <TextBox HorizontalAlignment="Left" Margin="10,10,10,10"
+                     VerticalAlignment="Top" Width="172"
+                     Visibility="{Binding FloatTextVisibility.Value,Mode=TwoWay}"
+                     Text="{Binding FloatText.Value,Mode=TwoWay,UpdateSourceTrigger=Default}"
+                     behavior:PlaceHolderBehavior.PlaceHolderText="{x:Static properties:Resources.NumericTextBox_PlaceholderText}"
+                     InputScope="Number"/>
 
                 <ScrollViewer MinHeight="150" MaxHeight="200" Margin="10,10,10,10" Width="250"
                           Visibility="{Binding DirectoryListVisibility.Value}"

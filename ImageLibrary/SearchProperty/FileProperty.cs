@@ -485,7 +485,7 @@ namespace ImageLibrary.SearchProperty
             }
         }
 
-        public static bool IsNumeric(this FileProperty property)
+        public static bool IsInteger(this FileProperty property)
         {
             switch (property)
             {
@@ -493,6 +493,17 @@ namespace ImageLibrary.SearchProperty
                 case FileProperty.Height:
                 case FileProperty.Rating:
                 case FileProperty.Size:
+                //case FileProperty.AspectRatio:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        public static bool IsFloat(this FileProperty property)
+        {
+            switch (property)
+            {
                 case FileProperty.AspectRatio:
                     return true;
                 default:

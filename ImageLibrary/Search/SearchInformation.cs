@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -19,7 +20,7 @@ namespace ImageLibrary.Search
     public class SearchInformation : INotifyPropertyChanged, ISearchCriteria
     {
         [DataMember]
-        public ComplexSearch Root { get; set; }
+        public ComplexSearch Root { get; private set; }
 
         [DataMember]
         public DateTimeOffset DateLastUsed
@@ -96,8 +97,7 @@ namespace ImageLibrary.Search
         }
         private string _fieldThumbnailFilePath;
 
-
-
+        
 
 
 
@@ -178,6 +178,16 @@ namespace ImageLibrary.Search
             }
             return this.HasSameSearch(other) && this.HasSameSort(other);
         }
+
+        public bool CheckSimilarity(SearchInformation other)
+        {
+            if (object.ReferenceEquals(this, other))
+            {
+                return !this.Root.IsEdited;
+            }
+            return this.HasSameSearch(other) && this.HasSameSort(other);
+        }
+
 
         public bool ValueEquals(SearchInformation other)
         {

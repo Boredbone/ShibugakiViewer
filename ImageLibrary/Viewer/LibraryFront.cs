@@ -142,12 +142,14 @@ namespace ImageLibrary.Viewer
 
             if (criteria != null)
             {
-                if (!criteria.SettingEquals(this.SearchInformation))
+                if (!criteria.CheckSimilarity(this.SearchInformation))
                 {
                     clearFlag = true;
                 }
 
                 this.SearchInformation = library.Searcher.AddSearchToDictionary(criteria);
+
+                this.SearchInformation.Root.DownEdited();
 
                 //履歴・アルバムのリストを更新
                 if (refreshList)

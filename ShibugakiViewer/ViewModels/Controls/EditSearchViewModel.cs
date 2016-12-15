@@ -61,6 +61,9 @@ namespace ShibugakiViewer.ViewModels.Controls
         public ReactiveProperty<int?> NumericText { get; private set; }
         public ReactiveProperty<Visibility> NumericTextVisibility { get; private set; }
 
+        public ReactiveProperty<double?> FloatText { get; private set; }
+        public ReactiveProperty<Visibility> FloatTextVisibility { get; private set; }
+
         public ObservableCollection<DirectoryInfo> DirectoryList { get; private set; }
         public ReactiveProperty<Visibility> DirectoryListVisibility { get; private set; }
 
@@ -175,7 +178,11 @@ namespace ShibugakiViewer.ViewModels.Controls
                 .ToReactiveProperty().AddTo(this.unsubscribers);
 
             this.NumericTextVisibility = propertyObserver
-                .Select(x => VisibilityHelper.Set(x.Enable && x.Property.IsNumeric()))
+                .Select(x => VisibilityHelper.Set(x.Enable && x.Property.IsInteger()))
+                .ToReactiveProperty().AddTo(this.unsubscribers);
+
+            this.FloatTextVisibility = propertyObserver
+                .Select(x => VisibilityHelper.Set(x.Enable && x.Property.IsFloat()))
                 .ToReactiveProperty().AddTo(this.unsubscribers);
 
             this.DirectoryListVisibility = propertyObserver
@@ -273,9 +280,15 @@ namespace ShibugakiViewer.ViewModels.Controls
                 : this.RegisteredTags.FindIndex(x => x.Key == (int)source.Reference)).AddTo(this.unsubscribers);
 
             this.NumericText = new ReactiveProperty<int?>(
-                (source != null && source.Property.IsNumeric())
+                (source != null && source.Property.IsInteger())
                 ? ((int?)(source.Reference as long?) ?? (source.Reference as int?))
                 : (int?)null)
+                .AddTo(this.unsubscribers);
+
+            this.FloatText = new ReactiveProperty<double?>(
+                (source != null && source.Property.IsFloat())
+                ? (source.Reference as double?) ?? (source.Reference as int?)
+                : null)
                 .AddTo(this.unsubscribers);
 
 
@@ -469,7 +482,7 @@ namespace ShibugakiViewer.ViewModels.Controls
                 }
             }
 
-            if (property.IsNumeric())
+            if (property.IsInteger())
             {
                 //var str = Regex.Replace(this.NumericText.Value, @"[^\d]", "");
                 var num = this.NumericText.Value ?? 0;
@@ -487,6 +500,12 @@ namespace ShibugakiViewer.ViewModels.Controls
                     //    return num;
                     //}
                 }
+            }
+
+
+            if (property.IsFloat())
+            {
+                return this.FloatText.Value ?? 0.0;
             }
 
             if (property.IsText())

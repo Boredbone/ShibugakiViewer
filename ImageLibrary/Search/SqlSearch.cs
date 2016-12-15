@@ -7,12 +7,14 @@ namespace ImageLibrary.Search
 {
     public interface ISqlSearch : INotifyPropertyChanged
     {
-        string ToSql();
-        bool IsUnit { get; }
-        ISqlSearch Clone();
-        bool ValueEquals(ISqlSearch other);
-        INotifyCollectionChanged Children { get; }
         ComplexSearch Parent { get; set; }
+        INotifyCollectionChanged Children { get; }
+        bool IsUnit { get; }
+        bool IsEdited { get; }
+        void DownEdited();
+        ISqlSearch Clone();
+        string ToSql();
+        bool ValueEquals(ISqlSearch other);
         void RemoveSelf();
     }
 }

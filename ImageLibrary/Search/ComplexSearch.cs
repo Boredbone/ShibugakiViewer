@@ -34,7 +34,7 @@ namespace ImageLibrary.Search
             }
         }
         private ObservableCollection<ISqlSearch> _fieldInnerChildren;
-        
+
         public ComplexSearch Parent { get; set; }
 
         [DataMember]
@@ -56,15 +56,21 @@ namespace ImageLibrary.Search
                 if (_fieldIsOr != value)
                 {
                     _fieldIsOr = value;
+                    this.IsEditedInner = true;
                     RaisePropertyChanged(nameof(IsOr));
                 }
             }
         }
         private bool _fieldIsOr;
-        
+
         public bool IsUnit => false;
 
         public string ReferenceLabel { get; } = "";
+
+        public bool IsEdited => this.IsEditedInner || this.InnerChildren.Any(x => x.IsEdited);
+
+        private bool IsEditedInner { get; set; }
+
 
         public ComplexSearch(bool or)
         {
@@ -88,6 +94,7 @@ namespace ImageLibrary.Search
         {
             this.InnerChildren.Add(method);
             method.Parent = this;
+            this.IsEditedInner = true;
             return this;
         }
 
@@ -113,6 +120,7 @@ namespace ImageLibrary.Search
             if (this.InnerChildren.Contains(item))
             {
                 this.InnerChildren.Remove(item);
+                this.IsEditedInner = true;
             }
         }
         public void RemoveSelf()
@@ -147,6 +155,15 @@ namespace ImageLibrary.Search
             return this.IsOr == ot.IsOr
                 && this.InnerChildren.SequenceEqual(ot.InnerChildren, (x, y) => x.ValueEquals(y));
 
+        }
+
+        public void DownEdited()
+        {
+            this.IsEditedInner = false;
+            foreach(var child in this.InnerChildren)
+            {
+                child.DownEdited();
+            }
         }
 
         public override string ToString()
