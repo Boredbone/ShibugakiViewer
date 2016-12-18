@@ -593,37 +593,46 @@ namespace ShibugakiViewer.Models
         /// <param name="property"></param>
         /// <param name="reference"></param>
         /// <param name="mode"></param>
-        public void StartNewSearch(FileProperty property, object reference, CompareMode mode)
+        public bool StartNewSearch(FileProperty property, object reference, CompareMode mode)
         {
-            this.StartNewSearch(new[]
-            {
+            return this.StartNewSearch(
                 new UnitSearch()
                 {
                     Property = property,
                     Reference = reference,
                     Mode = mode,
                 }
-            });
+            );
         }
 
         /// <summary>
         /// 新しい検索を開始してページを移動
         /// </summary>
         /// <param name="criteria"></param>
-        public void StartNewSearch(IEnumerable<ISqlSearch> criteria)
+        public bool StartNewSearch(ISqlSearch criteria)
         {
             var search = new SearchInformation(new ComplexSearch(false));
 
             if (criteria != null)
             {
-                foreach (var item in criteria)
-                {
-                    search.Root.Add(item);
-                }
+                search.Root.Add(criteria);
             }
+
+            //// 同じ内容の検索は無視
+            //if (this.front.FeaturedGroup == null && this.front.SearchInformation != null)
+            //{
+            //    if (this.SelectedPage.Value == PageType.Catalog
+            //        && this.front.SearchInformation.SettingEquals(search))
+            //    {
+            //        Debug.WriteLine("same search");
+            //        return false;
+            //    }
+            //}
 
             this.SetNewSearch(search);
             this.ChangePage(PageType.Catalog, null, 0);
+
+            return true;
         }
 
 

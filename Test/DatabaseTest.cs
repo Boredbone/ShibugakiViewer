@@ -31,6 +31,12 @@ namespace Test
         {
             await new Sample().Method1();
         }
+
+        [TestMethod]
+        public async Task DatabaseTimeTest()
+        {
+            await new Sample2().Method1();
+        }
     }
 
     class Sample
@@ -408,7 +414,114 @@ namespace Test
             }*/
 
         }
+        
+    }
+    class Sample2
+    {
 
+        private DatabaseFront database;
+        private TypedTable<Table1, string> table1;
+
+        public Sample2()
+        {
+            var dbPath = @"test2.db";
+
+
+            this.database = new DatabaseFront(dbPath);
+            this.table1 = new TypedTable<Table1, string>(this.database, "table1")
+            {
+                IsIdAuto = false,
+                Version = 2,
+            };
+
+            //table1.AddColumnOption(nameof(Table1.NewNumber), "DEFAULT 3");
+            //table1.AddColumnOption(nameof(Table1.NewText), "DEFAULT 'あおえ'");
+            //table1.AddColumnOption(nameof(Table1.IsEnabled), "DEFAULT 1");
+            //
+            //table1.Migrating += (o, e) =>
+            //{
+            //    if (e.TableInformations.First(x => x.TableName.Equals(this.table1.Name))
+            //        .Modified < new DateTime(2016, 1, 1))
+            //    {
+            //        e.Converters[nameof(Table1.NewNumber)] = "(SubNumber*2)+5";
+            //    }
+            //};
+        }
+
+        private string GetId() => Guid.NewGuid().ToString();
+
+        public async Task Method1()
+        {
+
+            using (var connection = this.database.Connect())
+            {
+                this.table1.Drop(connection);
+
+                await this.database.InitializeAsync(connection);
+            }
+
+            
+
+
+            using (var connection = this.database.Connect())
+            {
+                var date = DateTimeOffset.Now;
+
+                {
+                    var dateNum = await table1.QueryAsync<long>
+                        (connection, $"Select strftime('%s','{date.ToString("yyyy-MM-dd HH:mm:ss zzz")}')");
+
+                    this.AreEqual(date.ToUnixTimeSeconds(), dateNum.FirstOrDefault());
+                }
+                this.AreEqual(date.ToUniversalTime().ToUnixTimeSeconds(), date.ToUnixTimeSeconds());
+
+                {
+                    var dateNum = await table1.QueryAsync<long>
+                        (connection, $"Select strftime('%s','{date.ToString("yyyy-MM-dd HH:mm:ss")}')");
+
+                    this.AreNotEqual(date.ToUnixTimeSeconds(), dateNum.FirstOrDefault());
+                }
+                {
+                    var dateNum = await table1.QueryAsync<long>
+                        (connection, $"Select strftime('%s','{date.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}')");
+
+                    this.AreEqual(date.ToUnixTimeSeconds(), dateNum.FirstOrDefault());
+                }
+
+                {
+                    var unixTime = $"strftime('%s','{date.ToString("yyyy-MM-dd HH:mm:ss zzz")}')";
+                    var unixDate = DatabaseFunction.GetDate(unixTime);
+
+                    var dateNum = await table1.QueryAsync<long>
+                        (connection, $"Select {unixDate}");
+
+                    this.AreEqual(DatabaseFunction.DateOffsetReference(date), dateNum.FirstOrDefault().ToString());
+                }
+                {
+                    var unixTime = $"strftime('%s','{date.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}')";
+                    var unixDate = DatabaseFunction.GetDate(unixTime);
+
+                    var dateNum = await table1.QueryAsync<long>
+                        (connection, $"Select {unixDate}");
+
+                    this.AreEqual(DatabaseFunction.DateOffsetReference(date.ToUniversalTime()), dateNum.FirstOrDefault().ToString());
+                }
+            }
+
+            
+
+        }
+
+        private void AreEqual<T>(T a, T b)
+        {
+            Debug.WriteLine((a?.ToString() ?? "null") + ", " + (b?.ToString() ?? "null"));
+            Assert.AreEqual(a, b);
+        }
+        private void AreNotEqual<T>(T a, T b)
+        {
+            Debug.WriteLine((a?.ToString() ?? "null") + ", " + (b?.ToString() ?? "null"));
+            Assert.AreNotEqual(a, b);
+        }
 
         internal class Table1 : IRecord<string>
         {

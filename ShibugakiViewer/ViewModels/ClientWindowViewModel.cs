@@ -606,10 +606,12 @@ namespace ShibugakiViewer.ViewModels
 
         private void StartPathOrTagSearch(FileProperty property, object reference)
         {
-            this.Client.StartNewSearch(property, reference, CompareMode.Equal);
-            if (this.IsPaneOpen.Value && !this.IsPaneFixed.Value)
+            if (this.Client.StartNewSearch(property, reference, CompareMode.Equal))
             {
-                this.IsPaneOpen.Value = false;
+                if (this.IsPaneOpen.Value && !this.IsPaneFixed.Value)
+                {
+                    this.IsPaneOpen.Value = false;
+                }
             }
         }
 
