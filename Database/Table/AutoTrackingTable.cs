@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Boredbone.Utility.Notification;
 using Reactive.Bindings.Extensions;
+using System.Data;
 
 namespace Database.Table
 {
@@ -42,6 +43,18 @@ namespace Database.Table
                     });
                 })
                 .AddTo(this.Disposables);
+        }
+
+        public async Task<TRecord[]> GetAllAsTrackingAsync(IDbConnection connection)
+        {
+            var data = await this.Table.GetAllAsync(connection);
+
+            foreach(var item in data)
+            {
+                this.Tracker.Track(item);
+            }
+
+            return data;
         }
 
     }

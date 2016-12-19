@@ -206,7 +206,7 @@ namespace ImageLibrary.File
         public string TagEntry
         {
             get { return this.TagSet.ToEntry(); }
-            set
+            private set
             {
                 if (this._tagEntry != value)
                 {

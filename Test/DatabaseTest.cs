@@ -20,6 +20,7 @@ using ImageLibrary.Tag;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Reactive.Bindings.Extensions;
 using Boredbone.Utility.Tools;
+using System.Data;
 
 namespace Test
 {
@@ -35,7 +36,7 @@ namespace Test
         [TestMethod]
         public async Task DatabaseTimeTest()
         {
-            await new Sample2().Method1();
+            await new Sample2().Test1();
         }
     }
 
@@ -450,9 +451,81 @@ namespace Test
 
         private string GetId() => Guid.NewGuid().ToString();
 
-        public async Task Method1()
+        public async Task Test1()
+        {
+            using (var connection = this.database.Connect())
+            {
+                Debug.WriteLine("a");
+                var date = DateTimeOffset.Now;
+                await this.TestUnixDate(date, connection);
+
+                Debug.WriteLine("b");
+                var d2 = new DateTimeOffset(date.Year, date.Month, date.Day,
+                    date.Hour, date.Minute, date.Second, TimeSpan.FromHours(-10.5));
+                await this.TestUnixDate(d2, connection);
+
+                Debug.WriteLine("c");
+                var d3 = new DateTimeOffset(date.Year, date.Month, date.Day,
+                    date.Hour, date.Minute, date.Second, TimeSpan.FromHours(0));
+                await this.TestUnixDate(d3, connection);
+
+            }
+        }
+
+        private async Task TestUnixDate(DateTimeOffset date,IDbConnection connection)
         {
 
+            {
+                var dateNum = await table1.QueryAsync<long>
+                    (connection, $"Select strftime('%s','{date.ToString("yyyy-MM-dd HH:mm:ss zzz")}')");
+
+                this.AreEqual(date.ToUnixTimeSeconds(), dateNum.FirstOrDefault());
+            }
+            this.AreEqual(date.ToUniversalTime().ToUnixTimeSeconds(), date.ToUnixTimeSeconds());
+
+            {
+                var dateNum = await table1.QueryAsync<long>
+                    (connection, $"Select strftime('%s','{date.ToString("yyyy-MM-dd HH:mm:ss")}')");
+
+                if (date.Offset == default(TimeSpan))
+                {
+                    this.AreEqual(date.ToUnixTimeSeconds(), dateNum.FirstOrDefault());
+                }
+                else
+                {
+                    this.AreNotEqual(date.ToUnixTimeSeconds(), dateNum.FirstOrDefault());
+                }
+            }
+            {
+                var dateNum = await table1.QueryAsync<long>
+                    (connection, $"Select strftime('%s','{date.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}')");
+
+                this.AreEqual(date.ToUnixTimeSeconds(), dateNum.FirstOrDefault());
+            }
+
+            {
+                var unixTime = $"strftime('%s','{date.ToString("yyyy-MM-dd HH:mm:ss zzz")}')";
+                var unixDate = DatabaseFunction.GetDate(unixTime);
+
+                var dateNum = await table1.QueryAsync<long>
+                    (connection, $"Select {unixDate}");
+
+                this.AreEqual(DatabaseFunction.DateOffsetReference(date), dateNum.FirstOrDefault().ToString());
+            }
+            {
+                var unixTime = $"strftime('%s','{date.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}')";
+                var unixDate = DatabaseFunction.GetDate(unixTime);
+
+                var dateNum = await table1.QueryAsync<long>
+                    (connection, $"Select {unixDate}");
+
+                this.AreEqual(DatabaseFunction.DateOffsetReference(date.ToUniversalTime()), dateNum.FirstOrDefault().ToString());
+            }
+        }
+
+
+        public async Task Test2()
+        {
             using (var connection = this.database.Connect())
             {
                 this.table1.Drop(connection);
@@ -460,55 +533,19 @@ namespace Test
                 await this.database.InitializeAsync(connection);
             }
 
-            
 
+            //1970年より前
 
-            using (var connection = this.database.Connect())
-            {
-                var date = DateTimeOffset.Now;
+            //3000年
 
-                {
-                    var dateNum = await table1.QueryAsync<long>
-                        (connection, $"Select strftime('%s','{date.ToString("yyyy-MM-dd HH:mm:ss zzz")}')");
+            //null
 
-                    this.AreEqual(date.ToUnixTimeSeconds(), dateNum.FirstOrDefault());
-                }
-                this.AreEqual(date.ToUniversalTime().ToUnixTimeSeconds(), date.ToUnixTimeSeconds());
+            //異なるオフセット
 
-                {
-                    var dateNum = await table1.QueryAsync<long>
-                        (connection, $"Select strftime('%s','{date.ToString("yyyy-MM-dd HH:mm:ss")}')");
+            //現在地の日付で検索
 
-                    this.AreNotEqual(date.ToUnixTimeSeconds(), dateNum.FirstOrDefault());
-                }
-                {
-                    var dateNum = await table1.QueryAsync<long>
-                        (connection, $"Select strftime('%s','{date.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}')");
+            //
 
-                    this.AreEqual(date.ToUnixTimeSeconds(), dateNum.FirstOrDefault());
-                }
-
-                {
-                    var unixTime = $"strftime('%s','{date.ToString("yyyy-MM-dd HH:mm:ss zzz")}')";
-                    var unixDate = DatabaseFunction.GetDate(unixTime);
-
-                    var dateNum = await table1.QueryAsync<long>
-                        (connection, $"Select {unixDate}");
-
-                    this.AreEqual(DatabaseFunction.DateOffsetReference(date), dateNum.FirstOrDefault().ToString());
-                }
-                {
-                    var unixTime = $"strftime('%s','{date.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}')";
-                    var unixDate = DatabaseFunction.GetDate(unixTime);
-
-                    var dateNum = await table1.QueryAsync<long>
-                        (connection, $"Select {unixDate}");
-
-                    this.AreEqual(DatabaseFunction.DateOffsetReference(date.ToUniversalTime()), dateNum.FirstOrDefault().ToString());
-                }
-            }
-
-            
 
         }
 

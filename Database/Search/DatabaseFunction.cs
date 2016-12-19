@@ -76,7 +76,7 @@ namespace Database.Search
             => $"GLOB '*{ToGlobReference(reference)}*'";
 
         public static string DateOffsetReference(DateTimeOffset dateTime)
-            => UnixTime.FromDateTime(dateTime.Date).ToString();
+            => UnixTime.FromDateTime(dateTime.ToLocalTime().Date).ToString();
 
         public static string DateTimeOffsetReference(DateTimeOffset dateTime)
             => UnixTime.FromDateTime(dateTime).ToString();

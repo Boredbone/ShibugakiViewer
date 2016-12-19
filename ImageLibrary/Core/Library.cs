@@ -264,21 +264,16 @@ namespace ImageLibrary.Core
             {
                 await this.Database.InitializeAsync(connection);
 
-                tags = await this.TagDatabase.Table.GetAllAsync(connection);
-                folders = await this.FolderDatabase.Table.GetAllAsync(connection);
-                exifItems = await this.ExifVisibilityDatabase.Table.GetAllAsync(connection);
+                tags = await this.TagDatabase.GetAllAsTrackingAsync(connection);
+                folders = await this.FolderDatabase.GetAllAsTrackingAsync(connection);
+                exifItems = await this.ExifVisibilityDatabase.GetAllAsTrackingAsync(connection);
 
                 //loading test
                 await this.Records.AsQueryable(connection).FirstOrDefaultAsync();
             }
-
-            tags.ForEach(tag => this.TagDatabase.Tracker.Track(tag));
+            
             this.Tags.SetSource(tags.ToDictionary(x => x.Id, x => x));
-
-            folders.ForEach(folder => this.FolderDatabase.Tracker.Track(folder));
             this.Folders.SetSource(folders);
-
-            exifItems.ForEach(exif => this.ExifVisibilityDatabase.Tracker.Track(exif));
             this.ExifManager.SetSource(exifItems);
 
             if (folders.Length <= 0 && this.config.IsKnownFolderEnabled)
