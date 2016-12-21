@@ -29,7 +29,7 @@ namespace ImageLibrary.Core
         /// <returns></returns>
         public async Task<long> CountAsync(Record group)
         {
-            using (var connection = this.Table.Parent.Connect())
+            using (var connection = await this.Table.Parent.ConnectAsync())
             {
                 return await this.Table.CountAsync(connection,
                     this.GetFilterString(group));

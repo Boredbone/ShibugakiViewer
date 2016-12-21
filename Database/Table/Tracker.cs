@@ -49,7 +49,7 @@ namespace Database.Table
                     Task.Run(async () =>
                     {
                         var succeeded = false;
-                        using (var connection = this.table.Parent.Connect())
+                        using (var connection = await this.table.Parent.ConnectAsync())
                         {
                             using (var transaction = connection.BeginTransaction())
                             {
@@ -60,7 +60,8 @@ namespace Database.Table
                                         var properties = item.Select(x => x.PropertyName).Distinct().ToArray();
                                         await this.table.UpdateAsync
                                             (item.Key, connection, transaction,
-                                            item.Select(x => x.PropertyName).ToArray());
+                                            item.Select(x => x.PropertyName).ToArray())
+                                            .ConfigureAwait(false);
 
                                         Debug.WriteLine(item.Key.Id.ToString() + " update " + properties.Join(","));
 

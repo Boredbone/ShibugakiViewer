@@ -38,7 +38,8 @@ namespace Database.Table
                     Task.Run(async () =>
                     {
                         await this.Table.Parent.RequestThreadSafeTransactionAsync
-                            (context => this.Table.AddRangeAsync(items, context.Connection, context.Transaction));
+                            (context => this.Table.AddRangeAsync(items, context.Connection, context.Transaction))
+                            .ConfigureAwait(false);
                         items.ForEach(x => this.Tracker.Track(x));
                     });
                 })
@@ -47,7 +48,7 @@ namespace Database.Table
 
         public async Task<TRecord[]> GetAllAsTrackingAsync(IDbConnection connection)
         {
-            var data = await this.Table.GetAllAsync(connection);
+            var data = await this.Table.GetAllAsync(connection).ConfigureAwait(false);
 
             foreach(var item in data)
             {

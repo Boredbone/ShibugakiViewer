@@ -260,16 +260,19 @@ namespace ImageLibrary.Core
             FolderInformation[] folders;
             ExifVisibilityItem[] exifItems;
 
-            using (var connection = this.Database.Connect())
+            using (var connection = await this.Database.ConnectAsync().ConfigureAwait(false))
             {
-                await this.Database.InitializeAsync(connection);
+                await this.Database.InitializeAsync(connection).ConfigureAwait(false);
 
-                tags = await this.TagDatabase.GetAllAsTrackingAsync(connection);
-                folders = await this.FolderDatabase.GetAllAsTrackingAsync(connection);
-                exifItems = await this.ExifVisibilityDatabase.GetAllAsTrackingAsync(connection);
+                tags = await this.TagDatabase.GetAllAsTrackingAsync(connection)
+                    .ConfigureAwait(false);
+                folders = await this.FolderDatabase.GetAllAsTrackingAsync(connection)
+                    .ConfigureAwait(false);
+                exifItems = await this.ExifVisibilityDatabase.GetAllAsTrackingAsync(connection)
+                    .ConfigureAwait(false);
 
                 //loading test
-                await this.Records.AsQueryable(connection).FirstOrDefaultAsync();
+                await this.Records.AsQueryable(connection).FirstOrDefaultAsync().ConfigureAwait(false);
             }
             
             this.Tags.SetSource(tags.ToDictionary(x => x.Id, x => x));
@@ -300,7 +303,7 @@ namespace ImageLibrary.Core
         {
             Record[] records = null;
 
-            using (var connection = this.Database.Connect())
+            using (var connection = await this.Database.ConnectAsync().ConfigureAwait(false))
             {
                 records = await this.Records
                     .AsQueryable(connection)
@@ -308,7 +311,8 @@ namespace ImageLibrary.Core
                     .OrderBy(sort.Append(FileProperty.Id.ToSort(false)).ToArray())
                     .Skip(skip)
                     .Take(take)
-                    .ToArrayAsync();
+                    .ToArrayAsync()
+                    .ConfigureAwait(false);
             }
 
             foreach (var item in records)
@@ -332,10 +336,10 @@ namespace ImageLibrary.Core
             {
                 return 0;
             }
-            using (var connection = this.Records.Parent.Connect())
+            using (var connection = await this.Records.Parent.ConnectAsync().ConfigureAwait(false))
             {
                 return await this.FindIndexMainAsync
-                    (connection, criteria, criteria.GetFilterString(this), target);
+                    (connection, criteria, criteria.GetFilterString(this), target).ConfigureAwait(false);
             }
         }
 
@@ -363,7 +367,7 @@ namespace ImageLibrary.Core
             var filter = DatabaseFunction.And(filterSql,
                 SortSetting.GetOrderFilterSql(criteria.GetSort(), target));
 
-            return (await this.Records.CountAsync(connection, filter, reference)) - 1;
+            return (await this.Records.CountAsync(connection, filter, reference).ConfigureAwait(false)) - 1;
 
         }
 
@@ -376,13 +380,14 @@ namespace ImageLibrary.Core
         {
             var filter = criteria.GetFilterString(this);
 
-            using (var connection = this.Database.Connect())
+            using (var connection = await this.Database.ConnectAsync().ConfigureAwait(false))
             {
                 return await this.Records
                     .AsQueryable(connection)
                     .Where(filter)
                     .Select<string>(nameof(Record.Id))
-                    .ToArrayAsync();
+                    .ToArrayAsync()
+                    .ConfigureAwait(false);
             }
         }
 
@@ -390,9 +395,10 @@ namespace ImageLibrary.Core
         {
             var filter = criteria.GetFilterString(this);
 
-            using (var connection = this.Database.Connect())
+            using (var connection = await this.Database.ConnectAsync().ConfigureAwait(false))
             {
-                return await this.GetRegionIdsMainAsync(connection, criteria, index1, index2, filter);
+                return await this.GetRegionIdsMainAsync(connection, criteria, index1, index2, filter)
+                    .ConfigureAwait(false);
             }
         }
 
@@ -407,14 +413,15 @@ namespace ImageLibrary.Core
         {
             var filter = criteria.GetFilterString(this);
 
-            using (var connection = this.Database.Connect())
+            using (var connection = await this.Database.ConnectAsync().ConfigureAwait(false))
             {
                 var index1 = await this.FindIndexMainAsync(connection, criteria, filter, record1)
                     .ConfigureAwait(false);
                 var index2 = await this.FindIndexMainAsync(connection, criteria, filter, record2)
                     .ConfigureAwait(false);
 
-                return await this.GetRegionIdsMainAsync(connection, criteria, index1, index2, filter);
+                return await this.GetRegionIdsMainAsync(connection, criteria, index1, index2, filter)
+                    .ConfigureAwait(false);
             }
         }
 
@@ -456,7 +463,8 @@ namespace ImageLibrary.Core
                 .Select<string>(nameof(Record.Id))
                 .Skip(startIndex + 1)
                 .Take(endIndex - startIndex - 1)
-                .ToArrayAsync();
+                .ToArrayAsync()
+                .ConfigureAwait(false);
 
         }
 
@@ -744,7 +752,7 @@ namespace ImageLibrary.Core
                     return false;
                 }
 
-                using (var connection = this.Database.Connect())
+                using (var connection = await this.Database.ConnectAsync())
                 {
                     //実体のないアイテムの所属グループをデータベースに問い合わせ
                     var emptyKeys = items
@@ -858,7 +866,7 @@ namespace ImageLibrary.Core
         /// <returns></returns>
         public async Task<bool> HasItemsAsync()
         {
-            using (var connection = this.Database.Connect())
+            using (var connection = await this.Database.ConnectAsync())
             {
                 return (await this.Records
                     .AsQueryable(connection)
@@ -911,7 +919,7 @@ namespace ImageLibrary.Core
                 return null;
             }
 
-            using (var connection = this.Database.Connect())
+            using (var connection = await this.Database.ConnectAsync())
             {
                 var item = await this.Records.GetRecordFromKeyAsync(connection, key);
                 if (item != null)
@@ -947,7 +955,7 @@ namespace ImageLibrary.Core
         /// </summary>
         public async Task ClearAsync()
         {
-            using (var connection = this.Database.Connect())
+            using (var connection = await this.Database.ConnectAsync())
             {
                 this.Records.Drop(connection);
                 this.TagDatabase.Table.Drop(connection);

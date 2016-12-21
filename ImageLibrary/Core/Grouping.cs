@@ -83,7 +83,7 @@ namespace ImageLibrary.Core
             string[] relatedGroups;
             
 
-            using (var connection = this.Table.Parent.Connect())
+            using (var connection = await this.Table.Parent.ConnectAsync())
             {
                 var relatedGroupsList = new List<string[]>();
 

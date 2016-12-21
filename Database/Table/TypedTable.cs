@@ -468,7 +468,7 @@ namespace Database.Table
                 {
                     try
                     {
-                        await this.AddMainAsync(buffer, connection, transaction, replace);
+                        await this.AddMainAsync(buffer, connection, transaction, replace).ConfigureAwait(false);
 
                         transaction.Commit();
                     }
@@ -485,7 +485,7 @@ namespace Database.Table
         {
             using (var connection = this.Parent.ConnectAsThreadSafe())
             {
-                await this.AddRangeBufferedAsync(connection.Value, items, false);
+                await this.AddRangeBufferedAsync(connection.Value, items, false).ConfigureAwait(false);
             }
         }
 
@@ -513,7 +513,7 @@ namespace Database.Table
         {
             using (var connection = this.Parent.ConnectAsThreadSafe())
             {
-                await this.AddRangeBufferedAsync(connection.Value, items, true);
+                await this.AddRangeBufferedAsync(connection.Value, items, true).ConfigureAwait(false);
             }
         }
 
@@ -583,7 +583,7 @@ namespace Database.Table
 
             await connection.ExecuteAsync
                 ($"UPDATE {this.Name} SET {text} WHERE {IdName} = @{IdName}",
-                target, transaction);
+                target, transaction).ConfigureAwait(false);
         }
 
 
@@ -593,9 +593,9 @@ namespace Database.Table
         /// <param name="item"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public async Task RemoveAsync(TRecord item, DatabaseFront.TransactionContext context)
+        public Task RemoveAsync(TRecord item, DatabaseFront.TransactionContext context)
         {
-            await this.RemoveAsync(item, context.Connection, context.Transaction);
+            return this.RemoveAsync(item, context.Connection, context.Transaction);
         }
 
         /// <summary>
@@ -605,17 +605,17 @@ namespace Database.Table
         /// <param name="connection"></param>
         /// <param name="transaction"></param>
         /// <returns></returns>
-        public async Task RemoveAsync(TRecord item, IDbConnection connection, IDbTransaction transaction)
+        public Task RemoveAsync(TRecord item, IDbConnection connection, IDbTransaction transaction)
         {
-            await connection.ExecuteAsync
+            return connection.ExecuteAsync
                 ($"DELETE FROM {this.Name} WHERE {IdName} = @{IdName}",// LIMIT 1",
                 item, transaction);
         }
 
-        public async Task RemoveAsync
+        public Task RemoveAsync
             (object idContainer, string idPropertyName, IDbConnection connection, IDbTransaction transaction)
         {
-            await connection.ExecuteAsync
+            return connection.ExecuteAsync
                 ($"DELETE FROM {this.Name} WHERE {IdName} = @{idPropertyName}", idContainer, transaction);
         }
 
@@ -697,7 +697,7 @@ namespace Database.Table
 
                         await connection.ExecuteAsync
                             ($"DELETE FROM {this.Name} WHERE (({IdName} IN @{nameof(param.Item1)}) AND ({filter}))",
-                            param, transaction);
+                            param, transaction).ConfigureAwait(false);
 
                         transaction.Commit();
                     }
@@ -778,9 +778,9 @@ namespace Database.Table
         /// </summary>
         /// <param name="connection"></param>
         /// <returns></returns>
-        public async Task<long> CountAsync(IDbConnection connection)
+        public Task<long> CountAsync(IDbConnection connection)
         {
-            return await connection
+            return connection
                 .ExecuteScalarAsync<long>($@"SELECT COUNT(*) FROM {this.Name}");
         }
 
@@ -790,9 +790,9 @@ namespace Database.Table
         /// <param name="connection"></param>
         /// <param name="sql"></param>
         /// <returns></returns>
-        public async Task<long> CountAsync(IDbConnection connection, string sql)
+        public Task<long> CountAsync(IDbConnection connection, string sql)
         {
-            return await connection
+            return connection
                 .ExecuteScalarAsync<long>($@"SELECT COUNT(*) FROM {this.Name} WHERE {sql}");
         }
 
@@ -803,23 +803,23 @@ namespace Database.Table
         /// <param name="sql"></param>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        public async Task<long> CountAsync(IDbConnection connection, string sql, object parameter)
+        public Task<long> CountAsync(IDbConnection connection, string sql, object parameter)
         {
-            return await connection
+            return connection
                 .ExecuteScalarAsync<long>($@"SELECT COUNT(*) FROM {this.Name} WHERE {sql}", parameter);
         }
 
 
-        public async Task<TResult> MaxAsync<TResult>
+        public Task<TResult> MaxAsync<TResult>
             (IDbConnection connection, string column, string whereSql, object parameter = null)
         {
-            return await connection
+            return connection
                 .ExecuteScalarAsync<TResult>($@"SELECT MAX({column}) FROM {this.Name} WHERE {whereSql}", parameter);
         }
-        public async Task<TResult> MinAsync<TResult>
+        public Task<TResult> MinAsync<TResult>
             (IDbConnection connection, string column, string whereSql, object parameter = null)
         {
-            return await connection
+            return connection
                 .ExecuteScalarAsync<TResult>($@"SELECT MIN({column}) FROM {this.Name} WHERE {whereSql}", parameter);
         }
 
@@ -835,8 +835,8 @@ namespace Database.Table
         /// </summary>
         /// <param name="connection"></param>
         /// <returns></returns>
-        public async Task<TRecord[]> GetAllAsync(IDbConnection connection)
-            => await this.AsQueryable(connection).ToArrayAsync();
+        public Task<TRecord[]> GetAllAsync(IDbConnection connection)
+            => this.AsQueryable(connection).ToArrayAsync();
 
 
         /// <summary>
@@ -854,17 +854,17 @@ namespace Database.Table
                 .FirstOrDefault();
         }
 
-        public async Task<IEnumerable<TRecord>> GetRecordsFromKeyAsync(IDbConnection connection, TKey[] ids)
+        public Task<IEnumerable<TRecord>> GetRecordsFromKeyAsync(IDbConnection connection, TKey[] ids)
         {
             var param = new Tuple<TKey[]>(ids);
             var sql = $"SELECT * FROM {this.Name} WHERE {IdName} IN @{nameof(param.Item1)}";
-            return await connection.QueryAsync<TRecord>(sql, param);
+            return connection.QueryAsync<TRecord>(sql, param);
         }
 
-        public async Task<T> GetColumnsFromKeyAsync<T>(IDbConnection connection, TKey key, params string[] columns)
+        public Task<T> GetColumnsFromKeyAsync<T>(IDbConnection connection, TKey key, params string[] columns)
         {
             var selectText = columns.Join(", ");
-            return await connection
+            return connection
                 .ExecuteScalarAsync<T>
                     ($@"SELECT {selectText} FROM {this.Name} WHERE {IdName} = @{nameof(IdContainer.Id)} LIMIT 1",
                     new IdContainer(key));
@@ -900,7 +900,7 @@ namespace Database.Table
                 {
                     try
                     {
-                        await this.ExecuteAsync(connection, sql, param, transaction);
+                        await this.ExecuteAsync(connection, sql, param, transaction).ConfigureAwait(false);
 
                         transaction.Commit();
                     }
@@ -937,9 +937,9 @@ namespace Database.Table
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
-        public async Task RequestTransactionAsync(Action<DatabaseFront.TransactionContext> action)
+        public Task RequestTransactionAsync(Action<DatabaseFront.TransactionContext> action)
         {
-            await Task.Run(() => this.Parent.RequestTransaction(action));
+            return Task.Run(() => this.Parent.RequestTransaction(action));
         }
 
 
@@ -954,7 +954,8 @@ namespace Database.Table
         {
             var selector = $"SELECT {sql} FROM {this.Name} WHERE {IdName} = @{IdName} LIMIT 1";
 
-            var dic = (await connection.QueryAsync(selector, param, transaction)).FirstOrDefault();
+            var dic = (await connection.QueryAsync(selector, param, transaction).ConfigureAwait(false))
+                .FirstOrDefault();
 
             if (dic == null)
             {

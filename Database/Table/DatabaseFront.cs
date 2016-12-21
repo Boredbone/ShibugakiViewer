@@ -60,15 +60,20 @@ namespace Database.Table
         public IDbConnection Connect()
         {
             var connection = new SQLiteConnection(this.connectionString);
-
             connection.Open();
+            return connection;
+        }
 
+        public async Task<IDbConnection> ConnectAsync()
+        {
+            var connection = new SQLiteConnection(this.connectionString);
+            await connection.OpenAsync().ConfigureAwait(false);
             return connection;
         }
 
         public DisposableThreadLocal<IDbConnection> ConnectAsThreadSafe()
             => DisposableThreadLocal.Create(() => this.Connect());
-
+        
 
         /// <summary>
         /// Initialize Database
@@ -99,7 +104,8 @@ namespace Database.Table
             this.tables[0].CreateOrMigrate(connection, null);
 
 
-            var oldInformations = await this.informationTable.AsQueryable(connection).ToArrayAsync();
+            var oldInformations = await this.informationTable.AsQueryable(connection)
+                .ToArrayAsync().ConfigureAwait(false);
             var informations = oldInformations.OrderBy(x => x.Id).ToList();
 
 
@@ -171,11 +177,11 @@ namespace Database.Table
                 {
                     if (!oldInformations.Any(x => x.Id == info.Id))
                     {
-                        await this.informationTable.AddAsync(info, context);
+                        await this.informationTable.AddAsync(info, context).ConfigureAwait(false);
                     }
                     else
                     {
-                        await this.informationTable.UpdateAsync(info, context);
+                        await this.informationTable.UpdateAsync(info, context).ConfigureAwait(false);
                     }
                 }
             });
@@ -183,7 +189,7 @@ namespace Database.Table
         public async Task RequestTransactionAsync(Func<TransactionContext, Task> action)
         {
 
-            using (var connection = this.Connect())
+            using (var connection = await this.ConnectAsync())
             {
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -231,7 +237,8 @@ namespace Database.Table
                 {
                     try
                     {
-                        await action(new ThreadSafeTransactionContext(connection, transaction));
+                        await action(new ThreadSafeTransactionContext(connection, transaction))
+                            .ConfigureAwait(false);
 
                         transaction.Commit();
                     }
