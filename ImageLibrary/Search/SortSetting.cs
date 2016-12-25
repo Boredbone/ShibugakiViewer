@@ -81,8 +81,17 @@ namespace ImageLibrary.Search
             return items.Select(x => x.ToSql()).ToArray();
         }
 
-        public static string GetOrderFilterSql(IEnumerable<SortSetting> items, Record record)
+        public static string GetSkipFilterSql(IEnumerable<SortSetting> items)
+            => GetFilterSql(items, ">", "<", ">");
+
+        public static string GetOrderFilterSql(IEnumerable<SortSetting> items)
+            => GetFilterSql(items, "<", ">", "<=");
+
+
+        private static string GetFilterSql(IEnumerable<SortSetting> items,
+            string ascSymbol, string descSymbol, string idSymbol)
         {
+
             if (items == null)
             {
                 return null;
@@ -93,9 +102,9 @@ namespace ImageLibrary.Search
             var filters = items
                 .SelectMany(x => x.Property.GetSortColumns()
                     .Select(s => new SortFilterContainer
-                    { Column = s, Symbol = x.IsDescending ? ">" : "<" }))
+                    { Column = s, Symbol = x.IsDescending ? descSymbol : ascSymbol }))
                 .Append(new SortFilterContainer
-                { Column = FileProperty.Id.GetSortColumns().First(), Symbol = "<=" })
+                { Column = FileProperty.Id.GetSortColumns().First(), Symbol = idSymbol })
                 .Select((x, c) =>
                 {
                     var symbol = x.Symbol;
@@ -108,7 +117,7 @@ namespace ImageLibrary.Search
                     return fil;
                 })
                 .ToArray();
-            
+
             return DatabaseFunction.Or(filters.ToArray());
         }
 

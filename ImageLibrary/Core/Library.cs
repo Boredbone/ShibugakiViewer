@@ -365,7 +365,7 @@ namespace ImageLibrary.Core
             }
 
             var filter = DatabaseFunction.And(filterSql,
-                SortSetting.GetOrderFilterSql(criteria.GetSort(), target));
+                SortSetting.GetOrderFilterSql(criteria.GetSort()));
 
             return (await this.Records.CountAsync(connection, filter, reference).ConfigureAwait(false)) - 1;
 

@@ -455,6 +455,12 @@ namespace Test
         {
             using (var connection = this.database.Connect())
             {
+                this.table1.Drop(connection);
+
+                await this.database.InitializeAsync(connection);
+            }
+            using (var connection = this.database.Connect())
+            {
                 Debug.WriteLine("a");
                 var date = DateTimeOffset.Now;
                 await this.TestUnixDate(date, connection);
@@ -521,6 +527,23 @@ namespace Test
 
                 this.AreEqual(DatabaseFunction.DateOffsetReference(date.ToUniversalTime()), dateNum.FirstOrDefault().ToString());
             }
+            {
+                var container = new Table1{ DateOffset = date };
+
+                using(var tr = connection.BeginTransaction())
+                {
+                    await table1.ReplaceAsync(container, connection, tr);
+                    tr.Commit();
+                }
+
+                container.DateOffset = date.AddSeconds(1);
+
+                var dateNum = await table1.QueryAsync<string>
+                    (connection, $"Select DateOffset FROM {table1.Name} WHERE (DateOffset+1) == @DateOffset", container);
+
+                Assert.AreEqual(1, dateNum.Count());
+                this.AreEqual(UnixTime.FromDateTime(date).ToString(), dateNum.FirstOrDefault());
+            }
         }
 
 
@@ -569,13 +592,13 @@ namespace Test
             [RecordMember]
             public double Number { get; private set; }
             [RecordMember]
-            public DateTimeOffset DateOffset { get; private set; }
+            public DateTimeOffset DateOffset { get; set; }
             [RecordMember]
-            public DateTime Date { get; private set; }
+            public DateTime Date { get; set; }
             [RecordMember]
-            public DateTimeOffset? DateOffsetNull { get; private set; } = null;
+            public DateTimeOffset? DateOffsetNull { get; set; } = null;
             [RecordMember]
-            public DateTime? DateNull { get; private set; } = null;
+            public DateTime? DateNull { get; set; } = null;
             //[RecordMember]
             //public int SubNumber { get; set; }
             [RecordMember]

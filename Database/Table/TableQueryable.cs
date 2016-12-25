@@ -113,34 +113,34 @@ namespace Database.Table
 
         }
 
-        public async Task<IEnumerable<T>> AsEnumerableAsync()
+        public async Task<IEnumerable<T>> AsEnumerableAsync(object param = null)
         {
-            return await this.connection.QueryAsync<T>(this.MakeSql());
+            return await this.connection.QueryAsync<T>(this.MakeSql(), param);
         }
 
-        public IEnumerable<T> AsEnumerable()
+        public IEnumerable<T> AsEnumerable(object param = null)
         {
-            return this.connection.Query<T>(this.MakeSql());
+            return this.connection.Query<T>(this.MakeSql(), param);
         }
 
-        public T First()
-            => this.Take(1).AsEnumerable().First();
+        public T First(object param = null)
+            => this.Take(1).AsEnumerable(param).First();
 
-        public T FirstOrDefault()
-            => this.Take(1).AsEnumerable().FirstOrDefault();
+        public T FirstOrDefault(object param = null)
+            => this.Take(1).AsEnumerable(param).FirstOrDefault();
 
-        public T[] ToArray()
-            => this.AsEnumerable().ToArray();
+        public T[] ToArray(object param = null)
+            => this.AsEnumerable(param).ToArray();
 
 
-        public async Task<T> FirstAsync()
-            => (await this.Take(1).AsEnumerableAsync()).First();
+        public async Task<T> FirstAsync(object param = null)
+            => (await this.Take(1).AsEnumerableAsync(param)).First();
 
-        public async Task<T> FirstOrDefaultAsync()
-            => (await this.Take(1).AsEnumerableAsync()).FirstOrDefault();
+        public async Task<T> FirstOrDefaultAsync(object param = null)
+            => (await this.Take(1).AsEnumerableAsync(param)).FirstOrDefault();
 
-        public async Task<T[]> ToArrayAsync()
-            => (await this.AsEnumerableAsync()).ToArray();
-        
+        public async Task<T[]> ToArrayAsync(object param = null)
+            => (await this.AsEnumerableAsync(param)).ToArray();
+
     }
 }
