@@ -758,7 +758,7 @@ namespace Database.Table
         public long Count(IDbConnection connection)
         {
             return connection
-                .ExecuteScalar<long>($@"SELECT COUNT(*) FROM {this.Name}");
+                .ExecuteScalar<long>($@"SELECT COUNT({IdName}) FROM {this.Name}");
         }
 
         /// <summary>
@@ -770,7 +770,7 @@ namespace Database.Table
         public long Count(IDbConnection connection, string sql)
         {
             return connection
-                .ExecuteScalar<long>($@"SELECT COUNT(*) FROM {this.Name} WHERE {sql}");
+                .ExecuteScalar<long>($@"SELECT COUNT({IdName}) FROM {this.Name} WHERE {sql}");
         }
 
         /// <summary>
@@ -781,7 +781,7 @@ namespace Database.Table
         public Task<long> CountAsync(IDbConnection connection)
         {
             return connection
-                .ExecuteScalarAsync<long>($@"SELECT COUNT(*) FROM {this.Name}");
+                .ExecuteScalarAsync<long>($@"SELECT COUNT({IdName}) FROM {this.Name}");
         }
 
         /// <summary>
@@ -793,7 +793,7 @@ namespace Database.Table
         public Task<long> CountAsync(IDbConnection connection, string sql)
         {
             return connection
-                .ExecuteScalarAsync<long>($@"SELECT COUNT(*) FROM {this.Name} WHERE {sql}");
+                .ExecuteScalarAsync<long>($@"SELECT COUNT({IdName}) FROM {this.Name} WHERE {sql}");
         }
 
         /// <summary>
@@ -806,7 +806,7 @@ namespace Database.Table
         public Task<long> CountAsync(IDbConnection connection, string sql, object parameter)
         {
             return connection
-                .ExecuteScalarAsync<long>($@"SELECT COUNT(*) FROM {this.Name} WHERE {sql}", parameter);
+                .ExecuteScalarAsync<long>($@"SELECT COUNT({IdName}) FROM {this.Name} WHERE {sql}", parameter);
         }
 
 
