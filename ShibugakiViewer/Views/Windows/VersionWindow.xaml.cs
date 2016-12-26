@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ShibugakiViewer.Models;
+using Boredbone.Utility.Tools;
 
 namespace ShibugakiViewer.Views.Windows
 {
@@ -30,10 +31,21 @@ namespace ShibugakiViewer.Views.Windows
 
             var appName = core.AppName;
             this.Title = $"About {appName}";
-            
-            var ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
-            this.versionText.Text = ver.ToString();
+
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            var ver = assembly.GetName().Version;
+
+            this.versionText.Text = ver.ToString(3);
+
+            try
+            {
+                var buildDateTime = BuildTimeStamp.GetDateTimeUtcFrom(assembly.Location);
+                this.versionDetail.Text = $"{ver} {buildDateTime}";
+            }
+            catch
+            {
+            }
 
             this.projectHomeLink.NavigateUri = new Uri(core.ProjectHomeUrl);
         }

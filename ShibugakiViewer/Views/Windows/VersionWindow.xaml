@@ -76,6 +76,9 @@
                                            FontSize="{StaticResource SubTitleTextSize}">
                                     <Run Text="Version "/>
                                     <Run Name="versionText" Text="1.0"/>
+                                    <TextBlock.ToolTip>
+                                        <TextBlock Name="versionDetail" Text="1.0"/>
+                                    </TextBlock.ToolTip>
                                 </TextBlock>
                                 
                                 <TextBlock Style="{StaticResource normalTextStyle}">
