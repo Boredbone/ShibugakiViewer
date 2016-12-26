@@ -375,6 +375,7 @@ namespace ImageLibrary.Viewer
             }
 
             Record skipUntil = null;
+            /*
             if (offset > 0)
             {
                 lock (this.Cache)
@@ -384,7 +385,7 @@ namespace ImageLibrary.Viewer
                         skipUntil = null;
                     }
                 }
-            }
+            }*/
 
             var result = await criteria.SearchAsync(library, offset, takes, skipUntil);
 
