@@ -12,6 +12,6 @@ namespace ImageLibrary.Core
 
         Task<long> CountAsync(T criteria);
         string GetFilterString(T criteria);
-        Task<Record[]> SearchAsync(T criteria, long skip, long take);
+        Task<Record[]> SearchAsync(T criteria, long skip, long take, Record skipUntil);
     }
 }

@@ -73,16 +73,32 @@ namespace ImageLibrary.Core
         /// <param name="skip"></param>
         /// <param name="take"></param>
         /// <returns></returns>
-        public async Task<Record[]> SearchAsync(SearchInformation criteria, long skip, long take)
+        public async Task<Record[]> SearchAsync(SearchInformation criteria, long skip, long take, Record skipUntil)
         {
             //TODO データベースの状態が変わると、最初に数えたHit数と現在の検索結果が異なる可能性がある
 
             criteria.SetDateToNow();
 
-            var records = await this.Library.SearchMainAsync
-                (this.GetFilterString(criteria),
-                SortSetting.GetFullSql(criteria.GetSort()),
-                skip, take);
+            Record[] records;
+
+            if (skipUntil != null)
+            {
+                var sort = criteria.GetSort().ToArray();
+
+                var reference = await this.Library.GetSortReferenceAsync(criteria, skipUntil);
+
+                records = await this.Library.SearchMainAsync
+                    (DatabaseFunction.And(this.GetFilterString(criteria), SortSetting.GetSkipFilterSql(sort)),
+                    SortSetting.GetFullSql(sort),
+                    0, take, reference);
+            }
+            else
+            {
+                records = await this.Library.SearchMainAsync
+                    (this.GetFilterString(criteria),
+                    SortSetting.GetFullSql(criteria.GetSort()),
+                    skip, take);
+            }
 
             if ((criteria.ThumbnailFilePath == null || skip == 0) && records.Length > 0)
             {

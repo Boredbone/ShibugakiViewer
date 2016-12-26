@@ -64,7 +64,7 @@ namespace ImageLibrary.Core
         /// <param name="skip"></param>
         /// <param name="take"></param>
         /// <returns></returns>
-        public async Task<Record[]> SearchAsync(Record group, long skip, long take)
+        public async Task<Record[]> SearchAsync(Record group, long skip, long take, Record skipUntil = null)
         {
             return await this.Library.SearchMainAsync(
                 this.GetFilterString(group),

@@ -38,6 +38,12 @@ namespace Test
         {
             await new Sample2().Test1();
         }
+
+        [TestMethod]
+        public async Task DatabaseTimeTest2()
+        {
+            await new Sample2().Test2();
+        }
     }
 
     class Sample
@@ -556,19 +562,144 @@ namespace Test
                 await this.database.InitializeAsync(connection);
             }
 
-
+            //同じ時間が復元されるか
+            //異なるオフセット
+            //localタイムゾーンで取り出して同じ時間を指しているか
             //1970年より前
+            using (var connection = this.database.Connect())
+            {
+                var record = new Table1
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    DateOffset = new DateTimeOffset(1800, 1, 2, 3, 4, 5, TimeSpan.FromHours(-3.5)),
+                    Date = new DateTime(1800, 6, 7, 8, 9, 10, DateTimeKind.Local),
+                    DateOffsetNull = new DateTimeOffset(1800, 1, 2, 3, 4, 5, TimeSpan.FromHours(-13)),
+                    DateNull = new DateTime(1800, 6, 7, 8, 9, 10, DateTimeKind.Local),
+                };
+
+                using (var tr = connection.BeginTransaction())
+                {
+                    await table1.ReplaceAsync(record, connection, tr);
+                    tr.Commit();
+                }
+
+                var r2 = await table1.GetRecordFromKeyAsync(connection, record.Id);
+
+                this.AreEqual(record.DateOffset.ToLocalTime().ToString(), r2.DateOffset.ToString());
+                this.AreEqual(record.Date.ToLocalTime().ToString(), r2.Date.ToString());
+                this.AreEqual(record.DateOffsetNull?.ToLocalTime().ToString(), r2.DateOffsetNull?.ToString());
+                this.AreEqual(record.DateNull?.ToLocalTime().ToString(), r2.DateNull.ToString());
+
+            }
 
             //3000年
+            using (var connection = this.database.Connect())
+            {
+                var record = new Table1
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    DateOffset = new DateTimeOffset(3900, 1, 2, 3, 4, 5, TimeSpan.FromHours(3.5)),
+                    Date = new DateTime(3900, 6, 7, 8, 9, 10, DateTimeKind.Local),
+                    DateOffsetNull = new DateTimeOffset(3900, 11, 12, 13, 14, 15, TimeSpan.FromHours(14)),
+                    DateNull = new DateTime(3900, 6, 17, 18, 19, 20, DateTimeKind.Local),
+                };
+
+                using (var tr = connection.BeginTransaction())
+                {
+                    await table1.ReplaceAsync(record, connection, tr);
+                    tr.Commit();
+                }
+
+                var r2 = await table1.GetRecordFromKeyAsync(connection, record.Id);
+
+                this.AreEqual(record.DateOffset.ToLocalTime().ToString(), r2.DateOffset.ToString());
+                this.AreEqual(record.Date.ToLocalTime().ToString(), r2.Date.ToString());
+                this.AreEqual(record.DateOffsetNull?.ToLocalTime().ToString(), r2.DateOffsetNull?.ToString());
+                this.AreEqual(record.DateNull?.ToLocalTime().ToString(), r2.DateNull.ToString());
+
+            }
 
             //null
+            //recordで入れてrecordで取り出す
+            //recordで入れてlong?で取り出す
+            using (var connection = this.database.Connect())
+            {
+                var record = new Table1
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    DateOffsetNull = null,
+                    DateNull = null,
+                };
 
-            //異なるオフセット
+                using (var tr = connection.BeginTransaction())
+                {
+                    await table1.ReplaceAsync(record, connection, tr);
+                    tr.Commit();
+                }
+
+                var r2 = await table1.GetRecordFromKeyAsync(connection, record.Id);
+
+                this.AreEqual(record.DateOffset.ToLocalTime().ToString(), r2.DateOffset.ToString());
+                this.AreEqual(record.Date.ToLocalTime().ToString(), r2.Date.ToString());
+                Assert.IsNull(r2.DateOffsetNull);
+                Assert.IsNull(r2.DateNull);
+
+                this.AreEqual(0L, (await table1.QueryAsync<long>
+                    (connection, $"Select DateOffset FROM {table1.Name} WHERE Id=='{record.Id}'")).First());
+                this.AreEqual(0L, (await table1.QueryAsync<long>
+                    (connection, $"Select Date FROM {table1.Name} WHERE Id=='{record.Id}'")).First());
+                Assert.IsNull((await table1.QueryAsync<long?>
+                    (connection, $"Select DateOffsetNull FROM {table1.Name} WHERE Id=='{record.Id}'")).First());
+                Assert.IsNull((await table1.QueryAsync<long?>
+                    (connection, $"Select DateNull FROM {table1.Name} WHERE Id=='{record.Id}'")).First());
+
+
+            }
+
 
             //現在地の日付で検索
+            //前日23:59 当日0:00 3:00 12:00 20:00 23:59 翌日0:00
+            using (var connection = this.database.Connect())
+            {
+                var offset = DateTimeOffset.Now.Offset;
+                var records = new[] {
+                    new Table1 { DateOffset =  new DateTimeOffset(2200, 4, 30, 23, 59, 59, offset) },
+                    new Table1 { DateOffset =  new DateTimeOffset(2200, 5, 1, 0, 0, 0, offset) },
+                    new Table1 { DateOffset =  new DateTimeOffset(2200, 5, 1, 3, 30, 10, offset) },
+                    new Table1 { DateOffset =  new DateTimeOffset(2200, 5, 1, 12, 55, 30, offset) },
+                    new Table1 { DateOffset =  new DateTimeOffset(2200, 5, 1, 20, 44, 2, offset) },
+                    new Table1 { DateOffset =  new DateTimeOffset(2200, 5, 1, 23, 59, 59, offset) },
+                    new Table1 { DateOffset =  new DateTimeOffset(2200, 5, 2, 0, 0, 0, offset) },
+                }
+                .Select(x =>
+                {
+                    x.Id = Guid.NewGuid().ToString();
+                    return x;
+                })
+                .ToArray();
 
-            //
+                using (var tr = connection.BeginTransaction())
+                {
+                    await table1.ReplaceRangeAsync(records, connection, tr);
+                    tr.Commit();
+                }
 
+                var r2 = await table1.AsQueryable(connection)
+                    .Where($"{DatabaseFunction.GetDate("DateOffset")}=={DatabaseFunction.DateOffsetReference(new DateTimeOffset(2200, 5, 1, 1, 22, 3, offset))}")
+                    .OrderBy("DateOffset")
+                    .ToArrayAsync();
+
+                this.AreEqual(records.Length-2, r2.Length);
+
+                foreach (var c in records.Skip(1).Zip(r2, (a, b) =>new { a, b }))
+                {
+
+                    this.AreEqual(c.a.Id, c.b.Id);
+                    this.AreEqual(c.a.DateOffset.ToString(), c.b.DateOffset.ToString());
+                }
+                
+
+            }
 
         }
 
@@ -592,9 +723,9 @@ namespace Test
             [RecordMember]
             public double Number { get; private set; }
             [RecordMember]
-            public DateTimeOffset DateOffset { get; set; }
+            public DateTimeOffset DateOffset { get; set; } = UnixTime.DefaultDateTimeOffsetLocal;
             [RecordMember]
-            public DateTime Date { get; set; }
+            public DateTime Date { get; set; } = UnixTime.DefaultDateTimeUtc;
             [RecordMember]
             public DateTimeOffset? DateOffsetNull { get; set; } = null;
             [RecordMember]

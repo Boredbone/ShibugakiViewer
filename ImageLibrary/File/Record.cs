@@ -811,8 +811,8 @@ namespace ImageLibrary.File
         public string GetFilterString(Library library)
             => library.GroupQuery.GetFilterString(this);
 
-        public Task<Record[]> SearchAsync(Library library, long skip, long take)
-            => library.GroupQuery.SearchAsync(this, skip, take);
+        public Task<Record[]> SearchAsync(Library library, long skip, long take, Record skipUntil = null)
+            => library.GroupQuery.SearchAsync(this, skip, take, skipUntil);
         
 
 

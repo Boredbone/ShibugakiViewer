@@ -214,8 +214,8 @@ namespace ImageLibrary.Search
         public string GetFilterString(Library library)
             => library.RecordQuery.GetFilterString(this);
 
-        public Task<Record[]> SearchAsync(Library library, long skip, long take)
-            => library.RecordQuery.SearchAsync(this, skip, take);
+        public Task<Record[]> SearchAsync(Library library, long skip, long take, Record skipUntil = null)
+            => library.RecordQuery.SearchAsync(this, skip, take, skipUntil);
         
 
         public static SearchInformation GenerateEmpty() => new SearchInformation(new ComplexSearch(false));

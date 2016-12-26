@@ -299,7 +299,8 @@ namespace ImageLibrary.Core
         /// <param name="skip"></param>
         /// <param name="take"></param>
         /// <returns></returns>
-        public async Task<Record[]> SearchMainAsync(string filter, string[] sort, long skip, long take)
+        public async Task<Record[]> SearchMainAsync
+            (string filter, string[] sort, long skip, long take, object param = null)
         {
             Record[] records = null;
 
@@ -311,7 +312,7 @@ namespace ImageLibrary.Core
                     .OrderBy(sort.Append(FileProperty.Id.ToSort(false)).ToArray())
                     .Skip(skip)
                     .Take(take)
-                    .ToArrayAsync()
+                    .ToArrayAsync(param)
                     .ConfigureAwait(false);
             }
 
@@ -369,6 +370,18 @@ namespace ImageLibrary.Core
 
             return (await this.Records.CountAsync(connection, filter, reference).ConfigureAwait(false)) - 1;
 
+        }
+
+        public async Task<object> GetSortReferenceAsync(ISearchCriteria criteria, Record target)
+        {
+            using (var connection = await this.Records.Parent.ConnectAsync().ConfigureAwait(false))
+            {
+                var sql = SortSetting.GetReferenceSelectorSql(criteria.GetSort());
+
+                return await this.Records
+                    .GetDynamicParametersAsync(connection, sql, target)
+                    .ConfigureAwait(false);
+            }
         }
 
         /// <summary>

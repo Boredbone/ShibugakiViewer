@@ -374,7 +374,19 @@ namespace ImageLibrary.Viewer
                 throw new ArgumentException();
             }
 
-            var result = await criteria.SearchAsync(library, offset, takes);
+            Record skipUntil = null;
+            if (offset > 0)
+            {
+                lock (this.Cache)
+                {
+                    if (!this.Cache.TryGetValue(offset - 1, out skipUntil))
+                    {
+                        skipUntil = null;
+                    }
+                }
+            }
+
+            var result = await criteria.SearchAsync(library, offset, takes, skipUntil);
 
             lock (this.Cache)
             {
