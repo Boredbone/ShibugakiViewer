@@ -8,7 +8,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Boredbone.Utility.Extensions;
-using CsCommon.Utility.Extensions;
 using Dapper;
 
 namespace Database.Table

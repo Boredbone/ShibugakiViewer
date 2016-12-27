@@ -21,28 +21,39 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Reactive.Bindings.Extensions;
 using Boredbone.Utility.Tools;
 using System.Data;
+using Boredbone.Utility;
 
 namespace Test
 {
     [TestClass]
     public class DatabaseTest
     {
+
         [TestMethod]
         public async Task DatabaseUsageTest()
         {
-            await new Sample().Method1();
+            await new Sample().Method1(DateTimeOffset.Now.Offset);
+            await new Sample().Method1(TimeSpan.FromHours(3));
+            await new Sample().Method1(TimeSpan.FromHours(-7.5));
+            await new Sample().Method1(TimeSpan.FromHours(0));
         }
 
         [TestMethod]
         public async Task DatabaseTimeTest()
         {
-            await new Sample2().Test1();
+            await new Sample2().Test1(DateTimeOffset.Now.Offset);
+            await new Sample2().Test1(TimeSpan.FromHours(5));
+            await new Sample2().Test1(TimeSpan.FromHours(-10.5));
+            await new Sample2().Test1(TimeSpan.FromHours(0));
         }
 
         [TestMethod]
         public async Task DatabaseTimeTest2()
         {
-            await new Sample2().Test2();
+            await new Sample2().Test2(DateTimeOffset.Now.Offset);
+            await new Sample2().Test2(TimeSpan.FromHours(0.7));
+            await new Sample2().Test2(TimeSpan.FromHours(-4.4));
+            await new Sample2().Test2(TimeSpan.FromHours(0));
         }
     }
 
@@ -80,8 +91,12 @@ namespace Test
 
         private string GetId() => Guid.NewGuid().ToString();
 
-        public async Task Method1()
+        public async Task Method1(TimeSpan offset)
         {
+            //if (offset != DateTimeOffset.Now.Offset)
+            {
+                DatabaseFunction.SetDateOffset(offset);
+            }
 
             using (var connection = this.database.Connect())
             {
@@ -89,7 +104,7 @@ namespace Test
 
                 await this.database.InitializeAsync(connection);
             }
-            
+
 
             LibraryOwner.SetConfig(new LibraryConfiguration(""));
 
@@ -134,10 +149,10 @@ namespace Test
             var testName2 = testName.Replace('_', 'f').Replace(']', '-');
             items[1].SetName(testName2);
 
-            var currentTime = DateTimeOffset.Now;
+            var currentTime = DateTimeOffset.Now.ToOffset(offset);
 
             items[1].DateModified = currentTime - TimeSpan.FromDays(2);
-            items[2].DateModified= currentTime;
+            items[2].DateModified = currentTime;
 
             await this.database.RequestTransactionAsync(async context =>
             {
@@ -183,7 +198,7 @@ namespace Test
                         Console.WriteLine(item.ToString());
                     }
 
-                    Assert.AreEqual(4,results2.Length);
+                    Assert.AreEqual(4, results2.Length);
 
                     Assert.AreEqual(items[0].Id, results2[0].Id);
                     Assert.AreEqual(items[1].Id, results2[1].Id);
@@ -264,7 +279,7 @@ namespace Test
                 Console.WriteLine(rec.ToString());
                 Assert.AreEqual(testName, rec.Id);
             }
-            
+
 
             Record[] items2 = null;
             using (var connection = this.database.Connect())
@@ -358,7 +373,7 @@ namespace Test
 
                 Console.WriteLine("b");
                 //0001-01-01
-                Assert.AreEqual((-DateTimeOffset.Now.Offset.TotalSeconds).ToString(),
+                Assert.AreEqual((-offset.TotalSeconds).ToString(),
                     this.table1.AsQueryable(connection)
                     .Select<string>(DatabaseFunction.GetDate(nameof(Record.DateModified)))
                     .ToArray()
@@ -380,10 +395,11 @@ namespace Test
 
 
                 Console.WriteLine("d");
-                var today = DateTimeOffset.Now.Date;
+                var today = DateTimeOffset.Now.ToOffset(offset).ToDate();
+
 
                 var mods = this.table1.AsQueryable(connection)
-                    .Where($"{DatabaseFunction.GetDate(nameof(Record.DateModified))}=={UnixTime.FromDateTime(today.Date)}")
+                    .Where($"{DatabaseFunction.GetDate(nameof(Record.DateModified))}=={UnixTime.FromDateTime(today)}")
                     .Select<DateTimeOffset>($"{nameof(Record.DateModified)}")
                     .Take(2)
                     .ToArray();
@@ -392,15 +408,13 @@ namespace Test
                 Assert.AreEqual(1, mods.Length);
 
                 Console.WriteLine("f");
-                Assert.AreEqual(new DateTimeOffset(currentTime.Date)
-                    .AddHours(currentTime.Hour)
-                    .AddMinutes(currentTime.Minute)
-                    .AddSeconds(currentTime.Second),
+                this.AreEqual(new DateTimeOffset(currentTime.Year, currentTime.Month, currentTime.Day,
+                    currentTime.Hour, currentTime.Minute, currentTime.Second, offset),
                     mods[0]);
 
                 Console.WriteLine("g");
             }
-            
+
             /*
 
             using (var connection = this.database.Connect())
@@ -421,7 +435,17 @@ namespace Test
             }*/
 
         }
-        
+
+        private void AreEqual<T>(T a, T b)
+        {
+            Console.WriteLine((a?.ToString() ?? "null") + ", " + (b?.ToString() ?? "null"));
+            Assert.AreEqual(a, b);
+        }
+        private void AreNotEqual<T>(T a, T b)
+        {
+            Console.WriteLine((a?.ToString() ?? "null") + ", " + (b?.ToString() ?? "null"));
+            Assert.AreNotEqual(a, b);
+        }
     }
     class Sample2
     {
@@ -440,25 +464,16 @@ namespace Test
                 IsIdAuto = false,
                 Version = 2,
             };
-
-            //table1.AddColumnOption(nameof(Table1.NewNumber), "DEFAULT 3");
-            //table1.AddColumnOption(nameof(Table1.NewText), "DEFAULT 'あおえ'");
-            //table1.AddColumnOption(nameof(Table1.IsEnabled), "DEFAULT 1");
-            //
-            //table1.Migrating += (o, e) =>
-            //{
-            //    if (e.TableInformations.First(x => x.TableName.Equals(this.table1.Name))
-            //        .Modified < new DateTime(2016, 1, 1))
-            //    {
-            //        e.Converters[nameof(Table1.NewNumber)] = "(SubNumber*2)+5";
-            //    }
-            //};
         }
 
         private string GetId() => Guid.NewGuid().ToString();
 
-        public async Task Test1()
+        public async Task Test1(TimeSpan offset)
         {
+            //if (offset != DateTimeOffset.Now.Offset)
+            {
+                DatabaseFunction.SetDateOffset(offset);
+            }
             using (var connection = this.database.Connect())
             {
                 this.table1.Drop(connection);
@@ -469,22 +484,22 @@ namespace Test
             {
                 Debug.WriteLine("a");
                 var date = DateTimeOffset.Now;
-                await this.TestUnixDate(date, connection);
+                await this.TestUnixDate(date, connection, offset);
 
                 Debug.WriteLine("b");
                 var d2 = new DateTimeOffset(date.Year, date.Month, date.Day,
                     date.Hour, date.Minute, date.Second, TimeSpan.FromHours(-10.5));
-                await this.TestUnixDate(d2, connection);
+                await this.TestUnixDate(d2, connection, offset);
 
                 Debug.WriteLine("c");
                 var d3 = new DateTimeOffset(date.Year, date.Month, date.Day,
                     date.Hour, date.Minute, date.Second, TimeSpan.FromHours(0));
-                await this.TestUnixDate(d3, connection);
+                await this.TestUnixDate(d3, connection, offset);
 
             }
         }
 
-        private async Task TestUnixDate(DateTimeOffset date,IDbConnection connection)
+        private async Task TestUnixDate(DateTimeOffset date, IDbConnection connection, TimeSpan offset)
         {
 
             {
@@ -522,7 +537,14 @@ namespace Test
                 var dateNum = await table1.QueryAsync<long>
                     (connection, $"Select {unixDate}");
 
-                this.AreEqual(DatabaseFunction.DateOffsetReference(date), dateNum.FirstOrDefault().ToString());
+                if (DateTimeOffset.Now.Offset == offset)
+                {
+                    this.AreEqual(DatabaseFunction.DateOffsetReference(date), dateNum.FirstOrDefault().ToString());
+                }
+                else
+                {
+                    this.AreEqual(DatabaseFunction.DateOffsetReference(date, offset), dateNum.FirstOrDefault().ToString());
+                }
             }
             {
                 var unixTime = $"strftime('%s','{date.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}')";
@@ -531,12 +553,19 @@ namespace Test
                 var dateNum = await table1.QueryAsync<long>
                     (connection, $"Select {unixDate}");
 
-                this.AreEqual(DatabaseFunction.DateOffsetReference(date.ToUniversalTime()), dateNum.FirstOrDefault().ToString());
+                if (DateTimeOffset.Now.Offset == offset)
+                {
+                    this.AreEqual(DatabaseFunction.DateOffsetReference(date.ToUniversalTime()), dateNum.FirstOrDefault().ToString());
+                }
+                else
+                {
+                    this.AreEqual(DatabaseFunction.DateOffsetReference(date.ToUniversalTime(), offset), dateNum.FirstOrDefault().ToString());
+                }
             }
             {
-                var container = new Table1{ DateOffset = date };
+                var container = new Table1 { DateOffset = date };
 
-                using(var tr = connection.BeginTransaction())
+                using (var tr = connection.BeginTransaction())
                 {
                     await table1.ReplaceAsync(container, connection, tr);
                     tr.Commit();
@@ -553,8 +582,12 @@ namespace Test
         }
 
 
-        public async Task Test2()
+        public async Task Test2(TimeSpan offset)
         {
+            //if (offset != DateTimeOffset.Now.Offset)
+            {
+                DatabaseFunction.SetDateOffset(offset);
+            }
             using (var connection = this.database.Connect())
             {
                 this.table1.Drop(connection);
@@ -661,7 +694,7 @@ namespace Test
             //前日23:59 当日0:00 3:00 12:00 20:00 23:59 翌日0:00
             using (var connection = this.database.Connect())
             {
-                var offset = DateTimeOffset.Now.Offset;
+                //var offset = DateTimeOffset.Now.Offset;
                 var records = new[] {
                     new Table1 { DateOffset =  new DateTimeOffset(2200, 4, 30, 23, 59, 59, offset) },
                     new Table1 { DateOffset =  new DateTimeOffset(2200, 5, 1, 0, 0, 0, offset) },
@@ -684,20 +717,24 @@ namespace Test
                     tr.Commit();
                 }
 
+                var reference = (offset == DateTimeOffset.Now.Offset)
+                    ? DatabaseFunction.DateOffsetReference(new DateTimeOffset(2200, 5, 1, 1, 22, 3, offset))
+                    : DatabaseFunction.DateOffsetReference(new DateTimeOffset(2200, 5, 1, 1, 22, 3, offset), offset);
+
                 var r2 = await table1.AsQueryable(connection)
-                    .Where($"{DatabaseFunction.GetDate("DateOffset")}=={DatabaseFunction.DateOffsetReference(new DateTimeOffset(2200, 5, 1, 1, 22, 3, offset))}")
+                    .Where($"{DatabaseFunction.GetDate("DateOffset")}=={reference}")
                     .OrderBy("DateOffset")
                     .ToArrayAsync();
 
-                this.AreEqual(records.Length-2, r2.Length);
+                this.AreEqual(records.Length - 2, r2.Length);
 
-                foreach (var c in records.Skip(1).Zip(r2, (a, b) =>new { a, b }))
+                foreach (var c in records.Skip(1).Zip(r2, (a, b) => new { a, b }))
                 {
 
                     this.AreEqual(c.a.Id, c.b.Id);
-                    this.AreEqual(c.a.DateOffset.ToString(), c.b.DateOffset.ToString());
+                    this.AreEqual(c.a.DateOffset.ToString(), c.b.DateOffset.ToOffset(offset).ToString());
                 }
-                
+
 
             }
 
