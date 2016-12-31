@@ -166,11 +166,11 @@ namespace ImageLibrary.Creation
 
                 var folderFilter = complex.ToSql();
 
-                if (!string.IsNullOrWhiteSpace(folderFilter))
+                if (folderFilter != null)
                 {
 
-                    var filter = DatabaseFunction.And
-                        (DatabaseFunction.IsFalse(nameof(Record.IsGroup)), folderFilter);
+                    var filter = DatabaseExpression.And
+                        (DatabaseExpression.IsFalse(nameof(Record.IsGroup)), folderFilter);
 
                     using (var connection = this.Records.Parent.Connect())
                     {
@@ -203,7 +203,7 @@ namespace ImageLibrary.Creation
                 using (var connection = this.Records.Parent.Connect())
                 {
                     array = await this.Records.AsQueryable(connection)
-                        .Where(DatabaseFunction.And(DatabaseFunction.IsFalse(nameof(Record.IsGroup)),
+                        .Where(DatabaseExpression.And(DatabaseExpression.IsFalse(nameof(Record.IsGroup)),
                             FileProperty.DirectoryPathStartsWith.ToSearch(folder.Path, CompareMode.Equal)))
                         .ToArrayAsync();
                 }
@@ -238,8 +238,8 @@ namespace ImageLibrary.Creation
             {
                 var notFoundRecords = await this.Records
                     .AsQueryable(connection)
-                    .Where(DatabaseFunction.And(DatabaseFunction.IsTrue(nameof(Record.IsNotFound)),
-                        DatabaseFunction.IsFalse(nameof(Record.IsGroup))))
+                    .Where(DatabaseExpression.And(DatabaseExpression.IsTrue(nameof(Record.IsNotFound)),
+                        DatabaseExpression.IsFalse(nameof(Record.IsGroup))))
                     .ToArrayAsync();
 
                 foreach (var f in notFoundRecords)

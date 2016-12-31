@@ -50,7 +50,7 @@ namespace ImageLibrary.Core
             (IDbConnection connection, string[] items)
         {
             var list = new List<string>();
-            
+
             foreach (var ids in items.Buffer(128))
             {
                 var param = new Tuple<string[]>(ids.ToArray());
@@ -81,7 +81,7 @@ namespace ImageLibrary.Core
 
             //対象に含まれているグループ
             string[] relatedGroups;
-            
+
 
             using (var connection = await this.Table.Parent.ConnectAsync())
             {
@@ -179,7 +179,7 @@ namespace ImageLibrary.Core
                     //グループメンバーで同じものを持っていないレコードが一つもない場合はグループにもタグをつける
                     foreach (var tag in leader.TagSet.Read())
                     {
-                        var f = DatabaseFunction.And
+                        var f = DatabaseExpression.And
                             (filter, FileProperty.ContainsTag.ToSearch(tag, CompareMode.NotEqual));
                         var woTag = await this.Table.CountAsync(connection.Value, f);
                         if (woTag == 0)
@@ -189,7 +189,8 @@ namespace ImageLibrary.Core
                     }
 
                     //グループの評価はメンバーの中で最大のもの
-                    var rating = await this.Table.MaxAsync<int>(connection.Value, nameof(Record.Rating), filter);
+                    var rating = await this.Table.MaxAsync<int>
+                        (connection.Value, nameof(Record.Rating), filter);
                     group.Rating = rating;
 
                     //リーダーを設定
@@ -269,7 +270,7 @@ namespace ImageLibrary.Core
                             continue;
                         }
 
-                        var groupReference = DatabaseFunction.ToEqualsString(group);
+                        var groupReference = DatabaseReference.ToEqualsString(group);
 
 
                         //リーダーを探す
@@ -283,10 +284,10 @@ namespace ImageLibrary.Core
                         findLeaderSqlBuilder.Append($" AND {filter}) LIMIT 1");
 
                         var findLeaderSql = findLeaderSqlBuilder.ToString();
-                        
+
                         var leader = (await this.Table.QueryAsync<GroupInfo>(connection, findLeaderSql))
                             .FirstOrDefault();
-                        
+
 
                         //グループ内に見つからなければ新しいリーダーを設定
                         if (leader == null)
@@ -303,7 +304,7 @@ namespace ImageLibrary.Core
                         {
                             continue;
                         }
-                        
+
 
                         //日付を設定
 
@@ -367,7 +368,7 @@ namespace ImageLibrary.Core
             private static string GenerateUpdateSchema()
             {
                 var groupSqlBuilder = new StringBuilder();
-                
+
                 groupSqlBuilder.Append($@" SET");
 
                 groupSqlBuilder.Append($@" {nameof(Record.GroupKey)} = @{nameof(GroupInfo.Id)},");
@@ -476,9 +477,9 @@ namespace ImageLibrary.Core
 
             var existingName = this.Table
                 .AsQueryable(connection)
-                .Where($"{DatabaseFunction.ToLower(nameof(Record.FileName))} {DatabaseFunction.StartsWith(baseName)}")
+                .Where(DatabaseExpression.Is(DatabaseFunction.ToLower(nameof(Record.FileName)), DatabaseReference.StartsWith(baseName)))
                 .Select<string>(nameof(Record.FileName))
-                .OrderBy($"LENGTH({nameof(Record.FileName)}) DESC, {nameof(Record.FileName)} DESC")
+                .OrderBy($"{DatabaseFunction.Length(nameof(Record.FileName))} DESC, {nameof(Record.FileName)} DESC")
                 .Take(1)
                 .FirstOrDefault();
 

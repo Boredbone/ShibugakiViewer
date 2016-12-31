@@ -66,11 +66,11 @@ namespace ImageLibrary.SearchProperty
 
             dictionary[(int)FileProperty.Id]
                 = new PropertySearch(nameof(Record.Id), true,
-                o => DatabaseFunction.ToEqualsString(o));
+                o => DatabaseReference.ToEqualsString(o));
 
             dictionary[(int)FileProperty.DirectoryPath]
                 = new PropertySearch(DatabaseFunction.ToLower(nameof(Record.Directory)), true,
-                o => DatabaseFunction.ToLowerEqualsString(o));
+                o => DatabaseReference.ToLowerEqualsString(o));
 
             dictionary[(int)FileProperty.DirectoryPathStartsWith]
                 = new PropertySearch(DatabaseFunction.ToLower(nameof(Record.Directory)), false, o =>
@@ -78,17 +78,17 @@ namespace ImageLibrary.SearchProperty
                      var str = o.ToString();
                      var separator = System.IO.Path.DirectorySeparatorChar.ToString();
                      return (str.EndsWith(separator))
-                         ? DatabaseFunction.Match(str) : DatabaseFunction.StartsWith(str + separator);
+                         ? DatabaseReference.Match(str) : DatabaseReference.StartsWith(str + separator);
                  });
             dictionary[(int)FileProperty.DirectoryPathContains]
                 = new PropertySearch(DatabaseFunction.ToLower(nameof(Record.Directory)), false,
-                o => DatabaseFunction.Contains(o.ToString()));
+                o => DatabaseReference.Contains(o.ToString()));
 
             dictionary[(int)FileProperty.FullPath]
                 = new PropertySearch(
                     DatabaseFunction.ToLower
                     (DatabaseFunction.Combine(nameof(Record.Directory), nameof(Record.FileName))),
-                true, o => DatabaseFunction.ToLowerEqualsString(o));
+                true, o => DatabaseReference.ToLowerEqualsString(o));
 
             dictionary[(int)FileProperty.FileName] = new PropertySearch(true,
                 (o, mode) =>
@@ -97,47 +97,47 @@ namespace ImageLibrary.SearchProperty
 
                     if (mode == CompareMode.Equal || mode == CompareMode.NotEqual)
                     {
-                        var converted = DatabaseFunction.Match(o.ToString());
+                        var converted = DatabaseReference.Match(o.ToString());
 
                         if (mode == CompareMode.Equal)
                         {
-                            return $"({column} {converted})";
+                            return DatabaseExpression.Is(column, converted);
                         }
                         else
                         {
-                            return $"({column} NOT {converted})";
+                            return DatabaseExpression.IsNot(column, converted);
                         }
                     }
                     else
                     {
-                        var converted = DatabaseFunction.ToLowerEqualsString(o);
-                        return $"({column} {mode.ToSymbol()} {converted})";
+                        var converted = DatabaseReference.ToLowerEqualsString(o);
+                        return DatabaseExpression.Compare(column, mode, converted);
                     }
                 });
 
             dictionary[(int)FileProperty.FileNameContains] = new PropertySearch(
                 DatabaseFunction.ToLower(nameof(Record.FileName)),
-                false, o => DatabaseFunction.Contains(o.ToString()));
+                false, o => DatabaseReference.Contains(o.ToString()));
 
             dictionary[(int)FileProperty.DateTimeCreated]
                 = new PropertySearch(nameof(Record.DateCreated), true,
-                o => DatabaseFunction.DateTimeOffsetReference((DateTimeOffset)o));
+                o => DatabaseReference.DateTimeOffsetReference((DateTimeOffset)o));
             dictionary[(int)FileProperty.DateTimeModified]
                 = new PropertySearch(nameof(Record.DateModified), true,
-                o => DatabaseFunction.DateTimeOffsetReference((DateTimeOffset)o));
+                o => DatabaseReference.DateTimeOffsetReference((DateTimeOffset)o));
             dictionary[(int)FileProperty.DateTimeRegistered]
                 = new PropertySearch(nameof(Record.DateRegistered), true,
-                o => DatabaseFunction.DateTimeOffsetReference((DateTimeOffset)o));
+                o => DatabaseReference.DateTimeOffsetReference((DateTimeOffset)o));
 
             dictionary[(int)FileProperty.DateCreated]
                 = new PropertySearch(DatabaseFunction.GetDate(nameof(Record.DateCreated)), true,
-                o => DatabaseFunction.DateOffsetReference((DateTimeOffset)o));
+                o => DatabaseReference.DateOffsetReference((DateTimeOffset)o));
             dictionary[(int)FileProperty.DateModified]
                 = new PropertySearch(DatabaseFunction.GetDate(nameof(Record.DateModified)), true,
-                o => DatabaseFunction.DateOffsetReference((DateTimeOffset)o));
+                o => DatabaseReference.DateOffsetReference((DateTimeOffset)o));
             dictionary[(int)FileProperty.DateRegistered]
                 = new PropertySearch(DatabaseFunction.GetDate(nameof(Record.DateRegistered)), true,
-                o => DatabaseFunction.DateOffsetReference((DateTimeOffset)o));
+                o => DatabaseReference.DateOffsetReference((DateTimeOffset)o));
 
             dictionary[(int)FileProperty.Width]
                 = new PropertySearch(nameof(Record.Width), true);
@@ -147,19 +147,21 @@ namespace ImageLibrary.SearchProperty
                 = new PropertySearch(nameof(Record.Size), true);
             dictionary[(int)FileProperty.ContainsTag]
                 = new PropertySearch(nameof(Record.TagEntry), false,
-                o => DatabaseFunction.Contains($",{(int)o},"));
+                o => DatabaseReference.Contains($",{(int)o},"));
             dictionary[(int)FileProperty.HasTag]
                 = new PropertySearch(false, (o, c) =>
-                    c.ContainsEqual()
-                    ? $"length({nameof(Record.TagEntry)}) >= 2"
-                    : $"length({nameof(Record.TagEntry)}) < 2");
+                {
+                    var column = DatabaseFunction.Length(nameof(Record.TagEntry));
+                    var mode = c.ContainsEqual() ? CompareMode.GreatEqual : CompareMode.Less;
+                    return DatabaseExpression.Compare(column, mode, new DatabaseReference("2"));
+                });
             dictionary[(int)FileProperty.Rating]
                 = new PropertySearch(nameof(Record.Rating), true,
-                o => RateConvertingHelper.Reverse((int)o).ToString());
+                o => new DatabaseReference(RateConvertingHelper.Reverse((int)o).ToString()));
 
             dictionary[(int)FileProperty.Group]
-                = new PropertySearch(nameof(Record.GroupKey), false,
-                o => DatabaseFunction.ToEqualsString(o));
+                = new PropertySearch(nameof(Record.GroupKey), true,
+                o => DatabaseReference.ToEqualsString(o));
 
             dictionary[(int)FileProperty.AspectRatio]
                 = new PropertySearch(
@@ -312,7 +314,7 @@ namespace ImageLibrary.SearchProperty
         /// <param name="threshold"></param>
         /// <param name="mode"></param>
         /// <returns></returns>
-        public static string ToSearch
+        public static IDatabaseExpression ToSearch
             (this FileProperty property, object threshold, CompareMode mode)
         {
             return searchDictionary[(int)property].ToSql(mode, threshold);
@@ -493,7 +495,7 @@ namespace ImageLibrary.SearchProperty
                 case FileProperty.Height:
                 case FileProperty.Rating:
                 case FileProperty.Size:
-                //case FileProperty.AspectRatio:
+                    //case FileProperty.AspectRatio:
                     return true;
                 default:
                     return false;

@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Boredbone.Utility.Extensions;
+using Database.Search;
 using Database.Table;
 using ImageLibrary.Core;
 using ImageLibrary.File;
@@ -110,7 +111,7 @@ namespace ImageLibrary.Search
             this.SortSettings = new List<SortSetting>();
         }
 
-        public string GetWhereSql()
+        public IDatabaseExpression GetWhereSql()
         {
             return this.Root.ToSql();
         }
@@ -211,7 +212,7 @@ namespace ImageLibrary.Search
         public Task<long> CountAsync(Library library)
             => library.RecordQuery.CountAsync(this);
 
-        public string GetFilterString(Library library)
+        public IDatabaseExpression GetFilterString(Library library)
             => library.RecordQuery.GetFilterString(this);
 
         public Task<Record[]> SearchAsync(Library library, long skip, long take, Record skipUntil = null)

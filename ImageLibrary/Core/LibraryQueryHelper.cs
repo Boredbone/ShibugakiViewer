@@ -131,7 +131,7 @@ namespace ImageLibrary.Core
         /// <returns></returns>
         public async Task<HashSet<int>> GetCommonTagsAsync(string[] ids)
         {
-            var filter = DatabaseFunction.In(nameof(Record.Id), $"@{nameof(Tuple<object>.Item1)}");
+            var filter = DatabaseExpression.In(nameof(Record.Id), $"@{nameof(Tuple<object>.Item1)}");
 
             var sqlBuilder = new StringBuilder();
             sqlBuilder.Append($"SELECT {nameof(Record.TagEntry)} FROM {this.Table.Name}");
@@ -150,7 +150,7 @@ namespace ImageLibrary.Core
 
                 foreach (var tag in tagSet.Read())
                 {
-                    var f = DatabaseFunction.And
+                    var f = DatabaseExpression.And
                         (filter, FileProperty.ContainsTag.ToSearch(tag, CompareMode.NotEqual));
                     var woTag = await this.CountItemsWithoutTag(connection.Value, ids, 128, f);
                     if (woTag == 0)
@@ -173,7 +173,7 @@ namespace ImageLibrary.Core
         /// <param name="filter"></param>
         /// <returns></returns>
         private async Task<long> CountItemsWithoutTag
-            (IDbConnection connection, IEnumerable<string> items, int bufferLength, string filter)
+            (IDbConnection connection, IEnumerable<string> items, int bufferLength, IDatabaseExpression filter)
         {
 
             foreach (var ids in items.Buffer(bufferLength))
@@ -196,7 +196,7 @@ namespace ImageLibrary.Core
         /// <returns></returns>
         public async Task<int> GetCommonRatingAsync(string[] ids)
         {
-            var filter = DatabaseFunction.In(nameof(Record.Id), $"@{nameof(Tuple<object>.Item1)}");
+            var filter = DatabaseExpression.In(nameof(Record.Id), $"@{nameof(Tuple<object>.Item1)}");
 
             var sqlBuilder = new StringBuilder();
             sqlBuilder.Append($"SELECT DISTINCT {nameof(Record.Rating)} FROM {this.Table.Name}");

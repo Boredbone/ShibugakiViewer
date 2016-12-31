@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Boredbone.Utility.Extensions;
 using Boredbone.Utility.Tools;
+using Database.Search;
 using Database.Table;
 using ImageLibrary.Core;
 using ImageLibrary.Exif;
@@ -808,7 +809,7 @@ namespace ImageLibrary.File
         public Task<long> CountAsync(Library library)
             => library.GroupQuery.CountAsync(this);
 
-        public string GetFilterString(Library library)
+        public IDatabaseExpression GetFilterString(Library library)
             => library.GroupQuery.GetFilterString(this);
 
         public Task<Record[]> SearchAsync(Library library, long skip, long take, Record skipUntil = null)

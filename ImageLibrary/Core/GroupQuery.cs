@@ -31,8 +31,7 @@ namespace ImageLibrary.Core
         {
             using (var connection = await this.Table.Parent.ConnectAsync())
             {
-                return await this.Table.CountAsync(connection,
-                    this.GetFilterString(group));
+                return await this.Table.CountAsync(connection, this.GetFilterString(group));
             }
         }
 
@@ -41,7 +40,7 @@ namespace ImageLibrary.Core
         /// </summary>
         /// <param name="group"></param>
         /// <returns></returns>
-        public string GetFilterString(Record group)
+        public IDatabaseExpression GetFilterString(Record group)
         {
             if (!group.IsGroup)
             {
@@ -50,10 +49,10 @@ namespace ImageLibrary.Core
             return this.GetGroupFilterString(group.Id);
         }
 
-        public string GetGroupFilterString(string groupId)
+        public IDatabaseExpression GetGroupFilterString(string groupId)
         {
-            return DatabaseFunction.And(DatabaseFunction.IsFalse(nameof(Record.IsGroup)),
-                DatabaseFunction.AreEqualWithEscape(nameof(Record.GroupKey), groupId));
+            return DatabaseExpression.And(DatabaseExpression.IsFalse(nameof(Record.IsGroup)),
+                DatabaseExpression.AreEqualWithEscape(nameof(Record.GroupKey), groupId));
         }
 
 

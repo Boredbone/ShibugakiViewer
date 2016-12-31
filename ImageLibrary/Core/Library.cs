@@ -300,7 +300,7 @@ namespace ImageLibrary.Core
         /// <param name="take"></param>
         /// <returns></returns>
         public async Task<Record[]> SearchMainAsync
-            (string filter, string[] sort, long skip, long take, object param = null)
+            (IDatabaseExpression filter, string[] sort, long skip, long take, object param = null)
         {
             Record[] records = null;
 
@@ -352,7 +352,7 @@ namespace ImageLibrary.Core
         /// <param name="target"></param>
         /// <returns></returns>
         private async Task<long> FindIndexMainAsync
-            (IDbConnection connection, ISearchCriteria criteria, string filterSql, Record target)
+            (IDbConnection connection, ISearchCriteria criteria, IDatabaseExpression filterSql, Record target)
         {
             var sql = SortSetting.GetReferenceSelectorSql(criteria.GetSort());
 
@@ -365,7 +365,7 @@ namespace ImageLibrary.Core
                 return -1;
             }
 
-            var filter = DatabaseFunction.And(filterSql,
+            var filter = DatabaseExpression.And(filterSql,
                 SortSetting.GetOrderFilterSql(criteria.GetSort()));
 
             return (await this.Records.CountAsync(connection, filter, reference).ConfigureAwait(false)) - 1;
@@ -439,7 +439,7 @@ namespace ImageLibrary.Core
         }
 
         public async Task<string[]> GetRegionIdsMainAsync
-            (IDbConnection connection, ISearchCriteria criteria, long index1, long index2, string filter)
+            (IDbConnection connection, ISearchCriteria criteria, long index1, long index2, IDatabaseExpression filter)
         {
 
             if ((index1 < 0 && index2 < 0)
@@ -784,7 +784,7 @@ namespace ImageLibrary.Core
 
                     //削除
                     await this.Records.RemoveRangeBufferedWithFilter(connection, ids,
-                        DatabaseFunction.IsFalse(nameof(Record.IsGroup)));
+                        DatabaseExpression.IsFalse(nameof(Record.IsGroup)));
 
                     //関連するグループの情報を更新
                     await this.Grouping.RefreshGroupPropertiesAsync(connection, groups.ToArray());

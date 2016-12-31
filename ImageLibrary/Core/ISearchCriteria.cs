@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Database.Search;
 using ImageLibrary.File;
 using ImageLibrary.Search;
 
@@ -13,7 +14,7 @@ namespace ImageLibrary.Core
     /// </summary>
     public interface ISearchCriteria
     {
-        string GetFilterString(Library library);
+        IDatabaseExpression GetFilterString(Library library);
 
         Task<long> CountAsync(Library library);
         Task<Record[]> SearchAsync(Library library, long skip, long take, Record skipUntil);

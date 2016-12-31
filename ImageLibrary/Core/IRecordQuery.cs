@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
+using Database.Search;
 using Database.Table;
 using ImageLibrary.File;
-using ImageLibrary.Search;
 
 namespace ImageLibrary.Core
 {
@@ -11,7 +11,7 @@ namespace ImageLibrary.Core
         TypedTable<Record, string> Table { get; }
 
         Task<long> CountAsync(T criteria);
-        string GetFilterString(T criteria);
+        IDatabaseExpression GetFilterString(T criteria);
         Task<Record[]> SearchAsync(T criteria, long skip, long take, Record skipUntil);
     }
 }

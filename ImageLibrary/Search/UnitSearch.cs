@@ -101,7 +101,7 @@ namespace ImageLibrary.Search
         {
         }
 
-        public string ToSql()
+        public IDatabaseExpression ToSql()
         {
             return this.Property.ToSearch(this.Reference, this.Mode);
         }

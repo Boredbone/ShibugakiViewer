@@ -98,7 +98,7 @@ namespace ImageLibrary.Search
             return this;
         }
 
-        public string ToSql()
+        public IDatabaseExpression ToSql()
         {
             var items = this.InnerChildren
                 .Select(x => x.ToSql())
@@ -111,8 +111,8 @@ namespace ImageLibrary.Search
             }
 
             return (this.IsOr)
-                ? DatabaseFunction.Or(items)
-                : DatabaseFunction.And(items);
+                ? DatabaseExpression.Or(items)
+                : DatabaseExpression.And(items);
         }
 
         public void Remove(ISqlSearch item)

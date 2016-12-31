@@ -30,10 +30,9 @@ namespace ImageLibrary.Core
         /// <returns></returns>
         public async Task<long> CountAsync(SearchInformation criteria)
         {
-            using (var connection = this.Table.Parent.Connect())
+            using (var connection = await this.Table.Parent.ConnectAsync())
             {
-                return await this.Table.CountAsync(connection,
-                    this.GetFilterString(criteria));
+                return await this.Table.CountAsync(connection, this.GetFilterString(criteria));
             }
         }
 
@@ -44,23 +43,23 @@ namespace ImageLibrary.Core
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        public string GetFilterString(SearchInformation criteria)
+        public IDatabaseExpression GetFilterString(SearchInformation criteria)
         {
             var search = criteria.GetWhereSql();
             return GetFilterString(search);
         }
 
-        private string GetFilterString(string sql)
+        private IDatabaseExpression GetFilterString(IDatabaseExpression sql)
         {
             var groupFilter = (this.Library.IsGroupingEnabled)
-                ? DatabaseFunction.Or(
-                    DatabaseFunction.IsTrue(nameof(Record.IsGroup)),
-                    DatabaseFunction.IsNull(nameof(Record.GroupKey)))
-                : DatabaseFunction.IsFalse(nameof(Record.IsGroup));
+                ? DatabaseExpression.Or(
+                    DatabaseExpression.IsTrue(nameof(Record.IsGroup)),
+                    DatabaseExpression.IsNull(nameof(Record.GroupKey)))
+                : DatabaseExpression.IsFalse(nameof(Record.IsGroup));
 
             var filter = (sql != null)
-                ? DatabaseFunction.And(groupFilter, sql)
-                : $"({groupFilter})";
+                ? DatabaseExpression.And(groupFilter, sql)
+                : groupFilter;
 
             return filter;
         }
@@ -88,7 +87,7 @@ namespace ImageLibrary.Core
                 var reference = await this.Library.GetSortReferenceAsync(criteria, skipUntil);
 
                 records = await this.Library.SearchMainAsync
-                    (DatabaseFunction.And(this.GetFilterString(criteria), SortSetting.GetSkipFilterSql(sort)),
+                    (DatabaseExpression.And(this.GetFilterString(criteria), SortSetting.GetSkipFilterSql(sort)),
                     SortSetting.GetFullSql(sort),
                     0, take, reference);
             }

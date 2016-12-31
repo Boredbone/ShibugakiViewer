@@ -30,7 +30,7 @@ namespace ImageLibrary.Search
             }
         }
         private FileProperty _fieldProperty;
-        
+
         [DataMember]
         public bool IsDescending
         {
@@ -45,7 +45,7 @@ namespace ImageLibrary.Search
             }
         }
         private bool _fieldIsDescending;
-        
+
 
 
         public static SortSetting ById { get; }
@@ -81,15 +81,15 @@ namespace ImageLibrary.Search
             return items.Select(x => x.ToSql()).ToArray();
         }
 
-        public static string GetSkipFilterSql(IEnumerable<SortSetting> items)
-            => GetFilterSql(items, ">", "<", ">");
+        public static IDatabaseExpression GetSkipFilterSql(IEnumerable<SortSetting> items)
+            => GetFilterSql(items, CompareMode.Great, CompareMode.Less, CompareMode.Great);
 
-        public static string GetOrderFilterSql(IEnumerable<SortSetting> items)
-            => GetFilterSql(items, "<", ">", "<=");
+        public static IDatabaseExpression GetOrderFilterSql(IEnumerable<SortSetting> items)
+            => GetFilterSql(items, CompareMode.Less, CompareMode.Great, CompareMode.LessEqual);
 
 
-        private static string GetFilterSql(IEnumerable<SortSetting> items,
-            string ascSymbol, string descSymbol, string idSymbol)
+        private static IDatabaseExpression GetFilterSql(IEnumerable<SortSetting> items,
+            CompareMode ascSymbol, CompareMode descSymbol, CompareMode idSymbol)
         {
 
             if (items == null)
@@ -97,7 +97,7 @@ namespace ImageLibrary.Search
                 return null;
             }
 
-            var prevOrders = new List<string>();
+            var prevOrders = new List<IDatabaseExpression>();
 
             var filters = items
                 .SelectMany(x => x.Property.GetSortColumns()
@@ -108,25 +108,25 @@ namespace ImageLibrary.Search
                 .Select((x, c) =>
                 {
                     var symbol = x.Symbol;
-                    var reference = $"@C{c}";
+                    var reference = new DatabaseReference($"@C{c}");
 
-                    var str = $"{x.Column} {symbol} {reference}";
-                    var fil = DatabaseFunction.And(prevOrders.Append(str).ToArray());
-                    prevOrders.Add(DatabaseFunction.AreEqual(x.Column, reference));
+                    var str = DatabaseExpression.Compare(x.Column, symbol, reference);
+                    var fil = DatabaseExpression.And(prevOrders.Append(str).ToArray());
+                    prevOrders.Add(DatabaseExpression.AreEqual(x.Column, reference));
 
                     return fil;
                 })
                 .ToArray();
 
-            return DatabaseFunction.Or(filters.ToArray());
+            return DatabaseExpression.Or(filters.ToArray());
         }
 
         private class SortFilterContainer
         {
             public string Column { get; set; }
-            public string Symbol { get; set; }
+            public CompareMode Symbol { get; set; }
         }
-        
+
 
         public static string GetReferenceSelectorSql(IEnumerable<SortSetting> items)
         {
@@ -186,7 +186,7 @@ namespace ImageLibrary.Search
 
             return this.ValueEquals((SortSetting)obj);
         }
-        
+
 
         public override int GetHashCode()
         {

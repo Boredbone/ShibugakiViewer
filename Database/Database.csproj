@@ -107,7 +107,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Search\CompareMode.cs" />
+    <Compile Include="Search\DatabaseExpression.cs" />
     <Compile Include="Search\DatabaseFunction.cs" />
+    <Compile Include="Search\DatabaseReference.cs" />
     <Compile Include="Search\PropertySearch.cs" />
     <Compile Include="Table\AutoTrackingTable.cs" />
     <Compile Include="Table\DatabaseFront.cs" />

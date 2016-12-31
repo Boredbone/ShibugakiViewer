@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Boredbone.Utility.Extensions;
 using Dapper;
+using Database.Search;
 
 namespace Database.Table
 {
@@ -81,9 +82,9 @@ namespace Database.Table
             return this;
         }
 
-        public TableQueryable<T> Where(string sql)
+        public TableQueryable<T> Where(IDatabaseExpression sql)
         {
-            this.WhereSql = sql;
+            this.WhereSql = sql.GetSql();
             return this;
         }
 
@@ -96,8 +97,8 @@ namespace Database.Table
 
         private string MakeSql()
         {
-            var whereText = (this.WhereSql == null) ? "" : $" WHERE {this.WhereSql}";
-            var selectText = (this.SelectSql == null) ? "*" : this.SelectSql;
+            var whereText = (string.IsNullOrWhiteSpace(this.WhereSql)) ? "" : $" WHERE {this.WhereSql}";
+            var selectText = (string.IsNullOrWhiteSpace(this.SelectSql)) ? "*" : this.SelectSql;
             var limitText
                 = (this.TakeCount <= 0) ? ""
                 : (this.SkipCount <= 0) ? $" LIMIT {this.TakeCount}"

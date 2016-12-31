@@ -1,7 +1,7 @@
-﻿
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using Database.Search;
 
 namespace ImageLibrary.Search
 {
@@ -13,7 +13,7 @@ namespace ImageLibrary.Search
         bool IsEdited { get; }
         void DownEdited();
         ISqlSearch Clone();
-        string ToSql();
+        IDatabaseExpression ToSql();
         bool ValueEquals(ISqlSearch other);
         void RemoveSelf();
     }

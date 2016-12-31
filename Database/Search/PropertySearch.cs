@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Boredbone.Utility.Extensions;
+using Boredbone.Utility.Tools;
 
 namespace Database.Search
 {
@@ -15,8 +16,8 @@ namespace Database.Search
     public class PropertySearch
     {
         private readonly string selector;
-        private readonly Func<object, string> converter;
-        private readonly Func<object, CompareMode, string> fullConverter;
+        private readonly Func<object, DatabaseReference> converter;
+        private readonly Func<object, CompareMode, IDatabaseExpression> fullConverter;
 
         public bool IsComparable { get; }
 
@@ -25,12 +26,12 @@ namespace Database.Search
             this.selector = selector;
             this.IsComparable = isComparable;
         }
-        public PropertySearch(string selector, bool isComparable, Func<object, string> converter)
+        public PropertySearch(string selector, bool isComparable, Func<object, DatabaseReference> converter)
             : this(selector, isComparable)
         {
             this.converter = converter;
         }
-        public PropertySearch(bool isComparable, Func<object, CompareMode, string> fullConverter)
+        public PropertySearch(bool isComparable, Func<object, CompareMode, IDatabaseExpression> fullConverter)
             : this(null, isComparable)
         {
             this.fullConverter = fullConverter;
@@ -42,7 +43,7 @@ namespace Database.Search
         /// <param name="mode"></param>
         /// <param name="reference"></param>
         /// <returns></returns>
-        public string ToSql(CompareMode mode, object reference)
+        public IDatabaseExpression ToSql(CompareMode mode, object reference)
         {
             if (this.fullConverter != null)
             {
@@ -56,12 +57,12 @@ namespace Database.Search
                     case CompareMode.Equal:
                     case CompareMode.LessEqual:
                     case CompareMode.GreatEqual:
-                        return $"({DatabaseFunction.IsNull(this.selector)})";
+                        return DatabaseExpression.IsNull(this.selector);
 
                     case CompareMode.NotEqual:
                     case CompareMode.Less:
                     case CompareMode.Great:
-                        return $"({DatabaseFunction.IsNotNull(this.selector)})";
+                        return DatabaseExpression.IsNotNull(this.selector);
                 }
 
                 throw new ArgumentException();
@@ -72,19 +73,22 @@ namespace Database.Search
             {
                 if (this.IsComparable)
                 {
-                    return $"({this.selector} {mode.ToSymbol()} {reference})";
+                    return DatabaseExpression.Compare
+                        (this.selector, mode, new DatabaseReference(reference.ToString()));
                 }
                 switch (mode)
                 {
                     case CompareMode.Equal:
                     case CompareMode.LessEqual:
                     case CompareMode.GreatEqual:
-                        return $"({DatabaseFunction.AreEqual(this.selector, reference)})";
+                        return DatabaseExpression.AreEqual
+                            (this.selector, new DatabaseReference(reference.ToString()));
 
                     case CompareMode.NotEqual:
                     case CompareMode.Less:
                     case CompareMode.Great:
-                        return $"({this.selector} != {reference})";
+                        return DatabaseExpression.AreNotEqual
+                            (this.selector, new DatabaseReference(reference.ToString()));
                 }
                 throw new ArgumentException();
             }
@@ -93,21 +97,24 @@ namespace Database.Search
 
             if (this.IsComparable)
             {
-                return $"({this.selector} {mode.ToSymbol()} {converted})";
+                return DatabaseExpression.Compare(this.selector, mode, converted);
             }
             switch (mode)
             {
                 case CompareMode.Equal:
                 case CompareMode.LessEqual:
                 case CompareMode.GreatEqual:
-                    return $"({this.selector} {converted})";
+                    return DatabaseExpression.Is(this.selector, converted);
 
                 case CompareMode.NotEqual:
                 case CompareMode.Less:
                 case CompareMode.Great:
-                    return $"({this.selector} NOT {converted})";
+                    return DatabaseExpression.IsNot(this.selector, converted);
             }
             throw new ArgumentException();
         }
     }
+
+
+
 }

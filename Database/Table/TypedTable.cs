@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Boredbone.Utility.Extensions;
 using Dapper;
+using Database.Search;
 
 namespace Database.Table
 {
@@ -684,7 +685,7 @@ namespace Database.Table
         /// <param name="connection"></param>
         /// <param name="ids"></param>
         public async Task RemoveRangeBufferedWithFilter
-            (IDbConnection connection, IEnumerable<TKey> ids, string filter)
+            (IDbConnection connection, IEnumerable<TKey> ids, IDatabaseExpression filter)
         {
             foreach (var buffer in ids.Distinct().Buffer(this.BufferSize))
             {
@@ -695,7 +696,7 @@ namespace Database.Table
                         var param = new Tuple<TKey[]>(buffer.ToArray());
 
                         await connection.ExecuteAsync
-                            ($"DELETE FROM {this.Name} WHERE (({IdName} IN @{nameof(param.Item1)}) AND ({filter}))",
+                            ($"DELETE FROM {this.Name} WHERE (({IdName} IN @{nameof(param.Item1)}) AND ({filter.GetSql()}))",
                             param, transaction).ConfigureAwait(false);
 
                         transaction.Commit();
@@ -766,10 +767,10 @@ namespace Database.Table
         /// <param name="connection"></param>
         /// <param name="sql"></param>
         /// <returns></returns>
-        public long Count(IDbConnection connection, string sql)
+        public long Count(IDbConnection connection, IDatabaseExpression sql)
         {
             return connection
-                .ExecuteScalar<long>($@"SELECT COUNT({IdName}) FROM {this.Name} WHERE {sql}");
+                .ExecuteScalar<long>($@"SELECT COUNT({IdName}) FROM {this.Name} WHERE {sql.GetSql()}");
         }
 
         /// <summary>
@@ -789,10 +790,10 @@ namespace Database.Table
         /// <param name="connection"></param>
         /// <param name="sql"></param>
         /// <returns></returns>
-        public Task<long> CountAsync(IDbConnection connection, string sql)
+        public Task<long> CountAsync(IDbConnection connection, IDatabaseExpression sql)
         {
             return connection
-                .ExecuteScalarAsync<long>($@"SELECT COUNT({IdName}) FROM {this.Name} WHERE {sql}");
+                .ExecuteScalarAsync<long>($@"SELECT COUNT({IdName}) FROM {this.Name} WHERE {sql.GetSql()}");
         }
 
         /// <summary>
@@ -802,24 +803,24 @@ namespace Database.Table
         /// <param name="sql"></param>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        public Task<long> CountAsync(IDbConnection connection, string sql, object parameter)
+        public Task<long> CountAsync(IDbConnection connection, IDatabaseExpression sql, object parameter)
         {
             return connection
-                .ExecuteScalarAsync<long>($@"SELECT COUNT({IdName}) FROM {this.Name} WHERE {sql}", parameter);
+                .ExecuteScalarAsync<long>($@"SELECT COUNT({IdName}) FROM {this.Name} WHERE {sql.GetSql()}", parameter);
         }
 
 
         public Task<TResult> MaxAsync<TResult>
-            (IDbConnection connection, string column, string whereSql, object parameter = null)
+            (IDbConnection connection, string column, IDatabaseExpression whereSql, object parameter = null)
         {
             return connection
-                .ExecuteScalarAsync<TResult>($@"SELECT MAX({column}) FROM {this.Name} WHERE {whereSql}", parameter);
+                .ExecuteScalarAsync<TResult>($@"SELECT MAX({column}) FROM {this.Name} WHERE {whereSql.GetSql()}", parameter);
         }
         public Task<TResult> MinAsync<TResult>
-            (IDbConnection connection, string column, string whereSql, object parameter = null)
+            (IDbConnection connection, string column, IDatabaseExpression whereSql, object parameter = null)
         {
             return connection
-                .ExecuteScalarAsync<TResult>($@"SELECT MIN({column}) FROM {this.Name} WHERE {whereSql}", parameter);
+                .ExecuteScalarAsync<TResult>($@"SELECT MIN({column}) FROM {this.Name} WHERE {whereSql.GetSql()}", parameter);
         }
 
         /// <summary>
