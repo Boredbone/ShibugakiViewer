@@ -696,7 +696,7 @@ namespace Database.Table
                         var param = new Tuple<TKey[]>(buffer.ToArray());
 
                         await connection.ExecuteAsync
-                            ($"DELETE FROM {this.Name} WHERE (({IdName} IN @{nameof(param.Item1)}) AND ({filter.GetSql()}))",
+                            ($"DELETE FROM {this.Name} WHERE (({IdName} IN @{nameof(param.Item1)}) AND {filter.GetSql()})",
                             param, transaction).ConfigureAwait(false);
 
                         transaction.Commit();
@@ -900,7 +900,7 @@ namespace Database.Table
                 {
                     try
                     {
-                        await this.ExecuteAsync(connection, sql, param, transaction).ConfigureAwait(false);
+                        await connection.ExecuteAsync(sql, param, transaction).ConfigureAwait(false);
 
                         transaction.Commit();
                     }

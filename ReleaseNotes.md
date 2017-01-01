@@ -1,6 +1,11 @@
 # Release Notes
 
 
+## Version 1.4.1 (2017/01/02)
+- Change the registration method for date and time in the database
+- Fix a bug that fail to search in the local date
+- Fix a bug that an error occurs when a decimal fraction is entered in the aspect ratio threshold for search
+
 ## Version 1.3.2 (2016/12/04)
 - Improve performance
 
