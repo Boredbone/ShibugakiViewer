@@ -111,6 +111,8 @@
     <system:Double x:Key="ContextMenuTextSize">16</system:Double>
     <system:Double x:Key="RatingSymbolTextSize">28</system:Double>
 
+    <system:Boolean x:Key="IsThumbnailTooltipEnabled">True</system:Boolean>
+
     <SolidColorBrush x:Key="BasicBackColor" Color="White"/>
 
     <SolidColorBrush x:Key="MenuTextColor" Color="#FF383838"/>

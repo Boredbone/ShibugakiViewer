@@ -74,12 +74,15 @@ namespace ShibugakiViewer
                   typeof(FrameworkElement),
                   new FrameworkPropertyMetadata(
                       XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.Name)));
-
         }
 
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+#if DEBUG
+            this.Resources["IsThumbnailTooltipEnabled"] = false;
+#endif
 
             bool createdNew = false;
 

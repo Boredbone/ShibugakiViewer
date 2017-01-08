@@ -62,7 +62,8 @@
                         Margin="6"
                         DataContext="{Binding Value}"
                         ToolTipService.InitialShowDelay="1000"
-                        ToolTipService.ShowDuration="10000">
+                        ToolTipService.ShowDuration="10000"
+                        ToolTipService.IsEnabled="{StaticResource IsThumbnailTooltipEnabled}">
                         <Image 
                             x:Name="thumbnailImage"
                             Margin="0"
