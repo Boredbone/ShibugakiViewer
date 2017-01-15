@@ -1145,51 +1145,74 @@ namespace ShibugakiViewer.Models
                 (record, this.GenerateImageLoadOption(ImageQuality.Resized),
                 null, true, default(CancellationToken));
 
-
-            if (records.Length == 1)
+            if (records.Length != 1)
             {
-                Task.Run(async () =>
-                {
-                    await this.front.ActivateFolderAsync(record.FullPath).ConfigureAwait(false);
-
-                    var search = new SearchInformation(new ComplexSearch(false));
-                    search.Root.Add(new UnitSearch()
-                    {
-                        Property = FileProperty.DirectoryPathStartsWith,
-                        Reference = record.Directory,
-                        Mode = CompareMode.Equal,
-                    });
-
-                    search.SetSort(new[]
-                    {
-                        new SortSetting() { Property = FileProperty.FileName, IsDescending = false }
-                    });
-
-                    var index = await core.Library.FindIndexAsync(search, record).ConfigureAwait(false);
-
-                    this.lastViewerImageIndex = new OldNewPair<long>(index, index);
-
-                    this.front.Length
-                        .Where(x => x > index)
-                        .Take(1)
-                        .Subscribe(x =>
-                        {
-                            this.viewerImageChangeGate = false;
-                            this.ViewerIndexInner = index;
-                            this.viewerImageChangeGate = true;
-                        });
-
-
-                    state.Search = search;
-                    this.History.Current.Search = search;
-                    await Application.Current.Dispatcher.InvokeAsync(() =>
-                    {
-                        this.front.SetSearch(search, true);
-                    });
-
-                })
-                .FireAndForget();
+                return;
             }
+
+            string directory;
+            string tmpDir;
+
+            try
+            {
+                directory = System.IO.Path.GetDirectoryName(record.FullPath);
+                tmpDir = System.IO.Path.GetDirectoryName(System.IO.Path.GetTempPath());
+            }
+            catch
+            {
+                return;
+            }
+
+            //一時フォルダ内のファイル
+            if (directory.ToLower().StartsWith(tmpDir.ToLower()))
+            {
+                return;
+            }
+
+            //ファイルが一つだけ、かつ一時フォルダでない
+
+            Task.Run(async () =>
+            {
+                //同じフォルダ内のファイルをライブラリに登録
+                await this.front.ActivateFolderAsync(directory).ConfigureAwait(false);
+
+                var search = new SearchInformation(new ComplexSearch(false));
+                search.Root.Add(new UnitSearch()
+                {
+                    Property = FileProperty.DirectoryPathStartsWith,
+                    Reference = record.Directory,
+                    Mode = CompareMode.Equal,
+                });
+
+                search.SetSort(new[]
+                {
+                    new SortSetting() { Property = FileProperty.FileName, IsDescending = false }
+                });
+
+                var index = await core.Library.FindIndexAsync(search, record).ConfigureAwait(false);
+
+                this.lastViewerImageIndex = new OldNewPair<long>(index, index);
+
+                this.front.Length
+                    .Where(x => x > index)
+                    .Take(1)
+                    .Subscribe(x =>
+                    {
+                        this.viewerImageChangeGate = false;
+                        this.ViewerIndexInner = index;
+                        this.viewerImageChangeGate = true;
+                    });
+
+
+                state.Search = search;
+                this.History.Current.Search = search;
+                await Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    this.front.SetSearch(search, true);
+                });
+
+            })
+            .FireAndForget();
         }
 
         /// <summary>

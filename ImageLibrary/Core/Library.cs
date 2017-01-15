@@ -854,14 +854,13 @@ namespace ImageLibrary.Core
         public Task<IDisposable> LockAsync() => asyncLock.LockAsync();
 
         /// <summary>
-        /// 指定フォルダ内のファイルを使って起動
+        /// 与えられたフォルダ内のファイルを列挙してライブラリに登録
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public async Task ActivateFolderAsync(string path)
+        public async Task ActivateFolderAsync(string directory)
         {
-
-            var directory = System.IO.Path.GetDirectoryName(path);
+            //var directory = System.IO.Path.GetDirectoryName(path);
             var info = new FolderInformation(directory)
             {
                 IsTopDirectoryOnly = true,

@@ -620,8 +620,13 @@ namespace ImageLibrary.Viewer
             return records;
         }
 
-        public Task ActivateFolderAsync(string file)
-            => this.library.ActivateFolderAsync(file);
+        /// <summary>
+        /// 与えられたファイルと同じフォルダ内のファイルを列挙してライブラリに登録
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        public Task ActivateFolderAsync(string directory)
+            => this.library.ActivateFolderAsync(directory);
         
 
 
