@@ -1,5 +1,8 @@
 # Release Notes
 
+## Version 1.4.2 (2017/02/03)
+- Save the state of maximized window
+- Skip library update of temporary folder
 
 ## Version 1.4.1 (2017/01/02)
 - Change the registration method for date and time in the database
