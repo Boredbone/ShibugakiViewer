@@ -207,6 +207,10 @@ namespace ImageLibrary.Search
             this.DateLastUsed = DateTimeOffset.Now;
         }
 
+        public void SetNewKey()
+        {
+            this.Key = Guid.NewGuid().ToString();
+        }
 
 
         public Task<long> CountAsync(Library library)

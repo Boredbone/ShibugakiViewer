@@ -60,7 +60,8 @@ namespace ImageLibrary.Search
                 {
                     if (string.IsNullOrEmpty(x.Key))
                     {
-                        x.Key = Guid.NewGuid().ToString();
+                        x.SetNewKey();
+                        //x.Key = Guid.NewGuid().ToString();
                     }
                     return x.Key;
                 }, x => x);
@@ -75,7 +76,8 @@ namespace ImageLibrary.Search
             {
                 if (x.Key.IsNullOrEmpty())
                 {
-                    x.Key = Guid.NewGuid().ToString();
+                    x.SetNewKey();
+                    //x.Key = Guid.NewGuid().ToString();
                 }
                 return x;
             })
@@ -93,8 +95,9 @@ namespace ImageLibrary.Search
 
         private SearchInformation AddSearch(SearchInformation setting)
         {
-            var key = Guid.NewGuid().ToString();
-            setting.Key = key;
+            setting.SetNewKey();
+            //var key = Guid.NewGuid().ToString();
+            //setting.Key = key;
 
             this.SearchSettings.Add(setting.Key, setting);
 
@@ -107,7 +110,7 @@ namespace ImageLibrary.Search
             {
                 //内容の同じ検索が履歴に残っていたら置き換える
                 var resembler = this.SearchSettings
-                    .FirstOrDefault(x => x.Value.SettingEquals(setting));
+                    .FirstOrDefault(x => x.Value.HasSameSearch(setting));
 
                 if (resembler.Value != null)
                 {
@@ -238,7 +241,8 @@ namespace ImageLibrary.Search
             }
             if (item.Key.IsNullOrEmpty())
             {
-                item.Key = Guid.NewGuid().ToString();
+                item.SetNewKey();
+                //item.Key = Guid.NewGuid().ToString();
             }
             if (!this.FavoriteSearchList.Any(x => x.Key.Equals(item.Key)))
             {

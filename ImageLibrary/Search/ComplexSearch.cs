@@ -146,6 +146,11 @@ namespace ImageLibrary.Search
 
         public bool ValueEquals(ISqlSearch other)
         {
+            if (object.ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
             if (this.IsUnit != other.IsUnit)
             {
                 return false;

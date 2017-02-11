@@ -49,7 +49,7 @@ namespace ShibugakiViewer.Models
                 && this.ViewerIndex == other.ViewerIndex
                 && this.Type == other.Type
                 && ((this.GroupKey == other.GroupKey) || this.GroupKey.Equals(other.GroupKey))
-                && ((this.Search == other.Search) || this.Search.HasSameSearch(other.Search));
+                && ((this.Search == other.Search) || this.Search.SettingEquals(other.Search));
         }
 
         public override bool Equals(object obj)

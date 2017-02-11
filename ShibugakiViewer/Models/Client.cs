@@ -203,8 +203,8 @@ namespace ShibugakiViewer.Models
 
                 if (x.Action == CacheClearAction.SortChanged)
                 {
-                    this.History.Current.ViewerIndex = 0;
-                    this.History.Current.CatalogIndex = 0;
+                    //this.History.Current.ViewerIndex = 0;
+                    //this.History.Current.CatalogIndex = 0;
                 }
                 else
                 {
@@ -1011,7 +1011,23 @@ namespace ShibugakiViewer.Models
         /// <summary>
         /// 戻る
         /// </summary>
-        public void Back() => this.History.MoveBack();
+        public void Back()
+        {
+            var prevState = this.History.Current;
+            var prevSearch = prevState?.Search;
+            var prevSearchSnapShot = prevSearch?.Clone();
+
+            this.History.MoveBack();
+
+            var currentSearch = this.History.Current?.Search;
+
+            if (currentSearch != null && prevState != null && prevSearchSnapShot != null
+                && object.ReferenceEquals(currentSearch, prevSearch))
+            {
+                prevSearchSnapShot.SetNewKey();
+                prevState.Search = prevSearchSnapShot;
+            }
+        }
 
         /// <summary>
         /// 進む
