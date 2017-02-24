@@ -1,5 +1,9 @@
 # Release Notes
 
+## Version 1.4.3 (2017/02/25)
+- Improve the behavior of catalog page when sort condition is changed
+- Fix issue : popup dialog position is wrong with high DPI
+
 ## Version 1.4.2 (2017/02/03)
 - Save the state of maximized window
 - Skip library update of temporary folder
