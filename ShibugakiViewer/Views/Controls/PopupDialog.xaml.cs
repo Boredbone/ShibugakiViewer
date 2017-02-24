@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WpfTools;
+using WpfTools.Extensions;
 
 namespace ShibugakiViewer.Views.Controls
 {
@@ -357,7 +358,7 @@ namespace ShibugakiViewer.Views.Controls
             }
             else
             {
-                var pt = this.DockControl.PointToScreen(new Point(0.0, 0.0));
+                var pt = this.DockControl.GetScreenPosition();//.PointToScreen(new Point(0.0, 0.0));
 
                 var controlTop = pt.Y;
                 var controlLeft = pt.X;
@@ -438,9 +439,9 @@ namespace ShibugakiViewer.Views.Controls
                         break;
                 }
 
-                var canvasPosition = this.positionCanvas.PointToScreen(new Point(0.0, 0.0));
+                var canvasPosition = this.positionCanvas.GetScreenPosition();//.PointToScreen(new Point(0.0, 0.0));
 
-                var screenPosition = this.rootGrid.PointToScreen(new Point(0.0, 0.0));
+                var screenPosition = this.rootGrid.GetScreenPosition();//.PointToScreen(new Point(0.0, 0.0));
 
                 if (x + this.mainContent.ActualWidth > screenPosition.X + this.rootGrid.ActualWidth)
                 {
