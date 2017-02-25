@@ -171,7 +171,7 @@ namespace ImageLibrary.Exif
 
                             if (text == null)
                             {
-                                text = this.RenderTag(val);
+                                text = this.RenderTag(key,val);
                             }
 
                             if (text != null)
@@ -191,15 +191,33 @@ namespace ImageLibrary.Exif
             }
         }
 
-        private string RenderTag(object tagValue)
+        private string RenderTag(ushort id, object tagValue)
         {
             // Arrays don't render well without assistance.
             var array = tagValue as Array;
             if (array != null)
             {
+                if (id >= (ushort)ExifTags.XPTitle && id <= (ushort)ExifTags.XPSubject)
+                {
+                    var data = array.OfType<byte>().ToArray();
+                    var length = data.Length;
+                    if (length >= 2 && data[length - 2] == 0 && data[length - 1] == 0)
+                    {
+                        data = data.Take(length - 2).ToArray();
+                    }
+                    try
+                    {
+                        return System.Text.Encoding.Unicode.GetString(data);
+                    }
+                    catch
+                    {
+                    }
+                }
                 // Hex rendering for really big byte arrays (ugly otherwise)
                 if (array.Length > 20 && array.GetType().GetElementType() == typeof(byte))
+                {
                     return "";// "0x" + string.Join("", array.Cast<byte>().Select(x => x.ToString("X2")).ToArray());
+                }
 
                 return string.Join(", ", array.Cast<object>().Select(x => x.ToString()).ToArray());
             }
