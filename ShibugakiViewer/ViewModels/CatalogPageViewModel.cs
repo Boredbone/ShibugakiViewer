@@ -391,8 +391,12 @@ namespace ShibugakiViewer.ViewModels
 
 
             keyReceiver.Register(Key.Delete,
-                async (t, key) => await this.client.DeleteSelectedFiles(),
+                async (t, key) => await this.client.DeleteSelectedFiles(false),
                 cursorFilter);
+
+            keyReceiver.Register(Key.Delete,
+                async (t, key) => await this.client.DeleteSelectedFiles(true),
+                cursorFilter, modifier: ModifierKeys.Control);
 
             keyReceiver.Register(Key.F5, (t, key) => this.client.Refresh(), cursorFilter);
         }

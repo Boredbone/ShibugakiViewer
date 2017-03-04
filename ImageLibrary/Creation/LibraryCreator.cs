@@ -253,7 +253,7 @@ namespace ImageLibrary.Creation
 
 
             var topPathList = this.Folders
-                .Where(x => !x.Ignored)
+                .Where(x => !x.IsIgnored)
                 .Select(x => x.Path)
                 .OrderBy(x => x)
                 .ToArray();

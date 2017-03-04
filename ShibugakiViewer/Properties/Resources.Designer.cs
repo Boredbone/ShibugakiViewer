@@ -439,6 +439,24 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
+        ///   (File is not deleted.) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string DeleteFileText10 {
+            get {
+                return ResourceManager.GetString("DeleteFileText10", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   items from the library? に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string DeleteFileText11 {
+            get {
+                return ResourceManager.GetString("DeleteFileText11", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Are you sure you want to delete this file? に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string DeleteFileText2 {
@@ -489,6 +507,24 @@ namespace ShibugakiViewer.Properties {
         public static string DeleteFileText7 {
             get {
                 return ResourceManager.GetString("DeleteFileText7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Are you sure you want to remove this file from the library? に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string DeleteFileText8 {
+            get {
+                return ResourceManager.GetString("DeleteFileText8", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Are you sure you want to remove these に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string DeleteFileText9 {
+            get {
+                return ResourceManager.GetString("DeleteFileText9", resourceCulture);
             }
         }
         

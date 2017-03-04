@@ -276,7 +276,7 @@ namespace ShibugakiViewer
         /// Client表示
         /// </summary>
         /// <param name="files"></param>
-        public ClientWindow ShowClientWindow(IEnumerable<string> files)
+        private ClientWindow ShowClientWindow(IEnumerable<string> files)
         {
             var window = new ClientWindow() { ShowActivated = true };
 

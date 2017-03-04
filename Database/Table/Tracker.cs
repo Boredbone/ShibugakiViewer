@@ -70,9 +70,10 @@ namespace Database.Table
                                     transaction.Commit();
                                     succeeded = true;
                                 }
-                                catch
+                                catch(Exception e)
                                 {
                                     transaction.Rollback();
+                                    Debug.WriteLine(e.ToString());
                                 }
                             }
                         }

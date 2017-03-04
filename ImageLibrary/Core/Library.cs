@@ -37,7 +37,6 @@ namespace ImageLibrary.Core
         private const int databaseVersion = 5;
 
         private const double trackIntervalTime = 500.0;
-        
 
         public const string databaseFileName = "library.db";
         public const string librarySettingFileName = "libsettings.config";
@@ -55,7 +54,7 @@ namespace ImageLibrary.Core
 
         private Subject<DatabaseUpdatedEventArgs> DatabaseUpdatedSubject { get; }
         public IObservable<DatabaseUpdatedEventArgs> DatabaseUpdated => this.DatabaseUpdatedSubject.AsObservable();
-        
+
 
         private Subject<string> MessageSubject { get; }
         public IObservable<string> Message => this.MessageSubject.AsObservable();
@@ -158,7 +157,7 @@ namespace ImageLibrary.Core
             this.DatabaseUpdatedSubject = new Subject<DatabaseUpdatedEventArgs>().AddTo(this.Disposables);
 
             this.Searcher = new SearchSortManager();
-            
+
 
             //Initialize Database
 
@@ -193,7 +192,7 @@ namespace ImageLibrary.Core
             this.ExifVisibilityDatabase = new AutoTrackingTable<ExifVisibilityItem, int>
                 (this.Database, nameof(ExifVisibilityDatabase), trackIntervalTime, this.ExifManager.Added, databaseVersion)
                 .AddTo(this.Disposables);
-            
+
 
             this.Folders.FileTypeFilter = this.config.FileTypeFilter;
             this.Folders.FolderUpdated.Subscribe(x => this.CheckFolderUpdateAsync(x).FireAndForget())
@@ -209,7 +208,7 @@ namespace ImageLibrary.Core
             this.QueryHelper = new LibraryQueryHelper(this.Records, this);
             this.QueryHelper.Updated.Subscribe(this.DatabaseUpdatedSubject).AddTo(this.Disposables);
 
-            this.Creator = new LibraryCreator(this,this.config)
+            this.Creator = new LibraryCreator(this, this.config)
             {
                 TagDictionary = this.Tags,
                 Records = this.Records,
@@ -274,7 +273,7 @@ namespace ImageLibrary.Core
                 //loading test
                 await this.Records.AsQueryable(connection).FirstOrDefaultAsync().ConfigureAwait(false);
             }
-            
+
             this.Tags.SetSource(tags.ToDictionary(x => x.Id, x => x));
             this.Folders.SetSource(folders);
             this.ExifManager.SetSource(exifItems);
@@ -323,7 +322,7 @@ namespace ImageLibrary.Core
 
             return records;
         }
-        
+
 
         /// <summary>
         /// 指定検索条件下でのインデックスを調べる
@@ -501,7 +500,7 @@ namespace ImageLibrary.Core
             this.TreeRootNode = new DirectoryTreeAnalyzer().Analyze(array);
 
             //所有ファイル数0のフォルダはツリーに入れない
-            
+
         }
 
         /// <summary>
@@ -604,20 +603,28 @@ namespace ImageLibrary.Core
                 this.IsCreatingSubject.OnNext(true);
 
 
-                var ignored = this.Folders.GetIgnored().Select(x => x.Path).ToArray();
+                var ignored = this.Folders.GetIgnored()
+                    .Where(x => !x.IsRemoved)
+                    .ToArray();
+
+                var ignoredPath= ignored.Select(x => x.Path).ToArray();
 
 
                 this.Creator.Folders = this.Folders
                     .GetAvailable()
-                    .Where(x => !x.Ignored)
+                    .Where(x => !x.IsIgnored)
                     .ToArray();
-                this.Creator.IgnoredFolders = ignored;
+                this.Creator.IgnoredFolders = ignoredPath;
                 this.Creator.Completely = this.RefreshLibraryCompletely;
                 this.Creator.Level = this.FileCheckLevel;// PropertiesLevel.Basic;
 
 
                 await this.Creator.RefreshLibraryAsync
                     (notifyResult ? LibraryLoadAction.UserOperation : LibraryLoadAction.Startup);
+
+                //無効化されたフォルダに処理済みマーク
+                ignored.ForEach(x => x.MarkRemoved());
+
 
                 this.IsCreatingSubject.OnNext(false);
             }
@@ -629,7 +636,7 @@ namespace ImageLibrary.Core
         /// <returns></returns>
         public bool HasRefreshWaitingFolder()
             => this.Folders.GetAvailable().Any(x => x.RefreshEnable);
-        
+
 
         /// <summary>
         /// 特定フォルダのファイルを列挙
@@ -694,7 +701,7 @@ namespace ImageLibrary.Core
                             .Select(x => PathUtility.WithPostSeparator(x.Key))
                             .ToArray();
 
-                        foreach(var item in parentFolders)
+                        foreach (var item in parentFolders)
                         {
                             var path = PathUtility.WithPostSeparator(item);
                             if (!existing.Any(x => path.StartsWith(x)))
@@ -706,9 +713,9 @@ namespace ImageLibrary.Core
                                 });
                             }
                         }
-                        
+
                         this.Creator.Folders = folderPathDictionary.Select(x => x.Value).ToArray();
-                        
+
                         await this.Creator.RefreshLibraryAsync(LibraryLoadAction.FolderChanged);
                     }
                     else
@@ -736,7 +743,7 @@ namespace ImageLibrary.Core
         /// <param name="preAction"></param>
         /// <returns></returns>
         public async Task<bool> DeleteItemsAsync
-            (IEnumerable<KeyValuePair<string, Record>> files)
+            (IEnumerable<KeyValuePair<string, Record>> files, bool notDeleteFile)
         {
             if (files == null)
             {
@@ -757,12 +764,15 @@ namespace ImageLibrary.Core
                 var ids = items.Select(x => x.Key).ToArray();
                 var groups = new HashSet<string>(items.Select(x => x.Value?.GroupKey).Distinct());
 
-                //ストレージのファイルを削除
-                var result = Boredbone.Utility.Tools.ShellFileOperation.DeleteFiles(false, null, ids);
-
-                if (result > 0)
+                if (!notDeleteFile)
                 {
-                    return false;
+                    //ストレージのファイルを削除
+                    var result = Boredbone.Utility.Tools.ShellFileOperation.DeleteFiles(false, null, ids);
+
+                    if (result > 0)
+                    {
+                        return false;
+                    }
                 }
 
                 using (var connection = await this.Database.ConnectAsync())
@@ -776,7 +786,7 @@ namespace ImageLibrary.Core
                     if (emptyKeys.Length > 0)
                     {
                         var values = await this.Grouping.GetGroupIds(connection, emptyKeys);
-                        foreach(var item in values)
+                        foreach (var item in values)
                         {
                             groups.Add(item);
                         }
@@ -789,6 +799,8 @@ namespace ImageLibrary.Core
                     //関連するグループの情報を更新
                     await this.Grouping.RefreshGroupPropertiesAsync(connection, groups.ToArray());
                 }
+
+                this.MakeDirectoryTree();
             }
             this.DatabaseUpdatedSubject.OnNext(new DatabaseUpdatedEventArgs()
             {
@@ -816,7 +828,7 @@ namespace ImageLibrary.Core
             {
                 return;
             }
-            
+
             var tmpLibSettings = LibrarySettings
                 .Load(this.librarySettingXml, this.MessageSubject.OnNext);
 
@@ -833,10 +845,10 @@ namespace ImageLibrary.Core
             savedData.Initialize(this);
             this.librarySettings = savedData;
             this.IsLibrarySettingsLoaded = true;
-            
+
         }
 
-        
+
         /// <summary>
         /// 旧ライブラリからの移行用データを取得
         /// </summary>
@@ -869,7 +881,7 @@ namespace ImageLibrary.Core
             await this.ActivateNeighborFilesAsync(new[] { info });
         }
 
-        
+
 
 
         /// <summary>
@@ -918,7 +930,7 @@ namespace ImageLibrary.Core
             }
         }
 
-        
+
         /// <summary>
         /// IDからレコードを取得
         /// </summary>

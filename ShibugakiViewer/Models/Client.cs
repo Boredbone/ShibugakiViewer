@@ -241,13 +241,13 @@ namespace ShibugakiViewer.Models
                 .Select(_ => this.SelectedItems.GetAll().FirstOrDefault())
                 .Where(x => x.Key != null)
                 .Publish().RefCount();
-            
+
             //DBに問い合わせ
             var selectedChanged = selectedChangedTrigger
                 .Where(x => x.Value == null)
                 .SelectMany(x => core.Library.GetRecordAsync(x.Key))
                 .Merge(selectedChangedTrigger.Where(x => x.Value != null).Select(x => x.Value));
-            
+
 
             //Catalogで選択中のRecord
             var catalogDisplaying = this.SelectedItems.SelectedItemChanged
@@ -377,7 +377,7 @@ namespace ShibugakiViewer.Models
             //画像読み込みリクエスト
 
             this.ChangeToViewerSubject = new Subject<long>().AddTo(this.Disposables);
-            
+
             var cacheUpdated = front.CacheUpdated
                 .Where(x => this.ViewerIndex.Value >= x.Start && this.ViewerIndex.Value < x.Start + x.Length)
                 .Select(_ => this.ViewerIndex.Value);
@@ -999,7 +999,7 @@ namespace ShibugakiViewer.Models
 
                 this.History.MoveNew(state);
             }
-            
+
             this.PageChangeRequestSubject.OnNext(type);
 
             if (type == PageType.Catalog && catalogIndex.HasValue)
@@ -1038,15 +1038,15 @@ namespace ShibugakiViewer.Models
         /// ビューアで表示中のファイルを削除
         /// </summary>
         /// <returns></returns>
-        public Task<bool> DeleteDisplayingFile()
-            => this.DeleteFilesAsync(this.ToSingleDictionary(this.ViewerDisplaying.Value));
+        public Task<bool> DeleteDisplayingFile(bool notDeleteFile)
+            => this.DeleteFilesAsync(this.ToSingleDictionary(this.ViewerDisplaying.Value), notDeleteFile);
 
         /// <summary>
         /// プロパティ表示中のファイルを削除
         /// </summary>
         /// <returns></returns>
-        public Task<bool> DeleteSelectedSingleFile()
-            => this.DeleteFilesAsync(this.ToSingleDictionary(this.SelectedRecord.Value));
+        public Task<bool> DeleteSelectedSingleFile(bool notDeleteFile)
+            => this.DeleteFilesAsync(this.ToSingleDictionary(this.SelectedRecord.Value), notDeleteFile);
 
         private KeyValuePair<string, Record>[] ToSingleDictionary(Record value)
             => new[] { new KeyValuePair<string, Record>(value?.Id, value) };
@@ -1056,15 +1056,16 @@ namespace ShibugakiViewer.Models
         /// 選択されたファイルをすべて削除
         /// </summary>
         /// <returns></returns>
-        public Task<bool> DeleteSelectedFiles()
-            => this.DeleteFilesAsync(this.SelectedItems.GetAll().ToArray());
+        public Task<bool> DeleteSelectedFiles(bool notDeleteFile)
+            => this.DeleteFilesAsync(this.SelectedItems.GetAll().ToArray(), notDeleteFile);
 
         /// <summary>
         /// ファイルの削除
         /// </summary>
         /// <param name="files"></param>
         /// <returns></returns>
-        private async Task<bool> DeleteFilesAsync(IEnumerable<KeyValuePair<string, Record>> files)
+        private async Task<bool> DeleteFilesAsync
+            (IEnumerable<KeyValuePair<string, Record>> files, bool notDeleteFile)
         {
             if (files == null)
             {
@@ -1089,17 +1090,38 @@ namespace ShibugakiViewer.Models
             string messageBoxTitle;
             string messaBoxText;
 
-            if (items.Length == 1)
+            if (!notDeleteFile)
             {
-                messageBoxTitle = this.core.GetResourceString("DeleteFileText1");
-                messaBoxText = this.core.GetResourceString("DeleteFileText2")
-                    + "\n" + items[0].Key;
+                if (items.Length == 1)
+                {
+                    messageBoxTitle = this.core.GetResourceString("DeleteFileText1");
+                    messaBoxText = this.core.GetResourceString("DeleteFileText2")
+                        + "\n" + items[0].Key;
+                }
+                else
+                {
+                    messageBoxTitle = this.core.GetResourceString("DeleteFileText3");
+                    messaBoxText = this.core.GetResourceString("DeleteFileText4")
+                        + items.Length.ToString() + this.core.GetResourceString("DeleteFileText5");
+                }
             }
             else
             {
-                messageBoxTitle = this.core.GetResourceString("DeleteFileText3");
-                messaBoxText = this.core.GetResourceString("DeleteFileText4")
-                    + items.Length.ToString() + this.core.GetResourceString("DeleteFileText5");
+
+                if (items.Length == 1)
+                {
+                    messageBoxTitle = this.core.GetResourceString("DeleteFileText1");
+                    messaBoxText = this.core.GetResourceString("DeleteFileText8")
+                        + "\n" + this.core.GetResourceString("DeleteFileText10")
+                        + "\n" + items[0].Key;
+                }
+                else
+                {
+                    messageBoxTitle = this.core.GetResourceString("DeleteFileText3");
+                    messaBoxText = this.core.GetResourceString("DeleteFileText9")
+                        + items.Length.ToString() + this.core.GetResourceString("DeleteFileText11")
+                        + "\n" + this.core.GetResourceString("DeleteFileText10");
+                }
             }
 
             var userOperation = MessageBox.Show(messaBoxText, messageBoxTitle,
@@ -1111,7 +1133,7 @@ namespace ShibugakiViewer.Models
                 return false;
             }
 
-            var result = await this.front.DeleteItemsAsync(items);
+            var result = await this.front.DeleteItemsAsync(items, notDeleteFile);
 
             if (result)
             {

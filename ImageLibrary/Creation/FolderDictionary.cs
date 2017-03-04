@@ -82,7 +82,7 @@ namespace ImageLibrary.Creation
         {
             lock (this.gate)
             {
-                return this.registeredFolders.Where(x => !x.Ignored).ToArray();
+                return this.registeredFolders.Where(x => !x.IsIgnored).ToArray();
             }
         }
 
@@ -90,7 +90,7 @@ namespace ImageLibrary.Creation
         {
             lock (this.gate)
             {
-                return this.registeredFolders.Where(x => x.Ignored).ToArray();
+                return this.registeredFolders.Where(x => x.IsIgnored).ToArray();
             }
         }
 
@@ -133,9 +133,9 @@ namespace ImageLibrary.Creation
 
                 if (exists != null)
                 {
-                    if (exists.Ignored)
+                    if (exists.IsIgnored)
                     {
-                        exists.Ignored = false;
+                        exists.CancelIgnore();
                         exists.RefreshEnable = true;
                         registered = true;
                     }
@@ -181,7 +181,7 @@ namespace ImageLibrary.Creation
         {
             try
             {
-                if (folder.WatchChange && !folder.Ignored)
+                if (folder.WatchChange && !folder.IsIgnored)
                 {
                     this.FolderWatcher.Add(folder.Path, !folder.IsTopDirectoryOnly);
                 }

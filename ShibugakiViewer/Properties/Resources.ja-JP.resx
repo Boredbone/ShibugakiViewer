@@ -932,4 +932,16 @@
   <data name="CheckFileShellInformationLabel3" xml:space="preserve">
     <value>(ライブラリの更新に時間がかかります)</value>
   </data>
+  <data name="DeleteFileText10" xml:space="preserve">
+    <value>(ファイルは削除されません)</value>
+  </data>
+  <data name="DeleteFileText11" xml:space="preserve">
+    <value>個の項目をライブラリから除外しますか?</value>
+  </data>
+  <data name="DeleteFileText8" xml:space="preserve">
+    <value>このファイルをライブラリから除外しますか?</value>
+  </data>
+  <data name="DeleteFileText9" xml:space="preserve">
+    <value>これらの</value>
+  </data>
 </root>

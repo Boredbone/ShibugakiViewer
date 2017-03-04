@@ -915,8 +915,13 @@ namespace ShibugakiViewer.ViewModels
 
 
             keyReceiver.Register(Key.Delete,
-                async (t, key) => await this.client.DeleteDisplayingFile(),
+                async (t, key) => await this.client.DeleteDisplayingFile(false),
                 cursorFilter);
+
+            keyReceiver.Register(Key.Delete,
+                async (t, key) => await this.client.DeleteDisplayingFile(true),
+                cursorFilter, modifier: ModifierKeys.Control);
+
 
 
             keyReceiver.Register(Key.F5, (t, key) => this.client.Refresh(), cursorFilter);

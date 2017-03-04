@@ -300,7 +300,7 @@ namespace ShibugakiViewer.Views.InformationPanes
             var clientViewModel = this.DataContext as ClientWindowViewModel;
             if (clientViewModel != null)
             {
-                var result = await clientViewModel.Client.DeleteSelectedSingleFile();
+                var result = await clientViewModel.Client.DeleteSelectedSingleFile(false);
             }
             this.HideFileOperationDialog();
         }

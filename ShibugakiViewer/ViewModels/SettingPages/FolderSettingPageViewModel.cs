@@ -76,13 +76,7 @@ namespace ShibugakiViewer.ViewModels.SettingPages
 
             this.IgnoreCommand = this.IsEditable
                 .ToReactiveCommand()
-                .WithSubscribeOfType<FolderInformation>(folder =>
-                {
-                    if (folder != null)
-                    {
-                        folder.Ignored = true;
-                    }
-                }, this.Disposables);
+                .WithSubscribeOfType<FolderInformation>(folder => folder?.Ignore(), this.Disposables);
 
             this.RefreshCommand = this.IsEditable
                 .CombineLatest(this.IsInitializeMode, (a, b) => a && !b)

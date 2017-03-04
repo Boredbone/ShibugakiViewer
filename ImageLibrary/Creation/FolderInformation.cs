@@ -16,7 +16,6 @@ namespace ImageLibrary.Creation
     [DataContract]
     public class FolderInformation : INotifyPropertyChanged, IRecord<int>, ITrackable
     {
-
         [RecordMember]
         public int Id
         {
@@ -37,7 +36,7 @@ namespace ImageLibrary.Creation
         public string Path
         {
             get { return _fieldPath; }
-            set
+            private set
             {
                 if (_fieldPath != value)
                 {
@@ -47,6 +46,7 @@ namespace ImageLibrary.Creation
             }
         }
         private string _fieldPath;
+        
         
         [RecordMember]
         [DataMember]
@@ -65,11 +65,10 @@ namespace ImageLibrary.Creation
         private bool _fieldAutoRefreshEnable;
         
         [RecordMember]
-        [DataMember]
-        public bool Ignored
+        public int Ignored
         {
             get { return _fieldIgnored; }
-            set
+            private set
             {
                 if (_fieldIgnored != value)
                 {
@@ -78,7 +77,10 @@ namespace ImageLibrary.Creation
                 }
             }
         }
-        private bool _fieldIgnored;
+        private int _fieldIgnored;
+
+        public bool IsIgnored => this.Ignored > 0;
+        public bool IsRemoved => this.Ignored == 2;
 
         [RecordMember]
         [DataMember]
@@ -176,7 +178,7 @@ namespace ImageLibrary.Creation
         public FolderInformation(string path)
         {
             this.Path = path;
-            this.Ignored = false;
+            this.Ignored = 0;
 
             this.RefreshEnable = true;
             this.AutoRefreshEnable = true;
@@ -198,13 +200,25 @@ namespace ImageLibrary.Creation
                 return new FolderInformation(path)
                 {
                     AutoRefreshEnable = true,
-                    Ignored = false,
+                    Ignored = 0,
                     RefreshEnable = true,
                 };
             })
             .Where(x => x.Path != null && x.Path.Length > 0);
 
         }
+
+        public void MarkRemoved()
+        {
+            if (this.Ignored == 1)
+            {
+                this.Ignored = 2;
+            }
+        }
+
+        public void Ignore() => this.Ignored = 1;
+
+        public void CancelIgnore() => this.Ignored = 0;
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void RaisePropertyChanged(string propertyName)

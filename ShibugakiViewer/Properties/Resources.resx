@@ -930,4 +930,16 @@
   <data name="CheckFileShellInformationLabel3" xml:space="preserve">
     <value>(It makes library updating slower)</value>
   </data>
+  <data name="DeleteFileText10" xml:space="preserve">
+    <value>(File is not deleted.)</value>
+  </data>
+  <data name="DeleteFileText11" xml:space="preserve">
+    <value>items from the library?</value>
+  </data>
+  <data name="DeleteFileText8" xml:space="preserve">
+    <value>Are you sure you want to remove this file from the library?</value>
+  </data>
+  <data name="DeleteFileText9" xml:space="preserve">
+    <value>Are you sure you want to remove these</value>
+  </data>
 </root>

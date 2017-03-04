@@ -645,6 +645,15 @@ namespace Database.Table
                 ($"DELETE FROM {this.Name} WHERE {IdName} IN @{nameof(param.Item1)}", param, transaction);
         }
 
+        private Task RemoveRangeAsync(IEnumerable<TKey> ids,
+            IDbConnection connection, IDbTransaction transaction)
+        {
+            var param = new Tuple<TKey[]>(ids.ToArray());
+
+            return connection.ExecuteAsync
+                ($"DELETE FROM {this.Name} WHERE {IdName} IN @{nameof(param.Item1)}", param, transaction);
+        }
+
         /// <summary>
         /// Remove a lot of records
         /// </summary>
@@ -670,6 +679,30 @@ namespace Database.Table
         }
         public void RemoveRangeBuffered(IDbConnection connection, IEnumerable<TRecord> items)
             => this.RemoveRangeBuffered(connection, items.Select(x => x.Id));
+
+
+        public async Task RemoveRangeBufferedAsync(IDbConnection connection, IEnumerable<TKey> ids)
+        {
+            foreach (var buffer in ids.Distinct().Buffer(this.BufferSize))
+            {
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        await this.RemoveRangeAsync(buffer, connection, transaction)
+                            .ConfigureAwait(false);
+
+                        transaction.Commit();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                    }
+                }
+            }
+        }
+        public Task RemoveRangeBufferedAsync(IDbConnection connection, IEnumerable<TRecord> items)
+            => this.RemoveRangeBufferedAsync(connection, items.Select(x => x.Id));
 
         public void RemoveRangeBuffered(IEnumerable<TRecord> items)
         {

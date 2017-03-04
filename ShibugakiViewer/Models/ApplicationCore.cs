@@ -845,14 +845,14 @@ namespace ShibugakiViewer.Models
             return resultText;
         }
 
-        /// <summary>
-        /// 新しいClientWindowを表示
-        /// </summary>
-        /// <param name="files"></param>
-        public void ShowNewClient(IEnumerable<string> files)
-        {
-            ((App)Application.Current).ShowClientWindow(files);
-        }
+        ///// <summary>
+        ///// 新しいClientWindowを表示
+        ///// </summary>
+        ///// <param name="files"></param>
+        //public void ShowNewClient(IEnumerable<string> files)
+        //{
+        //    ((App)Application.Current).ShowClientWindow(files);
+        //}
 
         /// <summary>
         /// フォルダを登録
