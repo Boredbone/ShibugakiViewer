@@ -862,10 +862,10 @@
     <value>Delete Multiple Items</value>
   </data>
   <data name="DeleteFileText4" xml:space="preserve">
-    <value>Are you sure you want to delete these</value>
+    <value>Are you sure you want to delete these </value>
   </data>
   <data name="DeleteFileText5" xml:space="preserve">
-    <value>items?</value>
+    <value> items?</value>
   </data>
   <data name="DeleteFileText6" xml:space="preserve">
     <value>Group can not be deleted.</value>
@@ -934,12 +934,12 @@
     <value>(File is not deleted.)</value>
   </data>
   <data name="DeleteFileText11" xml:space="preserve">
-    <value>items from the library?</value>
+    <value> items from the library?</value>
   </data>
   <data name="DeleteFileText8" xml:space="preserve">
     <value>Are you sure you want to remove this file from the library?</value>
   </data>
   <data name="DeleteFileText9" xml:space="preserve">
-    <value>Are you sure you want to remove these</value>
+    <value>Are you sure you want to remove these </value>
   </data>
 </root>

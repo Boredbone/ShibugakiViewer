@@ -448,7 +448,7 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
-        ///   items from the library? に類似しているローカライズされた文字列を検索します。
+        ///    items from the library? に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string DeleteFileText11 {
             get {
@@ -475,7 +475,7 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
-        ///   Are you sure you want to delete these に類似しているローカライズされた文字列を検索します。
+        ///   Are you sure you want to delete these  に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string DeleteFileText4 {
             get {
@@ -484,7 +484,7 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
-        ///   items? に類似しているローカライズされた文字列を検索します。
+        ///    items? に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string DeleteFileText5 {
             get {
@@ -520,7 +520,7 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
-        ///   Are you sure you want to remove these に類似しているローカライズされた文字列を検索します。
+        ///   Are you sure you want to remove these  に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string DeleteFileText9 {
             get {
