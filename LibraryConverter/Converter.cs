@@ -354,10 +354,10 @@ namespace LibraryConverter.Compat
                 return null;
             }
 
-            return new FolderInformation(source.DisplayName)
+            var obj = new FolderInformation(source.DisplayName)
             {
                 AutoRefreshEnable = source.AutoRefreshEnable,
-                Ignored = source.Ignored,
+                //Ignored = source.Ignored,
                 RefreshEnable = source.RefreshEnable,
                 //RefreshTrigger = source.RefreshTrigger,
                 IsTopDirectoryOnly = false,
@@ -366,6 +366,17 @@ namespace LibraryConverter.Compat
                     : FolderCheckMode.Detail,
                 WatchChange = true,
             };
+
+            if (source.Ignored)
+            {
+                obj.Ignore();
+            }
+            else
+            {
+                obj.CancelIgnore();
+            }
+
+            return obj;
         }
 
         private SearchInformation ConvertSearch(SparkImageViewer.FileSearch.SearchInformation source)
