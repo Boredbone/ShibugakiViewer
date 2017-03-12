@@ -691,8 +691,7 @@ namespace ShibugakiViewer.Models
         {
             try
             {
-                var str = Properties.Resources.ResourceManager.GetString(key);
-                return str == null ? key : str;
+                return Properties.Resources.ResourceManager.GetString(key) ?? key;
             }
             catch
             {

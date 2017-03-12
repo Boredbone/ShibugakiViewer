@@ -869,8 +869,10 @@ namespace ShibugakiViewer.Models
 
             var index = this.ViewerIndex.Value;
 
-            if (length > 0 && index >= length && index > 0 && !ignoreIfDifferent)
+            if (length > 0 && index >= length && index > 0)// && !ignoreIfDifferent)
             {
+                Debug.WriteLine($"Index out of range, {nameof(ignoreIfDifferent)} = {ignoreIfDifferent}");
+                
                 this.ViewerIndex.Value = index - 1;
                 return;
             }

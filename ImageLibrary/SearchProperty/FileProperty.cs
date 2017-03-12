@@ -253,18 +253,11 @@ namespace ImageLibrary.SearchProperty
         /// <returns></returns>
         public static bool IsComperable(this FileProperty property)
         {
-            PropertySearch result;
-            if (searchDictionary.TryGetValue((int)property, out result))
+            if (searchDictionary.TryGetValue((int)property, out var result))
             {
                 return result.IsComparable;
             }
             return false;
-
-            //if (!searchDictionary.ContainsKey((int)property))
-            //{
-            //    return false;
-            //}
-            //return searchDictionary[(int)property].IsComparable;
         }
 
         /// <summary>
@@ -395,25 +388,10 @@ namespace ImageLibrary.SearchProperty
         /// <param name="property"></param>
         /// <returns></returns>
         public static string GetPropertyLabel(this FileProperty property)
-        {
-            return GetPropertyLabel((int)property);
-            //string result;
-            //if (Labels.TryGetValue(property, out result))
-            //{
-            //    return result;
-            //}
-            //return "";
-        }
+            => GetPropertyLabel((int)property);
 
         private static string GetPropertyLabel(int property)
-        {
-            string result;
-            if (Labels.TryGetValue(property, out result))
-            {
-                return result;
-            }
-            return "";
-        }
+            => Labels.TryGetValue(property, out var result) ? result : "";
 
 
         public static string GetEqualityLabel(this FileProperty property, bool isNot)
