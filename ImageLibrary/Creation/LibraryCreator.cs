@@ -362,7 +362,7 @@ namespace ImageLibrary.Creation
                 //本当にファイルが存在しないのか確認
                 if (!folderIgnoredRecords.ContainsKey(file.Key))
                 {
-                    if (await this.Config.IsFileExistsAsync(file.Value))
+                    if (this.Config.IsFileExists(file.Value))
                     {
                         missLoadedItems.Add(file.Key);
                         removedFilesResult.Remove(file.Key);

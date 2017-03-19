@@ -278,8 +278,8 @@ namespace ShibugakiViewer.Views.Behaviors
 
         public T Value
         {
-            get { return (T)GetValue(ValueProperty); }
-            set { SetValue(ValueProperty, value); }
+            get => (T)GetValue(ValueProperty);
+            set => SetValue(ValueProperty, value);
         }
 
         public static readonly DependencyProperty ValueProperty =
@@ -288,9 +288,7 @@ namespace ShibugakiViewer.Views.Behaviors
 
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var thisInstance = d as SingleValueAnimator<T>;
-
-            if (thisInstance != null)
+            if (d is SingleValueAnimator<T> thisInstance)
             {
                 thisInstance.ValueChanged?.Invoke(d, e);
             }

@@ -56,9 +56,7 @@ namespace ShibugakiViewer.Models.ImageViewer
             = new LockingQueue<CommandPacket>();
         private readonly LockingQueue<CommandPacket> thumbNailLoadRequest
             = new LockingQueue<CommandPacket>();
-
-        //private readonly CancellationTokenBag cancellationSources
-        //    = new CancellationTokenBag();
+        
 
         private Subject<Unit> ActionQueueSubject { get; }
 
@@ -105,8 +103,7 @@ namespace ShibugakiViewer.Models.ImageViewer
         public bool TryGetImage
             (string path, ImageQuality quality, out ImageSourceContainer image)
         {
-            ImageBufferItem result;
-            if (this.TryGetImageData(path, quality, out result))
+            if (this.TryGetImageData(path, quality, out var result))
             {
                 if (result != null)
                 {
@@ -135,36 +132,13 @@ namespace ShibugakiViewer.Models.ImageViewer
             if (quality == ImageQuality.ThumbNail)
             {
                 return this.thumbNailImages.TryGetOrRemove(key, out result);
-
-                //if (thumbNailImages.TryGetValue(key, out result))
-                //{
-                //    if (result != null)
-                //    {
-                //        return true;
-                //    }
-                //    thumbNailImages.TryRemove(key, out result);
-                //}
-                //return false;
             }
 
             if (this.images.TryGetOrRemoveWithQuality(key, quality, out result))
             {
                 return true;
             }
-
-            //if (images.TryGetValue(key, out result))
-            //{
-            //    if ((result != null && result.Quality == ImageQuality.OriginalSize)
-            //        || quality == ImageQuality.Resized
-            //        || quality == ImageQuality.LowQuality)
-            //    {
-            //        if (result != null)
-            //        {
-            //            return true;
-            //        }
-            //        images.TryRemove(key, out result);
-            //    }
-            //}
+            
 
             if (quality == ImageQuality.LowQuality)
             {
@@ -172,15 +146,6 @@ namespace ShibugakiViewer.Models.ImageViewer
                 {
                     return true;
                 }
-
-                //if (thumbNailImages.TryGetValue(key, out result))
-                //{
-                //    if (result != null)
-                //    {
-                //        return true;
-                //    }
-                //    thumbNailImages.TryRemove(key, out result);
-                //}
             }
 
             result = null;
@@ -198,18 +163,7 @@ namespace ShibugakiViewer.Models.ImageViewer
             (string path, ImageLoadingOptions option, IObserver<ImageSourceContainer> observer,
             bool hasPriority, CancellationToken token)
             => this.RequestLoadingToTask(null, path, option, observer, hasPriority, token);
-
-
-        //public void RequestLoading
-        //    (Record file, ImageLoadingOptions option, IObserver<ImageSourceContainer> observer,
-        //    bool hasPriority, ObservableCancellationTokenSource tokenSource)
-        //    => this.RequestLoadingToTask(file, file.FullPath, option, observer, hasPriority, tokenSource);
-        //
-        //public void RequestLoading
-        //    (string path, ImageLoadingOptions option, IObserver<ImageSourceContainer> observer,
-        //    bool hasPriority, ObservableCancellationTokenSource tokenSource)
-        //    => this.RequestLoadingToTask(null, path, option, observer, hasPriority, tokenSource);
-
+        
 
         private void RequestLoadingToTask
             (Record file, string path, ImageLoadingOptions option, IObserver<ImageSourceContainer> observer,
@@ -217,26 +171,10 @@ namespace ShibugakiViewer.Models.ImageViewer
         {
             if ((file != null || path != null) && !token.IsCancellationRequested)
             {
-                //Task.Run(() =>
                 this.RequestLoadingMain(file, path, option, observer, hasPriority, token);
             }
         }
-
-        //private void RequestLoadingToTask
-        //    (Record file, string path, ImageLoadingOptions option, IObserver<ImageSourceContainer> observer,
-        //    bool hasPriority, ObservableCancellationTokenSource tokenSource)
-        //{
-        //    if ((file != null || path != null) && !tokenSource.IsDisposed)
-        //    {
-        //        //Task.Run(() =>
-        //        {
-        //            this.cancellationSources.Add(tokenSource);
-        //            var token = tokenSource.Token;
-        //            this.RequestLoadingMain(file, path, option, observer, hasPriority, token);
-        //        }//);
-        //    }
-        //}
-
+        
 
         private void RequestLoadingMain
             (Record file, string path, ImageLoadingOptions option, IObserver<ImageSourceContainer> observer,
@@ -255,9 +193,8 @@ namespace ShibugakiViewer.Models.ImageViewer
                 observer = emptyObserver;
             }
 
-
-            ImageSourceContainer image;
-            if (this.TryGetImage(filePath, option.Quality, out image))
+            
+            if (this.TryGetImage(filePath, option.Quality, out var image))
             {
                 if (image != null && image.Image != null)
                 {
@@ -315,18 +252,17 @@ namespace ShibugakiViewer.Models.ImageViewer
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        private async Task LoadImageAsync(CommandPacket command)
+        private async ValueTask<bool> LoadImageAsync(CommandPacket command)
         {
             var key = command.Path;
-
-            ImageSourceContainer result;
-            if (this.TryGetImage(key, command.Option.Quality, out result))
+            
+            if (this.TryGetImage(key, command.Option.Quality, out var result))
             {
                 if (result != null)
                 {
                     command.Observer.OnNext(result);
                     command.Observer.OnCompleted();
-                    return;
+                    return true;
                 }
             }
 
@@ -335,7 +271,7 @@ namespace ShibugakiViewer.Models.ImageViewer
             if (token.IsCancellationRequested)
             {
                 command.Observer.OnCompleted();
-                return;
+                return true;
             }
 
 
@@ -380,12 +316,12 @@ namespace ShibugakiViewer.Models.ImageViewer
             {
                 if (file != null)
                 {
-                    await image.LoadImageAsync
+                    image.LoadImage
                         (file, frameSize, asThumbnail, option.IsFill, option.CmsEnable);
                 }
                 else
                 {
-                    await image.LoadImageAsync
+                    image.LoadImage
                         (key, frameSize, asThumbnail, option.IsFill, option.CmsEnable);
                 }
             }
@@ -395,7 +331,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 {
                     ClearBuffer();
                     command.Observer.OnError(e);
-                    return;
+                    return true;
                 }
                 else
                 {
@@ -405,7 +341,7 @@ namespace ShibugakiViewer.Models.ImageViewer
             catch (Exception e)
             {
                 command.Observer.OnError(e);
-                return;
+                return true;
             }
 
 
@@ -414,7 +350,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 if (token.IsCancellationRequested)
                 {
                     command.Observer.OnCompleted();
-                    return;
+                    return true;
                 }
 
 
@@ -439,12 +375,12 @@ namespace ShibugakiViewer.Models.ImageViewer
                 {
                     if (file != null)
                     {
-                        await image.LoadImageAsync
+                        image.LoadImage
                            (file, frameSize, asThumbnail, option.IsFill, option.CmsEnable);
                     }
                     else
                     {
-                        await image.LoadImageAsync
+                        image.LoadImage
                             (key, frameSize, asThumbnail, option.IsFill, option.CmsEnable);
                     }
 
@@ -452,13 +388,13 @@ namespace ShibugakiViewer.Models.ImageViewer
                 catch (Exception e)
                 {
                     command.Observer.OnError(e);
-                    return;
+                    return true;
                 }
             }
 
             if (image.HasImage())
             {
-                if (option.Quality == ImageQuality.ThumbNail || image.Quality == ImageQuality.LowQuality)
+                if (option.Quality == ImageQuality.ThumbNail || image.Quality <= ImageQuality.LowQuality)
                 {
                     thumbNailImages.AddOrExtrude
                         (key, new ImageBufferItem(image, ++this.count), thumbNailbufferSize);
@@ -473,7 +409,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 command.Observer.OnNext(image);
             }
             command.Observer.OnCompleted();
-
+            return true;
         }
 
 
@@ -500,15 +436,6 @@ namespace ShibugakiViewer.Models.ImageViewer
 
         public void ClearThumbNailRequests()
         {
-            //this.cancellationSources.CancelAndClear();
-            //ObservableCancellationTokenSource result;
-            //while (this.cancellationSources.TryTake(out result))
-            //{
-            //    if (result != null && !result.IsDisposed)
-            //    {
-            //        result.Cancel();
-            //    }
-            //}
             this.ClearQueue(this.thumbNailLoadRequest);
         }
 
@@ -554,11 +481,9 @@ namespace ShibugakiViewer.Models.ImageViewer
             public ImageLoadingOptions Option { get; set; }
             public CancellationToken CancellationToken { get; set; }
 
-            public string Path
-                => (this.path != null) ? this.path : this.File?.FullPath;
+            public string Path => this.path ?? this.File?.FullPath;
 
             private string path;
-
 
             public CommandPacket(Record file, ImageLoadingOptions option, IObserver<ImageSourceContainer> observer)
             {
@@ -638,9 +563,8 @@ namespace ShibugakiViewer.Models.ImageViewer
                     {
                         this.ReleaseOldImage();
                     }
-
-                    ImageBufferItem result;
-                    if (this.dictionary.TryGetValue(key, out result))
+                    
+                    if (this.dictionary.TryGetValue(key, out var result))
                     {
                         if (result.Quality > value.Quality)
                         {
@@ -671,24 +595,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 }
             }
         }
-
-        //private class CancellationTokenBag : LockingList<ObservableCancellationTokenSource>
-        //{
-        //    public void CancelAndClear()
-        //    {
-        //        lock (this.gate)
-        //        {
-        //            foreach (var item in this.list)
-        //            {
-        //                if (item != null && !item.IsDisposed)
-        //                {
-        //                    item.Cancel();
-        //                }
-        //            }
-        //            this.list.Clear();
-        //        }
-        //    }
-        //}
+        
     }
 
     /// <summary>
@@ -728,8 +635,7 @@ namespace ShibugakiViewer.Models.ImageViewer
 
             if (minKey != null)
             {
-                ImageBufferItem result;
-                dictionary.TryRemove(minKey, out result);
+                dictionary.TryRemove(minKey, out var result);
                 result?.Dispose();
             }
         }

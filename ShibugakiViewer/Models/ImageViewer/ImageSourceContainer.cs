@@ -27,7 +27,7 @@ namespace ShibugakiViewer.Models.ImageViewer
         public bool IsNotFound { get; set; }
 
         public GraphicInformation Information { get; private set; }
-        
+
         public string FullPath { get; private set; }
 
         private const int maxSize = 4096;
@@ -55,13 +55,13 @@ namespace ShibugakiViewer.Models.ImageViewer
             return this.Image != null || this.IsNotFound;
         }
 
-        public Task<bool> LoadImageAsync
+        public bool LoadImage
             (string fullPath, Size? frameSize, bool asThumbnail, bool isFill, bool cmsEnable)
         {
-            return this.LoadImageMainAsync(fullPath, frameSize, asThumbnail, isFill, cmsEnable);
+            return this.LoadImageMain(fullPath, frameSize, asThumbnail, isFill, cmsEnable);
         }
 
-        public async Task<bool> LoadImageAsync
+        public bool LoadImage
             (Record file, Size? frameSize, bool asThumbnail, bool isFill, bool cmsEnable)
         {
             if (file == null)
@@ -69,7 +69,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 return false;
             }
 
-            var result = await this.LoadImageMainAsync
+            var result = this.LoadImageMain
                 (file.FullPath, frameSize, asThumbnail, isFill, cmsEnable);
 
             if (result && this.Information != null)
@@ -107,9 +107,8 @@ namespace ShibugakiViewer.Models.ImageViewer
 
         }
 
-
-#pragma warning disable 1998
-        private async Task<bool> LoadImageMainAsync
+        
+        private bool LoadImageMain
             (string fullPath, Size? frameSize, bool asThumbnail, bool isFill, bool cmsEnable)
         {
 
@@ -124,11 +123,11 @@ namespace ShibugakiViewer.Models.ImageViewer
             {
                 return false;
             }
-            
+
             try
             {
                 GraphicInformation information = null;
-                
+
                 using (var stream = File.OpenRead(fullPath))
                 {
                     this.IsNotFound = false;
@@ -141,7 +140,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                     {
                         return false;
                     }
-                    
+
                     //描画領域サイズ
                     var frameWidth = (!frameSize.HasValue || frameSize.Value.Width < 1)
                         ? 16.0 : frameSize.Value.Width;
@@ -215,7 +214,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                         this.Quality = ImageQuality.OriginalSize;
 
                     }
-                    
+
 
                     var image = new BitmapImage();
 
@@ -232,34 +231,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                         image.DecodePixelHeight = (int)Math.Round(loadHeight);
                     }
 
-
-                    if (information.BlankHeaderLength == 0)
-                    {
-                        stream.Position = 0;
-
-                        image.StreamSource = stream;
-
-                        image.EndInit();
-                        image.Freeze();
-                    }
-                    else
-                    {
-                        using (var ms = new WrappingStream(new MemoryStream((int)
-                            (stream.Length - information.BlankHeaderLength))))
-                        {
-
-                            stream.Position = information.BlankHeaderLength;
-
-                            ms.Position = 0;
-                            stream.CopyTo(ms);
-                            ms.Position = 0;
-
-                            image.StreamSource = ms;
-
-                            image.EndInit();
-                            image.Freeze();
-                        }
-                    }
+                    this.SetSourceToImage(image, stream, information, asThumbnail);
 
                     this.Image = image;
                 }
@@ -289,9 +261,138 @@ namespace ShibugakiViewer.Models.ImageViewer
                 return false;
             }
         }
-#pragma warning restore 1998
 
 
+        private void SetSourceToImage
+            (BitmapImage image, Stream stream, GraphicInformation information, bool asThumbnail)
+        {
+            if (information.BlankHeaderLength == 0)
+            {
+                this.SetImage(image, stream, information, asThumbnail);
+            }
+            else
+            {
+                using (var ms = new WrappingStream(new MemoryStream((int)
+                    (stream.Length - information.BlankHeaderLength))))
+                {
+
+                    stream.Position = information.BlankHeaderLength;
+
+                    ms.Position = 0;
+                    stream.CopyTo(ms);
+
+                    this.SetImage(image, ms, information, asThumbnail);
+                }
+            }
+        }
+
+        private void SetImage
+            (BitmapImage image, Stream stream, GraphicInformation information, bool asThumbnail)
+        {
+            stream.Position = 0;
+
+            //var sw = new Stopwatch();
+            //sw.Start();
+
+            if (asThumbnail && information.Type == GraphicFileType.Jpeg)
+            {
+                try
+                {
+                    // Get JPEG thumbnail from header
+                    var frame = BitmapFrame.Create
+                        (stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
+                    var source = frame.Thumbnail;
+
+                    if (source == null)
+                    {
+                        stream.Position = 0;
+                        this.SetStreamSourceToImage(image, stream);
+
+                        //sw.Stop();
+                        //Debug.WriteLine($"{sw.ElapsedMilliseconds}, null {this.FullPath}");
+                        return;
+                    }
+
+                    using (var ms = new MemoryStream())
+                    {
+                        var encoder = new JpegBitmapEncoder();
+                        encoder.Frames.Add(BitmapFrame.Create(source));
+                        encoder.Save(ms);
+                        ms.Seek(0, SeekOrigin.Begin);
+
+                        this.SetStreamSourceToImage(image, ms);
+
+                        //sw.Stop();
+                        //Debug.WriteLine($"{sw.ElapsedMilliseconds}, frame {this.FullPath}");
+                        //if (information.Type != GraphicFileType.Jpeg)
+                        //{
+                        //    Debug.WriteLine($"frame {this.FullPath}");
+                        //}
+                        return;
+                    }
+                    /*
+                    byte[] thumb = null;
+                    thumb = this.GetThumbnail(stream, information);
+                    if (thumb != null)
+                    {
+                        using (var ts = new MemoryStream(thumb))
+                        {
+                            this.SetStreamSourceToImage(image, ts);
+
+                            sw.Stop();
+                            Debug.WriteLine($"{sw.ElapsedMilliseconds}, thumbnail {this.FullPath}");
+                            this.Quality = ImageQuality.ThumbNail;
+                            return;
+                        }
+                    }*/
+                }
+                catch
+                {
+
+                }
+                stream.Position = 0;
+            }
+
+            this.SetStreamSourceToImage(image, stream);
+            //sw.Stop();
+            //Debug.WriteLine($"{sw.ElapsedMilliseconds}, normal {this.FullPath}");
+        }
+
+        private void SetStreamSourceToImage(BitmapImage image, Stream stream)
+        {
+            image.StreamSource = stream;
+
+            image.EndInit();
+            image.Freeze();
+        }
+
+        private byte[] GetThumbnail(Stream source, GraphicInformation information)
+        {
+            if (information.Type != GraphicFileType.Jpeg)
+            {
+                return null;
+            }
+
+            // 画像オブジェクトの作成
+            using (var orig = System.Drawing.Image.FromStream(source, false, false))
+            {
+                int[] pils = orig.PropertyIdList;
+                int index = Array.IndexOf(pils, 0x501b); // サムネイル・データ
+
+                if (index == -1)
+                {
+                    return null;
+                }
+                else
+                {
+                    // サムネイル・データの取得
+                    var pi = orig.PropertyItems[index];
+                    byte[] jpgBytes = pi.Value;
+
+                    return jpgBytes;
+                }
+            }
+        }
     }
 
 

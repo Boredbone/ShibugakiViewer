@@ -227,9 +227,9 @@ namespace ShibugakiViewer.ViewModels.Controls
                 if (x.Enable)
                 {
                     var currentIndex = this.EqualitySelectedIndex.Value;
-                    this.EqualitySelector[this.equalitySelectorIndex(true)]
+                    this.EqualitySelector[this.GetEqualitySelectorIndex(true)]
                         = x.Property.GetEqualityLabel(true);
-                    this.EqualitySelector[this.equalitySelectorIndex(false)]
+                    this.EqualitySelector[this.GetEqualitySelectorIndex(false)]
                         = x.Property.GetEqualityLabel(false);
                     this.EqualitySelectedIndex.Value = currentIndex;
                 }
@@ -245,28 +245,21 @@ namespace ShibugakiViewer.ViewModels.Controls
 
         private void AddCompareSymbol(CompareMode mode)
         {
-            //this.CompareOperator.Add(new KeyValuePair<string, CompareMode>(mode.GetSymbol(), mode));
             this.CompareOperator.Add(new KeyValuePair<string, CompareMode>(mode.GetLabel(), mode));
         }
 
-        private int equalitySelectorIndex(bool flag)
-        {
-            return flag ? 1 : 0;
-        }
+        private int GetEqualitySelectorIndex(bool flag) => flag ? 1 : 0;
 
         private void Init(UnitSearch source)
         {
 
             this.PropertyListSelectedIndex = new ReactiveProperty<int>(-2).AddTo(this.unsubscribers);
-
-            //this.PropertyListSelectedIndex = new ReactiveProperty<int>
-            //    (source == null ? -1 : this.PropertyList.FindIndex(x => x.Value.Property == source.Property)).AddTo(this.unsubscribers);
-
+            
             this.CompareOperatorSelectedIndex = new ReactiveProperty<int>
                 (this.CompareOperator.FindIndex(x => x.Value == ((source?.Mode)??CompareMode.Equal))).AddTo(this.unsubscribers);
 
             this.EqualitySelectedIndex = new ReactiveProperty<int>
-                (source == null ? 0 : this.equalitySelectorIndex(!source.Mode.ContainsEqual()));
+                (source == null ? 0 : this.GetEqualitySelectorIndex(!source.Mode.ContainsEqual()));
 
             this.TextBoxContent = new ReactiveProperty<string>
                 ((source == null || !source.Property.IsText()) ? "" : source.Reference.ToString()).AddTo(this.unsubscribers);
@@ -282,7 +275,7 @@ namespace ShibugakiViewer.ViewModels.Controls
             this.NumericText = new ReactiveProperty<int?>(
                 (source != null && source.Property.IsInteger())
                 ? ((int?)(source.Reference as long?) ?? (source.Reference as int?))
-                : (int?)null)
+                : null)
                 .AddTo(this.unsubscribers);
 
             this.FloatText = new ReactiveProperty<double?>(
@@ -442,16 +435,11 @@ namespace ShibugakiViewer.ViewModels.Controls
             {
                 newSetting.Mode
                     = this.CompareOperator[this.CompareOperatorSelectedIndex.Value].Value;
-                //newSetting.IsNot = false;
             }
             else
             {
-
-                newSetting.Mode = (this.EqualitySelectedIndex.Value == this.equalitySelectorIndex(true))
+                newSetting.Mode = (this.EqualitySelectedIndex.Value == this.GetEqualitySelectorIndex(true))
                     ? CompareMode.NotEqual : CompareMode.Equal;
-
-                // newSetting.IsNot = this.EqualitySelectedIndex.Value == this.equalitySelectorIndex(true);
-
             }
 
             return newSetting;
@@ -470,7 +458,6 @@ namespace ShibugakiViewer.ViewModels.Controls
                 return this.DirectoryList
                     .Select(x => x.GetSelectedLabel())
                     .Join();
-                //.ToList();
             }
             else if (property == FileProperty.ContainsTag)
             {
@@ -484,7 +471,6 @@ namespace ShibugakiViewer.ViewModels.Controls
 
             if (property.IsInteger())
             {
-                //var str = Regex.Replace(this.NumericText.Value, @"[^\d]", "");
                 var num = this.NumericText.Value ?? 0;
 
                 if (property == FileProperty.Size)
@@ -494,11 +480,6 @@ namespace ShibugakiViewer.ViewModels.Controls
                 else
                 {
                     return num;
-                    //int num;
-                    //if (int.TryParse(str, out num))
-                    //{
-                    //    return num;
-                    //}
                 }
             }
 
@@ -536,19 +517,11 @@ namespace ShibugakiViewer.ViewModels.Controls
 
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         protected void RaisePropertyChanged(string propertyName)
-        {
-            var d = PropertyChanged;
-            if (d != null)
-                d(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public void Dispose()
-        {
-            this.unsubscribers.Dispose();
-        }
+            => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public void Dispose() => this.unsubscribers.Dispose();
     }
+
     public class PropertyContainer
     {
         public FileProperty Property { get; private set; }
