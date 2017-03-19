@@ -55,13 +55,13 @@ namespace ShibugakiViewer.Models.ImageViewer
             return this.Image != null || this.IsNotFound;
         }
 
-        public bool LoadImage
+        public ValueTask<bool> LoadImageAsync
             (string fullPath, Size? frameSize, bool asThumbnail, bool isFill, bool cmsEnable)
         {
-            return this.LoadImageMain(fullPath, frameSize, asThumbnail, isFill, cmsEnable);
+            return this.LoadImageMainAsync(fullPath, frameSize, asThumbnail, isFill, cmsEnable);
         }
 
-        public bool LoadImage
+        public async ValueTask<bool> LoadImageAsync
             (Record file, Size? frameSize, bool asThumbnail, bool isFill, bool cmsEnable)
         {
             if (file == null)
@@ -69,7 +69,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 return false;
             }
 
-            var result = this.LoadImageMain
+            var result = await this.LoadImageMainAsync
                 (file.FullPath, frameSize, asThumbnail, isFill, cmsEnable);
 
             if (result && this.Information != null)
@@ -107,8 +107,9 @@ namespace ShibugakiViewer.Models.ImageViewer
 
         }
 
-        
-        private bool LoadImageMain
+
+#pragma warning disable 1998
+        private async ValueTask<bool> LoadImageMainAsync
             (string fullPath, Size? frameSize, bool asThumbnail, bool isFill, bool cmsEnable)
         {
 
@@ -261,6 +262,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 return false;
             }
         }
+#pragma warning restore 1998
 
 
         private void SetSourceToImage

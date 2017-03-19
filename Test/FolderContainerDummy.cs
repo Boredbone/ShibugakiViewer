@@ -18,15 +18,17 @@ namespace Test
 
         public List<ImageFileInformation> Files { get; } = new List<ImageFileInformation>();
 
-
-        public long EnumerateFiles(
+#pragma warning disable 1998
+        public async ValueTask<long> EnumerateFilesAsync(
             Action<int> OnFileEnumerated, 
             bool containsChildren = true, 
             CancellationToken cancellationToken = default(CancellationToken), bool configureAwait = false)
         {
             return this.GetAllFiles().Count();
         }
+#pragma warning restore 1998
 
+#pragma warning disable 1998
         /// <summary>
         /// 外部から渡されたファイルリストを使用
         /// </summary>
@@ -34,13 +36,13 @@ namespace Test
         /// <param name="cancellationToken"></param>
         /// <param name="configureAwait"></param>
         /// <returns></returns>
-        public long EnumerateFiles
+        public async ValueTask<long> EnumerateFilesAsync
             (string[] path,
             CancellationToken cancellationToken = default(CancellationToken), bool configureAwait = false)
         {
             throw new NotImplementedException();
         }
-
+#pragma warning restore 
 
         public Dictionary<string, FolderContainerDummy> GetChildFolders()
         {

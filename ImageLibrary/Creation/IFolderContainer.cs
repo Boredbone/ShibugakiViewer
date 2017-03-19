@@ -11,13 +11,13 @@ namespace ImageLibrary.Creation
         ImageFileInformation GetImage(string path, PropertiesLevel level);
 
 
-        long EnumerateFiles(
+        ValueTask<long> EnumerateFilesAsync(
             Action<int> OnFileEnumerated, 
             bool containsChildren = true, 
             CancellationToken cancellationToken = default(CancellationToken),
             bool configureAwait = false);
 
-        long EnumerateFiles
+        ValueTask<long> EnumerateFilesAsync
             (string[] path,
             CancellationToken cancellationToken = default(CancellationToken), bool configureAwait = false);
 

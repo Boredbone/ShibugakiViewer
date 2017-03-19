@@ -16,9 +16,9 @@ namespace ImageLibrary.Core
         string SaveDirectory { get; }
         HashSet<string> FileTypeFilter { get; }
 
-        bool IsFileExists(Record file);
-        bool IsFolderExists(FolderInformation folder);
-        bool IsFolderExists(string path);
+        ValueTask<bool> IsFileExistsAsync(Record file);
+        ValueTask<bool> IsFolderExistsAsync(FolderInformation folder);
+        ValueTask<bool> IsFolderExistsAsync(string path);
         bool IsKnownFolderEnabled { get; }
         IFolderContainer GetFolderContainer(string path);
         IEnumerable<string> GetChildFolders(string path);
@@ -55,8 +55,8 @@ namespace ImageLibrary.Core
         {
             return Directory.EnumerateDirectories(path);
         }
-
-        public bool IsFileExists(Record file)
+#pragma warning disable 1998
+        public async ValueTask<bool> IsFileExistsAsync(Record file)
         {
             if (file.IsGroup)
             {
@@ -65,17 +65,19 @@ namespace ImageLibrary.Core
 
             return System.IO.File.Exists(file.FullPath);
         }
+#pragma warning restore 1998
 
-
-        public bool IsFolderExists(FolderInformation folder)
+        public async ValueTask<bool> IsFolderExistsAsync(FolderInformation folder)
         {
-            return this.IsFolderExists(folder.Path);
+            return await this.IsFolderExistsAsync(folder.Path);
         }
-        
-        public bool IsFolderExists(string path)
+
+#pragma warning disable 1998
+        public async ValueTask<bool> IsFolderExistsAsync(string path)
         {
             return System.IO.Directory.Exists(path);
         }
+#pragma warning restore 1998
     }
 
 
@@ -105,8 +107,9 @@ namespace ImageLibrary.Core
         {
             return this.GetChildFoldersFunction(path);
         }
-        
-        public bool IsFileExists(Record file)
+
+#pragma warning disable 1998
+        public async ValueTask<bool> IsFileExistsAsync(Record file)
         {
             if (file.IsGroup)
             {
@@ -115,16 +118,19 @@ namespace ImageLibrary.Core
 
             return false;
         }
+#pragma warning restore 1998
 
-        public bool IsFolderExists(FolderInformation folder)
+        public async ValueTask<bool> IsFolderExistsAsync(FolderInformation folder)
         {
-            return this.IsFolderExists(folder.Path);
+            return await this.IsFolderExistsAsync(folder.Path);
         }
-        
-        public bool IsFolderExists(string path)
+
+#pragma warning disable 1998
+        public async ValueTask<bool> IsFolderExistsAsync(string path)
         {
             return this.GetChildFoldersFunction(path) != null;
         }
+#pragma warning restore 1998
     }
 
 

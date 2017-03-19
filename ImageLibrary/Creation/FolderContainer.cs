@@ -37,7 +37,8 @@ namespace ImageLibrary.Creation
             this.accesser = accesser;
             this.fileTypeFilter = fileTypeFilter;
         }
-        
+
+#pragma warning disable 1998
         /// <summary>
         /// 外部から渡されたファイルリストを使用
         /// </summary>
@@ -45,7 +46,7 @@ namespace ImageLibrary.Creation
         /// <param name="cancellationToken"></param>
         /// <param name="configureAwait"></param>
         /// <returns></returns>
-        public long EnumerateFiles
+        public async ValueTask<long> EnumerateFilesAsync
             (string[] path,
             CancellationToken cancellationToken = default(CancellationToken), bool configureAwait = false)
         {
@@ -53,7 +54,9 @@ namespace ImageLibrary.Creation
 
             return this.FilesFullpath.LongLength;
         }
+#pragma warning restore 
 
+#pragma warning disable 1998
         /// <summary>
         /// フォルダ内ファイルを列挙
         /// </summary>
@@ -61,7 +64,7 @@ namespace ImageLibrary.Creation
         /// <param name="cancellationToken"></param>
         /// <param name="configureAwait"></param>
         /// <returns></returns>
-        public long EnumerateFiles(
+        public async ValueTask<long> EnumerateFilesAsync(
             Action<int> OnFileEnumerated, 
             bool containsChildren = true,
             CancellationToken cancellationToken = default(CancellationToken), 
@@ -78,7 +81,8 @@ namespace ImageLibrary.Creation
 
             return this.FilesFullpath.LongLength;
         }
-        
+
+#pragma warning restore 1998
 
         /// <summary>
         /// 列挙された各ファイルに対し処理

@@ -316,12 +316,12 @@ namespace ShibugakiViewer.Models.ImageViewer
             {
                 if (file != null)
                 {
-                    image.LoadImage
+                    await image.LoadImageAsync
                         (file, frameSize, asThumbnail, option.IsFill, option.CmsEnable);
                 }
                 else
                 {
-                    image.LoadImage
+                    await image.LoadImageAsync
                         (key, frameSize, asThumbnail, option.IsFill, option.CmsEnable);
                 }
             }
@@ -375,12 +375,12 @@ namespace ShibugakiViewer.Models.ImageViewer
                 {
                     if (file != null)
                     {
-                        image.LoadImage
+                        await image.LoadImageAsync
                            (file, frameSize, asThumbnail, option.IsFill, option.CmsEnable);
                     }
                     else
                     {
-                        image.LoadImage
+                        await image.LoadImageAsync
                             (key, frameSize, asThumbnail, option.IsFill, option.CmsEnable);
                     }
 

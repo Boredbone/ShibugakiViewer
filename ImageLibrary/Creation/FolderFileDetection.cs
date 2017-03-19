@@ -67,7 +67,7 @@ namespace ImageLibrary.Creation
 
             this.TopPath = this.Path;
 
-            var exists = this.Config.IsFolderExists(information);
+            var exists = await this.Config.IsFolderExistsAsync(information);
 
             //フォルダ取得に失敗
             if (!exists)
@@ -98,7 +98,7 @@ namespace ImageLibrary.Creation
 
             var folder = this.Config.GetFolderContainer(this.Path);
 
-            var count = folder.EnumerateFiles
+            var count = await folder.EnumerateFilesAsync
                 (x => this.FileEnumerated?.Invoke(x),
                 options.ContainsChildren, default(CancellationToken), false);
             
@@ -139,7 +139,7 @@ namespace ImageLibrary.Creation
         {
             var folder = this.Config.GetFolderContainer(this.Path);
 
-            var count = folder.EnumerateFiles
+            var count = await folder.EnumerateFilesAsync
                 (files, default(CancellationToken), false);
 
             var options = new LoadingOptions()
