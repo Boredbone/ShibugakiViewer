@@ -149,6 +149,8 @@ namespace ShibugakiViewer.Views.Behaviors
             var offset = -(e.Delta * this.ScrollSpeed / 6.0);
             ScrollToVerticalOffset(offset, this.IsAnimationEnabled);
             e.Handled = true;
+
+            //Debug.WriteLine($"{DateTime.Now.Ticks}");
         }
 
 
@@ -185,7 +187,15 @@ namespace ShibugakiViewer.Views.Behaviors
 
             target.ValueChanged += (o, e) => this.Animated(scrollViewer, id, target, e);
 
-            animation.Completed += (o, e) => this.animatingObjects.Remove(id);
+            //var startTime = DateTime.Now.Ticks;
+
+            animation.Completed += (o, e) =>
+            {
+                //Debug.WriteLine(DateTime.Now.Ticks - startTime);
+                this.animatingObjects.Remove(id);
+            };
+
+            //Debug.WriteLine($"{DateTime.Now.Ticks}, {this.animatingObjects.Count}");
 
             target.BeginAnimation(SingleValueAnimator<double>.ValueProperty, animation);
         }
@@ -221,8 +231,16 @@ namespace ShibugakiViewer.Views.Behaviors
             var items = this.request.ToArray();
             this.request.Clear();
 
-            var oldValue = items.Sum(x => x.OldValue);
-            var newValue = items.Sum(x => x.NewValue);
+            var oldValue = 0.0;
+            var newValue = 0.0;
+
+            foreach(var item in items)
+            {
+                oldValue += item.OldValue;
+                newValue += item.NewValue;
+            }
+            //var oldValue = items.Sum(x => x.OldValue);
+            //var newValue = items.Sum(x => x.NewValue);
 
             var ids = items.Select(x => x.Id).Distinct().ToArray();
 
@@ -261,7 +279,7 @@ namespace ShibugakiViewer.Views.Behaviors
 
             var b = scrollViewer.VerticalOffset - oldValue;
             scrollViewer.ScrollToVerticalOffset(b + newValue);
-
+            //Debug.WriteLine($"{DateTime.Now.Ticks}, {b + newValue}, {items.Length}");
         }
 
         private class ScrollRequestContainer

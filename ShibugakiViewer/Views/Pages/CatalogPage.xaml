@@ -456,7 +456,7 @@
                     ScrollSpeed="6.0"
                     AnimationTime="200"
                     RequestScrollAction="{Binding RequestScrollAction,Mode=OneWayToSource}"
-                    IsAnimationEnabled="False"/>
+                    IsAnimationEnabled="True"/>
             </i:Interaction.Behaviors>
 
         </cc:VirtualizedGridView>
