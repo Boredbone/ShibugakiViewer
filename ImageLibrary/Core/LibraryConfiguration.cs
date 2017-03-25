@@ -16,9 +16,9 @@ namespace ImageLibrary.Core
         string SaveDirectory { get; }
         HashSet<string> FileTypeFilter { get; }
 
-        ValueTask<bool> IsFileExistsAsync(Record file);
-        ValueTask<bool> IsFolderExistsAsync(FolderInformation folder);
-        ValueTask<bool> IsFolderExistsAsync(string path);
+        Task<bool> IsFileExistsAsync(Record file);
+        Task<bool> IsFolderExistsAsync(FolderInformation folder);
+        Task<bool> IsFolderExistsAsync(string path);
         bool IsKnownFolderEnabled { get; }
         IFolderContainer GetFolderContainer(string path);
         IEnumerable<string> GetChildFolders(string path);
@@ -56,7 +56,7 @@ namespace ImageLibrary.Core
             return Directory.EnumerateDirectories(path);
         }
 #pragma warning disable 1998
-        public async ValueTask<bool> IsFileExistsAsync(Record file)
+        public async Task<bool> IsFileExistsAsync(Record file)
         {
             if (file.IsGroup)
             {
@@ -67,13 +67,13 @@ namespace ImageLibrary.Core
         }
 #pragma warning restore 1998
 
-        public async ValueTask<bool> IsFolderExistsAsync(FolderInformation folder)
+        public async Task<bool> IsFolderExistsAsync(FolderInformation folder)
         {
             return await this.IsFolderExistsAsync(folder.Path);
         }
 
 #pragma warning disable 1998
-        public async ValueTask<bool> IsFolderExistsAsync(string path)
+        public async Task<bool> IsFolderExistsAsync(string path)
         {
             return System.IO.Directory.Exists(path);
         }
@@ -109,7 +109,7 @@ namespace ImageLibrary.Core
         }
 
 #pragma warning disable 1998
-        public async ValueTask<bool> IsFileExistsAsync(Record file)
+        public async Task<bool> IsFileExistsAsync(Record file)
         {
             if (file.IsGroup)
             {
@@ -120,13 +120,13 @@ namespace ImageLibrary.Core
         }
 #pragma warning restore 1998
 
-        public async ValueTask<bool> IsFolderExistsAsync(FolderInformation folder)
+        public async Task<bool> IsFolderExistsAsync(FolderInformation folder)
         {
             return await this.IsFolderExistsAsync(folder.Path);
         }
 
 #pragma warning disable 1998
-        public async ValueTask<bool> IsFolderExistsAsync(string path)
+        public async Task<bool> IsFolderExistsAsync(string path)
         {
             return this.GetChildFoldersFunction(path) != null;
         }

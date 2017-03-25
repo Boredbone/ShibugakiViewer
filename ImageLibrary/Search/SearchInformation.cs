@@ -115,9 +115,9 @@ namespace ImageLibrary.Search
         {
             return this.Root.ToSql();
         }
-        
 
-        public bool SetSort(IEnumerable<SortSetting> source)
+
+        public bool SetSort(IEnumerable<SortSetting> source, bool replaceDefaultSort)
         {
             if (this.GetSort().SequenceEqual(source, (x, y) => x.Equals(y)))
             {
@@ -128,7 +128,10 @@ namespace ImageLibrary.Search
                 return false;
             }
             this.SortSettings = source.ToList();
-            LibraryOwner.GetCurrent().Searcher.SetDefaultSort(source);
+            if (replaceDefaultSort)
+            {
+                LibraryOwner.GetCurrent().Searcher.SetDefaultSort(source);
+            }
             return true;
         }
 

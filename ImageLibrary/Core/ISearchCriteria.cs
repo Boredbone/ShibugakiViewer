@@ -20,7 +20,7 @@ namespace ImageLibrary.Core
         Task<Record[]> SearchAsync(Library library, long skip, long take, Record skipUntil);
 
         string SortEntry { get; }
-        bool SetSort(IEnumerable<SortSetting> source);
+        bool SetSort(IEnumerable<SortSetting> source, bool replaceDefaultSort);
         IEnumerable<SortSetting> GetSort();
     }
 }

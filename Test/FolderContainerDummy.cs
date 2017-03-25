@@ -19,7 +19,7 @@ namespace Test
         public List<ImageFileInformation> Files { get; } = new List<ImageFileInformation>();
 
 #pragma warning disable 1998
-        public async ValueTask<long> EnumerateFilesAsync(
+        public async Task<long> EnumerateFilesAsync(
             Action<int> OnFileEnumerated, 
             bool containsChildren = true, 
             CancellationToken cancellationToken = default(CancellationToken), bool configureAwait = false)
@@ -36,7 +36,7 @@ namespace Test
         /// <param name="cancellationToken"></param>
         /// <param name="configureAwait"></param>
         /// <returns></returns>
-        public async ValueTask<long> EnumerateFilesAsync
+        public async Task<long> EnumerateFilesAsync
             (string[] path,
             CancellationToken cancellationToken = default(CancellationToken), bool configureAwait = false)
         {

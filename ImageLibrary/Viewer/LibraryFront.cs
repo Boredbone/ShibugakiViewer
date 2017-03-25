@@ -206,7 +206,7 @@ namespace ImageLibrary.Viewer
         /// <param name="sort"></param>
         public void SetSort(IEnumerable<SortSetting> sort)
         {
-            if (this.GetActiveSearch()?.SetSort(sort) ?? false)
+            if (this.GetActiveSearch()?.SetSort(sort, true) ?? false)
             {
                 this.Clear(CacheClearAction.SortChanged);
             }

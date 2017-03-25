@@ -1227,7 +1227,7 @@ namespace ShibugakiViewer.Models
                 search.SetSort(new[]
                 {
                     new SortSetting() { Property = FileProperty.FileName, IsDescending = false }
-                });
+                }, false);
 
                 var index = await core.Library.FindIndexAsync(search, record).ConfigureAwait(false);
 

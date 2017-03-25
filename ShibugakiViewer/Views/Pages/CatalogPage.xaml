@@ -454,7 +454,7 @@
             <i:Interaction.Behaviors>
                 <behaviors:ScrollHelperBehavior
                     ScrollSpeed="6.0"
-                    AnimationTime="200"
+                    AnimationTime="250"
                     RequestScrollAction="{Binding RequestScrollAction,Mode=OneWayToSource}"
                     IsAnimationEnabled="True"/>
             </i:Interaction.Behaviors>

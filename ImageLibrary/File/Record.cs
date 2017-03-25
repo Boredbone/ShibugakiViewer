@@ -775,7 +775,7 @@ namespace ImageLibrary.File
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        public bool SetSort(IEnumerable<SortSetting> source)
+        public bool SetSort(IEnumerable<SortSetting> source, bool replaceDefaultSort)
         {
             if(this.GetSort().SequenceEqual(source, (x, y) => x.Equals(y)))
             {
@@ -786,7 +786,10 @@ namespace ImageLibrary.File
                 return false;
             }
             this.SortSettings = source.ToList();
-            LibraryOwner.GetCurrent().Searcher.SetDefaultGroupSort(source);
+            if (replaceDefaultSort)
+            {
+                LibraryOwner.GetCurrent().Searcher.SetDefaultGroupSort(source);
+            }
             return true;
         }
 

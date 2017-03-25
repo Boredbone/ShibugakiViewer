@@ -55,13 +55,13 @@ namespace ShibugakiViewer.Models.ImageViewer
             return this.Image != null || this.IsNotFound;
         }
 
-        public ValueTask<bool> LoadImageAsync
+        public Task<bool> LoadImageAsync
             (string fullPath, Size? frameSize, bool asThumbnail, bool isFill, bool cmsEnable)
         {
             return this.LoadImageMainAsync(fullPath, frameSize, asThumbnail, isFill, cmsEnable);
         }
 
-        public async ValueTask<bool> LoadImageAsync
+        public async Task<bool> LoadImageAsync
             (Record file, Size? frameSize, bool asThumbnail, bool isFill, bool cmsEnable)
         {
             if (file == null)
@@ -109,15 +109,9 @@ namespace ShibugakiViewer.Models.ImageViewer
 
 
 #pragma warning disable 1998
-        private async ValueTask<bool> LoadImageMainAsync
+        private async Task<bool> LoadImageMainAsync
             (string fullPath, Size? frameSize, bool asThumbnail, bool isFill, bool cmsEnable)
         {
-
-
-            //return false;
-            //return Task.Run(async () =>
-            //{
-
             this.FullPath = fullPath;
 
             if (fullPath.IsNullOrWhiteSpace())
@@ -125,12 +119,14 @@ namespace ShibugakiViewer.Models.ImageViewer
                 return false;
             }
 
+            
             try
             {
                 GraphicInformation information = null;
 
                 using (var stream = File.OpenRead(fullPath))
                 {
+                    
                     this.IsNotFound = false;
 
                     information = new GraphicInformation(stream);
@@ -155,8 +151,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                     //デコードサイズ
                     var loadWidth = -1.0;
                     var loadHeight = -1.0;
-
-                    //var rewrite = false;
+                    
 
                     if (frameSize.HasValue
                         && (imageWidth > frameWidth * resizeThreshold
@@ -193,7 +188,6 @@ namespace ShibugakiViewer.Models.ImageViewer
 
                         this.Quality = (asThumbnail)
                             ? ImageQuality.LowQuality : ImageQuality.Resized;
-                        //rewrite = true;
                     }
                     else
                     {
@@ -209,16 +203,14 @@ namespace ShibugakiViewer.Models.ImageViewer
                             {
                                 loadWidth = maxSize;
                             }
-                            //rewrite = true;
                         }
 
                         this.Quality = ImageQuality.OriginalSize;
 
                     }
-
-
+                    
                     var image = new BitmapImage();
-
+                    
                     image.BeginInit();
                     image.CacheOption = BitmapCacheOption.OnLoad;
                     image.CreateOptions = BitmapCreateOptions.None;
@@ -233,7 +225,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                     }
 
                     this.SetSourceToImage(image, stream, information, asThumbnail);
-
+                    
                     this.Image = image;
                 }
 
@@ -292,9 +284,7 @@ namespace ShibugakiViewer.Models.ImageViewer
             (BitmapImage image, Stream stream, GraphicInformation information, bool asThumbnail)
         {
             stream.Position = 0;
-
-            //var sw = new Stopwatch();
-            //sw.Start();
+            
 
             if (asThumbnail && information.Type == GraphicFileType.Jpeg)
             {
@@ -309,13 +299,10 @@ namespace ShibugakiViewer.Models.ImageViewer
                     {
                         stream.Position = 0;
                         this.SetStreamSourceToImage(image, stream);
-
-                        //sw.Stop();
-                        //Debug.WriteLine($"{sw.ElapsedMilliseconds}, null {this.FullPath}");
                         return;
                     }
 
-                    using (var ms = new MemoryStream())
+                    using (var ms = new WrappingStream(new MemoryStream()))
                     {
                         var encoder = new JpegBitmapEncoder();
                         encoder.Frames.Add(BitmapFrame.Create(source));
@@ -323,30 +310,8 @@ namespace ShibugakiViewer.Models.ImageViewer
                         ms.Seek(0, SeekOrigin.Begin);
 
                         this.SetStreamSourceToImage(image, ms);
-
-                        //sw.Stop();
-                        //Debug.WriteLine($"{sw.ElapsedMilliseconds}, frame {this.FullPath}");
-                        //if (information.Type != GraphicFileType.Jpeg)
-                        //{
-                        //    Debug.WriteLine($"frame {this.FullPath}");
-                        //}
                         return;
                     }
-                    /*
-                    byte[] thumb = null;
-                    thumb = this.GetThumbnail(stream, information);
-                    if (thumb != null)
-                    {
-                        using (var ts = new MemoryStream(thumb))
-                        {
-                            this.SetStreamSourceToImage(image, ts);
-
-                            sw.Stop();
-                            Debug.WriteLine($"{sw.ElapsedMilliseconds}, thumbnail {this.FullPath}");
-                            this.Quality = ImageQuality.ThumbNail;
-                            return;
-                        }
-                    }*/
                 }
                 catch
                 {
@@ -356,8 +321,6 @@ namespace ShibugakiViewer.Models.ImageViewer
             }
 
             this.SetStreamSourceToImage(image, stream);
-            //sw.Stop();
-            //Debug.WriteLine($"{sw.ElapsedMilliseconds}, normal {this.FullPath}");
         }
 
         private void SetStreamSourceToImage(BitmapImage image, Stream stream)

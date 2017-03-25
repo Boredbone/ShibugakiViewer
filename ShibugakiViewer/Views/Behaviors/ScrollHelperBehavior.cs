@@ -150,7 +150,7 @@ namespace ShibugakiViewer.Views.Behaviors
             ScrollToVerticalOffset(offset, this.IsAnimationEnabled);
             e.Handled = true;
 
-            //Debug.WriteLine($"{DateTime.Now.Ticks}");
+            //Debug.WriteLine($"{DateTime.Now.Ticks}, {e.Delta}");
         }
 
 
@@ -177,7 +177,7 @@ namespace ShibugakiViewer.Views.Behaviors
             {
                 From = 0,
                 To = delta,
-                //EasingFunction = new CircleEase() { EasingMode = EasingMode.EaseOut },
+                EasingFunction = new PowerEase() { EasingMode = EasingMode.EaseInOut, Power = 1.2 },
                 Duration = new Duration(TimeSpan.FromMilliseconds(time)),
             };
 
@@ -279,7 +279,7 @@ namespace ShibugakiViewer.Views.Behaviors
 
             var b = scrollViewer.VerticalOffset - oldValue;
             scrollViewer.ScrollToVerticalOffset(b + newValue);
-            //Debug.WriteLine($"{DateTime.Now.Ticks}, {b + newValue}, {items.Length}");
+            //Debug.WriteLine($"{DateTime.Now.Ticks}, {newValue - oldValue}, {items.Length}");
         }
 
         private class ScrollRequestContainer

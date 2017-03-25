@@ -16,6 +16,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Concurrency;
 using Boredbone.Utility.Notification;
 using Boredbone.Utility.LockingCollection;
+using System.Linq;
 
 namespace ShibugakiViewer.Models.ImageViewer
 {
@@ -126,6 +127,17 @@ namespace ShibugakiViewer.Models.ImageViewer
                 result = null;
                 return false;
             }
+            /*
+            #if DEBUG
+            if (this.thumbNailImages.Count > 0)
+            {
+                result = this.thumbNailImages.First().Value;
+                if (result != null)
+                {
+                    return true;
+                }
+            }
+            #endif*/
 
             var key = path;
 
@@ -252,7 +264,7 @@ namespace ShibugakiViewer.Models.ImageViewer
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        private async ValueTask<bool> LoadImageAsync(CommandPacket command)
+        private async Task LoadImageAsync(CommandPacket command)
         {
             var key = command.Path;
             
@@ -262,7 +274,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 {
                     command.Observer.OnNext(result);
                     command.Observer.OnCompleted();
-                    return true;
+                    return;
                 }
             }
 
@@ -271,7 +283,7 @@ namespace ShibugakiViewer.Models.ImageViewer
             if (token.IsCancellationRequested)
             {
                 command.Observer.OnCompleted();
-                return true;
+                return;
             }
 
 
@@ -331,7 +343,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 {
                     ClearBuffer();
                     command.Observer.OnError(e);
-                    return true;
+                    return;
                 }
                 else
                 {
@@ -341,7 +353,7 @@ namespace ShibugakiViewer.Models.ImageViewer
             catch (Exception e)
             {
                 command.Observer.OnError(e);
-                return true;
+                return;
             }
 
 
@@ -350,7 +362,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 if (token.IsCancellationRequested)
                 {
                     command.Observer.OnCompleted();
-                    return true;
+                    return;
                 }
 
 
@@ -388,7 +400,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 catch (Exception e)
                 {
                     command.Observer.OnError(e);
-                    return true;
+                    return;
                 }
             }
 
@@ -409,7 +421,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 command.Observer.OnNext(image);
             }
             command.Observer.OnCompleted();
-            return true;
+            return;
         }
 
 
@@ -505,6 +517,9 @@ namespace ShibugakiViewer.Models.ImageViewer
 
         private class ImageDictionary : LockingDictionary<string, ImageBufferItem>
         {
+            public int Count => this.dictionary.Count;
+            public KeyValuePair<string, ImageBufferItem> First() => this.dictionary.First();
+
             public bool TryGetOrRemove(string key, out ImageBufferItem result)
             {
                 lock (this.gate)
