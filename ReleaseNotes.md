@@ -1,5 +1,10 @@
 # Release Notes
 
+## Version 1.4.4 (2017/04/02)
+- Display text information in Exif
+- Fix issue  : The file in deregistered folder can not be re-registered
+- Improve thumbnail loading performance
+
 ## Version 1.4.3 (2017/02/25)
 - Improve the behavior of catalog page when sort condition is changed
 - Fix issue : popup dialog position is wrong with high DPI

@@ -268,7 +268,7 @@ namespace LibraryConverter.Compat
 
                 if (item.Value.SortSettings != null)
                 {
-                    group.SetSort(item.Value.SortSettings.Select(y => this.ConvertSort(y)));
+                    group.SetSort(item.Value.SortSettings.Select(y => this.ConvertSort(y)), true);
                 }
                 item.Value.Tags.ForEach(y => group.TagSet.Add(y));
 
@@ -396,7 +396,7 @@ namespace LibraryConverter.Compat
             //    result.SortSettings.Add(sort);
             //});
 
-            result.SetSort(source.SortSettings.Select(x => this.ConvertSort(x)));
+            result.SetSort(source.SortSettings.Select(x => this.ConvertSort(x)), true);
 
             return result;
 

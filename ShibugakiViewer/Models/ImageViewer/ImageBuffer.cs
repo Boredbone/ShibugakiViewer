@@ -421,7 +421,6 @@ namespace ShibugakiViewer.Models.ImageViewer
                 command.Observer.OnNext(image);
             }
             command.Observer.OnCompleted();
-            return;
         }
 
 

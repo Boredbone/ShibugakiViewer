@@ -270,7 +270,7 @@ namespace Test
                     new SortSetting() {Property=FileProperty.FileNameSequenceNumRight,IsDescending=false },
                     new SortSetting() {Property=FileProperty.AspectRatio,IsDescending=true },
                     new SortSetting() {Property=FileProperty.DateTimeRegistered,IsDescending=false },
-                });
+                }, true);
 
                 await Task.Delay(400);
 
