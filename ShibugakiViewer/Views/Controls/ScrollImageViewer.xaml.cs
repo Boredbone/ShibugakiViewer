@@ -143,7 +143,7 @@ namespace ShibugakiViewer.Views.Controls
                 this.CurrentOrientation = 0.0;
                 this.IsInHorizontalMirror = false;
                 this.IsInVerticalMirror = false;
-
+                
                 if (this.isImageLoaded)
                 {
                     this.DoAutoScaling();
@@ -1036,7 +1036,7 @@ namespace ShibugakiViewer.Views.Controls
 
             if (this.scaleInitializeFlag && !zoomed)
             {
-                this.ZoomImage(null, null, this.originalScale, 0.0, false, false);
+                this.ZoomImage(null, null, this.originalScale, 0.0, false, this.IsFill);
             }
 
             this.scaleInitializeFlag = false;
@@ -1150,6 +1150,7 @@ namespace ShibugakiViewer.Views.Controls
             double imageWidth = image.ActualWidth * this.ZoomFactor;
             double imageHeight = image.ActualHeight * this.ZoomFactor;
 
+            
             if (this.IsTurned)
             {
                 var tmp = imageWidth;
