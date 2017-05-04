@@ -1,5 +1,8 @@
 # Release Notes
 
+## Version 1.4.5 (2017/05/04)
+- Fix misalignment in fill mode
+
 ## Version 1.4.4 (2017/04/02)
 - Display text information in Exif
 - Fix issue  : The file in deregistered folder can not be re-registered
