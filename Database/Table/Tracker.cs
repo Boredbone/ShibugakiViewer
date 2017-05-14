@@ -21,20 +21,25 @@ namespace Database.Table
         private Subject<DatabaseUpdatedEventArgs> UpdatedSubject { get; }
         public IObservable<DatabaseUpdatedEventArgs> Updated => this.UpdatedSubject.AsObservable();
 
-
-        public double AutoSaveTimeMilliseconds { get; set; } = 300;
+        private const double autoSaveTimeMillisecondsDefault = 300.0;
+        public double AutoSaveTimeMilliseconds { get; } = autoSaveTimeMillisecondsDefault;
         public bool IsAutoSaving { get; set; } = true;
 
         private readonly Subject<PropertyChangedContainer<TRecord>> updateSubject;
         public IObservable<PropertyChangedContainer<TRecord>> PropertyChanged => this.updateSubject.AsObservable();
-        
 
-        public Tracker(ITypedTable<TRecord> table)
+        public Tracker(ITypedTable<TRecord> table) : this(table, autoSaveTimeMillisecondsDefault)
+        {
+        }
+
+        public Tracker(ITypedTable<TRecord> table, double autoSaveTimeMilliseconds)
         {
             this.table = table;
 
             this.UpdatedSubject = new Subject<DatabaseUpdatedEventArgs>().AddTo(this.Disposables);
             this.updateSubject = new Subject<PropertyChangedContainer<TRecord>>().AddTo(this.Disposables);
+
+            this.AutoSaveTimeMilliseconds = autoSaveTimeMilliseconds;
 
             var update = this.updateSubject
                 .Where(x => this.IsAutoSaving && this.table.TargetProperties.ContainsKey(x.PropertyName))
@@ -55,7 +60,7 @@ namespace Database.Table
                             {
                                 try
                                 {
-                                    foreach(var item in updatedItems.GroupBy(x => x.Source))
+                                    foreach (var item in updatedItems.GroupBy(x => x.Source))
                                     {
                                         var properties = item.Select(x => x.PropertyName).Distinct().ToArray();
                                         await this.table.UpdateAsync
@@ -70,7 +75,7 @@ namespace Database.Table
                                     transaction.Commit();
                                     succeeded = true;
                                 }
-                                catch(Exception e)
+                                catch (Exception e)
                                 {
                                     transaction.Rollback();
                                     Debug.WriteLine(e.ToString());
@@ -87,7 +92,7 @@ namespace Database.Table
                             });
                         }
                     });
-                    
+
                 })
                 .AddTo(this.Disposables);
         }
