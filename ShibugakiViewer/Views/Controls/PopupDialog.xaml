@@ -14,6 +14,7 @@
         Background="Transparent"
         Visibility="Collapsed"
         SizeChanged="rootGrid_SizeChanged"
+        TouchUp="rootGrid_TouchUp"
         MouseUp="rootGrid_MouseUp">
         <Canvas
             x:Name="positionCanvas"
@@ -21,6 +22,7 @@
             <ContentControl 
                 x:Name="mainContent"
                 MouseUp="mainContent_MouseUp"
+                TouchUp="mainContent_TouchUp"
                 SizeChanged="mainContent_SizeChanged"
                 Width="Auto" Height="Auto"/>
         </Canvas>

@@ -486,6 +486,17 @@ namespace ShibugakiViewer.Views.Controls
 
         private void rootGrid_MouseUp(object sender, MouseButtonEventArgs e)
         {
+
+            if (e.StylusDevice != null && this.mainContent.Content is FrameworkElement fe)
+            {
+                var point = lastMousePosition;
+                if (point.X >= 0 && point.Y >= 0 && point.X < fe.ActualWidth && point.Y < fe.ActualHeight)
+                {
+                    e.Handled = true;
+                    return;
+                }
+            }
+
             this.IsOpen = false;
             e.Handled = true;
         }
@@ -493,6 +504,17 @@ namespace ShibugakiViewer.Views.Controls
         private void mainContent_MouseUp(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
+        }
+
+        private Point lastMousePosition;
+
+        private void mainContent_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (this.mainContent.Content is FrameworkElement fe)
+            {
+                this.lastMousePosition = e.GetPosition(fe);
+            }
+
         }
 
         private void SetMask(bool isEnabled)
@@ -520,6 +542,28 @@ namespace ShibugakiViewer.Views.Controls
             this.Position = position;
             this.DialogContent = content;
             this.IsOpen = true;
+        }
+
+        private void mainContent_TouchUp(object sender, TouchEventArgs e)
+            => this.UpdateRelativePosition(e);
+
+        private void rootGrid_TouchUp(object sender, TouchEventArgs e)
+            => this.UpdateRelativePosition(e);
+        
+
+        private void UpdateRelativePosition(TouchEventArgs e)
+        {
+            if (this.mainContent.Content is FrameworkElement fe)
+            {
+                var point = e.GetTouchPoint(fe).Position;
+                lastMousePosition = point;
+                /*
+                if (point.X >= 0 && point.Y >= 0 && point.X < fe.ActualWidth && point.Y < fe.ActualHeight)
+                {
+                    e.Handled = true;
+                    return;
+                }*/
+            }
         }
     }
 
