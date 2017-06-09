@@ -257,6 +257,7 @@ namespace ShibugakiViewer.Views.Controls
         private Brush maskBrush;
         private Brush transparentBrush = new SolidColorBrush(Colors.Transparent);
 
+        private Point lastMousePosition;
 
         public PopupDialog()
         {
@@ -506,17 +507,6 @@ namespace ShibugakiViewer.Views.Controls
             e.Handled = true;
         }
 
-        private Point lastMousePosition;
-
-        private void mainContent_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (this.mainContent.Content is FrameworkElement fe)
-            {
-                this.lastMousePosition = e.GetPosition(fe);
-            }
-
-        }
-
         private void SetMask(bool isEnabled)
         {
             if (this.maskBrush == null)
@@ -557,12 +547,6 @@ namespace ShibugakiViewer.Views.Controls
             {
                 var point = e.GetTouchPoint(fe).Position;
                 lastMousePosition = point;
-                /*
-                if (point.X >= 0 && point.Y >= 0 && point.X < fe.ActualWidth && point.Y < fe.ActualHeight)
-                {
-                    e.Handled = true;
-                    return;
-                }*/
             }
         }
     }

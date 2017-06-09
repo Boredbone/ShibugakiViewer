@@ -108,8 +108,6 @@ namespace ShibugakiViewer
 
             this.isLaunched = true;
 
-            //DisableWPFTabletSupport();
-
             //Thread.CurrentThread.CurrentCulture = new CultureInfo("");
             //Thread.CurrentThread.CurrentUICulture = new CultureInfo("");
 
