@@ -1,5 +1,8 @@
 # Release Notes
 
+## Version 1.4.6 (2017/06/24)
+- Fix the issue of touch manipulation on Windows 10 Creators Update
+
 ## Version 1.4.5 (2017/05/04)
 - Fix misalignment in fill mode
 

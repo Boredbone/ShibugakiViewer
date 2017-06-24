@@ -487,7 +487,6 @@ namespace ShibugakiViewer.Views.Controls
 
         private void rootGrid_MouseUp(object sender, MouseButtonEventArgs e)
         {
-
             if (e.StylusDevice != null && this.mainContent.Content is FrameworkElement fe)
             {
                 var point = lastMousePosition;
