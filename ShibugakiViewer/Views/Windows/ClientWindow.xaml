@@ -27,9 +27,10 @@
         tb:FullScreenBehavior.IsFullScreen="{Binding IsFullScreen.Value,Mode=OneWay}"
         Title="{Binding WindowTitle.Value}"
         Icon="/ShibugakiViewer;component/Assets/Icons/appicon.ico">
+    <!--
     <Window.DataContext>
         <viewModels:ClientWindowViewModel/>
-    </Window.DataContext>
+    </Window.DataContext>-->
     <Window.Resources>
         <converter:OptionPaneTypeConverter x:Key="OptionPaneTypeConverter" />
 

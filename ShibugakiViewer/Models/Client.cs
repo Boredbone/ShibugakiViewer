@@ -97,7 +97,7 @@ namespace ShibugakiViewer.Models
         private Subject<long> PrepareNextSubject { get; }
 
         public Record FeaturedGroup => this.front.FeaturedGroup;
-        public ReactiveProperty<bool> IsGroupMode => this.front.IsGroupMode;
+        public ReadOnlyReactiveProperty<bool> IsGroupMode;
         public IObservable<Record> FeaturedGroupChanged => this.front.FeaturedGroupChanged;
         public IObservable<CacheUpdatedEventArgs> CacheUpdated => this.front.CacheUpdated;
 
@@ -139,7 +139,7 @@ namespace ShibugakiViewer.Models
 
 
 
-        public Client(LibraryFront front, ApplicationCore core)
+        public Client(LibraryFront front, ApplicationCore core, PageType firstPage, int pageChangeSkip)
         {
             this.core = core;
             this.front = front;
@@ -152,12 +152,19 @@ namespace ShibugakiViewer.Models
                 .ToReadOnlyReactiveProperty()
                 .AddTo(this.Disposables);
 
+            this.IsGroupMode = this.front.IsGroupMode.ToReadOnlyReactiveProperty().AddTo(this.Disposables);
 
             this.History = new History<ViewState>(new ViewState()).AddTo(this.Disposables);
 
+            //var firstPage = PageType.Search;
+            //var pageChangeSkip = 0;
+            //
+            //firstPage = PageType.Viewer;
+            //pageChangeSkip = 1;
+
             this.PageChangeRequestSubject = new Subject<PageType>().AddTo(this.Disposables);
-            this.SelectedPage = this.PageChangeRequestSubject
-                .ToReadOnlyReactiveProperty(PageType.Search)
+            this.SelectedPage = this.PageChangeRequestSubject.Skip(pageChangeSkip)
+                .ToReadOnlyReactiveProperty(firstPage)
                 .AddTo(this.Disposables);
 
             this.IsStateChangingSubject = new BehaviorSubject<bool>(false).AddTo(this.Disposables);

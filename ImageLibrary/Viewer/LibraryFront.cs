@@ -37,7 +37,8 @@ namespace ImageLibrary.Viewer
         private Subject<SearchCompletedEventArgs> SearchCompletedSubject { get; }
         public IObservable<SearchCompletedEventArgs> SearchCompleted => this.SearchCompletedSubject.AsObservable();
 
-        public ReactiveProperty<long> Length { get; }
+        private readonly ReactivePropertySlim<long> lengthPrivate;
+        public ReadOnlyReactivePropertySlim<long> Length { get; }
         public int PageSize { get; set; }
 
         private Dictionary<long, Record> Cache { get; }
@@ -52,7 +53,7 @@ namespace ImageLibrary.Viewer
                 if (_fieldFeaturedGroup != value)
                 {
                     _fieldFeaturedGroup = value;
-                    this.IsGroupMode.Value = (value != null);
+                    this.isGroupModePrivate.Value = (value != null);
                     this.FeaturedGroupChangedSubject.OnNext(value);
                 }
             }
@@ -61,7 +62,8 @@ namespace ImageLibrary.Viewer
         private BehaviorSubject<Record> FeaturedGroupChangedSubject { get; }
         public IObservable<Record> FeaturedGroupChanged => this.FeaturedGroupChangedSubject.AsObservable();
 
-        public ReactiveProperty<bool> IsGroupMode { get; }
+        public readonly ReactivePropertySlim<bool> isGroupModePrivate;
+        public ReadOnlyReactivePropertySlim<bool> IsGroupMode { get; }
 
         public bool HasSearch => this.FeaturedGroup != null || this.SearchInformation != null;
 
@@ -70,8 +72,8 @@ namespace ImageLibrary.Viewer
         private bool isReset = false;
 
         private readonly Library library;
-        private AsyncLock asyncLock = new AsyncLock();
-        private static Record dummyRecord = new Record();
+        private readonly AsyncLock asyncLock = new AsyncLock();
+        private static readonly Record dummyRecord = new Record();
 
 
         public LibraryFront(Library library)
@@ -83,8 +85,10 @@ namespace ImageLibrary.Viewer
             this.CacheUpdatedSubject = new Subject<CacheUpdatedEventArgs>().AddTo(this.Disposables);
             this.SearchCompletedSubject = new Subject<SearchCompletedEventArgs>().AddTo(this.Disposables);
 
-            this.IsGroupMode = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
-            this.Length = new ReactiveProperty<long>().AddTo(this.Disposables);
+            this.isGroupModePrivate = new ReactivePropertySlim<bool>(false).AddTo(this.Disposables);
+            this.IsGroupMode = this.isGroupModePrivate.ToReadOnlyReactivePropertySlim().AddTo(this.Disposables);
+            this.lengthPrivate = new ReactivePropertySlim<long>().AddTo(this.Disposables);
+            this.Length = this.lengthPrivate.ToReadOnlyReactivePropertySlim().AddTo(this.Disposables);
 
             this.FeaturedGroupChangedSubject = new BehaviorSubject<Record>(null).AddTo(this.Disposables);
 
@@ -281,13 +285,13 @@ namespace ImageLibrary.Viewer
                 return;
             }
 
-            var length = this.Length.Value;
+            var length = this.lengthPrivate.Value;
 
             if (this.isReset)
             {
                 length = await criteria.CountAsync(library).ConfigureAwait(false);
 
-                this.Length.Value = length;
+                this.lengthPrivate.Value = length;
                 this.isReset = false;
             }
 
@@ -315,9 +319,9 @@ namespace ImageLibrary.Viewer
 
             var result = await this.RequestSearchAsync(criteria, offset, takes).ConfigureAwait(false);
 
-            if (result.Length < takes && result.Length > 0 && this.Length.Value != offset + result.Length)
+            if (result.Length < takes && result.Length > 0 && this.lengthPrivate.Value != offset + result.Length)
             {
-                this.Length.Value = offset + result.Length;
+                this.lengthPrivate.Value = offset + result.Length;
             }
 
 
@@ -408,7 +412,7 @@ namespace ImageLibrary.Viewer
             {
                 NotifyCollectionChangedEventArgs eventArgs;
 
-                if (offset + result.Length > this.Length.Value)
+                if (offset + result.Length > this.lengthPrivate.Value)
                 {
                     eventArgs = new NotifyCollectionChangedEventArgs
                         (NotifyCollectionChangedAction.Add, result.ToList());
@@ -455,7 +459,7 @@ namespace ImageLibrary.Viewer
                     var startSearch = offset + result.Start;
                     var searchLength = result.End - result.Start + 1;
 
-                    if (searchLength < searchLengthMax && startSearch < this.Length.Value)
+                    if (searchLength < searchLengthMax && startSearch < this.lengthPrivate.Value)
                     {
                         var margin = searchLengthMax - searchLength;
                         if (direction == 0)
@@ -556,7 +560,7 @@ namespace ImageLibrary.Viewer
         {
             if (action == CacheClearAction.SearchChanged)
             {
-                this.Length.Value = 0;
+                this.lengthPrivate.Value = 0;
             }
 
             lock (this.Cache)
@@ -615,7 +619,7 @@ namespace ImageLibrary.Viewer
                 }
             }
             
-            this.Length.Value = records.LongLength;
+            this.lengthPrivate.Value = records.LongLength;
 
             return records;
         }
@@ -767,11 +771,10 @@ namespace ImageLibrary.Viewer
         {
             if (index < 0)
             {
-                index = index + this.Length.Value;
+                index = index + this.lengthPrivate.Value;
             }
 
-            Record value;
-            if (this.Cache.TryGetValue(index, out value) && (acceptDummy || value != dummyRecord))
+            if (this.Cache.TryGetValue(index, out Record value) && (acceptDummy || value != dummyRecord))
             {
                 return value;
             }
@@ -791,7 +794,7 @@ namespace ImageLibrary.Viewer
 
 
         int IReadOnlyCollection<Record>.Count
-            => (this.Length.Value < int.MaxValue) ? (int)this.Length.Value : int.MaxValue;
+            => (this.lengthPrivate.Value < int.MaxValue) ? (int)this.lengthPrivate.Value : int.MaxValue;
 
         Record IReadOnlyList<Record>.this[int index]
             => this.GetItemFromIndex(index);

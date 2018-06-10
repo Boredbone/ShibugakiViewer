@@ -278,16 +278,22 @@ namespace ShibugakiViewer
         /// <param name="files"></param>
         private ClientWindow ShowClientWindow(IEnumerable<string> files)
         {
-            var window = new ClientWindow() { ShowActivated = true };
+            ClientWindow window;// = new ClientWindow(PageType.Viewer, 1) { ShowActivated = true };
 
             if (files != null)
             {
+                window = new ClientWindow(PageType.Viewer, 2) { ShowActivated = true };
+
                 var client = (window.DataContext as ClientWindowViewModel)?.Client;
                 if (client != null)
                 {
                     client.ActivateFiles(files);
                 }
                 //window.ViewModel.LoadFiles(new[] { file });
+            }
+            else
+            {
+                window = new ClientWindow() { ShowActivated = true };
             }
 
             window.Show();

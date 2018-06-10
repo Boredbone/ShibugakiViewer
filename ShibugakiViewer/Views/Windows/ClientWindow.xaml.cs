@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using Boredbone.Utility.Extensions;
 using Boredbone.XamlTools.Extensions;
 using Reactive.Bindings.Extensions;
+using ShibugakiViewer.Models;
 using ShibugakiViewer.ViewModels;
 using ShibugakiViewer.Views.Controls;
 using ShibugakiViewer.Views.Pages;
@@ -31,9 +32,11 @@ namespace ShibugakiViewer.Views.Windows
         public PopupDialog PopupDialog => this.popupDialog;
         private CompositeDisposable disposables = new CompositeDisposable();
 
-        public ClientWindow()
+        public ClientWindow(PageType firstPage = PageType.Search, int pageChangeSkip = 0)
         {
             InitializeComponent();
+
+            this.DataContext = new ClientWindowViewModel(firstPage, pageChangeSkip);
 
             ((App)Application.Current).WindowPlacement
                 .Register(this, "ClientWindow");

@@ -40,7 +40,7 @@ namespace ImageLibrary.Core
 
         public const string databaseFileName = "library.db";
         public const string librarySettingFileName = "libsettings.config";
-        private XmlSettingManager<LibrarySettings> librarySettingXml;
+        private readonly XmlSettingManager<LibrarySettings> librarySettingXml;
 
 
         public IObservable<string> Loading => this.Creator.Loading;

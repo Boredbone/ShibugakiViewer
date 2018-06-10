@@ -109,7 +109,7 @@ namespace ShibugakiViewer.ViewModels
 
         public ReactiveProperty<double> FrameWidth { get; }
 
-        public Subject<SplitViewDisplayMode> PageChangedSubject { get; }
+        //public Subject<SplitViewDisplayMode> PageChangedSubject { get; }
         public ReactiveProperty<SplitViewDisplayMode> PaneDisplayMode { get; }
 
         public ReactiveProperty<double> JumpListWidth { get; }
@@ -119,7 +119,7 @@ namespace ShibugakiViewer.ViewModels
 
         public ReactiveCommand<string> OptionPageCommand { get; }
 
-        private ReactiveProperty<PaneMode> DefaultPaneMode { get; }
+        private ReadOnlyReactivePropertySlim<PaneMode> DefaultPaneMode { get; }
 
         public ReactiveProperty<Visibility> OptionPaneVisibility { get; }
         public ReactiveProperty<Visibility> PaneOpenButtonVisibility { get; }
@@ -155,12 +155,12 @@ namespace ShibugakiViewer.ViewModels
 
 
 
-        public ClientWindowViewModel()
+        public ClientWindowViewModel(PageType firstPage, int pageChangeSkip)
         {
             var core = ((App)Application.Current).Core;
             var library = core.Library;
 
-            var client = new Client(new LibraryFront(library), core).AddTo(this.Disposables);
+            var client = new Client(new LibraryFront(library), core, firstPage, pageChangeSkip).AddTo(this.Disposables);
             this.Client = client;
             this.Core = core;
 
@@ -248,7 +248,7 @@ namespace ShibugakiViewer.ViewModels
             this.DefaultPaneMode = client.SelectedPage
                 .Select(x => (x == PageType.Viewer) ? PaneMode.HideInClosing
                     : PaneMode.AlwaysVisible)
-                .ToReactiveProperty(PaneMode.AlwaysVisible)
+                .ToReadOnlyReactivePropertySlim(PaneMode.AlwaysVisible)
                 .AddTo(this.Disposables);
 
 
@@ -346,7 +346,7 @@ namespace ShibugakiViewer.ViewModels
 
             this.IsFullScreen = client.SelectedPage.Select(_ => false).ToReactiveProperty().AddTo(this.Disposables);
 
-            this.PageChangedSubject = new Subject<SplitViewDisplayMode>().AddTo(this.Disposables);
+            //this.PageChangedSubject = new Subject<SplitViewDisplayMode>().AddTo(this.Disposables);
 
             this.PaneDisplayMode = this.IsPaneFixed
                 .CombineLatest(this.DefaultPaneMode,
@@ -510,8 +510,7 @@ namespace ShibugakiViewer.ViewModels
             this.FileDropCommand = new ReactiveCommand()
                 .WithSubscribe(obj =>
                 {
-                    var files = obj as string[];
-                    if (files != null)
+                    if (obj is string[] files)
                     {
                         this.Client.ActivateFiles(files);
                     }
