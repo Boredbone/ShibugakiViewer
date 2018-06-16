@@ -280,20 +280,22 @@ namespace ShibugakiViewer
         {
             ClientWindow window;// = new ClientWindow(PageType.Viewer, 1) { ShowActivated = true };
 
-            if (files != null)
+            if (files != null && files.Count(x => x.HasText()) == 1)
             {
                 window = new ClientWindow(PageType.Viewer, 2) { ShowActivated = true };
-
+            }
+            else
+            {
+                window = new ClientWindow() { ShowActivated = true };
+            }
+            if (files != null)
+            {
                 var client = (window.DataContext as ClientWindowViewModel)?.Client;
                 if (client != null)
                 {
                     client.ActivateFiles(files);
                 }
                 //window.ViewModel.LoadFiles(new[] { file });
-            }
-            else
-            {
-                window = new ClientWindow() { ShowActivated = true };
             }
 
             window.Show();
