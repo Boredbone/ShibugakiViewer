@@ -18,7 +18,7 @@ namespace Database.Table
     {
         public int Version { get; set; } = 1;
 
-        private string connectionString;
+        private readonly string connectionString;
 
         private readonly List<ITypedTable> tables;
 
@@ -82,22 +82,29 @@ namespace Database.Table
         public async Task InitializeAsync(IDbConnection connection)
         {
             // Replace TypeHandler for DateTime
+#if true
+            SqlMapper.RemoveTypeMap(typeof(DateTime));
+            SqlMapper.RemoveTypeMap(typeof(DateTime?));
+            SqlMapper.RemoveTypeMap(typeof(DateTimeOffset));
+            SqlMapper.RemoveTypeMap(typeof(DateTimeOffset?));
+#else
             var obj = typeof(SqlMapper)
                 .GetField("typeMap", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
                 .GetValue(null);
 
             var typeMap = (Dictionary<Type, DbType>)obj;
-
+            
             typeMap.Remove(typeof(DateTime));
             typeMap.Remove(typeof(DateTime?));
             typeMap.Remove(typeof(DateTimeOffset));
             typeMap.Remove(typeof(DateTimeOffset?));
+#endif
 
             SqlMapper.AddTypeHandler(new DateTimeHandler());
             SqlMapper.AddTypeHandler(new NullableDateTimeHandler());
             SqlMapper.AddTypeHandler(new DateTimeOffsetHandler());
             SqlMapper.AddTypeHandler(new NullableDateTimeOffsetHandler());
-
+            
 
             this.informationTable.Version = this.Version;
 
@@ -258,7 +265,7 @@ namespace Database.Table
             }
         }
 
-        #region TypeHandler
+#region TypeHandler
 
         private class DateTimeConverter
         {
@@ -366,7 +373,7 @@ namespace Database.Table
             }
         }
 
-        #endregion
+#endregion
 
         public class TransactionContext
         {

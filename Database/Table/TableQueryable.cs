@@ -18,7 +18,7 @@ namespace Database.Table
 
     public class TableQueryable<T> : ITableQueryable<T>
     {
-        private IDbConnection connection;
+        private readonly IDbConnection connection;
         private ITypedTable Table { get; set; }
 
         private string SelectSql { get; set; }
