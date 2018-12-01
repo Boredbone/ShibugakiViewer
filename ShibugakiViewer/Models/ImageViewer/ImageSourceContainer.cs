@@ -126,7 +126,7 @@ namespace ShibugakiViewer.Models.ImageViewer
 
                 using (var stream = File.OpenRead(fullPath))
                 {
-                    
+
                     this.IsNotFound = false;
 
                     information = new GraphicInformation(stream);
@@ -151,7 +151,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                     //デコードサイズ
                     var loadWidth = -1.0;
                     var loadHeight = -1.0;
-                    
+
 
                     if (frameSize.HasValue
                         && (imageWidth > frameWidth * resizeThreshold
@@ -208,7 +208,8 @@ namespace ShibugakiViewer.Models.ImageViewer
                         this.Quality = ImageQuality.OriginalSize;
 
                     }
-                    
+
+                    /*
                     var image = new BitmapImage();
                     
                     image.BeginInit();
@@ -225,7 +226,16 @@ namespace ShibugakiViewer.Models.ImageViewer
                     }
 
                     this.SetSourceToImage(image, stream, information, asThumbnail);
-                    
+                    */
+                    var image = this.SetSourceToImage(
+                        new LoadingOptions() { Width = loadWidth, Height = loadHeight },
+                        stream, information, asThumbnail);
+                
+                    if (image == null)
+                    {
+                        this.IsNotFound = true;
+                        return false;
+                    }
                     this.Image = image;
                 }
 
@@ -236,7 +246,6 @@ namespace ShibugakiViewer.Models.ImageViewer
             {
                 this.IsNotFound = true;
                 return false;
-
             }
             catch (DirectoryNotFoundException)
             {
@@ -244,6 +253,11 @@ namespace ShibugakiViewer.Models.ImageViewer
                 return false;
             }
             catch (ArgumentException)
+            {
+                this.IsNotFound = true;
+                return false;
+            }
+            catch (InvalidOperationException)
             {
                 this.IsNotFound = true;
                 return false;
@@ -257,12 +271,12 @@ namespace ShibugakiViewer.Models.ImageViewer
 #pragma warning restore 1998
 
 
-        private void SetSourceToImage
-            (BitmapImage image, Stream stream, GraphicInformation information, bool asThumbnail)
+        private BitmapImage SetSourceToImage
+            (in LoadingOptions options, Stream stream, GraphicInformation information, bool asThumbnail)
         {
             if (information.BlankHeaderLength == 0)
             {
-                this.SetImage(image, stream, information, asThumbnail);
+                return this.SetImage(options, stream, information, asThumbnail);
             }
             else
             {
@@ -275,13 +289,13 @@ namespace ShibugakiViewer.Models.ImageViewer
                     ms.Position = 0;
                     stream.CopyTo(ms);
 
-                    this.SetImage(image, ms, information, asThumbnail);
+                    return this.SetImage(options, ms, information, asThumbnail);
                 }
             }
         }
 
-        private void SetImage
-            (BitmapImage image, Stream stream, GraphicInformation information, bool asThumbnail)
+        private BitmapImage SetImage
+            (in LoadingOptions options, Stream stream, GraphicInformation information, bool asThumbnail)
         {
             stream.Position = 0;
             
@@ -298,8 +312,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                     if (source == null)
                     {
                         stream.Position = 0;
-                        this.SetStreamSourceToImage(image, stream);
-                        return;
+                        return this.SetStreamSourceToImage(options, stream);
                     }
 
                     using (var ms = new WrappingStream(new MemoryStream()))
@@ -309,8 +322,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                         encoder.Save(ms);
                         ms.Seek(0, SeekOrigin.Begin);
 
-                        this.SetStreamSourceToImage(image, ms);
-                        return;
+                        return this.SetStreamSourceToImage(options, ms);
                     }
                 }
                 catch
@@ -320,15 +332,59 @@ namespace ShibugakiViewer.Models.ImageViewer
                 stream.Position = 0;
             }
 
-            this.SetStreamSourceToImage(image, stream);
+            return this.SetStreamSourceToImage(options, stream);
         }
 
-        private void SetStreamSourceToImage(BitmapImage image, Stream stream)
+        private struct LoadingOptions
         {
-            image.StreamSource = stream;
+            public double Width { get; set; }
+            public double Height { get; set; }
+        }
 
-            image.EndInit();
-            image.Freeze();
+        private BitmapImage SetStreamSourceToImage(in LoadingOptions options, Stream stream)
+        {
+            long position = -1;
+            if (stream.CanSeek)
+            {
+                position = stream.Position;
+            }
+            for (int i = 0; i < 2; i++)
+            {
+                if (stream.CanSeek && position >= 0)
+                {
+                    stream.Position = position;
+                }
+
+                var image = new BitmapImage();
+
+                image.BeginInit();
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.CreateOptions = (i == 0) 
+                    ? BitmapCreateOptions.None : BitmapCreateOptions.IgnoreColorProfile;
+
+                if (options.Width > 0)
+                {
+                    image.DecodePixelWidth = (int)Math.Round(options.Width);
+                }
+                else if (options.Height > 0)
+                {
+                    image.DecodePixelHeight = (int)Math.Round(options.Height);
+                }
+
+                image.StreamSource = stream;
+
+                try
+                {
+                    image.EndInit();
+                    image.Freeze();
+                    return image;
+                }
+                catch (ArgumentException)
+                {
+                    continue;
+                }
+            }
+            return null;
         }
 
         private byte[] GetThumbnail(Stream source, GraphicInformation information)
