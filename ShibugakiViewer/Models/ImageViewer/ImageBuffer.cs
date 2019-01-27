@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define SIGNAL_TEST
+
+using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
@@ -57,13 +59,23 @@ namespace ShibugakiViewer.Models.ImageViewer
             = new LockingQueue<CommandPacket>();
         private readonly LockingQueue<CommandPacket> thumbNailLoadRequest
             = new LockingQueue<CommandPacket>();
-        
 
+#if !SIGNAL_TEST
         private Subject<Unit> ActionQueueSubject { get; }
+#endif
 
 
-        private static IObserver<ImageSourceContainer> emptyObserver
+        private static readonly IObserver<ImageSourceContainer> emptyObserver
             = Observer.Create<ImageSourceContainer>(_ => { });
+
+        private Task queueTask = null;
+        private CancellationTokenSource queueCancellationTokenSource = null;
+        private readonly object queueTaskLock = new object();
+        private bool queTaskPreparing = false;
+
+        private readonly object queueLock = new object();
+        private readonly ManualResetEventSlim resetEvent = new ManualResetEventSlim();
+        private bool isQueueEmpty = true;
 
 
         public ImageBuffer()
@@ -72,7 +84,16 @@ namespace ShibugakiViewer.Models.ImageViewer
             thumbNailImages = new ImageDictionary();
 
             this.UpdatedSubject = new Subject<string>().AddTo(this.Disposables);
+#if SIGNAL_TEST
+            Disposable.Create(async () =>
+            {
+                await this.CloseQueueTaskAsync(TimeSpan.FromSeconds(5), false)
+                    .ConfigureAwait(false);
+            }).AddTo(this.Disposables);
 
+            this.WorkAsync().FireAndForget(x => Debug.WriteLine(x));
+#else
+            
             this.ActionQueueSubject = new Subject<Unit>().AddTo(this.Disposables);
 
             var scheduler = new EventLoopScheduler();
@@ -97,9 +118,111 @@ namespace ShibugakiViewer.Models.ImageViewer
                 subscription.Dispose();
                 scheduler.Dispose();
             }).AddTo(this.Disposables);
-
+#endif
         }
 
+        private async Task RunDequeueTaskAsync(CancellationToken cancellationToken)
+        {
+            Debug.WriteLine("!!! dequeue start !!!");
+            
+            while (true)
+            {
+                bool isCanceled = false;
+
+                lock (this.queueLock)
+                {
+                    this.isQueueEmpty = true;
+                }
+                this.resetEvent.Wait();
+
+                isCanceled = cancellationToken.IsCancellationRequested;
+
+                lock (this.queueLock)
+                {
+                    this.isQueueEmpty = false;
+                    this.resetEvent.Reset();
+                }
+                if (isCanceled)
+                {
+                    break;
+                }
+
+                CommandPacket packet;
+                while (this.currentFileLoadRequest.TryDequeue(mainQueueCapacity, out packet)
+                    || this.lowQualityPreLoadRequest.TryDequeue(lowQueueCapacity, out packet)
+                    || this.highQualityPreLoadRequest.TryDequeue(preloadQueueCapacity, out packet)
+                    || this.thumbNailLoadRequest.TryDequeue(this.ThumbnailRequestCapacity, out packet))
+                {
+                    await this.LoadImageAsync(packet).ConfigureAwait(false);
+                    isCanceled = cancellationToken.IsCancellationRequested;
+                    if (isCanceled)
+                    {
+                        break;
+                    }
+                }
+
+                if (isCanceled)
+                {
+                    break;
+                }
+            }
+            Debug.WriteLine("!!! dequeue end !!!");
+        }
+
+        public async Task WorkAsync()
+        {
+            var (isSucceeded, cts) = await this.CloseQueueTaskAsync(TimeSpan.FromSeconds(5), true)
+                .ConfigureAwait(false);
+            if (!isSucceeded)
+            {
+                return;
+            }
+
+            var qt = Task.Run(() => RunDequeueTaskAsync(cts.Token));
+            lock (this.queueTaskLock)
+            {
+                this.queueTask = qt;
+                this.queTaskPreparing = false;
+            }
+        }
+
+
+        private async Task<(bool, CancellationTokenSource)> CloseQueueTaskAsync
+            (TimeSpan timeout, bool ignoreIfPreparing)
+        {
+            CancellationTokenSource prevCts;
+            CancellationTokenSource newCts = null;
+            Task remainedTask = null;
+            lock (this.queueTaskLock)
+            {
+                if (ignoreIfPreparing)
+                {
+                    if (this.queTaskPreparing)
+                    {
+                        return (false, newCts);
+                    }
+                    this.queTaskPreparing = true;
+                }
+                prevCts = this.queueCancellationTokenSource;
+                remainedTask = this.queueTask;
+                newCts = new CancellationTokenSource();
+                this.queueCancellationTokenSource = newCts;
+                this.queueTask = null;
+            }
+            prevCts?.Cancel();
+            lock (this.queueLock)
+            {
+                this.resetEvent.Set();
+                //Monitor.PulseAll(this.queueLock);
+            }
+            if (remainedTask != null)
+            {
+                //TODO throw exception when timeout
+                await Task.WhenAny(Task.Delay(timeout), remainedTask)
+                    .ConfigureAwait(false);
+            }
+            return (true, newCts);
+        }
 
         public bool TryGetImage
             (string path, ImageQuality quality, out ImageSourceContainer image)
@@ -128,7 +251,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 return false;
             }
             /*
-            #if DEBUG
+#if DEBUG
             if (this.thumbNailImages.Count > 0)
             {
                 result = this.thumbNailImages.First().Value;
@@ -137,7 +260,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                     return true;
                 }
             }
-            #endif*/
+#endif*/
 
             var key = path;
 
@@ -252,10 +375,20 @@ namespace ShibugakiViewer.Models.ImageViewer
             {
                 this.highQualityPreLoadRequest.Enqueue(request);
             }
+#if SIGNAL_TEST
+            lock (this.queueLock)
+            {
+                if (this.isQueueEmpty)
+                {
+                    this.resetEvent.Set();
+                }
+            }
+#else
             if (this.ActionQueueSubject.HasObservers)
             {
                 this.ActionQueueSubject.OnNext(Unit.Default);
             }
+#endif
         }
 
         /// <summary>
@@ -494,7 +627,7 @@ namespace ShibugakiViewer.Models.ImageViewer
 
             public string Path => this.path ?? this.File?.FullPath;
 
-            private string path;
+            private readonly string path;
 
             public CommandPacket(Record file, ImageLoadingOptions option, IObserver<ImageSourceContainer> observer)
             {
