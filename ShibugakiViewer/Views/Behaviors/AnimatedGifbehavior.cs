@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Interactivity;
 using System.Windows.Media;
 using Reactive.Bindings.Extensions;
 using System.Reactive.Disposables;
@@ -22,6 +21,7 @@ using Boredbone.Utility.Extensions;
 using Boredbone.Utility.Tools;
 using XamlAnimatedGif;
 using System.IO;
+using Microsoft.Xaml.Behaviors;
 
 namespace ShibugakiViewer.Views.Behaviors
 {

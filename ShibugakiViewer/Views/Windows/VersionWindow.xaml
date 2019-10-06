@@ -7,7 +7,7 @@
         xmlns:tb="clr-namespace:WpfTools.Behaviors;assembly=WpfTools"
         xmlns:properties="clr-namespace:ShibugakiViewer.Properties"
         xmlns:b="clr-namespace:ShibugakiViewer.Views.Behaviors"
-        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         Style="{StaticResource DefaultWindowStyle}"
         ShowActivated="True" WindowStartupLocation="CenterOwner"

@@ -53,7 +53,7 @@ namespace ImageLibrary.Creation
 
             this.FolderWatcher.FolderChanged
                 .Where(x => x.ChangeType != WatcherChangeTypes.Changed)
-                .BufferUntilThrottle(2000, true)
+                .BufferUntilThrottle(TimeSpan.FromSeconds(4), true)
                 .Subscribe(x => this.CheckFolderUpdate(x))
                 .AddTo(this.Disposables);
         }

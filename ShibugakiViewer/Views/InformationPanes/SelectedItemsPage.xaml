@@ -8,7 +8,7 @@
              xmlns:cc="clr-namespace:WpfTools.Controls;assembly=WpfTools"
              xmlns:properties="clr-namespace:ShibugakiViewer.Properties"
              xmlns:b="clr-namespace:ShibugakiViewer.Views.Behaviors"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              x:Name="pageRoot"
              d:DesignHeight="300" d:DesignWidth="300">

@@ -7,7 +7,7 @@
              xmlns:local="clr-namespace:ShibugakiViewer.Views.Pages"
              xmlns:behaviors="clr-namespace:ShibugakiViewer.Views.Behaviors"
              xmlns:xb="clr-namespace:Boredbone.XamlTools.Behaviors;assembly=WpfTools"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
              xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions" 
              xmlns:search="clr-namespace:ImageLibrary.Search;assembly=ImageLibrary"
              xmlns:control="clr-namespace:ShibugakiViewer.Views.Controls"

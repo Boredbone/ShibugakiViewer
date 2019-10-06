@@ -36,7 +36,7 @@ namespace ShibugakiViewer.Models
 
 
         public string[] FileTypeFilter { get; }
-            = new[] { ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".wmf", ".emf", ".bhf", ".tif", ".tiff" };
+            = new[] { ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".wmf", ".emf", ".bhf", ".tif", ".tiff", ".webp" };
 
         public HashSet<string> MetaImageExtention { get; }
             = new HashSet<string>(new[] { ".wmf", ".emf" });

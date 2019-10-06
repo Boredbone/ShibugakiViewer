@@ -10,11 +10,11 @@ using System.Reactive.Linq;
 using Boredbone.Utility.Extensions;
 using Boredbone.XamlTools.Extensions;
 using System.Windows.Controls;
-using System.Windows.Interactivity;
 using System.Windows.Media.Animation;
 using System.Reactive.Subjects;
 using Reactive.Bindings.Extensions;
 using Boredbone.XamlTools;
+using Microsoft.Xaml.Behaviors;
 
 namespace ShibugakiViewer.Views.Behaviors
 {

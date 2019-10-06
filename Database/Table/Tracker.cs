@@ -13,7 +13,9 @@ using Reactive.Bindings.Extensions;
 
 namespace Database.Table
 {
+#pragma warning disable CA1063 // Implement IDisposable Correctly
     public class Tracker<TRecord, TKey> : IDisposable
+#pragma warning restore CA1063 // Implement IDisposable Correctly
         where TRecord : INotifyPropertyChanged, ITrackable, IRecord<TKey>
     {
         private ITypedTable<TRecord> table;
@@ -118,7 +120,9 @@ namespace Database.Table
 
         public bool IsDisposed => this.Disposables.IsDisposed;
         private CompositeDisposable Disposables { get; } = new CompositeDisposable();
+#pragma warning disable CA1063 // Implement IDisposable Correctly
         public void Dispose() => this.Disposables.Dispose();
+#pragma warning restore CA1063 // Implement IDisposable Correctly
     }
 
     public struct PropertyChangedContainer<T>

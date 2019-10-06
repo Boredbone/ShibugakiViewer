@@ -30,7 +30,7 @@ namespace Test
         public void GraphicInformationTest()
         {
 
-            var path = @"..\..\..\ShibugakiViewer\Assets\Icons\mikan_rect64.png";
+            var path = @"..\..\..\..\ShibugakiViewer\Assets\Icons\mikan_rect64.png";
             var information = new GraphicInformation(path);
 
             Assert.AreEqual(GraphicFileType.Png, information.Type);

@@ -9,7 +9,7 @@
              xmlns:tb="clr-namespace:WpfTools.Behaviors;assembly=WpfTools"
              xmlns:cc="clr-namespace:WpfTools.Controls;assembly=WpfTools"
              xmlns:xb="clr-namespace:Boredbone.XamlTools.Behaviors;assembly=WpfTools"
-             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 

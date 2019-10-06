@@ -9,7 +9,7 @@
         xmlns:control="clr-namespace:ShibugakiViewer.Views.Controls"
         xmlns:infoPane="clr-namespace:ShibugakiViewer.Views.InformationPanes"
         xmlns:b="clr-namespace:ShibugakiViewer.Views.Behaviors"
-        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
         xmlns:cc="clr-namespace:WpfTools.Controls;assembly=WpfTools"
         xmlns:properties="clr-namespace:ShibugakiViewer.Properties"
         xmlns:converter="clr-namespace:ShibugakiViewer.Views.Converters"

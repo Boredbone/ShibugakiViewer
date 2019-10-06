@@ -17,7 +17,8 @@ namespace ShibugakiViewer.Launcher
         private const string mutexId = "79509481-1f8d-44b0-a581-d0dd4fa23710";
         private const string pipeId = "1af9b56b-4195-4b99-9893-1edfb2f84cbe";
         private const string serverPath = @"ShibugakiViewer.exe";
-        private static readonly string[] folderCandidates = new[] { "bin", "Debug", "Release" };
+        private static readonly string[] folderCandidates
+            = new[] { "bin", "Debug\\netcoreapp3.0", "Release\\netcoreapp3.0", "Debug", "Release" };
         private const string endMark = "?";
 
         static void Main(string[] args)

@@ -271,8 +271,8 @@ namespace ShibugakiViewer.Models.ImageViewer
 #pragma warning restore 1998
 
 
-        private BitmapImage SetSourceToImage
-            (in LoadingOptions options, Stream stream, GraphicInformation information, bool asThumbnail)
+        private ImageSource SetSourceToImage
+            (LoadingOptions options, Stream stream, GraphicInformation information, bool asThumbnail)
         {
             if (information.BlankHeaderLength == 0)
             {
@@ -294,11 +294,15 @@ namespace ShibugakiViewer.Models.ImageViewer
             }
         }
 
-        private BitmapImage SetImage
-            (in LoadingOptions options, Stream stream, GraphicInformation information, bool asThumbnail)
+        private ImageSource SetImage
+            (LoadingOptions options, Stream stream, GraphicInformation information, bool asThumbnail)
         {
             stream.Position = 0;
-            
+
+            if (information.Type == GraphicFileType.Webp)
+            {
+                return this.SetImageAsWebp(options, stream, information, asThumbnail);
+            }
 
             if (asThumbnail && information.Type == GraphicFileType.Jpeg)
             {
@@ -335,13 +339,36 @@ namespace ShibugakiViewer.Models.ImageViewer
             return this.SetStreamSourceToImage(options, stream);
         }
 
+
+        private ImageSource SetImageAsWebp
+            (LoadingOptions options, Stream stream, GraphicInformation information, bool asThumbnail)
+        {
+            try
+            {
+                var data = new byte[stream.Length];
+                stream.Read(data, 0, data.Length);
+                var bmp = new Imazen.WebP.SimpleDecoder().DecodeFromBytes(data, data.Length);
+                using (var ms = new System.IO.MemoryStream())
+                {
+                    bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+                    ms.Position = 0;
+                    return SetStreamSourceToImage(options, ms);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                return null;
+            }
+        }
+
         private struct LoadingOptions
         {
             public double Width { get; set; }
             public double Height { get; set; }
         }
 
-        private BitmapImage SetStreamSourceToImage(in LoadingOptions options, Stream stream)
+        private ImageSource SetStreamSourceToImage(LoadingOptions options, Stream stream)
         {
             long position = -1;
             if (stream.CanSeek)

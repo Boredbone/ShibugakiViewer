@@ -456,7 +456,7 @@ namespace Test
 
                 Console.WriteLine("b");
                 //0001-01-01
-                Assert.AreEqual((-offset.TotalSeconds).ToString(),
+                Assert.AreEqual(((offset.TotalSeconds != 0) ? (-offset.TotalSeconds) : offset.TotalSeconds).ToString(),
                     this.table1.AsQueryable(connection)
                     .Select<string>(DatabaseFunction.GetDate(nameof(Record.DateModified)))
                     .ToArray()

@@ -29,7 +29,7 @@ namespace ShibugakiViewer.Views.Pages
             InitializeComponent();
             this.gridView.AddTo(this.disposables);
         }
-
+        
         public void Dispose()
         {
             this.disposables.Dispose();

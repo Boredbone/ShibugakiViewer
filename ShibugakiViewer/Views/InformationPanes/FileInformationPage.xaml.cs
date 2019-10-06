@@ -230,7 +230,8 @@ namespace ShibugakiViewer.Views.InformationPanes
             ((App)Application.Current).Core.Library.Loaded
                 .Where(x => x.Action == ImageLibrary.Core.LibraryLoadAction.Activation
                     || x.Action == ImageLibrary.Core.LibraryLoadAction.UserOperation)
-                .ObserveOnDispatcher()
+                .ObserveOnUIDispatcher()
+                //.ObserveOnDispatcher()
                 .Subscribe(_ => directoryBinding?.UpdateTarget())
                 .AddTo(this.disposables);
         }
