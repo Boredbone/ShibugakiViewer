@@ -82,7 +82,7 @@
                                 </TextBlock>
                                 
                                 <TextBlock Style="{StaticResource normalTextStyle}">
-                                    <Run Text="Copyright 2016 Boredbone"/>
+                                    <Run Text="Copyright 2019 Boredbone"/>
                                 </TextBlock>
 
                                 <TextBlock Style="{StaticResource normalTextStyle}">

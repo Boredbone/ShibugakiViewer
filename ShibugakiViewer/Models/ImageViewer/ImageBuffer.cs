@@ -462,12 +462,12 @@ namespace ShibugakiViewer.Models.ImageViewer
                 if (file != null)
                 {
                     await image.LoadImageAsync
-                        (file, frameSize, asThumbnail, option.IsFill, option.CmsEnable);
+                        (file, frameSize, asThumbnail, option.IsFill, option.CmsEnable).ConfigureAwait(false);
                 }
                 else
                 {
                     await image.LoadImageAsync
-                        (key, frameSize, asThumbnail, option.IsFill, option.CmsEnable);
+                        (key, frameSize, asThumbnail, option.IsFill, option.CmsEnable).ConfigureAwait(false);
                 }
             }
             catch (OutOfMemoryException e)
@@ -502,7 +502,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 this.ClearBuffer();
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-                await Task.Delay(300);
+                await Task.Delay(300).ConfigureAwait(false);
 
                 image = new ImageSourceContainer();
 
@@ -521,12 +521,12 @@ namespace ShibugakiViewer.Models.ImageViewer
                     if (file != null)
                     {
                         await image.LoadImageAsync
-                           (file, frameSize, asThumbnail, option.IsFill, option.CmsEnable);
+                           (file, frameSize, asThumbnail, option.IsFill, option.CmsEnable).ConfigureAwait(false);
                     }
                     else
                     {
                         await image.LoadImageAsync
-                            (key, frameSize, asThumbnail, option.IsFill, option.CmsEnable);
+                            (key, frameSize, asThumbnail, option.IsFill, option.CmsEnable).ConfigureAwait(false);
                     }
 
                 }

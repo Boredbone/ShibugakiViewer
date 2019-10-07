@@ -2,9 +2,11 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -70,7 +72,7 @@ namespace ShibugakiViewer.Models.ImageViewer
             }
 
             var result = await this.LoadImageMainAsync
-                (file.FullPath, frameSize, asThumbnail, isFill, cmsEnable);
+                (file.FullPath, frameSize, asThumbnail, isFill, cmsEnable).ConfigureAwait(false);
 
             if (result && this.Information != null)
             {
@@ -108,7 +110,6 @@ namespace ShibugakiViewer.Models.ImageViewer
         }
 
 
-#pragma warning disable 1998
         private async Task<bool> LoadImageMainAsync
             (string fullPath, Size? frameSize, bool asThumbnail, bool isFill, bool cmsEnable)
         {
@@ -227,9 +228,9 @@ namespace ShibugakiViewer.Models.ImageViewer
 
                     this.SetSourceToImage(image, stream, information, asThumbnail);
                     */
-                    var image = this.SetSourceToImage(
+                    var image = await this.SetSourceToImageAsync(
                         new LoadingOptions() { Width = loadWidth, Height = loadHeight },
-                        stream, information, asThumbnail);
+                        stream, information, asThumbnail).ConfigureAwait(false);
                 
                     if (image == null)
                     {
@@ -268,15 +269,14 @@ namespace ShibugakiViewer.Models.ImageViewer
                 return false;
             }
         }
-#pragma warning restore 1998
 
 
-        private ImageSource SetSourceToImage
+        private Task<ImageSource> SetSourceToImageAsync
             (LoadingOptions options, Stream stream, GraphicInformation information, bool asThumbnail)
         {
             if (information.BlankHeaderLength == 0)
             {
-                return this.SetImage(options, stream, information, asThumbnail);
+                return this.SetImageAsync(options, stream, information, asThumbnail);
             }
             else
             {
@@ -289,19 +289,19 @@ namespace ShibugakiViewer.Models.ImageViewer
                     ms.Position = 0;
                     stream.CopyTo(ms);
 
-                    return this.SetImage(options, ms, information, asThumbnail);
+                    return this.SetImageAsync(options, ms, information, asThumbnail);
                 }
             }
         }
 
-        private ImageSource SetImage
+        private async Task<ImageSource> SetImageAsync
             (LoadingOptions options, Stream stream, GraphicInformation information, bool asThumbnail)
         {
             stream.Position = 0;
 
             if (information.Type == GraphicFileType.Webp)
             {
-                return this.SetImageAsWebp(options, stream, information, asThumbnail);
+                return await this.SetImageAsWebpAsync(options, stream, information, asThumbnail);
             }
 
             if (asThumbnail && information.Type == GraphicFileType.Jpeg)
@@ -340,6 +340,36 @@ namespace ShibugakiViewer.Models.ImageViewer
         }
 
 
+        private async Task<ImageSource> SetImageAsWebpAsync
+            (LoadingOptions options, Stream stream, GraphicInformation information, bool asThumbnail)
+        {
+            try
+            {
+                var width = options.Width;
+                var height = options.Height;
+                if (width > 0 && height <= 0 && information.GraphicSize.Width > 1)
+                {
+                    height = width * information.GraphicSize.Height / information.GraphicSize.Width;
+                }
+                else if (height > 0 && width <= 0 && information.GraphicSize.Height > 1)
+                {
+                    width = height * information.GraphicSize.Width / information.GraphicSize.Height;
+                }
+
+                var data = new byte[stream.Length];
+                await stream.ReadAsync(data, 0, data.Length);
+                using var webp = new WebPWrapper.WebP();
+                using var bmp = webp.Decode(data);
+                var ss = ToBetterBitmapSource(bmp, new LoadingOptions() { Width = width, Height = height });
+                return ss;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+                return null;
+            }
+        }
+#if false
         private ImageSource SetImageAsWebp
             (LoadingOptions options, Stream stream, GraphicInformation information, bool asThumbnail)
         {
@@ -361,6 +391,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 return null;
             }
         }
+#endif
 
         private struct LoadingOptions
         {
@@ -368,8 +399,48 @@ namespace ShibugakiViewer.Models.ImageViewer
             public double Height { get; set; }
         }
 
+        [System.Security.SuppressUnmanagedCodeSecurity]
+        [DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool DeleteObject([In] IntPtr hObject);
+
+
+        private static BitmapSource ToBetterBitmapSource(System.Drawing.Bitmap source, LoadingOptions options)
+        {
+            var handle = source.GetHbitmap();
+            BitmapSizeOptions opt
+                = (options.Width > 0 && options.Height > 0) ? BitmapSizeOptions.FromWidthAndHeight((int)options.Width, (int)options.Height)
+                : (options.Width > 0) ? BitmapSizeOptions.FromWidthAndHeight((int)options.Width, (int)options.Width)
+                : (options.Height > 0) ? BitmapSizeOptions.FromWidthAndHeight((int)options.Height, (int)options.Height)
+                : BitmapSizeOptions.FromEmptyOptions();
+            try
+            {
+                var image = Imaging.CreateBitmapSourceFromHBitmap(
+                    handle,
+                    IntPtr.Zero,
+                    Int32Rect.Empty,
+                    opt);
+                image.Freeze();
+                return image;
+            }
+            finally
+            {
+                DeleteObject(handle);
+            }
+        }
         private ImageSource SetStreamSourceToImage(LoadingOptions options, Stream stream)
         {
+            /*
+            try
+            {
+                using var bmp = new System.Drawing.Bitmap(FullPath);
+                return ToBetterBitmapSource(bmp, options);
+            }
+            catch(Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+                return null;
+            }*/
             long position = -1;
             if (stream.CanSeek)
             {
