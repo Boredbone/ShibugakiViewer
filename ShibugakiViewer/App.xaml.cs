@@ -25,6 +25,7 @@ using System.Diagnostics;
 using System.Text;
 using Boredbone.Utility.Extensions;
 using ShibugakiViewer.Views.Controls;
+using System.IO.Pipes;
 
 namespace ShibugakiViewer
 {
@@ -44,6 +45,7 @@ namespace ShibugakiViewer
         private const string mutexId = "79509481-1f8d-44b0-a581-d0dd4fa23710";
         private const string pipeId = "1af9b56b-4195-4b99-9893-1edfb2f84cbe";
         private const string commandMarker = "?";
+        private static Mutex processMutex = null;
         private PipeServer server;
 
         private string SaveDirectory;
@@ -76,37 +78,46 @@ namespace ShibugakiViewer
                       XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.Name)));
         }
 
+        private static void ExchangeProcessMutex(Mutex newVal)
+        {
+            // MUST called from UI thread
+            if (processMutex != null)
+            {
+                processMutex.ReleaseMutex();
+                processMutex.Close();
+                processMutex.Dispose();
+                System.Diagnostics.Debug.WriteLine("mutex disposed");
+            }
+            processMutex = newVal;
+        }
+        private static void ReleaseProcessMutex()
+        {
+            try
+            {
+                ExchangeProcessMutex(null);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+            }
+        }
+
         protected override void OnStartup(StartupEventArgs e)
         {
+            if (!ConfirmSingleInstance(e.Args))
+            {
+                this.Shutdown();
+                return;
+            }
             base.OnStartup(e);
 
 #if DEBUG
             this.Resources["IsThumbnailTooltipEnabled"] = false;
 #endif
 
-            bool createdNew = false;
-
-            //多重起動防止
-            using (var mutex = new Mutex(true, mutexId, out createdNew))
-            {
-                if (createdNew)
-                {
-                    //取得できた
-                    mutex.ReleaseMutex();
-                    mutex.Close();
-                }
-                else
-                {
-                    //すでに起動していると判断して終了
-                    mutex.Close();
-                    MessageBox.Show($"{this.Core.AppName} is already launched.");
-                    this.Shutdown();
-                    return;
-                }
-            }
-            
-
             this.isLaunched = true;
+
+            Disposable.Create(() => ReleaseProcessMutex()).AddTo(this.disposables);
 
             //Thread.CurrentThread.CurrentCulture = new CultureInfo("");
             //Thread.CurrentThread.CurrentUICulture = new CultureInfo("");
@@ -163,6 +174,70 @@ namespace ShibugakiViewer
             if (this.Core.IsVersionCheckEnabled())
             {
                 this.CheckNewVersionAsync(window, exitApp).FireAndForget();
+            }
+        }
+
+        private bool ConfirmSingleInstance(string[] args)
+        {
+            try
+            {
+                var mutex = new Mutex(true, mutexId, out var createdNew);
+
+                if (createdNew)
+                {
+                    // Got mutex
+                    ExchangeProcessMutex(mutex);
+
+                    // This is the first instance
+                    return true;
+                }
+                // Another instance is already running...
+
+                // Connect pipe
+                bool pipeSucceeded = false;
+
+                try
+                {
+                    using (var pipeClient =
+                        new NamedPipeClientStream(".", pipeId, PipeDirection.Out))
+                    {
+                        pipeClient.Connect(10000);
+
+                        using (var sw = new StreamWriter(pipeClient) { AutoFlush = true })
+                        {
+                            if (args != null)
+                            {
+                                foreach (var line in args)
+                                {
+                                    sw.WriteLine(line);
+                                }
+                            }
+                            sw.WriteLine(commandMarker);
+                        }
+                    }
+                    pipeSucceeded = true;
+                }
+                catch (TimeoutException ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex);
+                }
+
+
+                // Close this app
+                mutex.Close();
+                mutex.Dispose();
+
+                if (!pipeSucceeded)
+                {
+                    MessageBox.Show($"already launched.");
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+                return true;
             }
         }
 
@@ -356,7 +431,8 @@ namespace ShibugakiViewer
                     .ObserveOnUIDispatcher()
                     .Subscribe(x => this.ExecutePipeCommand(x), ex =>
                     {
-                        MessageBox.Show(ex.ToString());
+                        ReleaseProcessMutex();
+                        MessageBox.Show($"{this.Core.AppName} Error : {ex.Message}");
                         this.Shutdown();
                     })
                     .AddTo(this.disposables);
@@ -372,6 +448,8 @@ namespace ShibugakiViewer
         /// <param name="e"></param>
         protected override void OnExit(ExitEventArgs e)
         {
+            ReleaseProcessMutex();
+
             base.OnExit(e);
 
             if (!this.isLaunched)
@@ -432,6 +510,7 @@ namespace ShibugakiViewer
         /// <param name="e"></param>
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
+            ReleaseProcessMutex();
             var exception = e.ExceptionObject as Exception;
             if (exception == null)
             {

@@ -59,63 +59,40 @@ namespace ShibugakiViewer.Models.Utility
             {
                 try
                 {
-                    using (var mutex = new Mutex(false, mutexId))
+                    while (true)
                     {
-                        //ミューテックスの所有権を要求する
-                        if (!mutex.WaitOne(0, false))
-                        {
-                            this.LineReceivedSubject.OnError(new Exception("Already launched"));
-                            //すでに起動していると判断して終了
-                            //Mutexを取得できなかったので解放の必要はない
-                            return;
-                        }
+                        cancellationToken.ThrowIfCancellationRequested();
 
+                        using var pipeServer =
+                            new NamedPipeServerStream(pipeId, PipeDirection.In);
+
+                        // Wait for a client to connect
+                        //await pipeServer.WaitForConnectionAsync(cancellationToken);
+                        pipeServer.WaitForConnection();
+                        cancellationToken.ThrowIfCancellationRequested();
 
                         try
                         {
-                            //mutexDictionary.TryAdd(mutexId, mutex);
+                            using var sr = new StreamReader(pipeServer);
 
-                            while (true)
+                            while (pipeServer.IsConnected)
                             {
                                 cancellationToken.ThrowIfCancellationRequested();
 
-                                using (var pipeServer =
-                                    new NamedPipeServerStream(pipeId, PipeDirection.In))
+                                var text = sr.ReadLine();
+                                if (text != null)
                                 {
-                                    // Wait for a client to connect
-                                    //await pipeServer.WaitForConnectionAsync(cancellationToken);
-                                    pipeServer.WaitForConnection();
-                                    cancellationToken.ThrowIfCancellationRequested();
-
-                                    try
-                                    {
-                                        using (var sr = new StreamReader(pipeServer))
-                                        {
-                                            while (pipeServer.IsConnected)
-                                            {
-                                                cancellationToken.ThrowIfCancellationRequested();
-
-                                                var text = sr.ReadLine();
-                                                if (text != null)
-                                                {
-                                                    this.LineReceivedSubject.OnNext(text);
-                                                }
-                                            }
-                                        }
-                                    }
-                                    catch (IOException)
-                                    {
-                                        // Catch the IOException that is raised if the pipe is broken
-                                        // or disconnected.
-                                    }
+                                    this.LineReceivedSubject.OnNext(text);
                                 }
                             }
+
                         }
-                        finally
+                        catch (IOException)
                         {
-                            mutex.ReleaseMutex();
-                            mutex.Close();
+                            // Catch the IOException that is raised if the pipe is broken
+                            // or disconnected.
                         }
+
                     }
                 }
                 catch (Exception e)
