@@ -133,7 +133,6 @@ namespace ShibugakiViewer.Launcher
         }
         static void ExitServer(int timeout) => SendMessages(timeout, null, "?exit");
 
-#if true
         static void RetryExitServer()
         {
             for (int i = 0; i < 10; i++)
@@ -149,45 +148,5 @@ namespace ShibugakiViewer.Launcher
                 Thread.Sleep(200);
             }
         }
-#else
-        static void RetryExitServer()
-        {
-            bool completed = false;
-            for (int i = 0; i < 10; i++)
-            {
-                try
-                {
-                    ExitServer(1000);
-                }
-                catch (TimeoutException ex)
-                {
-                    Console.WriteLine(ex);
-                    completed = true;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                    break;
-                }
-                using (var mutex = new Mutex(false, mutexId))
-                {
-                    if (mutex.WaitOne(300, false))
-                    {
-                        // Got mutex
-                        mutex.ReleaseMutex();
-                        mutex.Close();
-                    }
-                    else
-                    {
-                        completed = false;
-                    }
-                }
-                if (completed)
-                {
-                    break;
-                }
-            }
-        }
-#endif
     }
 }
