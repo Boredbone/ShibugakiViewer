@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace ShibugakiViewer.Launcher
 {
@@ -23,11 +19,15 @@ namespace ShibugakiViewer.Launcher
 
         static void Main(string[] args)
         {
-            var exitMode = args != null
-                && args.Length == 1
-                && args[0] != null
-                && args[0].ToLower().Equals("/q");
-            
+            bool exitMode = false;
+            bool retryExitMode = false;
+            if (args != null && args.Length == 1 && args[0] != null)
+            {
+                var argLow = args[0].ToLower();
+                exitMode = (argLow.Equals("/q"));
+                retryExitMode = (argLow.Equals("/qq"));
+            }
+
 
             try
             {
@@ -38,108 +38,156 @@ namespace ShibugakiViewer.Launcher
                 {
                     if (createdNew)
                     {
-                        //取得できた
+                        // Got mutex
                         isServerRunning = false;
                         mutex.ReleaseMutex();
                     }
                     mutex.Close();
-
-                    //try
-                    //{
-                    //    //ミューテックスの所有権を要求する
-                    //    if (mutex.WaitOne(0, false))
-                    //    {
-                    //        //取得できた
-                    //        isServerRunning = false;
-                    //        mutex.ReleaseMutex();
-                    //        mutex.Close();
-                    //    }
-                    //}
-                    //catch (AbandonedMutexException)
-                    //{
-                    //    isServerRunning = false;
-                    //}
                 }
 
-                if (!isServerRunning)
+                if (exitMode)
                 {
-                    if (exitMode)
+                    if (!isServerRunning)
                     {
                         return;
                     }
 
-                    var dir = System.AppDomain.CurrentDomain.BaseDirectory;
+                    ExitServer(5000);
 
-                    foreach (var folder in folderCandidates)
-                    {
-                        try
-                        {
-                            var workingDirectory = Path.Combine(dir, folder);
-                            var path = Path.Combine(workingDirectory, serverPath);
-
-                            var psi = new ProcessStartInfo()
-                            {
-                                FileName = path,
-                                WorkingDirectory = workingDirectory,
-                                Arguments = (args != null) ? string.Join(" ", args.Select(x => $"\"{x}\"")) : "",
-                            };
-
-                            var p = System.Diagnostics.Process.Start(psi);
-
-                            return;
-                        }
-                        catch (System.ComponentModel.Win32Exception)
-                        {
-                            //var tx = e.ToString();
-                        }
-                    }
-                    return;
-                }
-
-                using (var pipeClient =
-                    new NamedPipeClientStream(".", pipeId, PipeDirection.Out))
-                {
-                    pipeClient.Connect(5000);
-
-                    // Read user input and send that to the client process.
-                    using (var sw = new StreamWriter(pipeClient) { AutoFlush = true })
-                    {
-                        if (exitMode)
-                        {
-                            sw.WriteLine("?exit");
-                        }
-                        else
-                        {
-                            if (args != null)
-                            {
-                                foreach (var line in args)
-                                {
-                                    sw.WriteLine(line);
-                                }
-                            }
-                            sw.WriteLine(endMark);
-                        }
-                    }
-                }
-
-
-                if (exitMode)
-                {
                     using (var mutex = new Mutex(false, mutexId))
                     {
-                        //ミューテックスの所有権を要求する
                         if (mutex.WaitOne(5000, false))
                         {
-                            //取得できた
+                            // Got mutex
                             mutex.ReleaseMutex();
                             mutex.Close();
                         }
                     }
+                }
+                else if (retryExitMode)
+                {
+                    RetryExitServer();
+                }
+                else
+                {
+                    if (!isServerRunning)
+                    {
+                        RunServer(args);
+                        return;
+                    }
+                    SendMessages(5000, args, endMark);
                 }
             }
             catch (Exception)
             {
             }
         }
+
+        static void RunServer(string[] args)
+        {
+            var dir = System.AppDomain.CurrentDomain.BaseDirectory;
+
+            foreach (var folder in folderCandidates)
+            {
+                try
+                {
+                    var workingDirectory = Path.Combine(dir, folder);
+                    var path = Path.Combine(workingDirectory, serverPath);
+
+                    var psi = new ProcessStartInfo()
+                    {
+                        FileName = path,
+                        WorkingDirectory = workingDirectory,
+                        Arguments = (args != null) ? string.Join(" ", args.Select(x => $"\"{x}\"")) : "",
+                    };
+
+                    var p = System.Diagnostics.Process.Start(psi);
+
+                    return;
+                }
+                catch (System.ComponentModel.Win32Exception)
+                {
+                }
+            }
+        }
+
+        static void SendMessages(int timeout, string[] args, string endText)
+        {
+            using (var pipeClient =
+                new NamedPipeClientStream(".", pipeId, PipeDirection.Out))
+            {
+                pipeClient.Connect(timeout);
+
+                using (var sw = new StreamWriter(pipeClient) { AutoFlush = true })
+                {
+                    if (args != null)
+                    {
+                        foreach (var line in args)
+                        {
+                            sw.WriteLine(line);
+                        }
+                    }
+                    sw.WriteLine(endText);
+                }
+            }
+        }
+        static void ExitServer(int timeout) => SendMessages(timeout, null, "?exit");
+
+#if true
+        static void RetryExitServer()
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                try
+                {
+                    ExitServer(300);
+                }
+                catch (Exception)
+                {
+                    break;
+                }
+                Thread.Sleep(200);
+            }
+        }
+#else
+        static void RetryExitServer()
+        {
+            bool completed = false;
+            for (int i = 0; i < 10; i++)
+            {
+                try
+                {
+                    ExitServer(1000);
+                }
+                catch (TimeoutException ex)
+                {
+                    Console.WriteLine(ex);
+                    completed = true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    break;
+                }
+                using (var mutex = new Mutex(false, mutexId))
+                {
+                    if (mutex.WaitOne(300, false))
+                    {
+                        // Got mutex
+                        mutex.ReleaseMutex();
+                        mutex.Close();
+                    }
+                    else
+                    {
+                        completed = false;
+                    }
+                }
+                if (completed)
+                {
+                    break;
+                }
+            }
+        }
+#endif
     }
 }
