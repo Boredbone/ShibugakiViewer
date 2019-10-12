@@ -74,4 +74,8 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="powershell -ExecutionPolicy RemoteSigned -File &quot;$(ProjectDir)resolve_version.ps1&quot;&#xD;&#xA;" />
+  </Target>
+
 </Project>

@@ -36,22 +36,10 @@ namespace ShibugakiViewer.Views.Windows
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
             var ver = assembly.GetName().Version;
 
-            this.versionText.Text = ver.ToString(3);
+            this.versionText.Text = ver.ToString(3) + "." + VersionInformation.GitRevisionShort;
 
-            var path = assembly.Location;
-            if (path.EndsWith(".dll"))
-            {
-                // .NET Core 3.0
-                path = path.Substring(0, path.Length - 3) + "exe";
-            }
-            try
-            {
-                var buildDateTime = BuildTimeStamp.GetDateTimeUtcFrom(path);
-                this.versionDetail.Text = $"{ver} {buildDateTime}";
-            }
-            catch
-            {
-            }
+            var buildDateTime = DateTimeOffset.FromUnixTimeSeconds(VersionInformation.BuildTime).ToLocalTime();
+            this.versionDetail.Text = $"{ver} {buildDateTime}";
 
             this.projectHomeLink.NavigateUri = new Uri(core.ProjectHomeUrl);
         }
