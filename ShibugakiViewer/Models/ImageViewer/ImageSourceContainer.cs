@@ -354,10 +354,10 @@ namespace ShibugakiViewer.Models.ImageViewer
 
                 var data = new byte[stream.Length];
                 stream.Read(data, 0, data.Length);
-                using var webp = new WebPWrapper.WebP();
+                //using var webp = new WebPWrapper.WebP();
                 using var bmp = (asThumbnail)
-                    ? webp.GetThumbnailFast(data, (int)width, (int)height)
-                    : webp.Decode(data);
+                    ? WebPWrapper.WebP.GetThumbnail(data, (int)width, (int)height, true)
+                    : WebPWrapper.WebP.Decode(data);
                 return ToBetterBitmapSource(bmp, new LoadingOptions(width, height));
             }
             catch (Exception ex)
