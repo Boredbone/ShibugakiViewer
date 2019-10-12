@@ -456,8 +456,7 @@ namespace ShibugakiViewer.Views.Behaviors
                         else if (p.Equals(image?.FullPath))
                         {
                             this.ChangeSource(image.Image, image.FullPath,
-                                image.Information != null
-                                && image.Information.Type == GraphicFileType.Gif
+                                image.Information.Type == GraphicFileType.Gif
                                 && image.Quality >= ImageQuality.Resized);
                         }
                     }

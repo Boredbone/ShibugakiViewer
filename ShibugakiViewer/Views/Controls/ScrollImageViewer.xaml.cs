@@ -142,7 +142,7 @@ namespace ShibugakiViewer.Views.Controls
                 int orientation = 0;
                 bool horizontalMirror = false;
                 bool verticalMirror = false;
-
+                
                 if (record != null && newPath != null
                     && (record.Extension == ".jpg" || record.Extension == ".jpeg"))
                 {

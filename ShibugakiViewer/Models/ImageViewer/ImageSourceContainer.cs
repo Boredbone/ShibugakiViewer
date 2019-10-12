@@ -74,7 +74,7 @@ namespace ShibugakiViewer.Models.ImageViewer
             var result = this.LoadImageMain
                 (file.FullPath, frameSize, asThumbnail, isFill, cmsEnable);
 
-            if (result && this.Information != null)
+            if (result)
             {
 
                 if ((file.Width != this.Information.GraphicSize.Width)
@@ -120,21 +120,17 @@ namespace ShibugakiViewer.Models.ImageViewer
                 return false;
             }
 
-            
+
             try
             {
-                GraphicInformation information = null;
-
                 using (var stream = File.OpenRead(fullPath))
                 {
 
                     this.IsNotFound = false;
 
-                    information = new GraphicInformation(stream);
+                    this.Information = new GraphicInformation(stream);
 
-                    this.Information = information;
-
-                    if (information.IsMetaImage)
+                    if (this.Information.IsMetaImage)
                     {
                         return false;
                     }
@@ -146,8 +142,8 @@ namespace ShibugakiViewer.Models.ImageViewer
                         ? 16.0 : frameSize.Value.Height;
 
                     //画像サイズ
-                    var imageWidth = information.GraphicSize.Width;
-                    var imageHeight = information.GraphicSize.Height;
+                    var imageWidth = this.Information.GraphicSize.Width;
+                    var imageHeight = this.Information.GraphicSize.Height;
 
                     //デコードサイズ
                     var loadWidth = -1.0;
@@ -229,9 +225,9 @@ namespace ShibugakiViewer.Models.ImageViewer
                     this.SetSourceToImage(image, stream, information, asThumbnail);
                     */
                     var image = this.SetSourceToImage(
-                        new LoadingOptions() { Width = loadWidth, Height = loadHeight },
-                        stream, information, asThumbnail);
-                
+                        new LoadingOptions(loadWidth, loadHeight),
+                        stream, this.Information, asThumbnail);
+
                     if (image == null)
                     {
                         this.IsNotFound = true;
@@ -272,7 +268,7 @@ namespace ShibugakiViewer.Models.ImageViewer
 
 
         private ImageSource SetSourceToImage
-            (LoadingOptions options, Stream stream, GraphicInformation information, bool asThumbnail)
+            (in LoadingOptions options, Stream stream, in GraphicInformation information, bool asThumbnail)
         {
             if (information.BlankHeaderLength == 0)
             {
@@ -295,7 +291,7 @@ namespace ShibugakiViewer.Models.ImageViewer
         }
 
         private ImageSource SetImage
-            (LoadingOptions options, Stream stream, GraphicInformation information, bool asThumbnail)
+            (in LoadingOptions options, Stream stream, in GraphicInformation information, bool asThumbnail)
         {
             stream.Position = 0;
 
@@ -341,7 +337,7 @@ namespace ShibugakiViewer.Models.ImageViewer
 
 
         private ImageSource SetImageAsWebp
-            (LoadingOptions options, Stream stream, GraphicInformation information, bool asThumbnail)
+            (in LoadingOptions options, Stream stream, in GraphicInformation information, bool asThumbnail)
         {
             try
             {
@@ -360,7 +356,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 stream.Read(data, 0, data.Length);
                 using var webp = new WebPWrapper.WebP();
                 using var bmp = webp.Decode(data);
-                var ss = ToBetterBitmapSource(bmp, new LoadingOptions() { Width = width, Height = height });
+                var ss = ToBetterBitmapSource(bmp, new LoadingOptions(width, height));
                 return ss;
             }
             catch (Exception ex)
@@ -371,7 +367,7 @@ namespace ShibugakiViewer.Models.ImageViewer
         }
 #if false
         private ImageSource SetImageAsWebp
-            (LoadingOptions options, Stream stream, GraphicInformation information, bool asThumbnail)
+            (LoadingOptions options, Stream stream, in GraphicInformation information, bool asThumbnail)
         {
             try
             {
@@ -393,10 +389,16 @@ namespace ShibugakiViewer.Models.ImageViewer
         }
 #endif
 
-        private struct LoadingOptions
+        private readonly struct LoadingOptions
         {
-            public double Width { get; set; }
-            public double Height { get; set; }
+            public double Width { get; }
+            public double Height { get; }
+
+            public LoadingOptions(double width, double height)
+            {
+                this.Width = width;
+                this.Height = height;
+            }
         }
 
         [System.Security.SuppressUnmanagedCodeSecurity]
@@ -405,7 +407,7 @@ namespace ShibugakiViewer.Models.ImageViewer
         private static extern bool DeleteObject([In] IntPtr hObject);
 
 
-        private static BitmapSource ToBetterBitmapSource(System.Drawing.Bitmap source, LoadingOptions options)
+        private static BitmapSource ToBetterBitmapSource(System.Drawing.Bitmap source, in LoadingOptions options)
         {
             var handle = source.GetHbitmap();
             BitmapSizeOptions opt
@@ -428,7 +430,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 DeleteObject(handle);
             }
         }
-        private ImageSource SetStreamSourceToImage(LoadingOptions options, Stream stream)
+        private ImageSource SetStreamSourceToImage(in LoadingOptions options, Stream stream)
         {
             /*
             try
@@ -457,7 +459,7 @@ namespace ShibugakiViewer.Models.ImageViewer
 
                 image.BeginInit();
                 image.CacheOption = BitmapCacheOption.OnLoad;
-                image.CreateOptions = (i == 0) 
+                image.CreateOptions = (i == 0)
                     ? BitmapCreateOptions.None : BitmapCreateOptions.IgnoreColorProfile;
 
                 if (options.Width > 0)
@@ -485,7 +487,7 @@ namespace ShibugakiViewer.Models.ImageViewer
             return null;
         }
 
-        private byte[] GetThumbnail(Stream source, GraphicInformation information)
+        private byte[] GetThumbnail(Stream source, in GraphicInformation information)
         {
             if (information.Type != GraphicFileType.Jpeg)
             {

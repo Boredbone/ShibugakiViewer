@@ -333,8 +333,7 @@ namespace ShibugakiViewer.Models.ImageViewer
             {
                 if (image != null && image.Image != null)
                 {
-                    if (file != null && (file.Width <= 0 || file.Height <= 0)
-                        && image.Information != null)
+                    if (file != null && (file.Width <= 0 || file.Height <= 0))
                     {
                         file.Width = image.Information.GraphicSize.Width;
                         file.Height = image.Information.GraphicSize.Height;

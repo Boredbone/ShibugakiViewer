@@ -15,6 +15,7 @@ using System.Windows.Media;
 using Boredbone.Utility.Extensions;
 using Boredbone.Utility.Notification;
 using Boredbone.Utility.Tools;
+using Boredbone.XamlTools;
 using ImageLibrary.Core;
 using ImageLibrary.File;
 using ImageLibrary.Viewer;
@@ -30,15 +31,15 @@ namespace ShibugakiViewer.ViewModels
     public class CatalogPageViewModel : NotificationBase
     {
 
-        public ReactiveCommand ItemClickCommand { get; }
-        public ReactiveCommand ItemSelectCommand { get; }
-        public ReactiveCommand EditSortCommand { get; }
-        public ReactiveCommand SelectAllCommand { get; }
+        public DelegateCommand<object> ItemClickCommand { get; }
+        public DelegateCommand<object> ItemSelectCommand { get; }
+        public DelegateCommand<FrameworkElement> EditSortCommand { get; }
+        public DelegateCommand SelectAllCommand { get; }
         public ReactiveCommand SelectionClearCommand { get; }
         public ReactiveCommand GroupingCommand { get; }
         public ReactiveCommand RemoveFromGroupCommand { get; }
         public ReactiveCommand SetToLeaderCommand { get; }
-        public ReactiveCommand RefreshCommand { get; }
+        public DelegateCommand RefreshCommand { get; }
 
         public ReadOnlyReactiveProperty<long> Length { get; }
         public ReactiveProperty<int> DisplayIndex { get; }
@@ -166,42 +167,36 @@ namespace ShibugakiViewer.ViewModels
                 .AddTo(this.Disposables);
 
             //サムネイルクリック
-            this.ItemClickCommand = new ReactiveCommand()
-                .WithSubscribe(context => this.SelectOrShow(context, true), this.Disposables);
+            this.ItemClickCommand = new DelegateCommand<object>(context => this.SelectOrShow(context, true));
 
             //選択
-            this.ItemSelectCommand = new ReactiveCommand()
-                .WithSubscribe(context => this.SelectOrShow(context, false), this.Disposables);
+            this.ItemSelectCommand = new DelegateCommand<object>(context => this.SelectOrShow(context, false));
 
             //ソート条件編集
-            this.EditSortCommand = new ReactiveCommand()
-                .WithSubscribe(x =>
+            this.EditSortCommand = new DelegateCommand<FrameworkElement>(control =>
+            {
+                var content = new SortEditor()
                 {
-                    var control = x as FrameworkElement;
+                    ItemsSource = this.client.GetSort(),
+                };
 
-                    var content = new SortEditor()
+                content.IsEnabledChanged += (o, e) =>
+                {
+                    var value = e.NewValue as bool?;
+                    if (value.HasValue && !value.Value)
                     {
-                        ItemsSource = this.client.GetSort(),
-                    };
+                        this.client.SetSort(content.SortSettings);
+                    }
+                };
 
-                    content.IsEnabledChanged += (o, e) =>
-                    {
-                        var value = e.NewValue as bool?;
-                        if (value.HasValue && !value.Value)
-                        {
-                            this.client.SetSort(content.SortSettings);
-                        }
-                    };
+                this.parent.PopupOwner.PopupDialog.Show(content,
+                    new Thickness(double.NaN, 10.0, 0.0, double.NaN),
+                    HorizontalAlignment.Right, VerticalAlignment.Bottom, control);
 
-                    this.parent.PopupOwner.PopupDialog.Show(content,
-                        new Thickness(double.NaN, 10.0, 0.0, double.NaN),
-                        HorizontalAlignment.Right, VerticalAlignment.Bottom, control);
-
-                }, this.Disposables);
+            });
 
             //すべて選択
-            this.SelectAllCommand = new ReactiveCommand()
-                .WithSubscribe(async _ => await this.client.SelectAllAsync(), this.Disposables);
+            this.SelectAllCommand = new DelegateCommand(async () => await this.client.SelectAllAsync());
 
             //選択をクリア
             this.SelectionClearCommand = this.IsInSelecting
@@ -225,8 +220,7 @@ namespace ShibugakiViewer.ViewModels
                 .ToReactiveCommand()
                 .WithSubscribe(_ => this.client.SetGroupLeader(), this.Disposables);
 
-            this.RefreshCommand = new ReactiveCommand()
-                .WithSubscribe(_ => this.client.Refresh(), this.Disposables);
+            this.RefreshCommand = new DelegateCommand(() => this.client.Refresh());
 
             this.RegisterKeyReceiver(parent);
         }
