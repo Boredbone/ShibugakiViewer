@@ -66,7 +66,6 @@ namespace ShibugakiViewer
             this.disposables = new CompositeDisposable();
             this.Core = new ApplicationCore().AddTo(this.disposables);
 
-
             AppDomain.CurrentDomain.UnhandledException
                 += CurrentDomain_UnhandledException;
 
@@ -585,6 +584,18 @@ namespace ShibugakiViewer
 
         }
 
+        private string GetExecutingAssemblyPath()
+        {
+            var myAssembly = Assembly.GetEntryAssembly();
+            var path = myAssembly.Location;
+            if (path.EndsWith(".dll"))
+            {
+                // .NET Core 3.0
+                path = path.Substring(0, path.Length - 3) + "exe";
+            }
+            return path;
+        }
+
         /// <summary>
         /// 保存データのインポート・エクスポート
         /// </summary>
@@ -602,8 +613,7 @@ namespace ShibugakiViewer
                 }
             }
 
-            var myAssembly = Assembly.GetEntryAssembly();
-            var path = myAssembly.Location;
+            var path = GetExecutingAssemblyPath();
             var dir = Path.GetDirectoryName(path);
 
             var args = new[]
@@ -626,8 +636,7 @@ namespace ShibugakiViewer
         /// </summary>
         public void ConvertOldLibrary()
         {
-            var myAssembly = Assembly.GetEntryAssembly();
-            var path = myAssembly.Location;
+            var path = GetExecutingAssemblyPath();
             var dir = Path.GetDirectoryName(path);
 
             var args = new[]

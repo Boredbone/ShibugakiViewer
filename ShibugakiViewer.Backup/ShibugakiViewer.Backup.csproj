@@ -20,4 +20,8 @@
     <ProjectReference Include="..\ShibugakiViewer.Settings\ShibugakiViewer.Settings.csproj" />
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /y &quot;$(TargetDir)$(TargetName).exe&quot; &quot;$(SolutionDir)\ShibugakiViewer\$(OutDir)&quot;&#xD;&#xA;xcopy /y &quot;$(TargetDir)$(TargetName).dll&quot; &quot;$(SolutionDir)\ShibugakiViewer\$(OutDir)&quot;&#xD;&#xA;xcopy /y &quot;$(TargetDir)$(TargetName).runtimeconfig.json&quot; &quot;$(SolutionDir)\ShibugakiViewer\$(OutDir)&quot;" />
+  </Target>
+
 </Project>
