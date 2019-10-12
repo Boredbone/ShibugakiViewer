@@ -267,5 +267,26 @@ namespace ImageLibrary.Search
                 this.FavoriteSearchList.RemoveAt(index);
             }
         }
+
+        public void MoveFavoriteItem(SearchInformation item, int indexDiff, bool toEnd)
+        {
+            if (item == null || indexDiff == 0)
+            {
+                return;
+            }
+            var index = this.FavoriteSearchList.FindIndex(x => x.Key.Equals(item.Key));
+            if (index >= 0)
+            {
+                int newIndex = index + indexDiff;
+                if (toEnd)
+                {
+                    newIndex = (indexDiff > 0) ? (this.FavoriteSearchList.Count - 1) : 0;
+                }
+                if (newIndex != index && newIndex >= 0 && newIndex < this.FavoriteSearchList.Count)
+                {
+                    this.FavoriteSearchList.Move(index, newIndex);
+                }
+            }
+        }
     }
 }

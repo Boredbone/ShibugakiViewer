@@ -31,19 +31,19 @@ namespace ShibugakiViewer.ViewModels.Controls
         private CompositeDisposable unsubscribers;
 
         public List<KeyValuePair<string, PropertyContainer>> PropertyList { get; private set; }
-        public ReactiveProperty<int> PropertyListSelectedIndex { get; private set; }
+        public ReactivePropertySlim<int> PropertyListSelectedIndex { get; private set; }
         public string PropertyComboBoxDefault { get; private set; }
-        public ReactiveProperty<Visibility> PropertyComboBoxDefaultVisibility { get; private set; }
+        public ReadOnlyReactivePropertySlim<Visibility> PropertyComboBoxDefaultVisibility { get; private set; }
 
         public List<KeyValuePair<string, CompareMode>> CompareOperator { get; private set; }
-        public ReactiveProperty<int> CompareOperatorSelectedIndex { get; private set; }
-        public ReactiveProperty<Visibility> CompareListVisibility { get; private set; }
+        public ReactivePropertySlim<int> CompareOperatorSelectedIndex { get; private set; }
+        public ReadOnlyReactivePropertySlim<Visibility> CompareListVisibility { get; private set; }
 
         public ObservableCollection<string> EqualitySelector { get; private set; }
 
 
-        public ReactiveProperty<int> EqualitySelectedIndex { get; private set; }
-        public ReactiveProperty<Visibility> EqualityListVisibility { get; private set; }
+        public ReactivePropertySlim<int> EqualitySelectedIndex { get; private set; }
+        public ReadOnlyReactivePropertySlim<Visibility> EqualityListVisibility { get; private set; }
 
         private Lazy<ObservableCollection<KeyValuePair<int, TagInformation>>> registeredTags
             = new Lazy<ObservableCollection<KeyValuePair<int, TagInformation>>>
@@ -53,25 +53,25 @@ namespace ShibugakiViewer.ViewModels.Controls
         public ObservableCollection<KeyValuePair<int, TagInformation>> RegisteredTags
             => this.registeredTags.Value;
         
-        public ReactiveProperty<Visibility> TagListVisibility { get; private set; }
-        public ReactiveProperty<int> TagListSelectedIndex { get; private set; }
+        public ReadOnlyReactivePropertySlim<Visibility> TagListVisibility { get; private set; }
+        public ReactivePropertySlim<int> TagListSelectedIndex { get; private set; }
         public string TagComboBoxDefault { get; private set; }
-        public ReactiveProperty<Visibility> TagComboBoxDefaultVisibility { get; private set; }
+        public ReadOnlyReactivePropertySlim<Visibility> TagComboBoxDefaultVisibility { get; private set; }
 
-        public ReactiveProperty<int?> NumericText { get; private set; }
-        public ReactiveProperty<Visibility> NumericTextVisibility { get; private set; }
+        public ReactivePropertySlim<int?> NumericText { get; private set; }
+        public ReadOnlyReactivePropertySlim<Visibility> NumericTextVisibility { get; private set; }
 
-        public ReactiveProperty<double?> FloatText { get; private set; }
-        public ReactiveProperty<Visibility> FloatTextVisibility { get; private set; }
+        public ReactivePropertySlim<double?> FloatText { get; private set; }
+        public ReadOnlyReactivePropertySlim<Visibility> FloatTextVisibility { get; private set; }
 
         public ObservableCollection<DirectoryInfo> DirectoryList { get; private set; }
-        public ReactiveProperty<Visibility> DirectoryListVisibility { get; private set; }
+        public ReadOnlyReactivePropertySlim<Visibility> DirectoryListVisibility { get; private set; }
 
-        public ReactiveProperty<string> TextBoxContent { get; private set; }
-        public ReactiveProperty<Visibility> TextBoxVisibility { get; private set; }
+        public ReactivePropertySlim<string> TextBoxContent { get; private set; }
+        public ReadOnlyReactivePropertySlim<Visibility> TextBoxVisibility { get; private set; }
 
-        public ReactiveProperty<DateTime> DateContent { get; private set; }
-        public ReactiveProperty<Visibility> DateVisibility { get; private set; }
+        public ReactivePropertySlim<DateTime> DateContent { get; private set; }
+        public ReadOnlyReactivePropertySlim<Visibility> DateVisibility { get; private set; }
 
         private bool isSVO;
         public Visibility SOVVisibility
@@ -80,11 +80,11 @@ namespace ShibugakiViewer.ViewModels.Controls
 
         public string BelowRefString { get; private set; }
         public string IsVString { get; private set; }
-        public ReactiveProperty<Visibility> IsVStringVisibility { get; private set; }
+        public ReadOnlyReactivePropertySlim<Visibility> IsVStringVisibility { get; private set; }
 
         public ReactiveCommand OkCommand { get; }
         public ReactiveCommand CancelCommand { get; }
-        public ReactiveProperty<bool> IsEditing { get; }
+        public ReactivePropertySlim<bool> IsEditing { get; }
 
         private ApplicationCore settings;
         private Library library;
@@ -141,7 +141,7 @@ namespace ShibugakiViewer.ViewModels.Controls
             this.Init(unit);
             
 
-            this.IsEditing = new ReactiveProperty<bool>(true).AddTo(this.unsubscribers);
+            this.IsEditing = new ReactivePropertySlim<bool>(true).AddTo(this.unsubscribers);
 
             this.OkCommand = this.PropertyListSelectedIndex
                 .Select(x => x >= 0)
@@ -171,43 +171,43 @@ namespace ShibugakiViewer.ViewModels.Controls
 
             this.CompareListVisibility = propertyObserver
                 .Select(x => VisibilityHelper.Set(x.Enable && x.Property.IsComperable()))
-                .ToReactiveProperty().AddTo(this.unsubscribers);
+                .ToReadOnlyReactivePropertySlim().AddTo(this.unsubscribers);
 
             this.EqualityListVisibility = propertyObserver
                 .Select(x => VisibilityHelper.Set(x.Enable && !x.Property.IsComperable()))
-                .ToReactiveProperty().AddTo(this.unsubscribers);
+                .ToReadOnlyReactivePropertySlim().AddTo(this.unsubscribers);
 
             this.NumericTextVisibility = propertyObserver
                 .Select(x => VisibilityHelper.Set(x.Enable && x.Property.IsInteger()))
-                .ToReactiveProperty().AddTo(this.unsubscribers);
+                .ToReadOnlyReactivePropertySlim().AddTo(this.unsubscribers);
 
             this.FloatTextVisibility = propertyObserver
                 .Select(x => VisibilityHelper.Set(x.Enable && x.Property.IsFloat()))
-                .ToReactiveProperty().AddTo(this.unsubscribers);
+                .ToReadOnlyReactivePropertySlim().AddTo(this.unsubscribers);
 
             this.DirectoryListVisibility = propertyObserver
                 .Select(x => VisibilityHelper.Set(x.Enable && x.Property == FileProperty.DirectoryPathStartsWith))
-                .ToReactiveProperty().AddTo(this.unsubscribers);
+                .ToReadOnlyReactivePropertySlim().AddTo(this.unsubscribers);
 
             this.TagListVisibility = propertyObserver
                .Select(x => VisibilityHelper.Set(x.Enable && x.Property == FileProperty.ContainsTag))
-               .ToReactiveProperty().AddTo(this.unsubscribers);
+               .ToReadOnlyReactivePropertySlim().AddTo(this.unsubscribers);
 
             this.TextBoxVisibility = propertyObserver
                .Select(x => VisibilityHelper.Set(x.Enable && x.Property.IsText()))
-               .ToReactiveProperty().AddTo(this.unsubscribers);
+               .ToReadOnlyReactivePropertySlim().AddTo(this.unsubscribers);
 
             this.DateVisibility = propertyObserver
                .Select(x => VisibilityHelper.Set(x.Enable && x.Property.IsDate()))
-               .ToReactiveProperty().AddTo(this.unsubscribers);
+               .ToReadOnlyReactivePropertySlim().AddTo(this.unsubscribers);
 
             this.IsVStringVisibility = propertyObserver
                .Select(x => VisibilityHelper.Set(x.Enable && !this.isSVO))
-               .ToReactiveProperty().AddTo(this.unsubscribers);
+               .ToReadOnlyReactivePropertySlim().AddTo(this.unsubscribers);
 
             this.PropertyComboBoxDefaultVisibility = this.PropertyListSelectedIndex
                 .Select(x => VisibilityHelper.Set(x < 0))
-                .ToReactiveProperty()
+                .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.unsubscribers);
 
             this.TagComboBoxDefaultVisibility
@@ -218,7 +218,7 @@ namespace ShibugakiViewer.ViewModels.Controls
                 }
                 .CombineLatestValuesAreAllTrue()
                 .Select(x => VisibilityHelper.Set(x))
-                .ToReactiveProperty()
+                .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.unsubscribers);
 
 
@@ -253,32 +253,32 @@ namespace ShibugakiViewer.ViewModels.Controls
         private void Init(UnitSearch source)
         {
 
-            this.PropertyListSelectedIndex = new ReactiveProperty<int>(-2).AddTo(this.unsubscribers);
+            this.PropertyListSelectedIndex = new ReactivePropertySlim<int>(-2).AddTo(this.unsubscribers);
             
-            this.CompareOperatorSelectedIndex = new ReactiveProperty<int>
+            this.CompareOperatorSelectedIndex = new ReactivePropertySlim<int>
                 (this.CompareOperator.FindIndex(x => x.Value == ((source?.Mode)??CompareMode.Equal))).AddTo(this.unsubscribers);
 
-            this.EqualitySelectedIndex = new ReactiveProperty<int>
+            this.EqualitySelectedIndex = new ReactivePropertySlim<int>
                 (source == null ? 0 : this.GetEqualitySelectorIndex(!source.Mode.ContainsEqual()));
 
-            this.TextBoxContent = new ReactiveProperty<string>
+            this.TextBoxContent = new ReactivePropertySlim<string>
                 ((source == null || !source.Property.IsText()) ? "" : source.Reference.ToString()).AddTo(this.unsubscribers);
 
-            this.DateContent = new ReactiveProperty<DateTime>
+            this.DateContent = new ReactivePropertySlim<DateTime>
                 ((source == null || !source.Property.IsDate())
                 ? DateTime.Now : ((DateTimeOffset)source.Reference).Date).AddTo(this.unsubscribers);
 
-            this.TagListSelectedIndex = new ReactiveProperty<int>
+            this.TagListSelectedIndex = new ReactivePropertySlim<int>
                 ((source == null || source.Property != FileProperty.ContainsTag) ? -1
                 : this.RegisteredTags.FindIndex(x => x.Key == (int)source.Reference)).AddTo(this.unsubscribers);
 
-            this.NumericText = new ReactiveProperty<int?>(
+            this.NumericText = new ReactivePropertySlim<int?>(
                 (source != null && source.Property.IsInteger())
                 ? ((int?)(source.Reference as long?) ?? (source.Reference as int?))
                 : null)
                 .AddTo(this.unsubscribers);
 
-            this.FloatText = new ReactiveProperty<double?>(
+            this.FloatText = new ReactivePropertySlim<double?>(
                 (source != null && source.Property.IsFloat())
                 ? (source.Reference as double?) ?? (source.Reference as int?)
                 : null)

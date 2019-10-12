@@ -232,7 +232,9 @@
                           Margin="8">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition MaxWidth="300"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
                         <TextBlock 
@@ -250,8 +252,28 @@
                             Background="#80FFFFFF"
                             FontSize="{StaticResource NormalTextSize}"
                             VerticalAlignment="Bottom"
-                            xb:TextBoxBehavior.UpdateByReturn="True"
-                            />
+                            xb:TextBoxBehavior.UpdateByReturn="True"/>
+
+
+                        <cc:FlatButton
+                            Grid.Column="2"
+                            Content="{StaticResource UpSymbol}"
+                            Style="{StaticResource symbolButton}"
+                            ToolTipService.ToolTip="{x:Static properties:Resources.Up}"
+                            Width="48" Height="48"
+                            VerticalAlignment="Center" Margin="10,10,10,10"
+                            Command="{Binding UpFavoriteCommand}"/>
+
+                        <cc:FlatButton
+                            Grid.Column="3"
+                            Content="{StaticResource DownSymbol}"
+                            Style="{StaticResource symbolButton}"
+                            ToolTipService.ToolTip="{x:Static properties:Resources.Down}"
+                            Width="48" Height="48"
+                            VerticalAlignment="Center" Margin="10,10,20,10"
+                            Command="{Binding DownFavoriteCommand}"/>
+                        
+                        
                     </Grid>
                 </Grid>
             </Grid>

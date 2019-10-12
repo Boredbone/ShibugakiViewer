@@ -14,6 +14,22 @@
         <DataTemplate x:Key="ComboBoxTemplate">
             <TextBlock Text="{Binding Key}" Padding="0,0,27,0"/>
         </DataTemplate>
+        <Style TargetType="Button">
+            <Setter Property="FontSize" Value="{StaticResource InputTextSize}"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="FontSize" Value="{StaticResource InputTextSize}"/>
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="FontSize" Value="{StaticResource InputTextSize}"/>
+        </Style>
+        <Style TargetType="TextBlock" x:Key="editorLabelTextStyle">
+            <Style.Setters>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="FontSize" Value="{StaticResource NormalTextSize}"/>
+                <Setter Property="Margin" Value="3"/>
+            </Style.Setters>
+        </Style>
     </UserControl.Resources>
     <Border Background="White" BorderThickness="1" BorderBrush="Gray">
         <Grid Margin="10">
@@ -27,38 +43,39 @@
                     <Grid HorizontalAlignment="Left"
                           VerticalAlignment="Top">
                         <ComboBox HorizontalAlignment="Left"
-                                  VerticalAlignment="Center" Width="172"
+                                  VerticalAlignment="Center" MinWidth="172"
                                   ItemsSource="{Binding PropertyList}"
                                   ItemTemplate="{StaticResource ComboBoxTemplate}" 
                                   SelectedIndex="{Binding PropertyListSelectedIndex.Value,Mode=TwoWay}"/>
                         <TextBlock
                             Style="{StaticResource comboBoxPlaceHolderTextStyle}"
                             Visibility="{Binding PropertyComboBoxDefaultVisibility.Value,Mode=OneWay}"
+                              FontSize="{StaticResource InputTextSize}"
                             Text="{Binding PropertyComboBoxDefault}"/>
                     </Grid>
 
                     <!--
                       PlaceholderText="{Binding PropertyComboBoxDefault}"-->
                     <TextBlock Text="{Binding IsVString}"
-                           VerticalAlignment="Center"  FontSize="16" Margin="3"
-                           Visibility="{Binding IsVStringVisibility.Value,Mode=TwoWay}"/>
+                            Style="{StaticResource editorLabelTextStyle}"
+                           Visibility="{Binding IsVStringVisibility.Value,Mode=OneWay}"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Margin="10,10,10,10"
-                      Visibility="{Binding CompareListVisibility.Value,Mode=TwoWay}">
+                      Visibility="{Binding CompareListVisibility.Value,Mode=OneWay}">
                     <TextBlock Text="{Binding BelowRefString}" Visibility="{Binding SOVVisibility}"
-                           VerticalAlignment="Center" FontSize="16" Margin="3"/>
+                            Style="{StaticResource editorLabelTextStyle}"/>
                     <ComboBox HorizontalAlignment="Left"
-                      VerticalAlignment="Center" Width="172" 
+                      VerticalAlignment="Center" MinWidth="172"
                       ItemsSource="{Binding CompareOperator}"
                       SelectedIndex="{Binding CompareOperatorSelectedIndex.Value,Mode=TwoWay}"
                       ItemTemplate="{StaticResource ComboBoxTemplate}"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Margin="10,10,10,10"
-                      Visibility="{Binding EqualityListVisibility.Value,Mode=TwoWay}">
+                      Visibility="{Binding EqualityListVisibility.Value,Mode=OneWay}">
                     <TextBlock Text="{Binding BelowRefString}" Visibility="{Binding SOVVisibility}"
-                           VerticalAlignment="Center" FontSize="16" Margin="3"/>
+                            Style="{StaticResource editorLabelTextStyle}"/>
                     <ComboBox HorizontalAlignment="Left"
                       VerticalAlignment="Center" Width="172"
                       ItemsSource="{Binding EqualitySelector}"
@@ -67,7 +84,7 @@
                 
                 <TextBox HorizontalAlignment="Left" Margin="10,10,10,10"
                      VerticalAlignment="Top" Width="172"
-                     Visibility="{Binding NumericTextVisibility.Value,Mode=TwoWay}"
+                     Visibility="{Binding NumericTextVisibility.Value,Mode=OneWay}"
                      Text="{Binding NumericText.Value,Mode=TwoWay,UpdateSourceTrigger=Default}"
                       x:Uid="NumericTextBox"
                      behavior:PlaceHolderBehavior.PlaceHolderText="{x:Static properties:Resources.NumericTextBox_PlaceholderText}"
@@ -75,7 +92,7 @@
                 
                 <TextBox HorizontalAlignment="Left" Margin="10,10,10,10"
                      VerticalAlignment="Top" Width="172"
-                     Visibility="{Binding FloatTextVisibility.Value,Mode=TwoWay}"
+                     Visibility="{Binding FloatTextVisibility.Value,Mode=OneWay}"
                      Text="{Binding FloatText.Value,Mode=TwoWay,UpdateSourceTrigger=Default}"
                      behavior:PlaceHolderBehavior.PlaceHolderText="{x:Static properties:Resources.NumericTextBox_PlaceholderText}"
                      InputScope="Number"/>
@@ -104,7 +121,8 @@
                                   SelectedIndex="{Binding SelectedIndex.Value,Mode=TwoWay}">
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Key}"  Padding="0,0,27,0"/>
+                                            <TextBlock Text="{Binding Key}"  Padding="0,0,27,0" 
+                                                       FontSize="{StaticResource InputTextSize}"/>
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
 
@@ -117,7 +135,7 @@
 
                 <Grid HorizontalAlignment="Left" Margin="10,10,10,26"
                       VerticalAlignment="Top"
-                      Visibility="{Binding TagListVisibility.Value,Mode=TwoWay}">
+                      Visibility="{Binding TagListVisibility.Value,Mode=OneWay}">
 
                     <ComboBox HorizontalAlignment="Left" Margin="0"
                       VerticalAlignment="Center" Width="172"
@@ -128,29 +146,32 @@
                       PlaceholderText="{Binding TagComboBoxDefault}"-->
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Value.Name}" Padding="0,0,27,0"/>
+                                <TextBlock Text="{Binding Value.Name}" Padding="0,0,27,0"
+                                           FontSize="{StaticResource InputTextSize}"/>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
                     <TextBlock
                         Style="{StaticResource comboBoxPlaceHolderTextStyle}"
+                              FontSize="{StaticResource InputTextSize}"
                         Visibility="{Binding TagComboBoxDefaultVisibility.Value,Mode=OneWay}"
                         Text="{Binding TagComboBoxDefault}"/>
                 </Grid>
                 <TextBox HorizontalAlignment="Left" Margin="10,10,10,10"
                      VerticalAlignment="Top" Width="172"
-                     Visibility="{Binding TextBoxVisibility.Value,Mode=TwoWay}"
+                     Visibility="{Binding TextBoxVisibility.Value,Mode=OneWay}"
                      x:Uid="StringTextBox"
                      behavior:PlaceHolderBehavior.PlaceHolderText="{x:Static properties:Resources.StringTextBox_PlaceholderText}"
                      Text="{Binding TextBoxContent.Value,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
                 <!--PlaceholderText="Value" -->
 
-                <DatePicker Visibility="{Binding DateVisibility.Value,Mode=TwoWay}"
+                <DatePicker Visibility="{Binding DateVisibility.Value,Mode=OneWay}"
                         SelectedDate="{Binding DateContent.Value,Mode=TwoWay}"
+                            FontSize="{StaticResource InputTextSize}"
                          Margin="10,8,10,16"/>
 
                 <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center"
-                        Margin="0,0,0,10">
+                        Margin="0,10,0,10">
 
                     <Button x:Uid="OkButton"
                             IsDefault="True"

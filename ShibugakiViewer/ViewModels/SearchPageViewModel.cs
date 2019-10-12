@@ -8,8 +8,10 @@ using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using Boredbone.Utility.Extensions;
 using Boredbone.Utility.Notification;
+using Boredbone.XamlTools;
 using ImageLibrary.Core;
 using ImageLibrary.File;
 using ImageLibrary.Search;
@@ -27,30 +29,34 @@ namespace ShibugakiViewer.ViewModels
     {
         public ReactiveProperty<SearchInformation> CurrentSearch { get; }
 
-        public ReactiveCommand StartSearchCommand { get; }
-        public ReactiveCommand AddCriteriaCommand { get; }
-        public ReactiveCommand AddToFavoriteCommand { get; }
-        public ReactiveCommand SwitchModeCommand { get; }
-        public ReactiveCommand ItemClickCommand { get; }
-        public ReactiveCommand NewSearchCommand { get; }
+        public DelegateCommand StartSearchCommand { get; }
+        public DelegateCommand AddCriteriaCommand { get; }
+        public DelegateCommand AddToFavoriteCommand { get; }
+        public DelegateCommand SwitchModeCommand { get; }
+        public DelegateCommand<ISqlSearch> ItemClickCommand { get; }
+        public DelegateCommand NewSearchCommand { get; }
 
-        public ReactiveProperty<bool> IsEditing { get; }
-        public ReadOnlyReactiveProperty<bool> IsThumbnailVisible { get; }
+        public ReactivePropertySlim<bool> IsEditing { get; }
+        public ReadOnlyReactivePropertySlim<bool> IsThumbnailVisible { get; }
 
         public ReactiveCommand SelectHistoryCommand { get; }
         public ReactiveCommand SelectFavoriteCommand { get; }
-        public ReactiveCommand ClickHistoryCommand { get; }
-        public ReactiveCommand ClickFavoriteCommand { get; }
-        public ReactiveCommand ShowHistoryCommand { get; }
-        public ReactiveCommand ShowFavoriteCommand { get; }
+        public DelegateCommand<SearchInformation> ClickHistoryCommand { get; }
+        public DelegateCommand<SearchInformation> ClickFavoriteCommand { get; }
+        public DelegateCommand ShowHistoryCommand { get; }
+        public DelegateCommand ShowFavoriteCommand { get; }
+
+        public DelegateCommand UpFavoriteCommand { get; }
+        public DelegateCommand DownFavoriteCommand { get; }
+
 
         public ReadOnlyReactiveCollection<SearchInformation> HistoryList { get; }
         public ReadOnlyReactiveCollection<SearchInformation> FavoriteList { get; }
 
 
-        public ReactiveProperty<TabMode> SelectedTab { get; }
-        public ReadOnlyReactiveProperty<int> CurrentSearchType { get; }
-        public ReadOnlyReactiveProperty<bool> IsFavoriteSearch { get; }
+        public ReactivePropertySlim<TabMode> SelectedTab { get; }
+        public ReadOnlyReactivePropertySlim<int> CurrentSearchType { get; }
+        public ReadOnlyReactivePropertySlim<bool> IsFavoriteSearch { get; }
                 
         private readonly ClientWindowViewModel parent;
 
@@ -67,7 +73,7 @@ namespace ShibugakiViewer.ViewModels
             this.HistoryList = searcher.SearchHistory.ToReadOnlyReactiveCollection().AddTo(this.Disposables);
             this.FavoriteList = searcher.FavoriteSearchList.ToReadOnlyReactiveCollection().AddTo(this.Disposables);
 
-            this.SelectedTab = new ReactiveProperty<TabMode>
+            this.SelectedTab = new ReactivePropertySlim<TabMode>
                 ((searcher.FavoriteSearchList.Count > 0 && core.LastSearchedFavorite)
                     ? TabMode.Favorite : TabMode.History)
                 .AddTo(this.Disposables);
@@ -76,7 +82,7 @@ namespace ShibugakiViewer.ViewModels
                 .Subscribe(x => core.LastSearchedFavorite = (x == TabMode.Favorite))
                 .AddTo(this.Disposables);
 
-            this.IsEditing = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
+            this.IsEditing = new ReactivePropertySlim<bool>(false).AddTo(this.Disposables);
 
             
             this.SelectHistoryCommand = new ReactiveCommand().AddTo(this.Disposables);
@@ -100,7 +106,7 @@ namespace ShibugakiViewer.ViewModels
 
             this.IsThumbnailVisible = this.CurrentSearch
                 .Select(x => x.DateLastUsed > default(DateTimeOffset))
-                .ToReadOnlyReactiveProperty()
+                .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.Disposables);
 
             searcher.FavoriteSearchList
@@ -132,76 +138,68 @@ namespace ShibugakiViewer.ViewModels
                 .Merge(this.CurrentSearch)
                 .Select(x => this.HasFavoriteSearch(x) ? 1
                     : this.HasHistorySearch(x) ? 0 : 2)
-                .ToReadOnlyReactiveProperty()
+                .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.Disposables);
 
             this.IsFavoriteSearch = this.CurrentSearchType
                 .Select(x => x == 1)
-                .ToReadOnlyReactiveProperty()
+                .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.Disposables);
             
 
-            this.ClickHistoryCommand = new ReactiveCommand().AddTo(this.Disposables);
-            this.ClickFavoriteCommand = new ReactiveCommand().AddTo(this.Disposables);
-
-            this.ClickHistoryCommand
-                .Select(x => x as SearchInformation)
-                .Where(x => x != null)
-                .Subscribe(x =>
+            this.ClickHistoryCommand = new DelegateCommand<SearchInformation>(x =>
+            {
+                if (x == null)
                 {
-                    if (!this.IsEditing.Value
-                        || this.CurrentSearch.Value == null
-                        || this.CurrentSearch.Value.Key.IsNullOrEmpty()
-                        || this.CurrentSearch.Value.Key.Equals(x.Key))
-                    {
-                        this.StartSearch(client, x);
-                    }
-                    else
-                    {
-                        this.SelectHistoryCommand.Execute(x);
-                    }
-                })
-                .AddTo(this.Disposables);
-
-            this.ClickFavoriteCommand
-                .Select(x => x as SearchInformation)
-                .Where(x => x != null)
-                .Subscribe(x =>
+                    return;
+                }
+                if (!this.IsEditing.Value
+                    || this.CurrentSearch.Value == null
+                    || this.CurrentSearch.Value.Key.IsNullOrEmpty()
+                    || this.CurrentSearch.Value.Key.Equals(x.Key))
                 {
-                    if (!this.IsEditing.Value
-                        || this.CurrentSearch.Value == null
-                        || this.CurrentSearch.Value.Key.IsNullOrEmpty()
-                        || this.CurrentSearch.Value.Key.Equals(x.Key))
-                    {
-                        this.StartSearch(client, x);
-                    }
-                    else
-                    {
-                        this.SelectFavoriteCommand.Execute(x);
-                    }
-                })
-                .AddTo(this.Disposables);
-            
-            this.StartSearchCommand = new ReactiveCommand()
-                .WithSubscribe(_ => this.StartSearch(client, this.CurrentSearch.Value), this.Disposables);
-
-            this.AddCriteriaCommand = new ReactiveCommand()
-                .WithSubscribe(_ => this.EditSearch(this.CurrentSearch.Value.Root), this.Disposables);
-
-            this.ItemClickCommand = new ReactiveCommand()
-                .WithSubscribe(item =>
+                    this.StartSearch(client, x);
+                }
+                else
                 {
-                    var search = item as ISqlSearch;
+                    this.SelectHistoryCommand.Execute(x);
+                }
+            });
 
-                    if (search != null)
-                    {
-                        this.EditSearch(search);
-                    }
+            this.ClickFavoriteCommand = new DelegateCommand<SearchInformation>(x =>
+            {
+                if (x == null)
+                {
+                    return;
+                }
+                if (!this.IsEditing.Value
+                    || this.CurrentSearch.Value == null
+                    || this.CurrentSearch.Value.Key.IsNullOrEmpty()
+                    || this.CurrentSearch.Value.Key.Equals(x.Key))
+                {
+                    this.StartSearch(client, x);
+                }
+                else
+                {
+                    this.SelectFavoriteCommand.Execute(x);
+                }
+            });
 
-                }, this.Disposables);
+            this.StartSearchCommand = new DelegateCommand
+                (() => this.StartSearch(client, this.CurrentSearch.Value));
 
-            this.AddToFavoriteCommand = new ReactiveCommand()
-                .WithSubscribe(_ =>
+            this.AddCriteriaCommand = new DelegateCommand
+                (() => this.EditSearch(this.CurrentSearch.Value.Root));
+
+            this.ItemClickCommand = new DelegateCommand<ISqlSearch>(search =>
+            {
+                if (search != null)
+                {
+                    this.EditSearch(search);
+                }
+            });
+
+            this.AddToFavoriteCommand = new DelegateCommand(() =>
                 {
                     var item = this.CurrentSearch.Value;
                     if (item == null)
@@ -218,11 +216,10 @@ namespace ShibugakiViewer.ViewModels
                         searcher.MarkSearchFavorite(item);
                     }
 
-                }, this.Disposables);
+                });
 
 
-            this.SwitchModeCommand = new ReactiveCommand()
-                .WithSubscribe(_ =>
+            this.SwitchModeCommand = new DelegateCommand(()=>
                 {
                     var item = this.CurrentSearch.Value;
                     if (item == null)
@@ -231,16 +228,30 @@ namespace ShibugakiViewer.ViewModels
                     }
 
                     item.Root.IsOr = !item.Root.IsOr;
-                }, this.Disposables);
+                });
 
-            this.NewSearchCommand = new ReactiveCommand()
-                .WithSubscribe(_ => this.CurrentSearch.Value = SearchInformation.GenerateEmpty(),
-                    this.Disposables);
+            this.NewSearchCommand = new DelegateCommand
+                (() => this.CurrentSearch.Value = SearchInformation.GenerateEmpty());
 
-            this.ShowFavoriteCommand = new ReactiveCommand()
-                .WithSubscribe(_ => this.SelectedTab.Value = TabMode.Favorite, this.Disposables);
-            this.ShowHistoryCommand = new ReactiveCommand()
-                .WithSubscribe(_ => this.SelectedTab.Value = TabMode.History, this.Disposables);
+            this.ShowFavoriteCommand = new DelegateCommand
+                (() => this.SelectedTab.Value = TabMode.Favorite);
+            this.ShowHistoryCommand = new DelegateCommand
+                (() => this.SelectedTab.Value = TabMode.History);
+
+            this.UpFavoriteCommand = new DelegateCommand(() =>
+            {
+                if (this.IsFavoriteSearch.Value)
+                {
+                    searcher.MoveFavoriteItem(this.CurrentSearch.Value, -1, IsCtrlOrShiftKeyPressed());
+                }
+            });
+            this.DownFavoriteCommand = new DelegateCommand(() =>
+            {
+                if (this.IsFavoriteSearch.Value)
+                {
+                    searcher.MoveFavoriteItem(this.CurrentSearch.Value, 1, IsCtrlOrShiftKeyPressed());
+                }
+            });
         }
 
         private bool HasFavoriteSearch(SearchInformation search)
@@ -272,6 +283,13 @@ namespace ShibugakiViewer.ViewModels
             {
                 this.SelectedTab.Value = TabMode.History;
             }
+        }
+        private static bool IsCtrlOrShiftKeyPressed()
+        {
+            return (Keyboard.GetKeyStates(Key.LeftShift) & KeyStates.Down) == KeyStates.Down ||
+                 (Keyboard.GetKeyStates(Key.RightShift) & KeyStates.Down) == KeyStates.Down ||
+                 (Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) == KeyStates.Down ||
+                 (Keyboard.GetKeyStates(Key.RightCtrl) & KeyStates.Down) == KeyStates.Down;
         }
 
     }

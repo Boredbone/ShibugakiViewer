@@ -112,8 +112,9 @@ namespace ShibugakiViewer.Views.Controls
 
             if (index > 0)
             {
-                this.SortSettings.Remove(item);
-                this.SortSettings.Insert(index - 1, item);
+                this.SortSettings.Move(index, IsCtrlOrShiftKeyPressed() ? 0 : (index - 1));
+                //this.SortSettings.Remove(item);
+                //this.SortSettings.Insert(index - 1, item);
             }
         }
 
@@ -133,9 +134,17 @@ namespace ShibugakiViewer.Views.Controls
 
             if (index >= 0 && index < this.SortSettings.Count - 1)
             {
-                this.SortSettings.Remove(item);
-                this.SortSettings.Insert(index + 1, item);
+                this.SortSettings.Move(index, IsCtrlOrShiftKeyPressed() ? (this.SortSettings.Count - 1) : (index + 1));
+                //this.SortSettings.Remove(item);
+                //this.SortSettings.Insert(index + 1, item);
             }
+        }
+        private static bool IsCtrlOrShiftKeyPressed()
+        {
+            return (Keyboard.GetKeyStates(Key.LeftShift) & KeyStates.Down) == KeyStates.Down ||
+                 (Keyboard.GetKeyStates(Key.RightShift) & KeyStates.Down) == KeyStates.Down ||
+                 (Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) == KeyStates.Down ||
+                 (Keyboard.GetKeyStates(Key.RightCtrl) & KeyStates.Down) == KeyStates.Down;
         }
     }
 
