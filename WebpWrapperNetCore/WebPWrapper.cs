@@ -309,8 +309,8 @@ namespace WebPWrapper
             }
         }
         #endregion
-
-        #region | Public Compress Functions |
+#if false
+#region | Public Compress Functions |
         /// <summary>Save bitmap to file in WebP format</summary>
         /// <param name="bmp">Bitmap with the WebP image</param>
         /// <param name="pathFileName">The file to write</param>
@@ -934,7 +934,7 @@ namespace WebPWrapper
             public byte[] data;                 // Data of WebP Image
         }
 #endregion
-
+#endif
 #region | Destruction |
         /// <summary>Free memory</summary>
         public void Dispose()
@@ -949,7 +949,7 @@ namespace WebPWrapper
     internal sealed partial class UnsafeNativeMethods
     {
         private static int WEBP_DECODER_ABI_VERSION = 0x0208;
-
+#if false
         /// <summary>This function will initialize the configuration according to a predefined set of parameters (referred to by 'preset') and a given quality factor.</summary>
         /// <param name="config">The WebPConfig struct</param>
         /// <param name="preset">Type of image</param>
@@ -971,7 +971,7 @@ namespace WebPWrapper
         private static extern int WebPConfigInitInternal_x86(ref WebPConfig config, WebPPreset preset, float quality, int WEBP_DECODER_ABI_VERSION);
         [DllImport("libwebp_x64.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPConfigInitInternal")]
         private static extern int WebPConfigInitInternal_x64(ref WebPConfig config, WebPPreset preset, float quality, int WEBP_DECODER_ABI_VERSION);
-
+#endif
         /// <summary>Get info of WepP image</summary>
         /// <param name="rawWebP">Bytes[] of webp image</param>
         /// <param name="data_size">Size of rawWebP</param>
@@ -993,7 +993,7 @@ namespace WebPWrapper
         private static extern VP8StatusCode WebPGetFeaturesInternal_x86([InAttribute()] IntPtr rawWebP, UIntPtr data_size, ref WebPBitstreamFeatures features, int WEBP_DECODER_ABI_VERSION);
         [DllImport("libwebp_x64.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPGetFeaturesInternal")]
         private static extern VP8StatusCode WebPGetFeaturesInternal_x64([InAttribute()] IntPtr rawWebP, UIntPtr data_size, ref WebPBitstreamFeatures features, int WEBP_DECODER_ABI_VERSION);
-
+#if false
         /// <summary>Activate the lossless compression mode with the desired efficiency.</summary>
         /// <param name="config">The WebPConfig struct</param>
         /// <param name="level">between 0 (fastest, lowest compression) and 9 (slower, best compression)</param>
@@ -1151,7 +1151,7 @@ namespace WebPWrapper
         private static extern void WebPPictureFree_x86(ref WebPPicture wpic);
         [DllImport("libwebp_x64.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPPictureFree")]
         private static extern void WebPPictureFree_x64(ref WebPPicture wpic);
-
+#endif
         /// <summary>Validate the WebP image header and retrieve the image height and width. Pointers *width and *height can be passed NULL if deemed irrelevant</summary>
         /// <param name="data">Pointer to WebP image data</param>
         /// <param name="data_size">This is the size of the memory block pointed to by data containing the image data</param>
@@ -1262,6 +1262,7 @@ namespace WebPWrapper
         [DllImport("libwebp_x64.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPFreeDecBuffer")]
         private static extern void WebPFreeDecBuffer_x64(ref WebPDecBuffer buffer);
 
+#if false
         /// <summary>Lossy encoding images</summary>
         /// <param name="bgr">Pointer to BGR image data</param>
         /// <param name="width">The range is limited currently from 1 to 16383</param>
@@ -1373,10 +1374,12 @@ namespace WebPWrapper
         private static extern int WebPPictureDistortion_x86(ref WebPPicture srcPicture, ref WebPPicture refPicture, int metric_type, IntPtr pResult);
         [DllImport("libwebp_x64.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPPictureDistortion")]
         private static extern int WebPPictureDistortion_x64(ref WebPPicture srcPicture, ref WebPPicture refPicture, int metric_type, IntPtr pResult);
+#endif
     }
-#endregion
+    #endregion
 
 #region | Predefined |
+#if false
     /// <summary>Enumerate some predefined settings for WebPConfig, depending on the type of source picture. These presets are used when calling WebPConfigPreset().</summary>
     public enum WebPPreset
     {
@@ -1422,6 +1425,7 @@ namespace WebPWrapper
         /// <summary>List terminator. always last.</summary>
         VP8_ENC_ERROR_LAST,
     }
+#endif
 
     /// <summary>Enumeration of the status codes.</summary>
     public enum VP8StatusCode
@@ -1513,6 +1517,7 @@ namespace WebPWrapper
         private uint[] pad;
     };
 
+#if false
     /// <summary>Compression parameters.</summary>
     [StructLayoutAttribute(LayoutKind.Sequential)]
     public struct WebPConfig
@@ -1741,6 +1746,7 @@ namespace WebPWrapper
         [MarshalAsAttribute(UnmanagedType.ByValArray, SizeConst = 2, ArraySubType = UnmanagedType.U4)]
         private uint[] pad;
     };
+#endif
 
     [StructLayoutAttribute(LayoutKind.Sequential)]
     public struct WebPDecoderConfig
