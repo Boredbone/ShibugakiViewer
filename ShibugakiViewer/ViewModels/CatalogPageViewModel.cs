@@ -44,14 +44,14 @@ namespace ShibugakiViewer.ViewModels
         public ReactiveProperty<int> DisplayIndex { get; }
         public ReactiveProperty<int> StartIndex { get; }
 
-        public ReactiveProperty<int> RowLength => this.client.RowLength;
-        public ReactiveProperty<int> ColumnLength => this.client.ColumnLength;
+        public ReactivePropertySlim<int> RowLength => this.client.RowLength;
+        public ReactivePropertySlim<int> ColumnLength => this.client.ColumnLength;
 
 
         public ReactiveProperty<double> ThumbnailSize { get; }
         public ReactiveProperty<Thickness> ThumbnailMargin { get; }
-        public ReadOnlyReactiveProperty<Size> ThumbnailViewSize { get; }
-        public ReactiveProperty<Visibility> ImagePropertiesVisibility { get; }
+        public ReadOnlyReactivePropertySlim<Size> ThumbnailViewSize { get; }
+        public ReadOnlyReactivePropertySlim<Visibility> ImagePropertiesVisibility { get; }
         public ReadOnlyReactiveProperty<bool> IsInSelecting { get; }
         public ReadOnlyReactiveProperty<bool> IsRefreshEnabled { get; }
         public ReadOnlyReactiveProperty<bool> IsRenderingEnabled { get; }
@@ -115,11 +115,11 @@ namespace ShibugakiViewer.ViewModels
 
             this.ThumbnailViewSize = this.ThumbnailSize
                 .Select(x => new Size(x, x))
-                .ToReadOnlyReactiveProperty()
+                .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.Disposables);
 
             this.ImagePropertiesVisibility = this.ThumbnailSize
-                .Select(x => VisibilityHelper.Set(x > 128)).ToReactiveProperty().AddTo(this.Disposables);
+                .Select(x => VisibilityHelper.Set(x > 128)).ToReadOnlyReactivePropertySlim().AddTo(this.Disposables);
 
             this.ThumbnailMargin = this.ThumbnailSize
                 .Select(x => new Thickness((x < 128) ? 1 : (x < 256) ? 2 : 4))

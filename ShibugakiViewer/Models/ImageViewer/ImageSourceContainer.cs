@@ -57,13 +57,13 @@ namespace ShibugakiViewer.Models.ImageViewer
             return this.Image != null || this.IsNotFound;
         }
 
-        public Task<bool> LoadImageAsync
+        public bool LoadImage
             (string fullPath, Size? frameSize, bool asThumbnail, bool isFill, bool cmsEnable)
         {
-            return this.LoadImageMainAsync(fullPath, frameSize, asThumbnail, isFill, cmsEnable);
+            return this.LoadImageMain(fullPath, frameSize, asThumbnail, isFill, cmsEnable);
         }
 
-        public async Task<bool> LoadImageAsync
+        public bool LoadImage
             (Record file, Size? frameSize, bool asThumbnail, bool isFill, bool cmsEnable)
         {
             if (file == null)
@@ -71,8 +71,8 @@ namespace ShibugakiViewer.Models.ImageViewer
                 return false;
             }
 
-            var result = await this.LoadImageMainAsync
-                (file.FullPath, frameSize, asThumbnail, isFill, cmsEnable).ConfigureAwait(false);
+            var result = this.LoadImageMain
+                (file.FullPath, frameSize, asThumbnail, isFill, cmsEnable);
 
             if (result && this.Information != null)
             {
@@ -110,7 +110,7 @@ namespace ShibugakiViewer.Models.ImageViewer
         }
 
 
-        private async Task<bool> LoadImageMainAsync
+        private bool LoadImageMain
             (string fullPath, Size? frameSize, bool asThumbnail, bool isFill, bool cmsEnable)
         {
             this.FullPath = fullPath;
@@ -228,9 +228,9 @@ namespace ShibugakiViewer.Models.ImageViewer
 
                     this.SetSourceToImage(image, stream, information, asThumbnail);
                     */
-                    var image = await this.SetSourceToImageAsync(
+                    var image = this.SetSourceToImage(
                         new LoadingOptions() { Width = loadWidth, Height = loadHeight },
-                        stream, information, asThumbnail).ConfigureAwait(false);
+                        stream, information, asThumbnail);
                 
                     if (image == null)
                     {
@@ -271,12 +271,12 @@ namespace ShibugakiViewer.Models.ImageViewer
         }
 
 
-        private Task<ImageSource> SetSourceToImageAsync
+        private ImageSource SetSourceToImage
             (LoadingOptions options, Stream stream, GraphicInformation information, bool asThumbnail)
         {
             if (information.BlankHeaderLength == 0)
             {
-                return this.SetImageAsync(options, stream, information, asThumbnail);
+                return this.SetImage(options, stream, information, asThumbnail);
             }
             else
             {
@@ -289,19 +289,19 @@ namespace ShibugakiViewer.Models.ImageViewer
                     ms.Position = 0;
                     stream.CopyTo(ms);
 
-                    return this.SetImageAsync(options, ms, information, asThumbnail);
+                    return this.SetImage(options, ms, information, asThumbnail);
                 }
             }
         }
 
-        private async Task<ImageSource> SetImageAsync
+        private ImageSource SetImage
             (LoadingOptions options, Stream stream, GraphicInformation information, bool asThumbnail)
         {
             stream.Position = 0;
 
             if (information.Type == GraphicFileType.Webp)
             {
-                return await this.SetImageAsWebpAsync(options, stream, information, asThumbnail);
+                return this.SetImageAsWebp(options, stream, information, asThumbnail);
             }
 
             if (asThumbnail && information.Type == GraphicFileType.Jpeg)
@@ -340,7 +340,7 @@ namespace ShibugakiViewer.Models.ImageViewer
         }
 
 
-        private async Task<ImageSource> SetImageAsWebpAsync
+        private ImageSource SetImageAsWebp
             (LoadingOptions options, Stream stream, GraphicInformation information, bool asThumbnail)
         {
             try
@@ -357,7 +357,7 @@ namespace ShibugakiViewer.Models.ImageViewer
                 }
 
                 var data = new byte[stream.Length];
-                await stream.ReadAsync(data, 0, data.Length);
+                stream.Read(data, 0, data.Length);
                 using var webp = new WebPWrapper.WebP();
                 using var bmp = webp.Decode(data);
                 var ss = ToBetterBitmapSource(bmp, new LoadingOptions() { Width = width, Height = height });

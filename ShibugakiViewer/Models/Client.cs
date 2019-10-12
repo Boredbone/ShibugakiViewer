@@ -84,11 +84,11 @@ namespace ShibugakiViewer.Models
         public IObservable<SearchCompletedEventArgs> SearchCompleted => this.front.SearchCompleted;
         public IObservable<Unit> StateChanged { get; }
 
-        public ReactiveProperty<int> ColumnLength { get; }
-        public ReactiveProperty<int> RowLength { get; }
-        public ReadOnlyReactiveProperty<int> PageSize { get; }
+        public ReactivePropertySlim<int> ColumnLength { get; }
+        public ReactivePropertySlim<int> RowLength { get; }
+        public ReadOnlyReactivePropertySlim<int> PageSize { get; }
 
-        public ReadOnlyReactiveProperty<long> Length { get; }
+        public ReadOnlyReactivePropertySlim<long> Length { get; }
         public ReadOnlyReactiveProperty<Record> SelectedRecord { get; }
 
         private ReactiveProperty<Record> ViewerDisplayingInner { get; }
@@ -192,7 +192,7 @@ namespace ShibugakiViewer.Models
             .AddTo(this.Disposables);
 
             this.Length = this.front.Length
-                .ToReadOnlyReactiveProperty()
+                .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.Disposables);
 
 
@@ -220,8 +220,8 @@ namespace ShibugakiViewer.Models
             })
             .AddTo(this.Disposables);
 
-            this.ColumnLength = new ReactiveProperty<int>(-1).AddTo(this.Disposables);
-            this.RowLength = new ReactiveProperty<int>(-1).AddTo(this.Disposables);
+            this.ColumnLength = new ReactivePropertySlim<int>(-1).AddTo(this.Disposables);
+            this.RowLength = new ReactivePropertySlim<int>(-1).AddTo(this.Disposables);
 
             this.CatalogIndex = this.ToReactivePropertyAsSynchronized(x => x.CatalogIndexInner)
                 .AddTo(this.Disposables);
@@ -282,7 +282,7 @@ namespace ShibugakiViewer.Models
 
             this.PageSize = this.ColumnLength.Where(x => x > 0)
                 .CombineLatest(this.RowLength.Where(x => x > 0), (c, r) => c * r)
-                .ToReadOnlyReactiveProperty()
+                .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.Disposables);
 
             this.PageSize
@@ -910,18 +910,18 @@ namespace ShibugakiViewer.Models
                 }
                 else
                 {
-                    if (current?.Id == result[0]?.Id)
+                    if (current?.Id != result[0]?.Id)
+                    {
+                        Debug.WriteLine
+                            ($"different file {current?.Id ?? "null"}, {result[0]?.Id ?? "null"}");
+                    }/*
+                    else
                     {
                         if (current != result[0])
                         {
                             Debug.WriteLine($"database updated but ignored");
                         }
-                    }
-                    else
-                    {
-                        Debug.WriteLine
-                            ($"different file {current?.Id ?? "null"}, {result[0]?.Id ?? "null"}");
-                    }
+                    }*/
                 }
             }
             else if (!ignoreIfDifferent)

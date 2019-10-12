@@ -257,7 +257,7 @@ namespace ImageLibrary.Viewer
 
                     if (takes >= 0)
                     {
-                        await this.SearchMainAsync(offset, takes);
+                        await this.SearchMainAsync(offset, takes).ConfigureAwait(false);
                     }
 
 
@@ -391,7 +391,7 @@ namespace ImageLibrary.Viewer
                 }
             }*/
 
-            var result = await criteria.SearchAsync(library, offset, takes, skipUntil);
+            var result = await criteria.SearchAsync(library, offset, takes, skipUntil).ConfigureAwait(false);
 
             lock (this.Cache)
             {
@@ -651,7 +651,7 @@ namespace ImageLibrary.Viewer
                         return null;
                     }
 
-                    return await this.library.GetAllIdsAsync(criteria);
+                    return await this.library.GetAllIdsAsync(criteria).ConfigureAwait(false);
                 }
             });
         }
@@ -678,7 +678,7 @@ namespace ImageLibrary.Viewer
                     var index1 = this.FindIndex(start);
                     var index2 = this.FindIndex(end);
 
-                    return await this.library.GetIdsAsync(criteria, index1, index2);
+                    return await this.library.GetIdsAsync(criteria, index1, index2).ConfigureAwait(false);
                 }
             });
         }
@@ -690,10 +690,7 @@ namespace ImageLibrary.Viewer
         /// <returns></returns>
         public async Task<string> GroupAsync(string[] items)
         {
-            var key = await Task.Run(async () =>
-            {
-                return await this.library.Grouping.GroupAsync(items);
-            });
+            var key = await Task.Run(() => this.library.Grouping.GroupAsync(items)).ConfigureAwait(false);
             this.Clear(CacheClearAction.GroupUpdated);
             return key;
         }
@@ -711,10 +708,7 @@ namespace ImageLibrary.Viewer
                 return;
             }
 
-            await Task.Run(async () =>
-            {
-                await this.library.Grouping.RemoveFromGroupAsync(group, items);
-            });
+            await Task.Run(() => this.library.Grouping.RemoveFromGroupAsync(group, items)).ConfigureAwait(false);
             this.Clear(CacheClearAction.GroupUpdated);
         }
 
@@ -733,7 +727,7 @@ namespace ImageLibrary.Viewer
         public async Task<bool> DeleteItemsAsync
             (IEnumerable<KeyValuePair<string, Record>> items, bool notDeleteFile)
         {
-            var result = await this.library.DeleteItemsAsync(items, notDeleteFile);
+            var result = await this.library.DeleteItemsAsync(items, notDeleteFile).ConfigureAwait(false);
             if (result)
             {
                 this.Refresh();
@@ -749,7 +743,7 @@ namespace ImageLibrary.Viewer
             {
                 return item;
             }
-            return await this.library.GetRecordAsync(id);
+            return await this.library.GetRecordAsync(id).ConfigureAwait(false);
         }
 
         private KeyValuePair<long, Record> GetFromCacheById(string id)
