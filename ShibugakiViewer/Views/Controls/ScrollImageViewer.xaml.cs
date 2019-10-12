@@ -136,13 +136,66 @@ namespace ShibugakiViewer.Views.Controls
                 this.ImageWidth = record.Width;
             }
 
-            if (record?.FullPath != oldPath)
+            var newPath = record?.FullPath;
+            if (newPath != oldPath)
             {
-                this.rotateTransform.Angle = 0;
-                this.Orientation = 0;
-                this.CurrentOrientation = 0.0;
-                this.IsInHorizontalMirror = false;
-                this.IsInVerticalMirror = false;
+                int orientation = 0;
+                bool horizontalMirror = false;
+                bool verticalMirror = false;
+
+                if (record != null && newPath != null
+                    && (record.Extension == ".jpg" || record.Extension == ".jpeg"))
+                {
+                    try
+                    {
+                        using (var reader = new ExifLib.ExifReader(newPath))
+                        {
+                            if (reader.GetTagValue<object>(ExifLib.ExifTags.Orientation, out var obj))
+                            {
+                                var str = obj.ToString();
+                                var num = str[^1] - '0';
+                                //System.Diagnostics.Debug.WriteLine($"orientation {obj.GetType()} {obj} {num}");
+
+                                switch (num)
+                                {
+                                    case 2:
+                                        horizontalMirror = true;
+                                        break;
+                                    case 3:
+                                        orientation = 180;
+                                        break;
+                                    case 4:
+                                        verticalMirror = true;
+                                        break;
+                                    case 5:
+                                        orientation = 90;
+                                        verticalMirror = true;
+                                        break;
+                                    case 6:
+                                        orientation = 90;
+                                        break;
+                                    case 7:
+                                        orientation = 270;
+                                        verticalMirror = true;
+                                        break;
+                                    case 8:
+                                        orientation = 270;
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine(ex.Message);
+                    }
+                }
+                this.rotateTransform.Angle = orientation;
+                this.Orientation = orientation;
+                this.CurrentOrientation = orientation;
+
+                this.IsInHorizontalMirror = horizontalMirror;
+                this.IsInVerticalMirror = verticalMirror;
                 
                 if (this.isImageLoaded)
                 {
