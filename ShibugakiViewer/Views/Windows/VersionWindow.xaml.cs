@@ -38,9 +38,15 @@ namespace ShibugakiViewer.Views.Windows
 
             this.versionText.Text = ver.ToString(3);
 
+            var path = assembly.Location;
+            if (path.EndsWith(".dll"))
+            {
+                // .NET Core 3.0
+                path = path.Substring(0, path.Length - 3) + "exe";
+            }
             try
             {
-                var buildDateTime = BuildTimeStamp.GetDateTimeUtcFrom(assembly.Location);
+                var buildDateTime = BuildTimeStamp.GetDateTimeUtcFrom(path);
                 this.versionDetail.Text = $"{ver} {buildDateTime}";
             }
             catch

@@ -42,11 +42,13 @@ namespace ShibugakiViewer.Models.Utility
             {
                 tokenSource.Cancel();
 
-
-                using (var pipeClient =
-                    new NamedPipeClientStream(".", pipeId, PipeDirection.Out))
+                try
                 {
+                    using var pipeClient = new NamedPipeClientStream(".", pipeId, PipeDirection.Out);
                     pipeClient.Connect(100);
+                }
+                catch (TimeoutException)
+                {
                 }
             }).AddTo(this.Disposables);
         }
@@ -85,14 +87,12 @@ namespace ShibugakiViewer.Models.Utility
                                     this.LineReceivedSubject.OnNext(text);
                                 }
                             }
-
                         }
                         catch (IOException)
                         {
                             // Catch the IOException that is raised if the pipe is broken
                             // or disconnected.
                         }
-
                     }
                 }
                 catch (Exception e)

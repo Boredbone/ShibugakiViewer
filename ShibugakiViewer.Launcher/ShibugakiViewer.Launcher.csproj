@@ -18,10 +18,6 @@
     <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /y &quot;$(TargetDir)$(TargetName).exe&quot; &quot;$(SolutionDir)\ShibugakiViewer\bin\&quot;&#xD;&#xA;xcopy /y &quot;$(TargetDir)$(TargetName).dll&quot; &quot;$(SolutionDir)\ShibugakiViewer\bin\&quot;&#xD;&#xA;xcopy /y &quot;$(TargetDir)$(TargetName).runtimeconfig.json&quot; &quot;$(SolutionDir)\ShibugakiViewer\bin\&quot;" />
-  </Target>
-
   <ItemGroup>
     <None Remove="appicon.ico" />
   </ItemGroup>
