@@ -26,6 +26,7 @@ using System.Reactive;
 using ShibugakiViewer.Views.Behaviors;
 using System.Reactive.Subjects;
 using Boredbone.XamlTools;
+using System.IO;
 
 namespace ShibugakiViewer.Views.Controls
 {
@@ -142,52 +143,51 @@ namespace ShibugakiViewer.Views.Controls
                 int orientation = 0;
                 bool horizontalMirror = false;
                 bool verticalMirror = false;
-                
-                if (record != null && newPath != null
-                    && (record.Extension == ".jpg" || record.Extension == ".jpeg"))
-                {
-                    try
-                    {
-                        using (var reader = new ExifLib.ExifReader(newPath))
-                        {
-                            if (reader.GetTagValue<object>(ExifLib.ExifTags.Orientation, out var obj))
-                            {
-                                var str = obj.ToString();
-                                var num = str[^1] - '0';
-                                //System.Diagnostics.Debug.WriteLine($"orientation {obj.GetType()} {obj} {num}");
 
-                                switch (num)
-                                {
-                                    case 2:
-                                        horizontalMirror = true;
-                                        break;
-                                    case 3:
-                                        orientation = 180;
-                                        break;
-                                    case 4:
-                                        verticalMirror = true;
-                                        break;
-                                    case 5:
-                                        orientation = 90;
-                                        verticalMirror = true;
-                                        break;
-                                    case 6:
-                                        orientation = 90;
-                                        break;
-                                    case 7:
-                                        orientation = 270;
-                                        verticalMirror = true;
-                                        break;
-                                    case 8:
-                                        orientation = 270;
-                                        break;
-                                }
+                if (record != null && newPath != null)
+                {
+                    var ext = record.Extension.ToLower();
+                    if (ext == ".jpg" || ext == ".jpeg")
+                    {
+                        try
+                        {
+                            int num;
+                            {
+                                using var fs = new FileStream(newPath, FileMode.Open, FileAccess.Read);
+                                num = ImageLibrary.Exif.ExifManager.GetOrientation(fs);
+                                System.Diagnostics.Debug.WriteLine($"exif orientation {num}");
+                            }
+                            switch (num)
+                            {
+                                case 2:
+                                    horizontalMirror = true;
+                                    break;
+                                case 3:
+                                    orientation = 180;
+                                    break;
+                                case 4:
+                                    verticalMirror = true;
+                                    break;
+                                case 5:
+                                    orientation = 90;
+                                    verticalMirror = true;
+                                    break;
+                                case 6:
+                                    orientation = 90;
+                                    break;
+                                case 7:
+                                    orientation = 270;
+                                    verticalMirror = true;
+                                    break;
+                                case 8:
+                                    orientation = 270;
+                                    break;
                             }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        System.Diagnostics.Debug.WriteLine(ex.Message);
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine(ex.Message);
+                        }
                     }
                 }
                 this.rotateTransform.Angle = orientation;
