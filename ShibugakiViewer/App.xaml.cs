@@ -362,6 +362,7 @@ namespace ShibugakiViewer
             {
                 window = new ClientWindow() { ShowActivated = true };
             }
+            window.Show();
             if (files != null)
             {
                 var client = (window.DataContext as ClientWindowViewModel)?.Client;
@@ -372,7 +373,6 @@ namespace ShibugakiViewer
                 //window.ViewModel.LoadFiles(new[] { file });
             }
 
-            window.Show();
             return window;
         }
 
