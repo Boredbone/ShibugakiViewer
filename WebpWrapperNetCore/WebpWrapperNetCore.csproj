@@ -20,13 +20,4 @@
     <PackageReference Include="System.Drawing.Common" Version="4.6.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="Resources\libwebp_x64.dll">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\libwebp_x86.dll">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

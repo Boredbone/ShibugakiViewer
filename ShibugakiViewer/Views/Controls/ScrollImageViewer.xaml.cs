@@ -155,7 +155,7 @@ namespace ShibugakiViewer.Views.Controls
                             {
                                 using var fs = new FileStream(newPath, FileMode.Open, FileAccess.Read);
                                 num = ImageLibrary.Exif.ExifManager.GetOrientation(fs);
-                                System.Diagnostics.Debug.WriteLine($"exif orientation {num}");
+                                //System.Diagnostics.Debug.WriteLine($"exif orientation {num}");
                             }
                             switch (num)
                             {
