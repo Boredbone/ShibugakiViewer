@@ -11,7 +11,7 @@
         mc:Ignorable="d"
         Style="{StaticResource DefaultWindowStyle}"
         ShowActivated="True" WindowStartupLocation="CenterOwner"
-        Title="About" Height="380" Width="500">
+        Title="About" Height="420" Width="530">
 
     <Window.Resources>
         <Style x:Key="normalTextStyle" TargetType="TextBlock">
@@ -237,6 +237,20 @@
                                         NavigateUri="https://github.com/Templarian/MaterialDesign/blob/master/license.txt"
                                         tb:HyperlinkBehavior.NavigateByClick="True">
                                         <Run Text="SIL OPEN FONT LICENSE Version 1.1"/>
+                                    </Hyperlink>
+                                </TextBlock>
+                                
+                                <!-- WebP -->
+                                <TextBlock Style="{StaticResource normalTextStyle}">
+                                    <Hyperlink NavigateUri="https://developers.google.com/speed/webp"
+                                               tb:HyperlinkBehavior.NavigateByClick="True">
+                                        <Run Text="libwebp" FontWeight="Bold"/>
+                                    </Hyperlink>
+                                    <Run Text=" by Google "/>
+                                    <Hyperlink
+                                        NavigateUri="https://www.webmproject.org/license/software/"
+                                        tb:HyperlinkBehavior.NavigateByClick="True">
+                                        <Run Text="License"/>
                                     </Hyperlink>
                                 </TextBlock>
                             </StackPanel>

@@ -24,15 +24,15 @@ namespace WebpWrapper
                             throw new Exception("WebPGetInfo failed");
                         }
 
-                        bmp = new Bitmap(width, height, PixelFormat.Format24bppRgb);
+                        bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
                         bmpData = bmp.LockBits(new Rectangle(0, 0, width, height),
                             ImageLockMode.WriteOnly, bmp.PixelFormat);
 
                         var outputSize = bmpData.Stride * height;
-                        if (NativeMethods.WebPDecodeBGRInto(ptrData,
+                        if (NativeMethods.WebPDecodeBGRAInto(ptrData,
                             (UIntPtr)source.Length, bmpData.Scan0, outputSize, bmpData.Stride) == 0)
                         {
-                            throw new Exception("WebPDecodeBGRInto failed");
+                            throw new Exception("WebPDecodeBGRAInto failed");
                         }
 
                         return bmp;
@@ -103,11 +103,11 @@ namespace WebpWrapper
 
             try
             {
-                bmp = new Bitmap(width, height, PixelFormat.Format24bppRgb);
+                bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
                 bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height),
                     ImageLockMode.WriteOnly, bmp.PixelFormat);
 
-                config.output.colorspace = WEBP_CSP_MODE.MODE_BGR;
+                config.output.colorspace = WEBP_CSP_MODE.MODE_BGRA;
                 config.output.u.RGBA.rgba = bmpData.Scan0;
                 config.output.u.RGBA.stride = bmpData.Stride;
                 config.output.u.RGBA.size = (UIntPtr)(bmp.Height * bmpData.Stride);

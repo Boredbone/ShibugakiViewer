@@ -39,6 +39,18 @@ namespace WebpWrapper
         public static extern int WebPDecodeBGRInto
             ([In()] IntPtr data, UIntPtr data_size, IntPtr output_buffer, int output_buffer_size, int output_stride);
 
+        [DllImport(dllName, EntryPoint = "WebPDecodeBGRAInto", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int WebPDecodeBGRAInto
+            ([In()] IntPtr data, UIntPtr data_size, IntPtr output_buffer, int output_buffer_size, int output_stride);
+
+        [DllImport(dllName, EntryPoint = "WebPDecodeRGBAInto", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int WebPDecodeRGBAInto
+            ([In()] IntPtr data, UIntPtr data_size, IntPtr output_buffer, int output_buffer_size, int output_stride);
+
+        [DllImport(dllName, EntryPoint = "WebPDecodeARGBInto", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int WebPDecodeARGBInto
+            ([In()] IntPtr data, UIntPtr data_size, IntPtr output_buffer, int output_buffer_size, int output_stride);
+
         [DllImport(dllName, EntryPoint = "WebPInitDecoderConfigInternal", CallingConvention = CallingConvention.Cdecl)]
         public static extern int WebPInitDecoderConfigInternal
             (ref WebPDecoderConfig webPDecoderConfig, int WEBP_DECODER_ABI_VERSION);

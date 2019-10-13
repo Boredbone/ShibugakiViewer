@@ -26,6 +26,7 @@ using System.Text;
 using Boredbone.Utility.Extensions;
 using ShibugakiViewer.Views.Controls;
 using System.IO.Pipes;
+using CsCommon.Utility.Tools;
 
 namespace ShibugakiViewer
 {
@@ -267,7 +268,7 @@ namespace ShibugakiViewer
 
             if (dialogResult == true)
             {
-                Process.Start(this.Core.ProjectHomeUrl);
+                ProcessHelper.OpenBrowserWin(this.Core.ProjectHomeUrl);
                 if (exitApp)
                 {
                     await this.ExitAllAfterLibraryUnLockedAsync();
