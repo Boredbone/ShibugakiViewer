@@ -103,7 +103,7 @@ namespace ShibugakiViewer.Views.Behaviors
             this.StopGifAnimation();
 
             //Gifアニメのストリームを設定
-            if (this.IsGifAnimationEnabled && pathChanged && path.HasText())
+            if (this.IsGifAnimationEnabled && pathChanged && path.HasText() && path.EndsWith(".gif"))
             {
                 Stream stream = null;
                 try

@@ -91,7 +91,7 @@ namespace ShibugakiViewer.Models
         public ReadOnlyReactivePropertySlim<long> Length { get; }
         public ReadOnlyReactiveProperty<Record> SelectedRecord { get; }
 
-        private ReactiveProperty<Record> ViewerDisplayingInner { get; }
+        private ReactivePropertySlim<Record> ViewerDisplayingInner { get; }
         public ReadOnlyReactiveProperty<Record> ViewerDisplaying { get; }
 
         private Subject<long> PrepareNextSubject { get; }
@@ -172,7 +172,7 @@ namespace ShibugakiViewer.Models
             this.IsCatalogRenderingEnabledSubject = new Subject<bool>().AddTo(this.Disposables);
             this.CatalogScrollIndexSubject = new Subject<long>().AddTo(this.Disposables);
 
-            this.ViewerDisplayingInner = new ReactiveProperty<Record>().AddTo(this.Disposables);
+            this.ViewerDisplayingInner = new ReactivePropertySlim<Record>().AddTo(this.Disposables);
             this.ViewerDisplaying = this.ViewerDisplayingInner
                 .ToReadOnlyReactiveProperty().AddTo(this.Disposables);
 
