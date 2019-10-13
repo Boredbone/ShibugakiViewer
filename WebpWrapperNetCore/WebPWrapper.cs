@@ -33,7 +33,186 @@ namespace WebPWrapper
 {
     public sealed class WebP
     {
-        #region | Public Decompress Functions |
+
+        /// <summary>Decode a WebP image</summary>
+        /// <param name="rawWebP">The data to uncompress</param>
+        /// <returns>Bitmap with the WebP image</returns>
+        public static Bitmap Decode(byte[] rawWebP)
+        {
+            Bitmap bmp = null;
+            BitmapData bmpData = null;
+            //GCHandle pinnedWebP = GCHandle.Alloc(rawWebP, GCHandleType.Pinned);
+
+            try
+            {
+                unsafe
+                {
+                    fixed (byte* p = rawWebP)
+                    {
+                        //Get image width and height
+                        IntPtr ptrData = new IntPtr(p);//pinnedWebP.AddrOfPinnedObject();
+                        if (UnsafeNativeMethods.WebPGetInfo(ptrData, rawWebP.Length,
+                            out var imgWidth, out var imgHeight) == 0)
+                        {
+                            throw new Exception("Can't get information of WebP");
+                        }
+
+                        //Create a BitmapData and Lock all pixels to be written
+                        bmp = new Bitmap(imgWidth, imgHeight, PixelFormat.Format24bppRgb);
+                        bmpData = bmp.LockBits(new Rectangle(0, 0, imgWidth, imgHeight),
+                            ImageLockMode.WriteOnly, bmp.PixelFormat);
+
+                        //Uncompress the image
+                        var outputSize = bmpData.Stride * imgHeight;
+                        if (UnsafeNativeMethods.WebPDecodeBGRInto(ptrData,
+                            rawWebP.Length, bmpData.Scan0, outputSize, bmpData.Stride) == 0)
+                        {
+                            throw new Exception("Can't decode WebP");
+                        }
+
+                        return bmp;
+                    }
+                }
+            }
+            finally
+            {
+                //Unlock the pixels
+                if (bmp != null && bmpData != null)
+                {
+                    bmp.UnlockBits(bmpData);
+                }
+
+                //Free memory
+                //if (pinnedWebP.IsAllocated)
+                //    pinnedWebP.Free();
+            }
+        }
+
+        /// <summary>Decode a WebP image</summary>
+        /// <param name="rawWebP">the data to uncompress</param>
+        /// <param name="options">Options for advanced decode</param>
+        /// <returns>Bitmap with the WebP image</returns>
+        public static Bitmap Decode(byte[] rawWebP, WebPDecoderOptions options)
+        {
+            var config = new WebPDecoderConfig();
+            if (UnsafeNativeMethods.WebPInitDecoderConfig(ref config) == 0)
+            {
+                throw new Exception("WebPInitDecoderConfig failed. Wrong version?");
+            }
+
+            unsafe
+            {
+                fixed (byte* p = rawWebP)
+                {
+                    int width = 0;
+                    int height = 0;
+                    // Read the .webp input file information
+                    var ptrRawWebP = new IntPtr(p);//pinnedWebP.AddrOfPinnedObject();
+                    if (options.use_scaling == 0)
+                    {
+                        var result = UnsafeNativeMethods.WebPGetFeatures(ptrRawWebP, rawWebP.Length, ref config.input);
+                        if (result != VP8StatusCode.VP8_STATUS_OK)
+                        {
+                            throw new Exception("Failed WebPGetFeatures with error " + result);
+                        }
+
+                        //Test cropping values
+                        if (options.use_cropping == 1)
+                        {
+                            if (options.crop_left + options.crop_width > config.input.width
+                                || options.crop_top + options.crop_height > config.input.height)
+                            {
+                                throw new Exception("Crop options exceded WebP image dimensions");
+                            }
+                            width = options.crop_width;
+                            height = options.crop_height;
+                        }
+                    }
+                    else
+                    {
+                        width = options.scaled_width;
+                        height = options.scaled_height;
+                    }
+
+                    config.options = options;
+                    return DecodeWithOption(ptrRawWebP, rawWebP.Length, width, height, ref config);
+                }
+            }
+        }
+
+        private static Bitmap DecodeWithOption
+            (IntPtr ptrRawWebP, int length, int width, int height, ref WebPDecoderConfig config)
+        {
+            Bitmap bmp = null;
+            BitmapData bmpData = null;
+
+            try
+            {
+                // Create a BitmapData and Lock all pixels to be written
+                bmp = new Bitmap(width, height, PixelFormat.Format24bppRgb);
+                bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height),
+                    ImageLockMode.WriteOnly, bmp.PixelFormat);
+
+                // Specify the output format
+                config.output.colorspace = WEBP_CSP_MODE.MODE_BGR;
+                config.output.u.RGBA.rgba = bmpData.Scan0;
+                config.output.u.RGBA.stride = bmpData.Stride;
+                config.output.u.RGBA.size = (UIntPtr)(bmp.Height * bmpData.Stride);
+                config.output.height = bmp.Height;
+                config.output.width = bmp.Width;
+                config.output.is_external_memory = 1;
+
+                // Decode
+                {
+                    var result = UnsafeNativeMethods.WebPDecode(ptrRawWebP, length, ref config);
+                    UnsafeNativeMethods.WebPFreeDecBuffer(ref config.output);
+                    if (result != VP8StatusCode.VP8_STATUS_OK)
+                    {
+                        throw new Exception("Failed WebPDecode with error " + result);
+                    }
+
+                    return bmp;
+                }
+            }
+            finally
+            {
+                if (bmp != null && bmpData != null)
+                {
+                    bmp.UnlockBits(bmpData);
+                }
+            }
+        }
+
+        /// <summary>Get Thumbnail from webP in mode faster/low quality</summary>
+        /// <param name="rawWebP">The data to uncompress</param>
+        /// <param name="width">Wanted width of thumbnail</param>
+        /// <param name="height">Wanted height of thumbnail</param>
+        /// <returns>Bitmap with the WebP thumbnail</returns>
+        public static Bitmap GetThumbnail(byte[] rawWebP, int width, int height, bool lowQuality)
+        {
+            var config = new WebPDecoderConfig();
+            if (UnsafeNativeMethods.WebPInitDecoderConfig(ref config) == 0)
+            {
+                throw new Exception("WebPInitDecoderConfig failed. Wrong version?");
+            }
+
+            // Set up decode options
+            config.options.bypass_filtering = lowQuality ? 1 : 0;
+            config.options.no_fancy_upsampling = lowQuality ? 1 : 0;
+            config.options.use_threads = 1;
+            config.options.use_scaling = 1;
+            config.options.scaled_width = width;
+            config.options.scaled_height = height;
+
+            unsafe
+            {
+                fixed (byte* p = rawWebP)
+                {
+                    return DecodeWithOption(new IntPtr(p), rawWebP.Length, width, height, ref config);
+                }
+            }
+        }
+
 #if false
         /// <summary>Read a WebP file</summary>
         /// <param name="pathFileName">WebP file to load</param>
@@ -49,228 +228,7 @@ namespace WebPWrapper
             }
             catch (Exception ex) { throw new Exception(ex.Message + "\r\nIn WebP.Load"); }
         }
-#endif
 
-        /// <summary>Decode a WebP image</summary>
-        /// <param name="rawWebP">The data to uncompress</param>
-        /// <returns>Bitmap with the WebP image</returns>
-        public static Bitmap Decode(byte[] rawWebP)
-        {
-            int imgWidth;
-            int imgHeight;
-            int outputSize;
-            Bitmap bmp = null;
-            BitmapData bmpData = null;
-            //GCHandle pinnedWebP = GCHandle.Alloc(rawWebP, GCHandleType.Pinned);
-
-            try
-            {
-                unsafe
-                {
-                    fixed (byte* p = rawWebP)
-                    {
-                        //Get image width and height
-                        IntPtr ptrData = new IntPtr(p);//pinnedWebP.AddrOfPinnedObject();
-                        if (UnsafeNativeMethods.WebPGetInfo(ptrData, rawWebP.Length, out imgWidth, out imgHeight) == 0)
-                            throw new Exception("Can´t get information of WebP");
-
-                        //Create a BitmapData and Lock all pixels to be written
-                        bmp = new Bitmap(imgWidth, imgHeight, PixelFormat.Format24bppRgb);
-                        bmpData = bmp.LockBits(new Rectangle(0, 0, imgWidth, imgHeight), ImageLockMode.WriteOnly, bmp.PixelFormat);
-
-                        //Uncompress the image
-                        outputSize = bmpData.Stride * imgHeight;
-                        if (UnsafeNativeMethods.WebPDecodeBGRInto(ptrData, rawWebP.Length, bmpData.Scan0, outputSize, bmpData.Stride) == 0)
-                            throw new Exception("Can´t decode WebP");
-
-                        return bmp;
-                    }
-                }
-            }
-            catch (Exception ex) { throw new Exception(ex.Message + "\r\nIn WebP.Decode"); }
-            finally
-            {
-                //Unlock the pixels
-                if (bmpData != null)
-                    bmp.UnlockBits(bmpData);
-
-                //Free memory
-                //if (pinnedWebP.IsAllocated)
-                //    pinnedWebP.Free();
-            }
-        }
-
-        /// <summary>Decode a WebP image</summary>
-        /// <param name="rawWebP">the data to uncompress</param>
-        /// <param name="options">Options for advanced decode</param>
-        /// <returns>Bitmap with the WebP image</returns>
-        public static Bitmap Decode(byte[] rawWebP, WebPDecoderOptions options)
-        {
-            //GCHandle pinnedWebP = GCHandle.Alloc(rawWebP, GCHandleType.Pinned);
-            Bitmap bmp = null;
-            BitmapData bmpData = null;
-            VP8StatusCode result;
-            int width = 0;
-            int height = 0;
-
-            try
-            {
-                WebPDecoderConfig config = new WebPDecoderConfig();
-                if (UnsafeNativeMethods.WebPInitDecoderConfig(ref config) == 0)
-                {
-                    throw new Exception("WebPInitDecoderConfig failed. Wrong version?");
-                }
-
-                unsafe
-                {
-                    fixed (byte* p = rawWebP)
-                    {
-                        // Read the .webp input file information
-                        IntPtr ptrRawWebP = new IntPtr(p);//pinnedWebP.AddrOfPinnedObject();
-                        if (options.use_scaling == 0)
-                        {
-                            result = UnsafeNativeMethods.WebPGetFeatures(ptrRawWebP, rawWebP.Length, ref config.input);
-                            if (result != VP8StatusCode.VP8_STATUS_OK)
-                                throw new Exception("Failed WebPGetFeatures with error " + result);
-
-                            //Test cropping values
-                            if (options.use_cropping == 1)
-                            {
-                                if (options.crop_left + options.crop_width > config.input.width || options.crop_top + options.crop_height > config.input.height)
-                                    throw new Exception("Crop options exceded WebP image dimensions");
-                                width = options.crop_width;
-                                height = options.crop_height;
-                            }
-                        }
-                        else
-                        {
-                            width = options.scaled_width;
-                            height = options.scaled_height;
-                        }
-
-                        config.options.bypass_filtering = options.bypass_filtering;
-                        config.options.no_fancy_upsampling = options.no_fancy_upsampling;
-                        config.options.use_cropping = options.use_cropping;
-                        config.options.crop_left = options.crop_left;
-                        config.options.crop_top = options.crop_top;
-                        config.options.crop_width = options.crop_width;
-                        config.options.crop_height = options.crop_height;
-                        config.options.use_scaling = options.use_scaling;
-                        config.options.scaled_width = options.scaled_width;
-                        config.options.scaled_height = options.scaled_height;
-                        config.options.use_threads = options.use_threads;
-                        config.options.dithering_strength = options.dithering_strength;
-                        config.options.flip = options.flip;
-                        config.options.alpha_dithering_strength = options.alpha_dithering_strength;
-
-                        // Create a BitmapData and Lock all pixels to be written
-                        bmp = new Bitmap(width, height, PixelFormat.Format24bppRgb);
-                        bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
-
-                        // Specify the output format
-                        config.output.colorspace = WEBP_CSP_MODE.MODE_BGR;
-                        config.output.u.RGBA.rgba = bmpData.Scan0;
-                        config.output.u.RGBA.stride = bmpData.Stride;
-                        config.output.u.RGBA.size = (UIntPtr)(bmp.Height * bmpData.Stride);
-                        config.output.height = bmp.Height;
-                        config.output.width = bmp.Width;
-                        config.output.is_external_memory = 1;
-
-                        // Decode
-                        result = UnsafeNativeMethods.WebPDecode(ptrRawWebP, rawWebP.Length, ref config);
-                        if (result != VP8StatusCode.VP8_STATUS_OK)
-                        {
-                            throw new Exception("Failed WebPDecode with error " + result);
-                        }
-                        UnsafeNativeMethods.WebPFreeDecBuffer(ref config.output);
-
-                        return bmp;
-                    }
-                }
-            }
-            catch (Exception ex) { throw new Exception(ex.Message + "\r\nIn WebP.Decode"); }
-            finally
-            {
-                //Unlock the pixels
-                if (bmpData != null)
-                    bmp.UnlockBits(bmpData);
-
-                //Free memory
-                //if (pinnedWebP.IsAllocated)
-                //    pinnedWebP.Free();
-            }
-        }
-
-        /// <summary>Get Thumbnail from webP in mode faster/low quality</summary>
-        /// <param name="rawWebP">The data to uncompress</param>
-        /// <param name="width">Wanted width of thumbnail</param>
-        /// <param name="height">Wanted height of thumbnail</param>
-        /// <returns>Bitmap with the WebP thumbnail</returns>
-        public static Bitmap GetThumbnail(byte[] rawWebP, int width, int height,bool lowQuality)
-        {
-            //GCHandle pinnedWebP = GCHandle.Alloc(rawWebP, GCHandleType.Pinned);
-            Bitmap bmp = null;
-            BitmapData bmpData = null;
-
-            try
-            {
-                WebPDecoderConfig config = new WebPDecoderConfig();
-                if (UnsafeNativeMethods.WebPInitDecoderConfig(ref config) == 0)
-                    throw new Exception("WebPInitDecoderConfig failed. Wrong version?");
-
-                // Set up decode options
-                config.options.bypass_filtering = lowQuality ? 1 : 0;
-                config.options.no_fancy_upsampling = lowQuality ? 1 : 0;
-                config.options.use_threads = 1;
-                config.options.use_scaling = 1;
-                config.options.scaled_width = width;
-                config.options.scaled_height = height;
-
-                // Create a BitmapData and Lock all pixels to be written
-                bmp = new Bitmap(width, height, PixelFormat.Format24bppRgb);
-                bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
-
-                // Specify the output format
-                config.output.colorspace = WEBP_CSP_MODE.MODE_BGR;
-                config.output.u.RGBA.rgba = bmpData.Scan0;
-                config.output.u.RGBA.stride = bmpData.Stride;
-                config.output.u.RGBA.size = (UIntPtr)(bmp.Height * bmpData.Stride);
-                config.output.height = bmp.Height;
-                config.output.width = bmp.Width;
-                config.output.is_external_memory = 1;
-
-                unsafe
-                {
-                    fixed (byte* p = rawWebP)
-                    {
-                        // Decode
-                        IntPtr ptrRawWebP = new IntPtr(p);//pinnedWebP.AddrOfPinnedObject();
-                        VP8StatusCode result = UnsafeNativeMethods.WebPDecode(ptrRawWebP, rawWebP.Length, ref config);
-                        if (result != VP8StatusCode.VP8_STATUS_OK)
-                            throw new Exception("Failed WebPDecode with error " + result);
-
-                        UnsafeNativeMethods.WebPFreeDecBuffer(ref config.output);
-
-                        return bmp;
-                    }
-                }
-            }
-            catch (Exception ex) { throw new Exception(ex.Message + "\r\nIn WebP.Thumbnail"); }
-            finally
-            {
-                //Unlock the pixels
-                if (bmpData != null)
-                    bmp.UnlockBits(bmpData);
-
-                //Free memory
-                //if (pinnedWebP.IsAllocated)
-                //    pinnedWebP.Free();
-            }
-        }
-
-#endregion
-#if false
-#region | Public Compress Functions |
         /// <summary>Save bitmap to file in WebP format</summary>
         /// <param name="bmp">Bitmap with the WebP image</param>
         /// <param name="pathFileName">The file to write</param>
@@ -735,9 +693,7 @@ namespace WebPWrapper
                     UnsafeNativeMethods.WebPPictureFree(ref wpic);
             }
         }
-#endregion
 
-#region | Another Public Functions |
         /// <summary>Get the libwebp version</summary>
         /// <returns>Version of library</returns>
         public string GetVersion()
@@ -873,9 +829,7 @@ namespace WebPWrapper
                     pinnedResult.Free();
             }
         }
-#endregion
 
-#region | Private Methods |
         private MemoryWriter webpMemory;
 
         private int MyWriter([InAttribute()] IntPtr data, UIntPtr data_size, ref WebPPicture picture)
@@ -893,19 +847,16 @@ namespace WebPWrapper
             public int size;                    // Size of webP data
             public byte[] data;                 // Data of WebP Image
         }
-#endregion
-#region | Destruction |
+
         /// <summary>Free memory</summary>
         public void Dispose()
         {
             GC.SuppressFinalize(this);
         }
-#endregion
 #endif
     }
 
-#region | Import libwebp functions |
-    [SuppressUnmanagedCodeSecurityAttribute]
+    [SuppressUnmanagedCodeSecurity]
     internal sealed partial class UnsafeNativeMethods
     {
         private static int WEBP_DECODER_ABI_VERSION = 0x0208;
@@ -950,9 +901,9 @@ namespace WebPWrapper
             }
         }
         [DllImport("libwebp_x86.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPGetFeaturesInternal")]
-        private static extern VP8StatusCode WebPGetFeaturesInternal_x86([InAttribute()] IntPtr rawWebP, UIntPtr data_size, ref WebPBitstreamFeatures features, int WEBP_DECODER_ABI_VERSION);
+        private static extern VP8StatusCode WebPGetFeaturesInternal_x86([In()] IntPtr rawWebP, UIntPtr data_size, ref WebPBitstreamFeatures features, int WEBP_DECODER_ABI_VERSION);
         [DllImport("libwebp_x64.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPGetFeaturesInternal")]
-        private static extern VP8StatusCode WebPGetFeaturesInternal_x64([InAttribute()] IntPtr rawWebP, UIntPtr data_size, ref WebPBitstreamFeatures features, int WEBP_DECODER_ABI_VERSION);
+        private static extern VP8StatusCode WebPGetFeaturesInternal_x64([In()] IntPtr rawWebP, UIntPtr data_size, ref WebPBitstreamFeatures features, int WEBP_DECODER_ABI_VERSION);
 #if false
         /// <summary>Activate the lossless compression mode with the desired efficiency.</summary>
         /// <param name="config">The WebPConfig struct</param>
@@ -1131,9 +1082,9 @@ namespace WebPWrapper
             }
         }
         [DllImport("libwebp_x86.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPGetInfo")]
-        private static extern int WebPGetInfo_x86([InAttribute()] IntPtr data, UIntPtr data_size, out int width, out int height);
+        private static extern int WebPGetInfo_x86([In()] IntPtr data, UIntPtr data_size, out int width, out int height);
         [DllImport("libwebp_x64.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPGetInfo")]
-        private static extern int WebPGetInfo_x64([InAttribute()] IntPtr data, UIntPtr data_size, out int width, out int height);
+        private static extern int WebPGetInfo_x64([In()] IntPtr data, UIntPtr data_size, out int width, out int height);
 
         /// <summary>Decode WEBP image pointed to by *data and returns BGR samples into a pre-allocated buffer</summary>
         /// <param name="data">Pointer to WebP image data</param>
@@ -1155,9 +1106,9 @@ namespace WebPWrapper
             }
         }
         [DllImport("libwebp_x86.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPDecodeBGRInto")]
-        private static extern int WebPDecodeBGRInto_x86([InAttribute()] IntPtr data, UIntPtr data_size, IntPtr output_buffer, int output_buffer_size, int output_stride);
+        private static extern int WebPDecodeBGRInto_x86([In()] IntPtr data, UIntPtr data_size, IntPtr output_buffer, int output_buffer_size, int output_stride);
         [DllImport("libwebp_x64.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPDecodeBGRInto")]
-        private static extern int WebPDecodeBGRInto_x64([InAttribute()] IntPtr data, UIntPtr data_size, IntPtr output_buffer, int output_buffer_size, int output_stride);
+        private static extern int WebPDecodeBGRInto_x64([In()] IntPtr data, UIntPtr data_size, IntPtr output_buffer, int output_buffer_size, int output_stride);
 
         /// <summary>Initialize the configuration as empty. This function must always be called first, unless WebPGetFeatures() is to be called.</summary>
         /// <param name="webPDecoderConfig">Configuration struct</param>
@@ -1336,9 +1287,7 @@ namespace WebPWrapper
         private static extern int WebPPictureDistortion_x64(ref WebPPicture srcPicture, ref WebPPicture refPicture, int metric_type, IntPtr pResult);
 #endif
     }
-#endregion
 
-#region | Predefined |
 #if false
     /// <summary>Enumerate some predefined settings for WebPConfig, depending on the type of source picture. These presets are used when calling WebPConfigPreset().</summary>
     public enum WebPPreset
@@ -1385,24 +1334,6 @@ namespace WebPWrapper
         /// <summary>List terminator. always last.</summary>
         VP8_ENC_ERROR_LAST,
     }
-#endif
-
-    /// <summary>Enumeration of the status codes.</summary>
-    public enum VP8StatusCode
-    {
-        /// <summary>No error.</summary>
-        VP8_STATUS_OK = 0,
-        /// <summary>Memory error allocating objects.</summary>
-        VP8_STATUS_OUT_OF_MEMORY,
-        VP8_STATUS_INVALID_PARAM,
-        VP8_STATUS_BITSTREAM_ERROR,
-        /// <summary>Configuration is invalid.</summary>
-        VP8_STATUS_UNSUPPORTED_FEATURE,
-        VP8_STATUS_SUSPENDED,
-        /// <summary>Abort request by user.</summary>
-        VP8_STATUS_USER_ABORT,
-        VP8_STATUS_NOT_ENOUGH_DATA,
-    }
 
     /// <summary>Image characteristics hint for the underlying encoder.</summary>
     public enum WebPImageHint
@@ -1419,65 +1350,6 @@ namespace WebPWrapper
         WEBP_HINT_LAST
     };
 
-    /// <summary>Describes the byte-ordering of packed samples in memory.</summary>
-    public enum WEBP_CSP_MODE
-    {
-        /// <summary>Byte-order: R,G,B,R,G,B,...</summary>
-        MODE_RGB = 0,
-        /// <summary>Byte-order: R,G,B,A,R,G,B,A,...</summary>
-        MODE_RGBA = 1,
-        /// <summary>Byte-order: B,G,R,B,G,R,...</summary>
-        MODE_BGR = 2,
-        /// <summary>Byte-order: B,G,R,A,B,G,R,A,...</summary>
-        MODE_BGRA = 3,
-        /// <summary>Byte-order: A,R,G,B,A,R,G,B,...</summary>
-        MODE_ARGB = 4,
-        /// <summary>Byte-order: RGB-565: [a4 a3 a2 a1 a0 r5 r4 r3], [r2 r1 r0 g4 g3 g2 g1 g0], ...
-        /// WEBP_SWAP_16BITS_CSP is defined, 
-        /// Byte-order: RGB-565: [a4 a3 a2 a1 a0 b5 b4 b3], [b2 b1 b0 g4 g3 g2 g1 g0], ...</summary>
-        MODE_RGBA_4444 = 5,
-        /// <summary>Byte-order: RGB-565: [r4 r3 r2 r1 r0 g5 g4 g3], [g2 g1 g0 b4 b3 b2 b1 b0], ...
-        /// WEBP_SWAP_16BITS_CSP is defined, 
-        /// Byte-order: [b3 b2 b1 b0 a3 a2 a1 a0], [r3 r2 r1 r0 g3 g2 g1 g0], ...</summary>
-        MODE_RGB_565 = 6,
-        /// <summary>RGB-premultiplied transparent modes (alpha value is preserved)</summary>
-        MODE_rgbA = 7,
-        /// <summary>RGB-premultiplied transparent modes (alpha value is preserved)</summary>
-        MODE_bgrA = 8,
-        /// <summary>RGB-premultiplied transparent modes (alpha value is preserved)</summary>
-        MODE_Argb = 9,
-        /// <summary>RGB-premultiplied transparent modes (alpha value is preserved)</summary>
-        MODE_rgbA_4444 = 10,
-        /// <summary>yuv 4:2:0</summary>
-        MODE_YUV = 11,
-        /// <summary>yuv 4:2:0</summary>
-        MODE_YUVA = 12,
-        /// <summary>MODE_LAST -> 13</summary>
-        MODE_LAST = 13,
-    }
-#endregion
-
-#region | libwebp structs |
-    /// <summary>Features gathered from the bitstream</summary>
-    [StructLayoutAttribute(LayoutKind.Sequential)]
-    public struct WebPBitstreamFeatures
-    {
-        /// <summary>Width in pixels, as read from the bitstream.</summary>
-        public int width;
-        /// <summary>Height in pixels, as read from the bitstream.</summary>
-        public int height;
-        /// <summary>True if the bitstream contains an alpha channel.</summary>
-        public int has_alpha;
-        /// <summary>True if the bitstream is an animation.</summary>
-        public int has_animation;
-        /// <summary>0 = undefined (/mixed), 1 = lossy, 2 = lossless</summary>
-        public int format;
-        /// <summary>Padding for later use.</summary>
-        [MarshalAsAttribute(UnmanagedType.ByValArray, SizeConst = 5, ArraySubType = UnmanagedType.U4)]
-        private uint[] pad;
-    };
-
-#if false
     /// <summary>Compression parameters.</summary>
     [StructLayoutAttribute(LayoutKind.Sequential)]
     public struct WebPConfig
@@ -1708,137 +1580,143 @@ namespace WebPWrapper
     };
 #endif
 
-    [StructLayoutAttribute(LayoutKind.Sequential)]
-    public struct WebPDecoderConfig
+    public enum WEBP_CSP_MODE
     {
-        /// <summary>Immutable bitstream features (optional)</summary>
-        public WebPBitstreamFeatures input;
-        /// <summary>Output buffer (can point to external mem)</summary>
-        public WebPDecBuffer output;
-        /// <summary>Decoding options</summary>
-        public WebPDecoderOptions options;
+        MODE_RGB = 0, MODE_RGBA = 1,
+        MODE_BGR = 2, MODE_BGRA = 3,
+        MODE_ARGB = 4, MODE_RGBA_4444 = 5,
+        MODE_RGB_565 = 6,
+        // RGB-premultiplied transparent modes (alpha value is preserved)
+        MODE_rgbA = 7,
+        MODE_bgrA = 8,
+        MODE_Argb = 9,
+        MODE_rgbA_4444 = 10,
+        // YUV modes must come after RGB ones.
+        MODE_YUV = 11, MODE_YUVA = 12,  // yuv 4:2:0
+        MODE_LAST = 13
     }
 
-    /// <summary>Output buffer</summary>
-    [StructLayoutAttribute(LayoutKind.Sequential)]
-    public struct WebPDecBuffer
+    public enum VP8StatusCode
     {
-        /// <summary>Colorspace.</summary>
-        public WEBP_CSP_MODE colorspace;
-        /// <summary>Width of image.</summary>
-        public int width;
-        /// <summary>Height of image.</summary>
-        public int height;
-        /// <summary>If non-zero, 'internal_memory' pointer is not used. If value is '2' or more, the external memory is considered 'slow' and multiple read/write will be avoided.</summary>
-        public int is_external_memory;
-        /// <summary>Output buffer parameters.</summary>
-        public RGBA_YUVA_Buffer u;
-        /// <summary>padding for later use.</summary>
-        private UInt32 pad1;
-        /// <summary>padding for later use.</summary>
-        private UInt32 pad2;
-        /// <summary>padding for later use.</summary>
-        private UInt32 pad3;
-        /// <summary>padding for later use.</summary>
-        private UInt32 pad4;
-        /// <summary>Internally allocated memory (only when is_external_memory is 0). Should not be used externally, but accessed via WebPRGBABuffer.</summary>
-        public IntPtr private_memory;
+        VP8_STATUS_OK = 0,
+        VP8_STATUS_OUT_OF_MEMORY,
+        VP8_STATUS_INVALID_PARAM,
+        VP8_STATUS_BITSTREAM_ERROR,
+        VP8_STATUS_UNSUPPORTED_FEATURE,
+        VP8_STATUS_SUSPENDED,
+        VP8_STATUS_USER_ABORT,
+        VP8_STATUS_NOT_ENOUGH_DATA
     }
 
-    /// <summary>Union of buffer parameters</summary>
-    [StructLayoutAttribute(LayoutKind.Explicit)]
-    public struct RGBA_YUVA_Buffer
+    [StructLayout(LayoutKind.Sequential)]
+    public struct WebPRGBABuffer
     {
-        [FieldOffsetAttribute(0)]
+        public IntPtr rgba;    // pointer to RGBA samples
+        public int stride;       // stride in bytes from one scanline to the next.
+        public UIntPtr size;      // total size of the *rgba buffer.
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct WebPYUVABuffer
+    {
+        public IntPtr y;     // pointer to luma, chroma U/V, alpha samples
+        public IntPtr u;
+        public IntPtr v;
+        public IntPtr a;
+
+        public int y_stride;               // luma stride
+        public int u_stride;
+        public int v_stride;     // chroma strides
+        public int a_stride;               // alpha stride
+        public UIntPtr y_size;              // luma plane size
+        public UIntPtr u_size;
+        public UIntPtr v_size;      // chroma planes size
+        public UIntPtr a_size;              // alpha-plane size
+    }
+
+    [StructLayout(LayoutKind.Explicit)]
+    public struct WebPUnionBuffer
+    {
+        [FieldOffset(0)]
         public WebPRGBABuffer RGBA;
 
-        [FieldOffsetAttribute(0)]
+        [FieldOffset(0)]
         public WebPYUVABuffer YUVA;
     }
 
-    [StructLayoutAttribute(LayoutKind.Sequential)]
-    public struct WebPYUVABuffer
+    [StructLayout(LayoutKind.Sequential)]
+    public struct WebPDecBuffer
     {
-        /// <summary>Pointer to luma samples</summary>
-        public IntPtr y;
-        /// <summary>Pointer to chroma U samples</summary>
-        public IntPtr u;
-        /// <summary>Pointer to chroma V samples</summary>
-        public IntPtr v;
-        /// <summary>Pointer to alpha samples</summary>
-        public IntPtr a;
-        /// <summary>luma stride</summary>
-        public int y_stride;
-        /// <summary>chroma U stride</summary>
-        public int u_stride;
-        /// <summary>chroma V stride</summary>
-        public int v_stride;
-        /// <summary>alpha stride</summary>
-        public int a_stride;
-        /// <summary>luma plane size</summary>
-        public UIntPtr y_size;
-        /// <summary>chroma plane U size</summary>
-        public UIntPtr u_size;
-        /// <summary>chroma plane V size</summary>
-        public UIntPtr v_size;
-        /// <summary>alpha plane size</summary>
-        public UIntPtr a_size;
+        public WEBP_CSP_MODE colorspace;  // Colorspace.
+        public int width;
+        public int height;         // Dimensions.
+
+        // If non-zero, 'internal_memory' pointer is not
+        // used. If value is '2' or more, the external
+        // memory is considered 'slow' and multiple
+        // read/write will be avoided.
+        public int is_external_memory;
+
+        public WebPUnionBuffer u; // Nameless union of buffer parameters.
+
+        UInt32 pad0; // padding for later use
+        UInt32 pad1;
+        UInt32 pad2;
+        UInt32 pad3;
+
+        // Internally allocated memory (only when
+        // is_external_memory is 0). Should not be used
+        // externally, but accessed via the buffer union.
+        private IntPtr private_memory;
+
     }
 
-    /// <summary>Generic structure for describing the output sample buffer.</summary>
-    [StructLayoutAttribute(LayoutKind.Sequential)]
-    public struct WebPRGBABuffer
+    [StructLayout(LayoutKind.Sequential)]
+    public struct WebPBitstreamFeatures
     {
-        /// <summary>pointer to RGBA samples.</summary>
-        public IntPtr rgba;
-        /// <summary>stride in bytes from one scanline to the next.</summary>
-        public int stride;
-        /// <summary>total size of the rgba buffer.</summary>
-        public UIntPtr size;
-    }
+        public int width;          // Width in pixels, as read from the bitstream.
+        public int height;         // Height in pixels, as read from the bitstream.
+        public int has_alpha;      // True if the bitstream contains an alpha channel.
+        public int has_animation;  // True if the bitstream is an animation.
+        public int format;         // 0 = undefined (/mixed), 1 = lossy, 2 = lossless
 
-    /// <summary>Decoding options</summary>
-    [StructLayoutAttribute(LayoutKind.Sequential)]
+        UInt32 pad0; // padding for later use
+        UInt32 pad1;
+        UInt32 pad2;
+        UInt32 pad3;
+        UInt32 pad4;
+    };
+
+    [StructLayout(LayoutKind.Sequential)]
     public struct WebPDecoderOptions
     {
-        /// <summary>if true, skip the in-loop filtering.</summary>
-        public int bypass_filtering;
-        /// <summary>if true, use faster pointwise upsampler.</summary>
-        public int no_fancy_upsampling;
-        /// <summary>if true, cropping is applied _first_</summary>
-        public int use_cropping;
-        /// <summary>left position for cropping. Will be snapped to even values.</summary>
+        public int bypass_filtering;               // if true, skip the in-loop filtering
+        public int no_fancy_upsampling;            // if true, use faster pointwise upsampler
+        public int use_cropping;                   // if true, cropping is applied _first_
         public int crop_left;
-        /// <summary>top position for cropping. Will be snapped to even values.</summary>
-        public int crop_top;
-        /// <summary>width of the cropping area</summary>
+        public int crop_top;            // top-left position for cropping. Will be snapped to even values.
         public int crop_width;
-        /// <summary>height of the cropping area</summary>
-        public int crop_height;
-        /// <summary>if true, scaling is applied _afterward_</summary>
-        public int use_scaling;
-        /// <summary>final width</summary>
+        public int crop_height;        // dimension of the cropping area
+        public int use_scaling;                    // if true, scaling is applied _afterward_
         public int scaled_width;
-        /// <summary>final height</summary>
-        public int scaled_height;
-        /// <summary>if true, use multi-threaded decoding</summary>
-        public int use_threads;
-        /// <summary>dithering strength (0=Off, 100=full)</summary>
-        public int dithering_strength;
-        /// <summary>flip output vertically</summary>
-        public int flip;
-        /// <summary>alpha dithering strength in [0..100]</summary>
-        public int alpha_dithering_strength;
-        /// <summary>padding for later use.</summary>
-        private UInt32 pad1;
-        /// <summary>padding for later use.</summary>
-        private UInt32 pad2;
-        /// <summary>padding for later use.</summary>
-        private UInt32 pad3;
-        /// <summary>padding for later use.</summary>
-        private UInt32 pad4;
-        /// <summary>padding for later use.</summary>
-        private UInt32 pad5;
+        public int scaled_height;    // final resolution
+        public int use_threads;                    // if true, use multi-threaded decoding
+        public int dithering_strength;             // dithering strength (0=Off, 100=full)
+        public int flip;                           // flip output vertically
+        public int alpha_dithering_strength;       // alpha dithering strength in [0..100]
+
+        UInt32 pad0; // padding for later use
+        UInt32 pad1;
+        UInt32 pad2;
+        UInt32 pad3;
+        UInt32 pad4;
     };
-#endregion
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct WebPDecoderConfig
+    {
+        public WebPBitstreamFeatures input;  // Immutable bitstream features (optional)
+        public WebPDecBuffer output;         // Output buffer (can point to external mem)
+        public WebPDecoderOptions options;   // Decoding options
+    }
 }
