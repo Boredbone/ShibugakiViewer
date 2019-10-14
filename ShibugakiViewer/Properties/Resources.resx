@@ -942,4 +942,7 @@
   <data name="DeleteFileText9" xml:space="preserve">
     <value>Are you sure you want to remove these </value>
   </data>
+  <data name="ExifOrientationSwitch_Text" xml:space="preserve">
+    <value>Ignore Exif orientation information</value>
+  </data>
 </root>

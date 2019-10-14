@@ -144,7 +144,7 @@ namespace ShibugakiViewer.Views.Controls
                 bool horizontalMirror = false;
                 bool verticalMirror = false;
 
-                if (record != null && newPath != null)
+                if (!this.isExifOrientationDisabled && record != null && newPath != null)
                 {
                     var ext = record.Extension.ToLower();
                     if (ext == ".jpg" || ext == ".jpeg")
@@ -817,6 +817,32 @@ namespace ShibugakiViewer.Views.Controls
 
         #endregion
 
+        #region IsExifOrientationDisabled
+
+        public bool IsExifOrientationDisabled
+        {
+            get { return (bool)GetValue(IsExifOrientationDisabledProperty); }
+            set { SetValue(IsExifOrientationDisabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsExifOrientationDisabledProperty =
+            DependencyProperty.Register(nameof(IsExifOrientationDisabled), typeof(bool), typeof(ScrollImageViewer),
+            new PropertyMetadata(false, new PropertyChangedCallback(OnIsExifOrientationDisabledChanged)));
+
+        private static void OnIsExifOrientationDisabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as ScrollImageViewer;
+            var value = e.NewValue as bool?;
+
+            if (thisInstance != null && value != null)
+            {
+                thisInstance.isExifOrientationDisabled = value.Value;
+            }
+
+        }
+
+        #endregion
+
         #region IsFill
 
         public bool IsFill
@@ -891,6 +917,7 @@ namespace ShibugakiViewer.Views.Controls
         private bool isScrollAnimating = false;
         private bool ignoreNextScaleChange = false;
         private bool isWindowInitialized = false;
+        private bool isExifOrientationDisabled = false;
 
         private Subject<double> MetaImageZoomFactorSubject { get; }
         public ReadOnlyReactiveProperty<double> MetaImageZoomFactor { get; }

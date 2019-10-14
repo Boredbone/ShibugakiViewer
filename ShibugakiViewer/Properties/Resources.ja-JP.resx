@@ -944,4 +944,7 @@
   <data name="DeleteFileText9" xml:space="preserve">
     <value>これらの</value>
   </data>
+  <data name="ExifOrientationSwitch_Text" xml:space="preserve">
+    <value>Exifの回転情報を無視する</value>
+  </data>
 </root>

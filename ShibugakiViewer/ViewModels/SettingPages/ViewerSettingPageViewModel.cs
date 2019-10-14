@@ -29,6 +29,7 @@ namespace ShibugakiViewer.ViewModels.SettingPages
 
         public ReactiveProperty<bool> IsFlipReversed { get; }
         public ReactiveProperty<bool> IsAnimatedGifEnabled { get; }
+        public ReactiveProperty<bool> IsExifOrientationDisabled { get; }
         public ReactiveProperty<bool> IsOpenNavigationWithSingleTapEnabled { get; }
         public ReactiveProperty<bool> UseExtendedMouseButtonsToSwitchImage { get; }
         public ReactiveProperty<bool> RefreshLibraryOnLaunched { get; }
@@ -88,6 +89,9 @@ namespace ShibugakiViewer.ViewModels.SettingPages
                 .AddTo(this.Disposables);
             this.IsAnimatedGifEnabled = core
                 .ToReactivePropertyAsSynchronized(x => x.IsAnimatedGifEnabled)
+                .AddTo(this.Disposables);
+            this.IsExifOrientationDisabled = core
+                .ToReactivePropertyAsSynchronized(x => x.IsExifOrientationDisabled)
                 .AddTo(this.Disposables);
             this.IsOpenNavigationWithSingleTapEnabled = core
                 .ToReactivePropertyAsSynchronized(x => x.IsOpenNavigationWithSingleTapEnabled)

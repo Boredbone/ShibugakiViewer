@@ -34,6 +34,8 @@ namespace ShibugakiViewer.Models
         [DataMember]
         public bool IsGifAnimationDisabled { get; set; }
         [DataMember]
+        public bool IsExifOrientationDisabled { get; set; }
+        [DataMember]
         public bool UseExtendedMouseButtonsToSwitchImage { get; set; }
 
         [DataMember]
@@ -112,6 +114,7 @@ namespace ShibugakiViewer.Models
             this.IsProfessionalFolderSettingEnabled = false;
             this.IsCmsEnabled = false;
             this.IsGifAnimationDisabled = false;
+            this.IsExifOrientationDisabled = false;
 
             this.CursorKeyBind = 0;
 

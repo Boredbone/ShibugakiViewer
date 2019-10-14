@@ -79,6 +79,7 @@ namespace ShibugakiViewer.ViewModels
         public ReactiveProperty<int> Orientation { get; }
 
         public ReactiveProperty<bool> IsGifAnimationEnabled { get; }
+        public ReactiveProperty<bool> IsExifOrientationDisabled { get; }
 
         public ReadOnlyReactiveProperty<bool> IsFill { get; }
         public ReadOnlyReactiveProperty<bool> IsZoomoutOnly { get; }
@@ -200,7 +201,11 @@ namespace ShibugakiViewer.ViewModels
             this.IsGifAnimationEnabled = parent.Core
                 .ToReactivePropertyAsSynchronized(x => x.IsAnimatedGifEnabled)
                 .AddTo(this.Disposables);
-            
+
+            this.IsExifOrientationDisabled = parent.Core
+                .ToReactivePropertyAsSynchronized(x => x.IsExifOrientationDisabled)
+                .AddTo(this.Disposables);
+
 
             this.IsFill = parent.Core
                 .ObserveProperty(x => x.IsSlideshowResizeToFill)

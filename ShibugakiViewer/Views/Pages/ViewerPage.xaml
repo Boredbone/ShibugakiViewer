@@ -49,6 +49,7 @@
                 CheckHorizontalScrollRequestFunction="{Binding CheckHorizontalScrollRequestFunction}"
                 CheckVerticalScrollRequestFunction="{Binding CheckVerticalScrollRequestFunction}"
                 IsGifAnimationEnabled="{Binding IsGifAnimationEnabled.Value,Mode=OneWay}"
+                IsExifOrientationDisabled="{Binding IsExifOrientationDisabled.Value,Mode=OneWay}"
                 IsZoomoutOnly="{Binding IsZoomoutOnly.Value,Mode=OneWay}"
                 IsFill="{Binding IsFill.Value,Mode=OneWay}"
                 ScaleToPhysicalPixel="{Binding UsePhysicalPixel.Value,Mode=OneWay}"

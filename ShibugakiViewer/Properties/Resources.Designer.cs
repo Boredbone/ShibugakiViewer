@@ -664,6 +664,15 @@ namespace ShibugakiViewer.Properties {
         }
         
         /// <summary>
+        ///   Ignore Exif orientation information に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ExifOrientationSwitch_Text {
+            get {
+                return ResourceManager.GetString("ExifOrientationSwitch_Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Exif Data to Display に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ExifToDisplay {

@@ -196,6 +196,19 @@ namespace ShibugakiViewer.Models
             }
         }
 
+        public bool IsExifOrientationDisabled
+        {
+            get { return this.Settings.IsExifOrientationDisabled; }
+            set
+            {
+                if (this.Settings.IsExifOrientationDisabled != value)
+                {
+                    this.Settings.IsExifOrientationDisabled = value;
+                    RaisePropertyChanged(nameof(IsExifOrientationDisabled));
+                }
+            }
+        }
+
         public bool UseExtendedMouseButtonsToSwitchImage
         {
             get { return this.Settings.UseExtendedMouseButtonsToSwitchImage; }
