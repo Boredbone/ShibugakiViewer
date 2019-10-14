@@ -104,6 +104,86 @@
                 </GroupBox>
 
 
+
+                <GroupBox Header="{x:Static properties:Resources.Viewer}">
+                    <StackPanel>
+
+
+                        <CheckBox 
+                            Content="{x:Static properties:Resources.AnimatedGifSwitch_Text}" 
+                            IsChecked="{Binding IsAnimatedGifEnabled.Value,Mode=TwoWay}"/>
+
+                        <CheckBox 
+                            Content="{x:Static properties:Resources.ExifOrientationSwitch_Text}" 
+                            IsChecked="{Binding IsExifOrientationDisabled.Value,Mode=TwoWay}"/>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            
+                            <TextBlock 
+                                Grid.Row="0" 
+                                Style="{StaticResource headerTextStyle}"
+                                TextWrapping="Wrap"
+                                Text="{x:Static properties:Resources.HighDpi}"/>
+                            <ComboBox
+                                Grid.Row="0" Grid.Column="1"
+                                Style="{StaticResource comboBoxStyle}"
+                                SelectedIndex="{Binding UseLogicalPixel.Value,Mode=TwoWay,
+                                Converter={StaticResource BoolIntConverter}}">
+                                <ComboBoxItem
+                                    Content="{x:Static properties:Resources.UsePhysicalPixel}"/>
+                                <ComboBoxItem
+                                    Content="{x:Static properties:Resources.UseLogicalPixel}"/>
+                            </ComboBox>
+
+                            <TextBlock 
+                                Grid.Row="1" 
+                                Style="{StaticResource headerTextStyle}"
+                                TextWrapping="Wrap"
+                                Text="{x:Static properties:Resources.ScalingMode}"/>
+                            <ComboBox
+                                Grid.Row="1" Grid.Column="1"
+                                Style="{StaticResource comboBoxStyle}"
+                                SelectedIndex="{Binding ScalingMode.Value,Mode=TwoWay}">
+                                <ComboBoxItem
+                                    Content="{x:Static properties:Resources.Quality}"/>
+                                <ComboBoxItem
+                                    Content="{x:Static properties:Resources.Performance}"/>
+                            </ComboBox>
+                            
+                            <TextBlock 
+                                Grid.Row="2" 
+                                Style="{StaticResource headerTextStyle}"
+                                TextWrapping="Wrap"
+                                Text="{x:Static properties:Resources.ResizeMethodText_Text}"/>
+                            <ComboBox
+                                Grid.Row="2" Grid.Column="1"
+                                Style="{StaticResource comboBoxStyle}"
+                                SelectedIndex="{Binding IsFill.Value,Mode=TwoWay,
+                                Converter={StaticResource BoolIntConverter}}">
+                                <ComboBoxItem
+                                    Content="{x:Static properties:Resources.FitText_Content}"/>
+                                <ComboBoxItem
+                                    Content="{x:Static properties:Resources.FillText_Content}"/>
+                            </ComboBox>
+                            
+                        </Grid>
+
+                        <CheckBox
+                            IsChecked="{Binding IsResizingAlways.Value,Mode=TwoWay}"
+                            Content="{x:Static properties:Resources.ResizeSmallImageText_Text}"/>
+
+                    </StackPanel>
+                </GroupBox>
+
                 <GroupBox Header="{x:Static properties:Resources.ColorSetting}">
                     <StackPanel>
 
@@ -216,86 +296,6 @@
                         tb:SliderBehavior.IsReceiveMouseWheel="True"
                         AutoToolTipPrecision="2">
                 </Slider>-->
-                    </StackPanel>
-                </GroupBox>
-
-
-                <GroupBox Header="{x:Static properties:Resources.Viewer}">
-                    <StackPanel>
-
-
-                        <CheckBox 
-                            Content="{x:Static properties:Resources.AnimatedGifSwitch_Text}" 
-                            IsChecked="{Binding IsAnimatedGifEnabled.Value,Mode=TwoWay}"/>
-
-                        <CheckBox 
-                            Content="{x:Static properties:Resources.ExifOrientationSwitch_Text}" 
-                            IsChecked="{Binding IsExifOrientationDisabled.Value,Mode=TwoWay}"/>
-
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            
-                            <TextBlock 
-                                Grid.Row="0" 
-                                Style="{StaticResource headerTextStyle}"
-                                TextWrapping="Wrap"
-                                Text="{x:Static properties:Resources.HighDpi}"/>
-                            <ComboBox
-                                Grid.Row="0" Grid.Column="1"
-                                Style="{StaticResource comboBoxStyle}"
-                                SelectedIndex="{Binding UseLogicalPixel.Value,Mode=TwoWay,
-                                Converter={StaticResource BoolIntConverter}}">
-                                <ComboBoxItem
-                                    Content="{x:Static properties:Resources.UsePhysicalPixel}"/>
-                                <ComboBoxItem
-                                    Content="{x:Static properties:Resources.UseLogicalPixel}"/>
-                            </ComboBox>
-
-                            <TextBlock 
-                                Grid.Row="1" 
-                                Style="{StaticResource headerTextStyle}"
-                                TextWrapping="Wrap"
-                                Text="{x:Static properties:Resources.ScalingMode}"/>
-                            <ComboBox
-                                Grid.Row="1" Grid.Column="1"
-                                Style="{StaticResource comboBoxStyle}"
-                                SelectedIndex="{Binding ScalingMode.Value,Mode=TwoWay}">
-                                <ComboBoxItem
-                                    Content="{x:Static properties:Resources.Quality}"/>
-                                <ComboBoxItem
-                                    Content="{x:Static properties:Resources.Performance}"/>
-                            </ComboBox>
-                            
-                            <TextBlock 
-                                Grid.Row="2" 
-                                Style="{StaticResource headerTextStyle}"
-                                TextWrapping="Wrap"
-                                Text="{x:Static properties:Resources.ResizeMethodText_Text}"/>
-                            <ComboBox
-                                Grid.Row="2" Grid.Column="1"
-                                Style="{StaticResource comboBoxStyle}"
-                                SelectedIndex="{Binding IsFill.Value,Mode=TwoWay,
-                                Converter={StaticResource BoolIntConverter}}">
-                                <ComboBoxItem
-                                    Content="{x:Static properties:Resources.FitText_Content}"/>
-                                <ComboBoxItem
-                                    Content="{x:Static properties:Resources.FillText_Content}"/>
-                            </ComboBox>
-                            
-                        </Grid>
-
-                        <CheckBox
-                            IsChecked="{Binding IsResizingAlways.Value,Mode=TwoWay}"
-                            Content="{x:Static properties:Resources.ResizeSmallImageText_Text}"/>
-
                     </StackPanel>
                 </GroupBox>
 
