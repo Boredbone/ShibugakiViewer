@@ -48,6 +48,7 @@
     <ProjectReference Include="..\CsCommon\CsCommon.csproj" />
     <ProjectReference Include="..\Database\Database.csproj" />
     <ProjectReference Include="..\ImageLibrary\ImageLibrary.csproj" />
+    <ProjectReference Include="..\ShibugakiViewer.Backup\ShibugakiViewer.Backup.csproj" />
     <ProjectReference Include="..\ShibugakiViewer.Settings\ShibugakiViewer.Settings.csproj" />
     <ProjectReference Include="..\WebpWrapperNetCore\WebpWrapperNetCore.csproj" />
     <ProjectReference Include="..\WpfTools\WpfTools.csproj" />
