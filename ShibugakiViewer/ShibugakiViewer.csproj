@@ -78,5 +78,14 @@
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="if &quot;$(ConfigurationName)&quot; == &quot;Release&quot; (&#xD;&#xA;powershell -ExecutionPolicy RemoteSigned -File &quot;$(ProjectDir)resolve_version.ps1&quot;&#xD;&#xA;)" />
   </Target>
+  
+  <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
+    <Copy SourceFiles="..\ShibugakiViewer.Backup\bin\$(Configuration)\$(TargetFramework)\ShibugakiViewer.Backup.deps.json" DestinationFolder="$(OutDir)" />
+    <Copy SourceFiles="..\ShibugakiViewer.Backup\bin\$(Configuration)\$(TargetFramework)\ShibugakiViewer.Backup.runtimeconfig.json" DestinationFolder="$(OutDir)" />
+  </Target>
+  <Target Name="CopyCustomContentOnPublish" AfterTargets="Publish">
+    <Copy SourceFiles="..\ShibugakiViewer.Backup\bin\$(Configuration)\$(TargetFramework)\ShibugakiViewer.Backup.deps.json" DestinationFolder="$(PublishDir)" />
+    <Copy SourceFiles="..\ShibugakiViewer.Backup\bin\$(Configuration)\$(TargetFramework)\ShibugakiViewer.Backup.runtimeconfig.json" DestinationFolder="$(PublishDir)" />
+  </Target>
 
 </Project>

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -19,5 +19,5 @@
     <ProjectReference Include="..\LibraryConverter\LibraryConverter.csproj" />
     <ProjectReference Include="..\ShibugakiViewer.Settings\ShibugakiViewer.Settings.csproj" />
   </ItemGroup>
-
+  
 </Project>
