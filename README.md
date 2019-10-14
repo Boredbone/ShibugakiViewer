@@ -64,7 +64,7 @@ For example, sort images first by rating and then by modified date in each group
 ### Supported file formats
 
 It supports the image format of the following:  
-` ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".wmf", ".emf", ".tif", ".tiff"`  
+` ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".wmf", ".emf", ".tif", ".tiff", ".webp"`  
   
 Animated GIF is supported.  
   

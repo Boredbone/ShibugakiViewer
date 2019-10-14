@@ -63,7 +63,7 @@ for Windows 7/8/8.1/10
 ### 対応ファイル形式
 
 以下の画像形式に対応しています。  
-` ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".wmf", ".emf", ".tif", ".tiff"`  
+` ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".wmf", ".emf", ".tif", ".tiff", ".webp"`  
   
 GIFアニメーションの再生が可能です。  
   
