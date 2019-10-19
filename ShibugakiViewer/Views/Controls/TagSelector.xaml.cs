@@ -21,6 +21,7 @@ using Boredbone.Utility.Extensions;
 using System.Windows.Controls.Primitives;
 using System.Reactive.Disposables;
 using Reactive.Bindings.Extensions;
+using ShibugakiViewer.Models.Utility;
 
 namespace ShibugakiViewer.Views.Controls
 {
@@ -340,6 +341,18 @@ namespace ShibugakiViewer.Views.Controls
                 this.DecideTag(this.list.SelectedItem as TagInformation);
                 e.Handled = true;
             }
+            else
+            {
+                var focused = FocusManager.GetFocusedElement(this) ?? Keyboard.FocusedElement;
+                if (focused is TextBox || focused is ComboBox || focused is ComboBoxItem)
+                {
+                    return;
+                }
+                if (ScrollToTagByKey(e.Key))
+                {
+                    e.Handled = true;
+                }
+            }
         }
 
 
@@ -402,6 +415,46 @@ namespace ShibugakiViewer.Views.Controls
                     this.LoadList(x);
                 })
                 .AddTo(this.disposables, "SortMode");
+        }
+
+        private bool ScrollToTagByKey(Key key)
+        {
+            if (!KeyBoardHelper.KeyToChar(key, out var keyChar))
+            {
+                return false;
+            }
+            //var tag = this.Tags.FirstOrDefault(x => x.Name.Length > 0 && char.ToLower(x.Name[0]) >= keyChar);
+
+            TagInformation matchTag = null;
+            TagInformation betterTag = null;
+
+            foreach (var item in this.Tags)
+            {
+                if (item != null && item.Name.Length > 0)
+                {
+                    var c = char.ToLower(item.Name[0]);
+                    if (c == keyChar)
+                    {
+                        matchTag = item;
+                        break;
+                    }
+                    if (betterTag == null && c >= keyChar)
+                    {
+                        betterTag = item;
+                    }
+                }
+            }
+            if (matchTag == null)
+            {
+                matchTag = betterTag;
+            }
+
+            if (matchTag == null)
+            {
+                return false;
+            }
+            this.list.ScrollIntoView(matchTag);
+            return this.SelectItem(matchTag);
         }
     }
 }

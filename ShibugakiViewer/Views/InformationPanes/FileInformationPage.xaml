@@ -353,7 +353,6 @@
                     </Grid>-->
 
                 </StackPanel>
-                
                 <StackPanel
                         Visibility="{Binding FileCommonVisibility,ElementName=controlRoot}">
 

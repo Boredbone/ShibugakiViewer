@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
              xmlns:local="clr-namespace:ShibugakiViewer.Views.Controls"
              xmlns:behavior="clr-namespace:ShibugakiViewer.Views.Behaviors"
              xmlns:properties="clr-namespace:ShibugakiViewer.Properties"
@@ -150,6 +151,9 @@
                                            FontSize="{StaticResource InputTextSize}"/>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
+                        <i:Interaction.Behaviors>
+                            <behavior:TagComboBoxBehavior />
+                        </i:Interaction.Behaviors>
                     </ComboBox>
                     <TextBlock
                         Style="{StaticResource comboBoxPlaceHolderTextStyle}"

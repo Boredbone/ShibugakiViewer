@@ -175,4 +175,32 @@ namespace ShibugakiViewer.Models.Utility
             }
         }
     }
+    
+    class KeyBoardHelper
+    {
+        public static bool KeyToChar(Key key, out char c)
+        {
+            if (key >= Key.D0 && key <= Key.D9)
+            {
+                c = (char)(key - Key.D0 + '0');
+                return true;
+            }
+            else if (key >= Key.NumPad0 && key <= Key.NumPad9)
+            {
+                c = (char)(key - Key.NumPad0 + '0');
+                return true;
+            }
+            else if (key >= Key.A && key <= Key.Z)
+            {
+                c = (char)(key - Key.A + 'a');
+                return true;
+            }
+            else
+            {
+                c = '\0';
+                //System.Diagnostics.Debug.WriteLine($"key={key}");
+                return false;
+            }
+        }
+    }
 }
