@@ -17,13 +17,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "Test\Test.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShibugakiViewer.Settings", "ShibugakiViewer.Settings\ShibugakiViewer.Settings.csproj", "{4BF7A971-6C55-487C-BA74-4E9A46A2BFEB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShibugakiViewer.Launcher", "ShibugakiViewer.Launcher\ShibugakiViewer.Launcher.csproj", "{2E49E3E6-0ABE-4C89-945B-A1AA9ACA2ABE}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShibugakiViewer.Backup", "ShibugakiViewer.Backup\ShibugakiViewer.Backup.csproj", "{8E92C1AE-45A2-4559-B344-E013FDD2F950}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraryConverter", "LibraryConverter\LibraryConverter.csproj", "{792694F6-4F73-46F4-B88D-108DA9418CF1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebpWrapperNetCore", "WebpWrapperNetCore\WebpWrapperNetCore.csproj", "{B03B4B85-C79A-4C80-9896-1417732FD5CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebpWrapperNetCore", "WebpWrapperNetCore\WebpWrapperNetCore.csproj", "{B03B4B85-C79A-4C80-9896-1417732FD5CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShibugakiViewer.Launcher", "ShibugakiViewer.Launcher\ShibugakiViewer.Launcher.csproj", "{60F96B0F-12C2-49D5-B005-D6D7B956FFFB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,10 +59,6 @@ Global
 		{4BF7A971-6C55-487C-BA74-4E9A46A2BFEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4BF7A971-6C55-487C-BA74-4E9A46A2BFEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4BF7A971-6C55-487C-BA74-4E9A46A2BFEB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2E49E3E6-0ABE-4C89-945B-A1AA9ACA2ABE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2E49E3E6-0ABE-4C89-945B-A1AA9ACA2ABE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2E49E3E6-0ABE-4C89-945B-A1AA9ACA2ABE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2E49E3E6-0ABE-4C89-945B-A1AA9ACA2ABE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8E92C1AE-45A2-4559-B344-E013FDD2F950}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8E92C1AE-45A2-4559-B344-E013FDD2F950}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E92C1AE-45A2-4559-B344-E013FDD2F950}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -75,6 +71,10 @@ Global
 		{B03B4B85-C79A-4C80-9896-1417732FD5CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B03B4B85-C79A-4C80-9896-1417732FD5CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B03B4B85-C79A-4C80-9896-1417732FD5CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60F96B0F-12C2-49D5-B005-D6D7B956FFFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60F96B0F-12C2-49D5-B005-D6D7B956FFFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60F96B0F-12C2-49D5-B005-D6D7B956FFFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60F96B0F-12C2-49D5-B005-D6D7B956FFFB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
