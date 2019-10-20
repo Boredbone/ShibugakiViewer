@@ -62,6 +62,25 @@ namespace ShibugakiViewer
         private System.Windows.Forms.NotifyIcon notifyIcon;
 
 
+        /// <summary>
+        /// Application Entry Point.
+        /// </summary>
+        [System.STAThreadAttribute()]
+        public static void Main()
+        {
+            System.Diagnostics.Debug.WriteLine("entry");
+            string[] args = Environment.GetCommandLineArgs();
+            if (args != null && args.Length > 0 && !ConfirmSingleInstance(args.AsSpan(1)))
+            {
+                return;
+            }
+            System.Diagnostics.Debug.WriteLine("start");
+
+            ShibugakiViewer.App app = new ShibugakiViewer.App();
+            app.InitializeComponent();
+            app.Run();
+        }
+
         public App()
         {
             this.disposables = new CompositeDisposable();
@@ -104,14 +123,13 @@ namespace ShibugakiViewer
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            if (!ConfirmSingleInstance(e.Args))
-            {
-                this.Shutdown();
-                return;
-            }
             base.OnStartup(e);
 
 #if DEBUG
+            if (processMutex == null)
+            {
+                MessageBox.Show($"Mutex is null!");
+            }
             this.Resources["IsThumbnailTooltipEnabled"] = false;
 #endif
 
@@ -177,7 +195,7 @@ namespace ShibugakiViewer
             }
         }
 
-        private bool ConfirmSingleInstance(string[] args)
+        private static bool ConfirmSingleInstance(Span<string> args)
         {
             try
             {

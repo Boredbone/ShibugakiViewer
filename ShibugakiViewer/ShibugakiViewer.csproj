@@ -10,6 +10,7 @@
     <Description>Image Database</Description>
     <Copyright>Boredbone 2019</Copyright>
     <Authors>Boredbone</Authors>
+    <EnableDefaultApplicationDefinition>false</EnableDefaultApplicationDefinition>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
