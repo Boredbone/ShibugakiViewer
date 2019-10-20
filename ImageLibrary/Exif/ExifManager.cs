@@ -313,12 +313,6 @@ namespace ImageLibrary.Exif
 
                     var convertEndian = isLittleEndian != BitConverter.IsLittleEndian;
 
-                    if (isLittleEndian)
-                    {
-                        System.Diagnostics.Debug.WriteLine("exif little endian");
-                    }
-
-
                     var ifdOffsetBin = header.AsSpan(10, 4);
                     if (convertEndian)
                     {

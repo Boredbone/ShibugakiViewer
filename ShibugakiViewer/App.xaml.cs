@@ -68,13 +68,11 @@ namespace ShibugakiViewer
         [System.STAThreadAttribute()]
         public static void Main()
         {
-            System.Diagnostics.Debug.WriteLine("entry");
             string[] args = Environment.GetCommandLineArgs();
             if (args != null && args.Length > 0 && !ConfirmSingleInstance(args.AsSpan(1)))
             {
                 return;
             }
-            System.Diagnostics.Debug.WriteLine("start");
 
             ShibugakiViewer.App app = new ShibugakiViewer.App();
             app.InitializeComponent();
