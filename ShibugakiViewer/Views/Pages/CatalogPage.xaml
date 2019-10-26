@@ -84,19 +84,14 @@
 
                         </Image>
 
-                        <Grid
+                        <StackPanel
                             VerticalAlignment="Bottom" Background="#70000000"
                             Visibility="{Binding 
                             Source={StaticResource rootControl},
                             Path=DataContext.ImagePropertiesVisibility.Value,
                             FallbackValue=Collapsed}">
 
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
                             <TextBlock 
-                                Grid.Row="0"
                                 Text="{Binding FileName,Mode=OneWay,FallbackValue=''}"
                                        FontSize="16"
                                        Foreground="{StaticResource ThumbnailNameTextColor}"
@@ -107,7 +102,6 @@
                                        />
 
                             <TextBlock
-                                Grid.Row="1"
                                 Foreground="{StaticResource ThumbnailSizeTextColor}"
                                        x:Name="sizeText"
                                        Margin="2,0"
@@ -119,7 +113,6 @@
 
                             
                             <TextBlock
-                                Grid.Row="1"
                                 Foreground="{StaticResource ThumbnailSizeTextColor}"
                                        x:Name="itemsCountText"
                                        Margin="2,0"
@@ -130,41 +123,38 @@
                                 <Run Text=" items"/>-->
                             </TextBlock>
 
-                        </Grid>
+                        </StackPanel>
 
 
                         <Border Height="32" Width="32"
                                 VerticalAlignment="Top" HorizontalAlignment="Right"
-                                Background="Transparent" Margin="0">
-                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                  Background="{StaticResource CheckBoxBaseColor}">
+                                Background="{StaticResource CheckBoxBaseColor}" Margin="0">
 
-                                <i:Interaction.Behaviors>
-                                    <behaviors:HoverGridBehavior
+                            <i:Interaction.Behaviors>
+                                <behaviors:HoverBorderBehavior
                                         Background="{StaticResource CheckBoxBaseColor}"
                                         HoverBackground="{StaticResource CheckBoxHoverColor}"/>
-                                </i:Interaction.Behaviors>
+                            </i:Interaction.Behaviors>
 
-                                <CheckBox x:Name="itemCheckBox" Margin="0"
+                            <CheckBox x:Name="itemCheckBox" Margin="0"
                                           VerticalAlignment="Center"
                                           IsTabStop="False"
                                           HorizontalAlignment="Center">
 
-                                    <i:Interaction.Behaviors>
-                                        <behaviors:RecordSelectBehavior
+                                <i:Interaction.Behaviors>
+                                    <behaviors:RecordSelectBehavior
                                             Manager="{Binding 
                                             Source={StaticResource rootControl},
                                             Path=DataContext.SelectedItems,
                                             Mode=OneWay}"/>
-                                    </i:Interaction.Behaviors>
-                                    <CheckBox.LayoutTransform>
-                                        <ScaleTransform CenterX="0"
+                                </i:Interaction.Behaviors>
+                                <CheckBox.LayoutTransform>
+                                    <ScaleTransform CenterX="0"
                                                         CenterY="0"
                                                         ScaleX="1.5"
                                                         ScaleY="1.5" />
-                                    </CheckBox.LayoutTransform>
-                                </CheckBox>
-                            </Grid>
+                                </CheckBox.LayoutTransform>
+                            </CheckBox>
                         </Border>
                         <Grid.ToolTip>
 

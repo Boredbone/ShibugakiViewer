@@ -3,7 +3,7 @@
                     xmlns:local="clr-namespace:ShibugakiViewer.Views">
 
     <SolidColorBrush x:Key="ThemeTextColor" Color="White"/>
-    <SolidColorBrush x:Key="ThemeNegatedTextColor" Color="LightGray"/>
+    <SolidColorBrush x:Key="ThemeNegatedTextColor" Color="#FFE0E0E0"/>
     <SolidColorBrush x:Key="ThemeBackColor" Color="Black"/>
     <SolidColorBrush x:Key="TopBarBackColor" Color="#A0000000"/>
     <SolidColorBrush x:Key="ThemeMaskColor" Color="#20FFFFFF"/>

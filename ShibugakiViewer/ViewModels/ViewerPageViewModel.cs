@@ -35,7 +35,7 @@ namespace ShibugakiViewer.ViewModels
 
         public ReadOnlyReactiveProperty<Record> Record => this.client.ViewerDisplaying;
         public ReactiveProperty<double> ZoomFactor { get; }
-        public ReactiveProperty<double> CurrentZoomFactorPercent { get; }
+        public ReadOnlyReactivePropertySlim<double> CurrentZoomFactorPercent { get; }
         public ReactiveProperty<double> DesiredZoomFactor { get; }
         public ReactiveProperty<double> DisplayZoomFactor { get; }
         public ReactiveProperty<Visibility> ZoomFactorVisibility { get; }
@@ -167,7 +167,7 @@ namespace ShibugakiViewer.ViewModels
 
             this.CurrentZoomFactorPercent = this.ZoomFactor
                 .Select(x => x * 100.0)
-                .ToReactiveProperty()
+                .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.Disposables);
 
             this.DisplayZoomFactor = this.CurrentZoomFactorPercent.ToReactiveProperty().AddTo(this.Disposables);

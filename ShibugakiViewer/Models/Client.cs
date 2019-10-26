@@ -23,6 +23,7 @@ using ImageLibrary.Viewer;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using ShibugakiViewer.Models.ImageViewer;
+using WpfTools.Extensions;
 
 namespace ShibugakiViewer.Models
 {
@@ -73,8 +74,8 @@ namespace ShibugakiViewer.Models
             }
         }
 
-        public ReactiveProperty<long> CatalogIndex { get; }
-        public ReactiveProperty<long> ViewerIndex { get; }
+        public ReactivePropertySlim<long> CatalogIndex { get; }
+        public ReactivePropertySlim<long> ViewerIndex { get; }
 
 
         public double ViewWidth { get; set; }
@@ -97,7 +98,7 @@ namespace ShibugakiViewer.Models
         private Subject<long> PrepareNextSubject { get; }
 
         public Record FeaturedGroup => this.front.FeaturedGroup;
-        public ReadOnlyReactiveProperty<bool> IsGroupMode;
+        public ReadOnlyReactivePropertySlim<bool> IsGroupMode { get; }
         public IObservable<Record> FeaturedGroupChanged => this.front.FeaturedGroupChanged;
         public IObservable<CacheUpdatedEventArgs> CacheUpdated => this.front.CacheUpdated;
 
@@ -127,8 +128,8 @@ namespace ShibugakiViewer.Models
         private OldNewPair<long> lastViewerImageIndex;
         private Record lastGroup = null;
 
-        public ReadOnlyReactiveProperty<int> BackHistoryCount => this.History.BackHistoryCount;
-        public ReadOnlyReactiveProperty<int> ForwardHistoryCount => this.History.ForwardHistoryCount;
+        public ReadOnlyReactivePropertySlim<int> BackHistoryCount => this.History.BackHistoryCount;
+        public ReadOnlyReactivePropertySlim<int> ForwardHistoryCount => this.History.ForwardHistoryCount;
 
         private readonly ApplicationCore core;
         private readonly LibraryFront front;
@@ -152,7 +153,7 @@ namespace ShibugakiViewer.Models
                 .ToReadOnlyReactiveProperty()
                 .AddTo(this.Disposables);
 
-            this.IsGroupMode = this.front.IsGroupMode.ToReadOnlyReactiveProperty().AddTo(this.Disposables);
+            this.IsGroupMode = this.front.IsGroupMode.ToReadOnlyReactivePropertySlim().AddTo(this.Disposables);
 
             this.History = new History<ViewState>(new ViewState()).AddTo(this.Disposables);
 
@@ -223,9 +224,9 @@ namespace ShibugakiViewer.Models
             this.ColumnLength = new ReactivePropertySlim<int>(-1).AddTo(this.Disposables);
             this.RowLength = new ReactivePropertySlim<int>(-1).AddTo(this.Disposables);
 
-            this.CatalogIndex = this.ToReactivePropertyAsSynchronized(x => x.CatalogIndexInner)
+            this.CatalogIndex = this.ToReactivePropertySlimAsSynchronized(x => x.CatalogIndexInner, this.Disposables)
                 .AddTo(this.Disposables);
-            this.ViewerIndex = this.ToReactivePropertyAsSynchronized(x => x.ViewerIndexInner)
+            this.ViewerIndex = this.ToReactivePropertySlimAsSynchronized(x => x.ViewerIndexInner, this.Disposables)
                 .AddTo(this.Disposables);
 
 

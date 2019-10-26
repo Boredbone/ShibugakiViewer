@@ -549,8 +549,10 @@ namespace ShibugakiViewer.Models.ImageViewer
                     images.AddOrExtrude
                         (key, new ImageBufferItem(image, ++this.count), bufferSize);
                 }
-
-                this.UpdatedSubject.OnNext(key);
+                if (!this.UpdatedSubject.IsDisposed)
+                {
+                    this.UpdatedSubject.OnNext(key);
+                }
                 command.Observer.OnNext(image);
             }
             command.Observer.OnCompleted();
