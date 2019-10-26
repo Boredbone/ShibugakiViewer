@@ -50,6 +50,34 @@ namespace Test
 
             //Create Library
 
+            var files = new SearchInformation(new ComplexSearch(false))
+                .Search(library, 0, 0);
+
+
+            var originalFiles = this.FileEnumerator
+                .SelectMany(x => x.Value.Files)
+                .OrderBy(x => x.Path)
+                .ToArray();
+
+            Assert.AreEqual(originalFiles.Length, files.Length);
+
+            foreach (var file in files.OrderBy(x => x.Id).Zip
+                (originalFiles, (Target, Reference) => new { Target, Reference }))
+            {
+                Assert.IsTrue(await IsFileEquals(file.Target, file.Reference, library));
+            }
+
+
+        }
+        [TestMethod]
+        public async Task LibraryCreationTestAsync()
+        {
+
+            await this.InitializeTestAsync();
+            var library = await this.CreateLibraryAsync();
+
+            //Create Library
+
             var files = await new SearchInformation(new ComplexSearch(false))
                 .SearchAsync(library, 0, 0);
 
@@ -73,6 +101,57 @@ namespace Test
 
         [TestMethod]
         public async Task PropertyChangeTest()
+        {
+
+            await this.InitializeTestAsync();
+            var library = await this.CreateLibraryAsync();
+
+            var file = this.FileEnumerator
+                .SelectMany(x => x.Value.GetAllFiles())
+                .First();
+
+            var f1 = await library.GetRecordAsync(file.Path);
+
+            //var f1s = await this.SearchAsync(FileProperty.FileName, file.Name, CompareMode.Equal);
+            //var f1 = f1s.Where(x => x.Id == file.GetFileId()).First();
+
+            Assert.AreEqual(500, f1.Height);
+
+            f1.Height = 123;
+            f1.Width = 456;
+            f1.Size = 789L;
+
+            await Task.Delay(500);
+
+            var f2 = await library.GetRecordAsync(file.Path);
+
+            Assert.AreEqual(123, f2.Height);
+            Assert.AreEqual(456, f2.Width);
+            Assert.AreEqual(789L, f2.Size);
+
+
+            var rf = (this.Search(FileProperty.Rating, 3, CompareMode.Equal)).First();
+            var rfkey = rf.Id;
+            var or = rf.GetRate();
+            rf.SetRate(or + 1);
+            var nr = rf.GetRate();
+
+
+            var rf3 = await library.GetRecordAsync(rfkey);
+
+            Assert.AreEqual(or, rf3.GetRate());
+            Assert.AreNotEqual(nr, rf3.GetRate());
+
+
+            await Task.Delay(500);
+            var rf2 = await library.GetRecordAsync(rfkey);
+
+            Assert.AreNotEqual(or, rf2.GetRate());
+
+            Assert.AreEqual(nr, rf2.GetRate());
+        }
+        [TestMethod]
+        public async Task PropertyChangeTestAsync()
         {
 
             await this.InitializeTestAsync();
@@ -245,6 +324,218 @@ namespace Test
 
         [TestMethod]
         public async Task GroupTest()
+        {
+            await this.InitializeTestAsync();
+            var library = await this.CreateLibraryAsync();
+
+            var groupKey = "";
+
+            var files = this.Search
+                (FileProperty.Size, 500L, CompareMode.GreatEqual);
+
+            Record group1a;
+            {
+
+                var leader1 = files.OrderBy(x => x.FileName).First();
+
+                var group1Id = await library.Grouping.GroupAsync(files.Select(x => x.Id).ToArray());
+
+                await Task.Delay(300);
+
+                var group1 = await library.GetRecordAsync(group1Id);
+
+                group1.SetSort(new[]
+                {
+                    new SortSetting() {Property=FileProperty.FileNameSequenceNumRight,IsDescending=false },
+                    new SortSetting() {Property=FileProperty.AspectRatio,IsDescending=true },
+                    new SortSetting() {Property=FileProperty.DateTimeRegistered,IsDescending=false },
+                }, true);
+
+                await Task.Delay(400);
+
+                var member = library.GroupQuery.Search(group1, 0, 1000);
+
+                await this.IsGroupEquals(group1, leader1, member);
+
+                group1a = await library.GetRecordAsync(group1.Id);
+
+                await this.IsFileEquals(group1, group1a);
+
+                groupKey = group1.Id;
+            }
+
+
+            var key = group1a.GroupKey;
+            var group1aMember = group1a.Search(library, 0, 0);
+
+            var leader2 = group1aMember.First(x => x.Id != key);
+
+            //group1a.IsLoaded = false;
+            group1a.SetGroupLeader(leader2);
+
+            await this.WriteLineAsync($"leader2:{leader2.Id}");
+
+            group1a.Rating = 5;
+
+            //await Task.Delay(500);
+
+            //await library.SaveGroupChangeAsync(group1a);
+
+            await Task.Delay(500);
+
+            var group1b = await library.GetRecordAsync(groupKey);
+            var group1bMember = group1b.Search(library, 0, 0);
+
+            Assert.AreEqual(5, group1b.Rating);
+
+            await this.IsGroupEquals(group1b, leader2, group1bMember);
+
+
+            await this.IsFileOptionsEquals(group1a, group1b);
+
+            //return;
+
+            var members2 = group1bMember.ToList();
+
+            //グループ内のサムネイルでないファイル削除
+
+            var mid1 = members2
+                .Where(x => x.Id != group1b.GroupKey)
+                .OrderByDescending(x => x.DateCreated)
+                .Take(2).ToList();
+
+            foreach (var m in mid1)
+            {
+                members2.Remove(m);
+                //this.FileEnumerator.
+                foreach (var folder in this.FileEnumerator)
+                {
+                    var f = folder.Value.Files.FirstOrDefault(y => y.Path == m.Id);
+                    if (f != null)
+                    {
+                        folder.Value.Files.Remove(f);
+                        await this.WriteLineAsync($"remove {f.Path}");
+                        break;
+                    }
+                }
+            }
+
+            await this.WriteLineAsync("remove 2");
+
+            //ライブラリ更新
+            var result1 = await this.RefreshLibraryAsync(library);
+
+            await this.AreEqualAsync(2, result1.RemovedFiles.Count);
+
+
+            //情報更新されるか？ソート・サムネイル設定維持されるか？
+
+            var group1c = await library.GetRecordAsync(groupKey);
+            var group1cMember = group1c.Search(library, 0, 0);
+
+
+            await this.AreEqualAsync(group1bMember.Length - 2, group1cMember.Length);
+
+            {
+                var g2 = await library.GetRecordAsync(groupKey);
+                var l2 = await library.GetRecordAsync(g2.GroupKey);
+                await this.AreEqualAsync(g2.GroupKey, l2.Id);
+                await this.AreEqualAsync(g2.Id, l2.GroupKey);
+
+            }
+
+            await this.IsGroupEquals(group1c, leader2, group1cMember);
+
+            await this.IsFileOptionsEquals(group1b, group1c);
+
+
+            {
+                await this.WriteLineAsync("thumbnail");
+                //グループ内のサムネイルファイル削除
+
+                var mid2 = members2
+                    .Where(x => x.Id == group1b.GroupKey)
+                    .ToList();
+
+                foreach (var m in mid2)
+                {
+                    members2.Remove(m);
+                    //this.FileEnumerator.
+                    foreach (var folder in this.FileEnumerator)
+                    {
+                        var f = folder.Value.Files.FirstOrDefault(y => y.Path == m.Id);
+                        if (f != null)
+                        {
+                            folder.Value.Files.Remove(f);
+                            await this.WriteLineAsync($"remove {f.Path}");
+                            break;
+                        }
+                    }
+                }
+                //ライブラリ更新
+                var result2 = await this.RefreshLibraryAsync(library);
+
+                await this.AreEqualAsync(1, result2.RemovedFiles.Count);
+
+
+                //情報更新されるか？ソート設定維持されるか？サムネイル更新されるか？
+
+                var group1d = await library.GetRecordAsync(groupKey);
+                var group1dMember = group1d.Search(library, 0, 0);
+                var leader3 = await library.GetRecordAsync(group1d.GroupKey);
+
+                await this.AreEqualAsync(group1bMember.Length - 3, group1dMember.Length);
+
+                Assert.AreNotEqual(leader2.Id, group1d.GroupKey);
+
+                await this.IsGroupEquals(group1d, leader3, group1dMember);
+
+                await this.IsFileOptionsEquals(group1b, group1d, true);
+            }
+
+
+            {
+                await this.WriteLineAsync("all");
+
+                //グループ内ファイル全削除
+                var mid2 = members2
+                    .ToList();
+
+                foreach (var m in mid2)
+                {
+                    members2.Remove(m);
+                    //this.FileEnumerator.
+                    foreach (var folder in this.FileEnumerator)
+                    {
+                        var f = folder.Value.Files.FirstOrDefault(y => y.Path == m.Id);
+                        if (f != null)
+                        {
+                            folder.Value.Files.Remove(f);
+                            await this.WriteLineAsync($"remove {f.Path}");
+                            break;
+                        }
+                    }
+                }
+                //ライブラリ更新
+                var result2 = await this.RefreshLibraryAsync(library);
+
+                await this.AreEqualAsync(mid2.Count, result2.RemovedFiles.Count);
+
+                //グループ削除され，検索にかからなくなるか？
+
+
+                var group1d = await library.GetRecordAsync(groupKey);
+
+
+                Assert.AreEqual(null, group1d);
+
+            }
+
+
+
+        }
+        [TestMethod]
+        public async Task GroupTestAsync()
         {
             await this.InitializeTestAsync();
             var library = await this.CreateLibraryAsync();
@@ -659,7 +950,25 @@ namespace Test
 
             return files;
         }
+        private Record[] Search
+            (FileProperty property, object reference, CompareMode mode)
+        {
 
+            var search = new SearchInformation(new ComplexSearch(false));
+            search.Root
+                .Add(new UnitSearch()
+                {
+                    Property = property,
+                    Reference = reference,
+                    Mode = mode,
+                });
+
+            var library = LibraryOwner.GetCurrent();
+
+            var files = search.Search(library, 0, 0);
+
+            return files;
+        }
         private async Task AreEqualAsync<T>(T a, T b)
         {
             await this.WriteLineAsync((a?.ToString() ?? "null") + ", " + (b?.ToString() ?? "null"));

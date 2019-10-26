@@ -72,7 +72,6 @@ namespace ImageLibrary.Core
                 throw new ArgumentException();
             }
 
-
             //以前に設定されていたグループ
             var oldGroupsList = new List<string[]>();
 
@@ -83,7 +82,7 @@ namespace ImageLibrary.Core
             string[] relatedGroups;
 
 
-            using (var connection = await this.Table.Parent.ConnectAsync())
+            using (var connection = this.Table.Parent.Connect())
             {
                 var relatedGroupsList = new List<string[]>();
 
@@ -150,13 +149,15 @@ namespace ImageLibrary.Core
                 var isNewGroupGenerated = false;
 
                 group = (groupKey != null)
-                    ? await this.Table.GetRecordFromKeyAsync(connection.Value, groupKey) : null;
+                    ? this.Table.GetRecordFromKey(connection.Value, groupKey)
+                    : null;
 
 
                 if (group == null || !group.IsGroup)
                 {
                     //新しいグループを作る
-                    groupKey = await this.GenerateNewGroupKeyAsync(connection.Value);
+                    groupKey = await this.GenerateNewGroupKeyAsync(connection.Value)
+                            .ConfigureAwait(false);
                     group = Record.GenerateAsGroup(groupKey);
                     group.SetName(this.GenerateGroupName(connection.Value));
                     isNewGroupGenerated = true;
@@ -164,7 +165,8 @@ namespace ImageLibrary.Core
 
 
                 //新しいグループを設定
-                await this.SetGroupAsync(connection.Value, groupKey, items.Union(groupMembers));
+                await this.SetGroupAsync(connection.Value, groupKey, items.Union(groupMembers))
+                    .ConfigureAwait(false);
 
                 if (isNewGroupGenerated)
                 {
@@ -190,7 +192,8 @@ namespace ImageLibrary.Core
 
                     //グループの評価はメンバーの中で最大のもの
                     var rating = await this.Table.MaxAsync<int>
-                        (connection.Value, nameof(Record.Rating), filter);
+                        (connection.Value, nameof(Record.Rating), filter)
+                        .ConfigureAwait(false);
                     group.Rating = rating;
 
                     //リーダーを設定
@@ -202,7 +205,8 @@ namespace ImageLibrary.Core
                 {
                     try
                     {
-                        await this.Table.ReplaceAsync(group, connection.Value, transaction);
+                        await this.Table.ReplaceAsync(group, connection.Value, transaction)
+                            .ConfigureAwait(false);
 
                         transaction.Commit();
                     }
@@ -214,7 +218,8 @@ namespace ImageLibrary.Core
 
                 //グループの情報を更新
                 await this.RefreshGroupPropertiesAsync
-                    (connection.Value, uniqueGroups.Append(group.Id).Distinct().ToArray());
+                    (connection.Value, uniqueGroups.Append(group.Id).Distinct().ToArray())
+                    .ConfigureAwait(false);
             }
 
             return groupKey;
@@ -248,7 +253,8 @@ namespace ImageLibrary.Core
 
                         //IsGroup==0の場合はスキップ
                         var isGroup = await this.Table
-                            .GetColumnsFromKeyAsync<int>(connection, group, nameof(Record.IsGroup));
+                            .GetColumnsFromKeyAsync<int>(connection, group, nameof(Record.IsGroup))
+                            .ConfigureAwait(false);
 
                         if (isGroup == 0)
                         {
@@ -258,7 +264,8 @@ namespace ImageLibrary.Core
                         var filter = this.Library.GroupQuery.GetGroupFilterString(group);
 
                         //グループに所属するレコードの数
-                        var count = await this.Table.CountAsync(connection, filter);
+                        var count = await this.Table.CountAsync(connection, filter)
+                            .ConfigureAwait(false);
 
                         var idContainer = new Tuple<string>(group);
 
@@ -266,7 +273,8 @@ namespace ImageLibrary.Core
                         if (count <= 0)
                         {
                             await this.Table.RemoveAsync
-                                (idContainer, nameof(idContainer.Item1), connection, transaction);
+                                (idContainer, nameof(idContainer.Item1), connection, transaction)
+                            .ConfigureAwait(false);
                             continue;
                         }
 
@@ -285,7 +293,8 @@ namespace ImageLibrary.Core
 
                         var findLeaderSql = findLeaderSqlBuilder.ToString();
 
-                        var leader = (await this.Table.QueryAsync<GroupInfo>(connection, findLeaderSql))
+                        var leader = (await this.Table.QueryAsync<GroupInfo>(connection, findLeaderSql)
+                            .ConfigureAwait(false))
                             .FirstOrDefault();
 
 
@@ -297,7 +306,8 @@ namespace ImageLibrary.Core
                                 .Where(filter)
                                 .OrderBy(FileProperty.FileName.ToSort(false))
                                 .Select<GroupInfo>(GroupInfo.LeaderSchema)
-                                .FirstOrDefaultAsync();
+                                .FirstOrDefaultAsync()
+                                .ConfigureAwait(false);
                         }
 
                         if (leader == null)
@@ -322,7 +332,8 @@ namespace ImageLibrary.Core
 
                         var maxDateSql = maxDateSqlBuilder.ToString();
 
-                        var maxDate = (await this.Table.QueryAsync<GroupInfo>(connection, maxDateSql)).FirstOrDefault();
+                        var maxDate = (await this.Table.QueryAsync<GroupInfo>(connection, maxDateSql)
+                            .ConfigureAwait(false)).FirstOrDefault();
 
                         var groupInfo = leader.CopyDateFrom(maxDate);
 
@@ -330,7 +341,8 @@ namespace ImageLibrary.Core
 
                         var groupSql = groupInfo.GetUpdateSchema(this.Table.Name);
 
-                        await this.Table.ExecuteAsync(connection, groupSql, groupInfo);
+                        await this.Table.ExecuteAsync(connection, groupSql, groupInfo)
+                            .ConfigureAwait(false);
 
                     }
                     transaction.Commit();

@@ -886,12 +886,26 @@ namespace Database.Table
                     new IdContainer(key)))
                 .FirstOrDefault();
         }
+        public TRecord GetRecordFromKey(IDbConnection connection, TKey key)
+        {
+            return (connection
+                .Query<TRecord>
+                    ($@"SELECT * FROM {this.Name} WHERE {IdName} = @{nameof(IdContainer.Id)} LIMIT 1",
+                    new IdContainer(key)))
+                .FirstOrDefault();
+        }
 
         public Task<IEnumerable<TRecord>> GetRecordsFromKeyAsync(IDbConnection connection, TKey[] ids)
         {
             var param = new Tuple<TKey[]>(ids);
             var sql = $"SELECT * FROM {this.Name} WHERE {IdName} IN @{nameof(param.Item1)}";
             return connection.QueryAsync<TRecord>(sql, param);
+        }
+        public IEnumerable<TRecord> GetRecordsFromKey(IDbConnection connection, TKey[] ids)
+        {
+            var param = new Tuple<TKey[]>(ids);
+            var sql = $"SELECT * FROM {this.Name} WHERE {IdName} IN @{nameof(param.Item1)}";
+            return connection.Query<TRecord>(sql, param);
         }
 
         public Task<T> GetColumnsFromKeyAsync<T>(IDbConnection connection, TKey key, params string[] columns)
