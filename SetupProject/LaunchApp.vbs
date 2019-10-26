@@ -1,1 +1,0 @@
-CreateObject("WScript.Shell").Run """" & Session.Property("TARGETDIR") & "ShibugakiViewer\\ShibugakiViewer.Launcher.exe"""
