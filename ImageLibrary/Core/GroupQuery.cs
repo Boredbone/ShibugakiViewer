@@ -34,6 +34,13 @@ namespace ImageLibrary.Core
                 return await this.Table.CountAsync(connection, this.GetFilterString(group));
             }
         }
+        public long Count(Record group)
+        {
+            using (var connection = this.Table.Parent.Connect())
+            {
+                return this.Table.Count(connection, this.GetFilterString(group));
+            }
+        }
 
         /// <summary>
         /// グループの検索条件を生成
@@ -63,9 +70,17 @@ namespace ImageLibrary.Core
         /// <param name="skip"></param>
         /// <param name="take"></param>
         /// <returns></returns>
-        public async Task<Record[]> SearchAsync(Record group, long skip, long take, Record skipUntil = null)
+        public Task<Record[]> SearchAsync(Record group, long skip, long take, Record skipUntil = null)
         {
-            return await this.Library.SearchMainAsync(
+            return this.Library.SearchMainAsync(
+                this.GetFilterString(group),
+                SortSetting.GetFullSql(group.GetSort()),
+                skip, take);
+        }
+
+        public Record[] Search(Record group, long skip, long take, Record skipUntil = null)
+        {
+            return this.Library.SearchMain(
                 this.GetFilterString(group),
                 SortSetting.GetFullSql(group.GetSort()),
                 skip, take);

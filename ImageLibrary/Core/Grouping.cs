@@ -92,10 +92,10 @@ namespace ImageLibrary.Core
                     var param = new Tuple<string[]>(ids.ToArray());
 
                     //渡されたコレクションから設定されているグループを列挙
-                    var r = await this.Table.QueryAsync<string>(connection, this.recordSql, param);
+                    var r = this.Table.Query<string>(connection, this.recordSql, param);
 
                     //対象に含まれているグループを列挙
-                    var g = await this.Table.QueryAsync<string>(connection, this.groupSql, param);
+                    var g = this.Table.Query<string>(connection, this.groupSql, param);
 
                     oldGroupsList.Add(r.ToArray());
                     relatedGroupsList.Add(g.ToArray());
@@ -109,12 +109,12 @@ namespace ImageLibrary.Core
                 {
                     var filter = this.Library.GroupQuery.GetGroupFilterString(g);
 
-                    var members = await this.Table
+                    var members = this.Table
                         .AsQueryable(connection)
                         .Where(filter)
                         .Select<string>(nameof(Record.Id))
                         .Distinct()
-                        .ToArrayAsync();
+                        .ToArray();
 
                     groupMembersList.Add(members);
                 }
@@ -170,10 +170,10 @@ namespace ImageLibrary.Core
                 {
                     var filter = this.Library.GroupQuery.GetGroupFilterString(groupKey);
 
-                    var leader = await this.Table.AsQueryable(connection.Value)
+                    var leader = this.Table.AsQueryable(connection.Value)
                         .Where(filter)
                         .OrderBy(FileProperty.FileName.ToSort(false))
-                        .FirstAsync();
+                        .First();
 
                     //リーダーのタグを全て確認
                     //グループメンバーで同じものを持っていないレコードが一つもない場合はグループにもタグをつける
@@ -181,7 +181,7 @@ namespace ImageLibrary.Core
                     {
                         var f = DatabaseExpression.And
                             (filter, FileProperty.ContainsTag.ToSearch(tag, CompareMode.NotEqual));
-                        var woTag = await this.Table.CountAsync(connection.Value, f);
+                        var woTag = this.Table.Count(connection.Value, f);
                         if (woTag == 0)
                         {
                             group.TagSet.Add(tag);

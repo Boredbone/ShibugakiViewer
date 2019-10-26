@@ -981,6 +981,11 @@ namespace Database.Table
         {
             return connection.QueryAsync<T>(sql, param, transaction);
         }
+        public IEnumerable<T> Query<T>
+            (IDbConnection connection, string sql, object param = null, IDbTransaction transaction = null)
+        {
+            return connection.Query<T>(sql, param, transaction);
+        }
 
         public async Task<object> GetDynamicParametersAsync
             (IDbConnection connection, string sql, TRecord param, IDbTransaction transaction = null)
@@ -989,6 +994,27 @@ namespace Database.Table
 
             var dic = (await connection.QueryAsync(selector, param, transaction).ConfigureAwait(false))
                 .FirstOrDefault();
+
+            if (dic == null)
+            {
+                return null;
+            }
+
+            var items = (IDictionary<string, object>)dic;
+
+            var dbArgs = new DynamicParameters();
+            foreach (var pair in items)
+            {
+                dbArgs.Add(pair.Key, pair.Value);
+            }
+            return dbArgs;
+        }
+        public object GetDynamicParameters
+            (IDbConnection connection, string sql, TRecord param, IDbTransaction transaction = null)
+        {
+            var selector = $"SELECT {sql} FROM {this.Name} WHERE {IdName} = @{IdName} LIMIT 1";
+
+            var dic = connection.Query(selector, param, transaction).FirstOrDefault();
 
             if (dic == null)
             {

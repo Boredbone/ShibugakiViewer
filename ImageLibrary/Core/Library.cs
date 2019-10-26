@@ -322,7 +322,29 @@ namespace ImageLibrary.Core
 
             return records;
         }
+        public Record[] SearchMain
+            (IDatabaseExpression filter, string[] sort, long skip, long take, object param = null)
+        {
+            Record[] records = null;
 
+            using (var connection = this.Database.Connect())
+            {
+                records = this.Records
+                    .AsQueryable(connection)
+                    .Where(filter)
+                    .OrderBy(sort.Append(FileProperty.Id.ToSort(false)).ToArray())
+                    .Skip(skip)
+                    .Take(take)
+                    .ToArray(param);
+            }
+
+            foreach (var item in records)
+            {
+                this.RecordTracker.Track(item);
+            }
+
+            return records;
+        }
 
         /// <summary>
         /// 指定検索条件下でのインデックスを調べる
@@ -380,6 +402,16 @@ namespace ImageLibrary.Core
                 return await this.Records
                     .GetDynamicParametersAsync(connection, sql, target)
                     .ConfigureAwait(false);
+            }
+        }
+        public object GetSortReference(ISearchCriteria criteria, Record target)
+        {
+            using (var connection = this.Records.Parent.Connect())
+            {
+                var sql = SortSetting.GetReferenceSelectorSql(criteria.GetSort());
+
+                return  this.Records
+                    .GetDynamicParameters(connection, sql, target);
             }
         }
 

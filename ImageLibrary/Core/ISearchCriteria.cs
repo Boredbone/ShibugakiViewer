@@ -18,6 +18,8 @@ namespace ImageLibrary.Core
 
         Task<long> CountAsync(Library library);
         Task<Record[]> SearchAsync(Library library, long skip, long take, Record skipUntil);
+        long Count(Library library);
+        Record[] Search(Library library, long skip, long take, Record skipUntil);
 
         string SortEntry { get; }
         bool SetSort(IEnumerable<SortSetting> source, bool replaceDefaultSort);

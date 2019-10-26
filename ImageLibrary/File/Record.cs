@@ -370,10 +370,10 @@ namespace ImageLibrary.File
 
 
                 var context = SynchronizationContext.Current;
-                Task.Run(async () =>
+                Task.Run(() =>
                 {
                     this._fieldMemberCount
-                        = await LibraryOwner.GetCurrent().GroupQuery.CountAsync(this);
+                        = LibraryOwner.GetCurrent().GroupQuery.Count(this);
                 }).ContinueWith(t =>
                 {
                     context?.Post(state =>
@@ -817,7 +817,11 @@ namespace ImageLibrary.File
 
         public Task<Record[]> SearchAsync(Library library, long skip, long take, Record skipUntil = null)
             => library.GroupQuery.SearchAsync(this, skip, take, skipUntil);
-        
+
+        public long Count(Library library)
+            => library.GroupQuery.Count(this);
+        public Record[] Search(Library library, long skip, long take, Record skipUntil = null)
+            => library.GroupQuery.Search(this, skip, take, skipUntil);
 
 
         #endregion

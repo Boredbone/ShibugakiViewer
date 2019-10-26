@@ -202,7 +202,7 @@ namespace ShibugakiViewer.Models
                 .Merge(this.front.CacheCleared.Select(_ => Unit.Default))
                 .Publish().RefCount();
 
-            this.front.CacheCleared.Subscribe(x =>
+            this.front.CacheCleared.ObserveOnUIDispatcher().Subscribe(x =>
             {
                 if (x.Action == CacheClearAction.SearchChanged || x.Action == CacheClearAction.GroupUpdated)
                 {

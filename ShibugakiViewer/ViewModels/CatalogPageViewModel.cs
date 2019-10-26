@@ -150,6 +150,7 @@ namespace ShibugakiViewer.ViewModels
                  .SkipUntil(client.StateChanged)
                  .Take(1)
                  .Repeat()
+                 .ObserveOnUIDispatcher()
                  .Subscribe(_ => this.RefreshTrigger = !this.RefreshTrigger)
                  .AddTo(this.Disposables);
 

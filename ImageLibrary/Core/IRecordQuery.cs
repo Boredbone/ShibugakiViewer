@@ -13,5 +13,7 @@ namespace ImageLibrary.Core
         Task<long> CountAsync(T criteria);
         IDatabaseExpression GetFilterString(T criteria);
         Task<Record[]> SearchAsync(T criteria, long skip, long take, Record skipUntil);
+        long Count(T criteria);
+        Record[] Search(T criteria, long skip, long take, Record skipUntil);
     }
 }

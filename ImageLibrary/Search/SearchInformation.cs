@@ -224,7 +224,13 @@ namespace ImageLibrary.Search
 
         public Task<Record[]> SearchAsync(Library library, long skip, long take, Record skipUntil = null)
             => library.RecordQuery.SearchAsync(this, skip, take, skipUntil);
-        
+
+
+        public long Count(Library library)
+            => library.RecordQuery.Count(this);
+
+        public Record[] Search(Library library, long skip, long take, Record skipUntil = null)
+            => library.RecordQuery.Search(this, skip, take, skipUntil);
 
         public static SearchInformation GenerateEmpty() => new SearchInformation(new ComplexSearch(false));
 

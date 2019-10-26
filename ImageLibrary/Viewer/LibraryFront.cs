@@ -189,7 +189,7 @@ namespace ImageLibrary.Viewer
         {
             if (group == null || !group.IsGroup)
             {
-                throw new ArgumentException();
+                throw new ArgumentException("no group");
             }
 
             if (this.FeaturedGroup == null || this.FeaturedGroup.Id != group.Id)
@@ -201,7 +201,10 @@ namespace ImageLibrary.Viewer
         public async Task SetGroupSearchAsync(string key)
         {
             var group = await this.library.GetRecordAsync(key);
-            this.SetGroupSearch(group);
+            if (group != null)
+            {
+                this.SetGroupSearch(group);
+            }
         }
 
         /// <summary>
@@ -254,13 +257,11 @@ namespace ImageLibrary.Viewer
                             return;
                         }
                     }
-
                     if (takes >= 0)
                     {
-                        await this.SearchMainAsync(offset, takes).ConfigureAwait(false);
+                        this.SearchMain(offset, takes);
+                        //await this.SearchMain(offset, takes).ConfigureAwait(false);
                     }
-
-
                     if (this.SearchCompletedSubject.HasObservers)
                     {
                         this.SearchCompletedSubject.OnNext(new SearchCompletedEventArgs()
@@ -270,13 +271,14 @@ namespace ImageLibrary.Viewer
                             Length = 0,
                         });
                     }
-
                 }
+                //sw.Stop();
+                //System.Diagnostics.Debug.WriteLine($"{sw.ElapsedMilliseconds}[ms],offset={offset},takes={takes}");
             });
         }
 
 
-        private async Task SearchMainAsync(long offset, int takes)
+        private void SearchMain(long offset, int takes)
         {
             var criteria = this.GetActiveSearch();
 
@@ -289,7 +291,8 @@ namespace ImageLibrary.Viewer
 
             if (this.isReset)
             {
-                length = await criteria.CountAsync(library).ConfigureAwait(false);
+                length = criteria.Count(library);
+                //length = await criteria.CountAsync(library).ConfigureAwait(false);
 
                 this.lengthPrivate.Value = length;
                 this.isReset = false;
@@ -317,7 +320,8 @@ namespace ImageLibrary.Viewer
                 }
             }
 
-            var result = await this.RequestSearchAsync(criteria, offset, takes).ConfigureAwait(false);
+            var result = this.RequestSearch(criteria, offset, takes);
+            //var result = await this.RequestSearchAsync(criteria, offset, takes).ConfigureAwait(false);
 
             if (result.Length < takes && result.Length > 0 && this.lengthPrivate.Value != offset + result.Length)
             {
@@ -360,7 +364,8 @@ namespace ImageLibrary.Viewer
 
                 if (takes > 0 && offset < length)
                 {
-                    await this.RequestSearchAsync(criteria, offset, takes).ConfigureAwait(false);
+                    this.RequestSearch(criteria, offset, takes);
+                    //await this.RequestSearchAsync(criteria, offset, takes).ConfigureAwait(false);
                 }
             }
         }
@@ -392,14 +397,29 @@ namespace ImageLibrary.Viewer
             }*/
 
             var result = await criteria.SearchAsync(library, offset, takes, skipUntil).ConfigureAwait(false);
-
+            PostRequestSearch(result, offset, takes);
+            return result;
+        }
+        private Record[] RequestSearch
+            (ISearchCriteria criteria, long offset, long takes)
+        {
+            if (criteria == null || takes <= 0)
+            {
+                throw new ArgumentException();
+            }
+            var result = criteria.Search(library, offset, takes, null);
+            PostRequestSearch(result, offset, takes);
+            return result;
+        }
+        private void PostRequestSearch(Record[] records, long offset, long takes)
+        {
             lock (this.Cache)
             {
                 for (int i = 0; i < takes; i++)
                 {
-                    if (i < result.Length)
+                    if (i < records.Length)
                     {
-                        this.Cache[offset + i] = result[i];
+                        this.Cache[offset + i] = records[i];
                     }
                     else
                     {
@@ -408,19 +428,19 @@ namespace ImageLibrary.Viewer
                 }
             }
 
-            if (result.Length > 0)
+            if (records.Length > 0)
             {
                 NotifyCollectionChangedEventArgs eventArgs;
 
-                if (offset + result.Length > this.lengthPrivate.Value)
+                if (offset + records.Length > this.lengthPrivate.Value)
                 {
                     eventArgs = new NotifyCollectionChangedEventArgs
-                        (NotifyCollectionChangedAction.Add, result.ToList());
+                        (NotifyCollectionChangedAction.Add, records.ToList());
                 }
                 else
                 {
                     eventArgs = new NotifyCollectionChangedEventArgs
-                        (NotifyCollectionChangedAction.Replace, result.ToList(), new List<Record>());
+                        (NotifyCollectionChangedAction.Replace, records.ToList(), new List<Record>());
                 }
                 this.CollectionChanged?.Invoke(this, eventArgs);
 
@@ -429,12 +449,10 @@ namespace ImageLibrary.Viewer
                     this.CacheUpdatedSubject.OnNext(new CacheUpdatedEventArgs()
                     {
                         Start = offset,
-                        Length = result.Length,
+                        Length = records.Length,
                     });
                 }
             }
-
-            return result;
         }
 
         /// <summary>

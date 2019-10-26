@@ -35,7 +35,13 @@ namespace ImageLibrary.Core
                 return await this.Table.CountAsync(connection, this.GetFilterString(criteria));
             }
         }
-
+        public long Count(SearchInformation criteria)
+        {
+            using (var connection = this.Table.Parent.Connect())
+            {
+                return this.Table.Count(connection, this.GetFilterString(criteria));
+            }
+        }
 
 
         /// <summary>
@@ -94,6 +100,42 @@ namespace ImageLibrary.Core
             else
             {
                 records = await this.Library.SearchMainAsync
+                    (this.GetFilterString(criteria),
+                    SortSetting.GetFullSql(criteria.GetSort()),
+                    skip, take);
+            }
+
+            if ((criteria.ThumbnailFilePath == null || skip == 0) && records.Length > 0)
+            {
+                criteria.ThumbnailFilePath = records[0].FullPath;
+            }
+            else if (skip == 0 && take > 0 && records.Length <= 0)
+            {
+                criteria.ThumbnailFilePath = null;
+            }
+
+            return records;
+        }
+        public Record[] Search(SearchInformation criteria, long skip, long take, Record skipUntil)
+        {
+            criteria.SetDateToNow();
+
+            Record[] records;
+
+            if (skipUntil != null)
+            {
+                var sort = criteria.GetSort().ToArray();
+
+                var reference = this.Library.GetSortReference(criteria, skipUntil);
+
+                records = this.Library.SearchMain
+                    (DatabaseExpression.And(this.GetFilterString(criteria), SortSetting.GetSkipFilterSql(sort)),
+                    SortSetting.GetFullSql(sort),
+                    0, take, reference);
+            }
+            else
+            {
+                records = this.Library.SearchMain
                     (this.GetFilterString(criteria),
                     SortSetting.GetFullSql(criteria.GetSort()),
                     skip, take);
