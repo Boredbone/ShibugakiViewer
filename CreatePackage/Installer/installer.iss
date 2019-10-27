@@ -42,6 +42,10 @@ Name: "japanese"; MessagesFile: "compiler:Languages\Japanese.isl"
 #include <idp.iss>
 #include <idplang\japanese.iss>
 
+[CustomMessages]
+english.RuntimeInstallationFailedMessage=The installation of the .NET Core runtime could not be verified. The application may not run.
+japanese.RuntimeInstallationFailedMessage=.NET Core ランタイムのインストールを確認できませんでした。アプリケーションは実行できない可能性があります。
+
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
@@ -69,6 +73,9 @@ Source: "..\..\RuntimeCheckerDesctop\bin\Release\publish\RuntimeCheckerDesctop.d
 Source: "..\..\RuntimeCheckerDesctop\bin\Release\publish\RuntimeCheckerDesctop.dll"; DestDir: RuntimeCheckerDesctop; Flags: dontcopy
 Source: "..\..\RuntimeCheckerDesctop\bin\Release\publish\RuntimeCheckerDesctop.exe"; DestDir: RuntimeCheckerDesctop; Flags: dontcopy
 Source: "..\..\RuntimeCheckerDesctop\bin\Release\publish\RuntimeCheckerDesctop.runtimeconfig.json"; DestDir: RuntimeCheckerDesctop; Flags: dontcopy
+
+Source: "..\..\ShibugakiViewer.Launcher.Net45\bin\Release\ShibugakiViewer.Launcher.Net45.exe"; DestDir: ShibugakiViewerLauncher; Flags: dontcopy
+Source: "..\..\ShibugakiViewer.Launcher.Net45\bin\Release\ShibugakiViewer.Launcher.Net45.exe.config"; DestDir: ShibugakiViewerLauncher; Flags: dontcopy
 
 
 [Icons]
@@ -153,10 +160,21 @@ begin
 end;
 
 //==========================================================
+procedure ExitRunningApp;
+var
+  resultCode: Integer;
+begin
+  // Copy launcher and exit running app
+  ExtractTemporaryFiles('ShibugakiViewerLauncher\*');
+  Exec(ExpandConstant('{tmp}\')+'ShibugakiViewerLauncher\ShibugakiViewer.Launcher.Net45.exe' , '/qq', '', SW_HIDE, ewWaitUntilTerminated, resultCode);
+end;
+
+//==========================================================
 function PrepareToInstall(var NeedsRestart: Boolean): String;
 begin
   //TODO Copy launcher and exit running app
   Log('!!!PrepareToInstall');
+  ExitRunningApp();
   MsgBox('PrepareToInstall', mbInformation, MB_OK);
 end;
 
@@ -356,9 +374,9 @@ begin
 
   runtimeLevel := 0;
   UpdateRuntimeLevel();
-  MsgBox('runtimeLevel=' + IntToStr(runtimeLevel), mbInformation, MB_OK);
+  //MsgBox('runtimeLevel=' + IntToStr(runtimeLevel), mbInformation, MB_OK);
   if (runtimeLevel <> 1) then begin
-    MsgBox('.NET Core ランタイムのインストールを確認できませんでした。アプリケーションは実行できない可能性があります。', mbInformation, MB_OK);
+    MsgBox(CustomMessage('RuntimeInstallationFailedMessage'), mbInformation, MB_OK);
   end;
 
 
@@ -370,7 +388,7 @@ procedure CurStepChanged(CurStep: TSetupStep);
 begin
   if (CurStep = ssInstall) then begin
     UninstallOldVersion();
-    //TODO Install .NET Core Runtime
+    // Install .NET Core Runtime
     InstallRuntime()
   end else if (CurStep = ssPostInstall) then begin
   end;
@@ -423,9 +441,9 @@ begin
   case CurUninstallStep of
     usUninstall:
       begin
+        ExitRunningApp();
         MsgBox('CurUninstallStepChanged:' #13#13 'Uninstall is about to start.', mbInformation, MB_OK)
         // ...insert code to perform pre-uninstall tasks here...
-        //TODO Exit running app
       end;
     usPostUninstall:
       begin
