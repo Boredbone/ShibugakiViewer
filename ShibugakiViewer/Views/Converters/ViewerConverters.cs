@@ -110,7 +110,9 @@ namespace ShibugakiViewer.Views.Converters
 
             string fullPath = "";
 
-            foreach (var item in library.GetPathList(path))
+            var pathList = library.GetPathList(path, true, out var remain);
+
+            foreach (var item in pathList)
             {
                 var key = item.GetKey();
                 if (string.IsNullOrEmpty(key))
@@ -121,6 +123,11 @@ namespace ShibugakiViewer.Views.Converters
                 fullPath = fullPath + key;
 
                 list.Add(new PathContainer() { Name = key, FullPath = fullPath });
+            }
+            if (!string.IsNullOrEmpty(remain))
+            {
+                fullPath = fullPath + remain;
+                list.Add(new PathContainer() { Name = remain, FullPath = fullPath });
             }
 
             if (list.Count == 0)

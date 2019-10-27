@@ -542,12 +542,17 @@ namespace ImageLibrary.Core
         /// <returns></returns>
         public TreeNode<string>[] GetPathList(string path)
         {
-
+            return GetPathList(path, false, out _);
+        }
+        public TreeNode<string>[] GetPathList(string path, bool enableRemain, out string remain)
+        {
+            remain = null;
             var list = new List<TreeNode<string>>() { this.TreeRootNode };
 
             var separator = System.IO.Path.DirectorySeparatorChar.ToString();
 
             var text = path.ToLower();
+            int startIndex = 0;
 
             while (text != null && text.Length > 0)
             {
@@ -583,6 +588,7 @@ namespace ImageLibrary.Core
                         if (text.Length > dir.Key.Length)
                         {
                             text = text.Substring(dir.Key.Length);
+                            startIndex += dir.Key.Length;
                         }
                         else
                         {
@@ -595,8 +601,19 @@ namespace ImageLibrary.Core
 
                 if (!succeeded)
                 {
-                    e.AddChild(text);
+                    if (enableRemain)
+                    {
+                        if (startIndex < path.Length)
+                        {
+                            remain = path.Substring(startIndex);
+                        }
+                    }
+                    else
+                    {
+                        e.AddChild(text);
+                    }
                     text = "";
+                    break;
                 }
             }
 
