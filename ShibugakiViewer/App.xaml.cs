@@ -530,6 +530,9 @@ namespace ShibugakiViewer
             var exception = e.ExceptionObject as Exception;
             if (exception == null)
             {
+#if DEBUG
+                System.IO.File.AppendAllText("log.txt", $"{DateTimeOffset.Now}\nUnknown Exception\n\n");
+#endif
                 MessageBox.Show("Unknown Exception");
                 return;
             }
@@ -540,8 +543,10 @@ namespace ShibugakiViewer
 
 #if DEBUG
             var text = exception.ToString();
+            System.IO.File.AppendAllText("log.txt", $"{DateTimeOffset.Now}\nUnhandled Exception\n" +
+                $":{text}\n\n");
 #else
-            var text = exception.Message;
+            var text = $"{exception.GetType().FullName}: {exception.Message}";
 #endif
 
             MessageBox.Show(text, "UnhandledException",
