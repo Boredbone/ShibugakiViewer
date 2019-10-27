@@ -31,6 +31,12 @@ namespace ShibugakiViewer.Launcher
 
             try
             {
+                if (retryExitMode)
+                {
+                    RetryExitServer();
+                    return;
+                }
+
                 var isServerRunning = true;
                 bool createdNew = false;
 
@@ -44,39 +50,35 @@ namespace ShibugakiViewer.Launcher
                     }
                     mutex.Close();
                 }
-
-                if (exitMode)
+                if (isServerRunning)
                 {
-                    if (!isServerRunning)
+                    if (exitMode)
                     {
-                        return;
-                    }
+                        ExitServer(5000);
 
-                    ExitServer(5000);
-
-                    using (var mutex = new Mutex(false, mutexId))
-                    {
-                        if (mutex.WaitOne(5000, false))
+                        using (var mutex = new Mutex(false, mutexId))
                         {
-                            // Got mutex
-                            mutex.ReleaseMutex();
-                            mutex.Close();
+                            if (mutex.WaitOne(5000, false))
+                            {
+                                // Got mutex
+                                mutex.ReleaseMutex();
+                                mutex.Close();
+                            }
                         }
                     }
-                }
-                else if (retryExitMode)
-                {
-                    RetryExitServer();
+                    else
+                    {
+                        SendMessages(5000, args, endMark);
+                    }
                 }
                 else
                 {
-                    if (!isServerRunning)
+                    if (!exitMode)
                     {
                         RunServer(args);
-                        return;
                     }
-                    SendMessages(5000, args, endMark);
                 }
+
             }
             catch (Exception)
             {
