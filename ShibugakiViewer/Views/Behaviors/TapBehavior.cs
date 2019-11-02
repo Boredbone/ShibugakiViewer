@@ -91,6 +91,7 @@ namespace ShibugakiViewer.Views.Behaviors
             var mouseMove = target.PointerMoveAsObservable();
             var mouseUp = target.PreviewPointerUpAsObservable();
 
+            /*
             var doubleTap = Observable.FromEvent<MouseButtonEventHandler, MouseButtonEventArgs>(
                 h => (s, e) => h(e),
                 h => target.MouseDoubleClick += h,
@@ -100,7 +101,7 @@ namespace ShibugakiViewer.Views.Behaviors
                     SenderHeight = this.AssociatedObject.ActualHeight,
                     SenderWidth = this.AssociatedObject.ActualWidth,
                     IsDoubleTap = true,
-                });
+                });*/
 
 
             mouseMove

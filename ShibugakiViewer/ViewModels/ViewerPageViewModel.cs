@@ -112,6 +112,8 @@ namespace ShibugakiViewer.ViewModels
 
         private bool topBarOpenedByPointer = false;
 
+        private DateTime lastTopbarChanged;
+
 
         public ViewerPageViewModel(ClientWindowViewModel parent)
         {
@@ -267,25 +269,32 @@ namespace ShibugakiViewer.ViewModels
 
             this.TapCommand = new ReactiveCommand().AddTo(this.Disposables);
 
-            var tapped = this.TapCommand.OfType<ViewerTapEventArgs>().Publish().RefCount();
+            var tapped = this.TapCommand.OfType<ViewerTapEventArgs>()
+                .Publish().RefCount();
 
             tapped
                 .Subscribe(e =>
                 {
-                    if (e.HolizontalRate < edgeTapThreshold)
+                    if (e.IsLongTouch)
                     {
-                        this.MoveLeft();
+                        this.TogglePane();
                     }
-                    else if (e.HolizontalRate > (1.0 - edgeTapThreshold))
+                    else
                     {
-                        this.MoveRight();
+                        if (e.HolizontalRate < edgeTapThreshold)
+                        {
+                            this.MoveLeft();
+                        }
+                        else if (e.HolizontalRate > (1.0 - edgeTapThreshold))
+                        {
+                            this.MoveRight();
+                        }
                     }
-
                 })
                 .AddTo(this.Disposables);
 
             tapped
-                .Where(_ => parent.Core.IsOpenNavigationWithSingleTapEnabled)
+                .Where(x => parent.Core.IsOpenNavigationWithSingleTapEnabled && !x.IsLongTouch)
                 .Throttle(TimeSpan.FromMilliseconds(500))
                 .Subscribe(e =>
                 {
@@ -295,7 +304,10 @@ namespace ShibugakiViewer.ViewModels
                         && e.HolizontalRate <= (1.0 - edgeTapThreshold)
                         && (!this.IsTopBarFixed.Value || !this.IsTopBarOpen.Value))
                     {
-                        this.IsTopBarOpen.Toggle();
+                        if (DateTime.Now - lastTopbarChanged > TimeSpan.FromMilliseconds(600))
+                        {
+                            this.IsTopBarOpen.Toggle();
+                        }
                     }
                 })
                 .AddTo(this.Disposables);
@@ -310,12 +322,14 @@ namespace ShibugakiViewer.ViewModels
                     {
                         this.IsTopBarOpen.Value = true;
                         this.topBarOpenedByPointer = true;
+                        lastTopbarChanged = DateTime.Now;
                     }
                     else if (y > 150)
                     {
                         if (this.topBarOpenedByPointer && !this.IsTopBarFixed.Value)
                         {
                             this.IsTopBarOpen.Value = false;
+                            lastTopbarChanged = DateTime.Now;
                         }
                         this.topBarOpenedByPointer = false;
                     }

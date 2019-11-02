@@ -1064,11 +1064,15 @@ namespace ShibugakiViewer.Views.Controls
 
                 this.TapCommand?.Execute(new ViewerTapEventArgs()
                 {
+                    X = e.EndPosition.X,
+                    Y = e.EndPosition.Y,
                     VerticalRate = v,
                     HolizontalRate = h,
                     Count = this.tapCount,
                     Span = e.Span,
                     Interval = e.Interval,
+                    IsTouch = e.IsTouch,
+                    IsLongTouch = (e.IsTouch && e.Span > TimeSpan.FromMilliseconds(shortTapTimeThreshold)),
                 });
             }
         }
@@ -1809,10 +1813,15 @@ namespace ShibugakiViewer.Views.Controls
 
     public class ViewerTapEventArgs : EventArgs
     {
+        public double X { get; set; }
+        public double Y { get; set; }
         public double HolizontalRate { get; set; }
         public double VerticalRate { get; set; }
         public int Count { get; set; }
         public TimeSpan Span { get; set; }
         public TimeSpan Interval { get; set; }
+        public bool IsTouch { get; set; }
+
+        public bool IsLongTouch { get; set; }
     }
 }
