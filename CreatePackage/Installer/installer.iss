@@ -69,10 +69,10 @@ Source: "..\..\RuntimeCheckerCore\bin\Release\publish\RuntimeCheckerCore.dll"; D
 Source: "..\..\RuntimeCheckerCore\bin\Release\publish\RuntimeCheckerCore.exe"; DestDir: RuntimeCheckerCore; Flags: dontcopy
 Source: "..\..\RuntimeCheckerCore\bin\Release\publish\RuntimeCheckerCore.runtimeconfig.json"; DestDir: RuntimeCheckerCore; Flags: dontcopy
 
-Source: "..\..\RuntimeCheckerDesctop\bin\Release\publish\RuntimeCheckerDesctop.deps.json"; DestDir: RuntimeCheckerDesctop; Flags: dontcopy
-Source: "..\..\RuntimeCheckerDesctop\bin\Release\publish\RuntimeCheckerDesctop.dll"; DestDir: RuntimeCheckerDesctop; Flags: dontcopy
-Source: "..\..\RuntimeCheckerDesctop\bin\Release\publish\RuntimeCheckerDesctop.exe"; DestDir: RuntimeCheckerDesctop; Flags: dontcopy
-Source: "..\..\RuntimeCheckerDesctop\bin\Release\publish\RuntimeCheckerDesctop.runtimeconfig.json"; DestDir: RuntimeCheckerDesctop; Flags: dontcopy
+Source: "..\..\RuntimeCheckerDesktop\bin\Release\publish\RuntimeCheckerDesktop.deps.json"; DestDir: RuntimeCheckerDesktop; Flags: dontcopy
+Source: "..\..\RuntimeCheckerDesktop\bin\Release\publish\RuntimeCheckerDesktop.dll"; DestDir: RuntimeCheckerDesktop; Flags: dontcopy
+Source: "..\..\RuntimeCheckerDesktop\bin\Release\publish\RuntimeCheckerDesktop.exe"; DestDir: RuntimeCheckerDesktop; Flags: dontcopy
+Source: "..\..\RuntimeCheckerDesktop\bin\Release\publish\RuntimeCheckerDesktop.runtimeconfig.json"; DestDir: RuntimeCheckerDesktop; Flags: dontcopy
 
 Source: "..\..\ShibugakiViewer.Launcher.Net45\bin\Release\ShibugakiViewer.Launcher.Net45.exe"; DestDir: ShibugakiViewerLauncher; Flags: dontcopy
 Source: "..\..\ShibugakiViewer.Launcher.Net45\bin\Release\ShibugakiViewer.Launcher.Net45.exe.config"; DestDir: ShibugakiViewerLauncher; Flags: dontcopy
@@ -339,8 +339,8 @@ begin
     Exec(ExpandConstant('{tmp}\')+'RuntimeCheckerCore\RuntimeCheckerCore.exe' , '', '', SW_HIDE, ewWaitUntilTerminated, resultCode);
     if (resultCode > 0) then begin
       // Core runtime exists
-      ExtractTemporaryFiles('RuntimeCheckerDesctop\*');
-      Exec(ExpandConstant('{tmp}\')+'RuntimeCheckerDesctop\RuntimeCheckerDesctop.exe' , '', '', SW_HIDE, ewWaitUntilTerminated, resultCode);
+      ExtractTemporaryFiles('RuntimeCheckerDesktop\*');
+      Exec(ExpandConstant('{tmp}\')+'RuntimeCheckerDesktop\RuntimeCheckerDesktop.exe' , '', '', SW_HIDE, ewWaitUntilTerminated, resultCode);
       if (resultCode > 0) then begin
         // Desktop runtime exists
         runtimeLevel:=1;

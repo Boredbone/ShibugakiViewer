@@ -29,7 +29,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShibugakiViewer.Launcher.Ne
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuntimeCheckerCore", "RuntimeCheckerCore\RuntimeCheckerCore.csproj", "{CB900412-9B52-4B14-BACA-2BA227F36E6C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuntimeCheckerDesctop", "RuntimeCheckerDesctop\RuntimeCheckerDesctop.csproj", "{C924821A-0191-4F20-8175-FD3077B1C1E0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuntimeCheckerDesktop", "RuntimeCheckerDesktop\RuntimeCheckerDesktop.csproj", "{C924821A-0191-4F20-8175-FD3077B1C1E0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreatePackage", "CreatePackage\CreatePackage.csproj", "{4332C772-E4DC-4295-9028-BBB1C42373C0}"
 EndProject
