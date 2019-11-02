@@ -140,6 +140,7 @@ namespace ShibugakiViewer.Views.Controls
             var newPath = record?.FullPath;
             if (newPath != oldPath)
             {
+                lastSourceChangedTime = DateTime.Now;
                 int orientation = 0;
                 bool horizontalMirror = false;
                 bool verticalMirror = false;
@@ -202,6 +203,7 @@ namespace ShibugakiViewer.Views.Controls
                     this.DoAutoScaling();
                 }
                 this.scaleInitializeFlag = true;
+                this.ScrollBarVisibility = VisibilityHelper.Set(false);
             }
             else
             {
@@ -918,6 +920,7 @@ namespace ShibugakiViewer.Views.Controls
         private bool ignoreNextScaleChange = false;
         private bool isWindowInitialized = false;
         private bool isExifOrientationDisabled = false;
+        private DateTime lastSourceChangedTime;
 
         private Subject<double> MetaImageZoomFactorSubject { get; }
         public ReadOnlyReactiveProperty<double> MetaImageZoomFactor { get; }
@@ -980,7 +983,8 @@ namespace ShibugakiViewer.Views.Controls
                 .Subscribe(x =>
                 {
                     this.IsPointerMoving = x;
-                    this.ScrollBarVisibility = VisibilityHelper.Set(x);
+                    this.ScrollBarVisibility = VisibilityHelper
+                    .Set((DateTime.Now - lastSourceChangedTime < TimeSpan.FromMilliseconds(200)) ? false : x);
                 })
                 .AddTo(this.dispsables);
 
@@ -1191,15 +1195,16 @@ namespace ShibugakiViewer.Views.Controls
                 height = buf;
             }
 
-            var horizontalRate = (this.ViewWidth - 1.0) / width;// view.ViewportWidth / width;
-            var verticalRate = (this.ViewHeight - 1.0) / height;// view.ViewportHeight / height;
-
             if (fill)
             {
+                var horizontalRate = (this.ViewWidth) / width;// view.ViewportWidth / width;
+                var verticalRate = (this.ViewHeight) / height;// view.ViewportHeight / height;
                 return Math.Max(horizontalRate, verticalRate);
             }
             else
             {
+                var horizontalRate = (this.ViewWidth - 1.0) / width;// view.ViewportWidth / width;
+                var verticalRate = (this.ViewHeight - 1.0) / height;// view.ViewportHeight / height;
                 return Math.Min(horizontalRate, verticalRate);
             }
         }
