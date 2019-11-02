@@ -27,7 +27,7 @@ DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 ;PrivilegesRequiredOverridesAllowed=dialog
-OutputDir=.
+OutputDir=..\Package
 OutputBaseFilename=ShibugakiViewerInstaller
 SetupIconFile=..\..\ShibugakiViewer\Assets\Icons\appicon.ico
 Compression=lzma
@@ -77,14 +77,13 @@ Source: "..\..\RuntimeCheckerDesctop\bin\Release\publish\RuntimeCheckerDesctop.r
 Source: "..\..\ShibugakiViewer.Launcher.Net45\bin\Release\ShibugakiViewer.Launcher.Net45.exe"; DestDir: ShibugakiViewerLauncher; Flags: dontcopy
 Source: "..\..\ShibugakiViewer.Launcher.Net45\bin\Release\ShibugakiViewer.Launcher.Net45.exe.config"; DestDir: ShibugakiViewerLauncher; Flags: dontcopy
 
+#include "files.iss"
+#include "removedfiles.iss"
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
-
-[UninstallDelete]
-;Type: files; Name: "{app}\test.txt"
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
