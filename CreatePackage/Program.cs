@@ -11,21 +11,98 @@ namespace CreatePackage
     {
         static void Main(string[] args)
         {
-            //UpdateVersion("2.0.0");
+            if (args.Length >= 2 && args[0] == "version")
+            {
+                UpdateVersion(args[1]);
+                return;
+            }
+            if (args.Length >= 1)
+            {
+                if (args[0] == "file")
+                {
+                    ResolveFiles();
+                }
+                else if (args[0] == "clean")
+                {
+                    Clean();
+                }
+                else if (args[0] == "zip")
+                {
+                    Zip();
+                }
+                return;
+            }
 
+            Console.WriteLine("end");
+            Console.ReadLine();
+        }
+
+        static void Zip()
+        {
+            System.IO.Compression.ZipFile.CreateFromDirectory(
+                @"..\..\..\Package\ShibugakiViewer", 
+                @"..\..\..\Package\ShibugakiViewer.zip");
+        }
+
+        static void Clean()
+        {
+            var directories = Directory.GetDirectories(@"..\..\..\..\");
+
+            var remove = new List<string>();
+
+            foreach (var item in directories)
+            {
+                var dirName = Path.GetFileName(item);
+
+                if (dirName.StartsWith("."))
+                {
+                    Console.WriteLine(item + " - " + dirName);
+                    continue;
+                }
+                var hasObj = Directory.Exists(item + @"\obj");
+                var hasBin = Directory.Exists(item + @"\bin");
+
+                Console.WriteLine($"{item} - {dirName} {(hasObj ? "obj" : "-")} {(hasBin ? "bin" : "-")}");
+
+                if (dirName == "CreatePackage")
+                {
+                    continue;
+                }
+                if (hasObj)
+                {
+                    remove.Add(item + @"\obj");
+                }
+                if (hasBin)
+                {
+                    if (dirName == "ShibugakiViewer")
+                    {
+                        if (Directory.Exists(item + @"\bin\Release"))
+                        {
+                            remove.Add(item + @"\bin\Release");
+                        }
+                    }
+                    else
+                    {
+                        remove.Add(item + @"\bin");
+                    }
+                }
+            }
+            foreach (var item in remove.Select(x => Path.GetFullPath(x)))
+            {
+                Console.WriteLine(item);
+                Directory.Delete(item, true);
+            }
+        }
+
+        static void ResolveFiles()
+        {
             var packageRootPath = @"..\..\..\Package";
-            var sourceRootPath = @"..\..\..\..\ShibugakiViewer\bin\Release\publish";
-            var launcherSourceRootPath = @"..\..\..\..\ShibugakiViewer.Launcher\bin\Release\publish";
+            var sourceRootPath = @"..\..\..\..\ShibugakiViewer\bin\Release\netcoreapp3.0";
+            var launcherSourceRootPath = @"..\..\..\..\ShibugakiViewer.Launcher\bin\Release\netcoreapp3.0";
 
             var launcherDestPath = packageRootPath + @"\ShibugakiViewer";
             var mainDestPath = packageRootPath + @"\ShibugakiViewer\bin";
 
-            var excludeFiles = new string[]
-            {
-                @"publish\System.Reactive.xml",
-                @"publish\runtimes\linux-x64\native\netstandard2.0\SQLite.Interop.dll",
-                @"publish\runtimes\osx-x64\native\netstandard2.0\SQLite.Interop.dll",
-            }.Select(x => x.ToLower()).ToArray();
 
 
 
@@ -42,6 +119,14 @@ namespace CreatePackage
             var installFiles = new List<string>();
 
             {
+                var excludeFiles = new string[]
+                {
+                    @"\System.Reactive.xml",
+                    @"\runtimes\linux-x64\native\netstandard2.0\SQLite.Interop.dll",
+                    @"\runtimes\osx-x64\native\netstandard2.0\SQLite.Interop.dll",
+                    @".runtimeconfig.dev.json",
+                }.Select(x => x.ToLower()).ToArray();
+
                 var sourceRootAbsolutePath = Path.GetFullPath(sourceRootPath);
                 Console.WriteLine(sourceRootAbsolutePath);
 
@@ -78,31 +163,43 @@ namespace CreatePackage
                 }
             }
             {
+                var excludeFiles = new string[]
+                {
+                    @".runtimeconfig.dev.json",
+                }.Select(x => x.ToLower()).ToArray();
+
                 var sourceRootAbsolutePath = Path.GetFullPath(launcherSourceRootPath);
                 Console.WriteLine(sourceRootAbsolutePath);
 
                 var files = Directory.GetFiles(launcherSourceRootPath, "*", SearchOption.AllDirectories);
                 foreach (var file in files)
                 {
-                    var absPath = Path.GetFullPath(file);
-                    if (absPath.StartsWith(sourceRootAbsolutePath))
+                    if (excludeFiles.Any(x => file.ToLower().EndsWith(x)))
                     {
-                        var relPath = absPath.Substring(sourceRootAbsolutePath.Length);
-                        installFiles.Add(relPath);
-
-                        var destPath = Path.GetFullPath(launcherDestPath + relPath);
-                        Console.WriteLine(file + " : " + relPath + " : " + destPath);
-
-                        var dir = Path.GetDirectoryName(destPath);
-                        if (!Directory.Exists(dir))
-                        {
-                            Directory.CreateDirectory(dir);
-                        }
-                        File.Copy(file, destPath);
+                        Console.WriteLine("-   " + file);
                     }
                     else
                     {
-                        Console.WriteLine("??? " + file);
+                        var absPath = Path.GetFullPath(file);
+                        if (absPath.StartsWith(sourceRootAbsolutePath))
+                        {
+                            var relPath = absPath.Substring(sourceRootAbsolutePath.Length);
+                            installFiles.Add(relPath);
+
+                            var destPath = Path.GetFullPath(launcherDestPath + relPath);
+                            Console.WriteLine(file + " : " + relPath + " : " + destPath);
+
+                            var dir = Path.GetDirectoryName(destPath);
+                            if (!Directory.Exists(dir))
+                            {
+                                Directory.CreateDirectory(dir);
+                            }
+                            File.Copy(file, destPath);
+                        }
+                        else
+                        {
+                            Console.WriteLine("??? " + file);
+                        }
                     }
                 }
             }
@@ -130,9 +227,6 @@ namespace CreatePackage
                     Console.WriteLine(str);
                 }
             }
-
-            Console.WriteLine("end");
-            Console.ReadLine();
         }
 
         static void UpdateVersion(string version)
@@ -143,10 +237,10 @@ namespace CreatePackage
             ReplaceCsprojVersion("ShibugakiViewer.Settings", version);
             ReplaceCsprojVersion("Database", version);
             ReplaceCsprojVersion("ImageLibrary", version);
-            
+
             ReplaceVersion("../../../../ShibugakiViewer.Launcher.Net45/Properties/AssemblyInfo.cs",
                 "assembly: AssemblyVersion\\(\".+\\.0\"\\)", $"assembly: AssemblyVersion(\"{version}.0\")");
-            
+
             ReplaceVersion($@"../../../Installer/installer.iss",
                 "#define MyAppVersion \".+\"", $"#define MyAppVersion \"{version}\"");
         }

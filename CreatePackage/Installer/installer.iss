@@ -64,15 +64,15 @@ Name: desktop; Description: ".NET Core Desktop Runtime"; Types: CoreOnly NoRunti
 Source: "C:\Program Files (x86)\Inno Setup 6\Examples\MyProg.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
-Source: "..\..\RuntimeCheckerCore\bin\Release\publish\RuntimeCheckerCore.deps.json"; DestDir: RuntimeCheckerCore; Flags: dontcopy
-Source: "..\..\RuntimeCheckerCore\bin\Release\publish\RuntimeCheckerCore.dll"; DestDir: RuntimeCheckerCore; Flags: dontcopy
-Source: "..\..\RuntimeCheckerCore\bin\Release\publish\RuntimeCheckerCore.exe"; DestDir: RuntimeCheckerCore; Flags: dontcopy
-Source: "..\..\RuntimeCheckerCore\bin\Release\publish\RuntimeCheckerCore.runtimeconfig.json"; DestDir: RuntimeCheckerCore; Flags: dontcopy
+Source: "..\..\RuntimeCheckerCore\bin\Release\netcoreapp3.0\RuntimeCheckerCore.deps.json"; DestDir: RuntimeCheckerCore; Flags: dontcopy
+Source: "..\..\RuntimeCheckerCore\bin\Release\netcoreapp3.0\RuntimeCheckerCore.dll"; DestDir: RuntimeCheckerCore; Flags: dontcopy
+Source: "..\..\RuntimeCheckerCore\bin\Release\netcoreapp3.0\RuntimeCheckerCore.exe"; DestDir: RuntimeCheckerCore; Flags: dontcopy
+Source: "..\..\RuntimeCheckerCore\bin\Release\netcoreapp3.0\RuntimeCheckerCore.runtimeconfig.json"; DestDir: RuntimeCheckerCore; Flags: dontcopy
 
-Source: "..\..\RuntimeCheckerDesktop\bin\Release\publish\RuntimeCheckerDesktop.deps.json"; DestDir: RuntimeCheckerDesktop; Flags: dontcopy
-Source: "..\..\RuntimeCheckerDesktop\bin\Release\publish\RuntimeCheckerDesktop.dll"; DestDir: RuntimeCheckerDesktop; Flags: dontcopy
-Source: "..\..\RuntimeCheckerDesktop\bin\Release\publish\RuntimeCheckerDesktop.exe"; DestDir: RuntimeCheckerDesktop; Flags: dontcopy
-Source: "..\..\RuntimeCheckerDesktop\bin\Release\publish\RuntimeCheckerDesktop.runtimeconfig.json"; DestDir: RuntimeCheckerDesktop; Flags: dontcopy
+Source: "..\..\RuntimeCheckerDesktop\bin\Release\netcoreapp3.0\RuntimeCheckerDesktop.deps.json"; DestDir: RuntimeCheckerDesktop; Flags: dontcopy
+Source: "..\..\RuntimeCheckerDesktop\bin\Release\netcoreapp3.0\RuntimeCheckerDesktop.dll"; DestDir: RuntimeCheckerDesktop; Flags: dontcopy
+Source: "..\..\RuntimeCheckerDesktop\bin\Release\netcoreapp3.0\RuntimeCheckerDesktop.exe"; DestDir: RuntimeCheckerDesktop; Flags: dontcopy
+Source: "..\..\RuntimeCheckerDesktop\bin\Release\netcoreapp3.0\RuntimeCheckerDesktop.runtimeconfig.json"; DestDir: RuntimeCheckerDesktop; Flags: dontcopy
 
 Source: "..\..\ShibugakiViewer.Launcher.Net45\bin\Release\ShibugakiViewer.Launcher.Net45.exe"; DestDir: ShibugakiViewerLauncher; Flags: dontcopy
 Source: "..\..\ShibugakiViewer.Launcher.Net45\bin\Release\ShibugakiViewer.Launcher.Net45.exe.config"; DestDir: ShibugakiViewerLauncher; Flags: dontcopy
@@ -213,8 +213,6 @@ function GetProductIdFromUpgradeCode(): String;
 var
   //resultCode: integer;
   Names: TArrayOfString;
-  I: Integer;
-  S: String;
   packedProductId: String;
   actualProductId: String;
 begin
