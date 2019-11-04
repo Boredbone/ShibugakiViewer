@@ -220,7 +220,7 @@ namespace CreatePackage
                     }
 
                     var str = @"Source: ""..\Package\ShibugakiViewer" + item +
-                        "\"; DestDir: \"{app}" + destDir + "\"; Flags: ignoreversion";
+                        "\"; DestDir: \"{app}\\ShibugakiViewer" + destDir + "\"; Flags: ignoreversion";
 
                     br.WriteLine(str);
 

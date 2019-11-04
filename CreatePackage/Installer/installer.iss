@@ -20,16 +20,17 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={pf}\{#MyInstallDirectory}
+DefaultDirName={autopf}\{#MyInstallDirectory}
 DisableDirPage=no
 DefaultGroupName=MyProgramStartFolder
 DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
-;PrivilegesRequired=lowest
-;PrivilegesRequiredOverridesAllowed=dialog
+PrivilegesRequired=lowest
+PrivilegesRequiredOverridesAllowed=dialog
 OutputDir=..\Package
 OutputBaseFilename=ShibugakiViewerInstaller
 SetupIconFile=..\..\ShibugakiViewer\Assets\Icons\appicon.ico
+UninstallDisplayIcon={app}\{#MyAppName}\bin\{#MyAppExeName}
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -61,7 +62,6 @@ Name: core; Description: ".NET Core Runtime"; Types: NoRuntime; Flags: checkable
 Name: desktop; Description: ".NET Core Desktop Runtime"; Types: CoreOnly NoRuntime; Flags: checkablealone disablenouninstallwarning;
 
 [Files]
-Source: "C:\Program Files (x86)\Inno Setup 6\Examples\MyProg.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 Source: "..\..\RuntimeCheckerCore\bin\Release\netcoreapp3.0\RuntimeCheckerCore.deps.json"; DestDir: RuntimeCheckerCore; Flags: dontcopy
@@ -81,12 +81,12 @@ Source: "..\..\ShibugakiViewer.Launcher.Net45\bin\Release\ShibugakiViewer.Launch
 #include "removedfiles.iss"
 
 [Icons]
-Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
-Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
-Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppName}\bin\{#MyAppExeName}"
+;Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
+Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppName}\bin\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\{#MyAppName}\bin\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
 
 [Code]
@@ -169,12 +169,19 @@ begin
 end;
 
 //==========================================================
+procedure ExitRunningAppBeforeUninstall;
+var
+  resultCode: Integer;
+begin
+  Exec(ExpandConstant('{app}\{#MyAppName}\ShibugakiViewer.Launcher.exe'), '/qq', '', SW_HIDE, ewWaitUntilTerminated, resultCode);
+end;
+
+//==========================================================
 function PrepareToInstall(var NeedsRestart: Boolean): String;
 begin
-  //TODO Copy launcher and exit running app
+  // Copy launcher and exit running app
   Log('!!!PrepareToInstall');
   ExitRunningApp();
-  MsgBox('PrepareToInstall', mbInformation, MB_OK);
 end;
 
 
@@ -279,7 +286,6 @@ begin
     Result := actualProductId;
   end;
   Log('prod='+actualProductId);
-  //MsgBox('prod='+actualProductId, mbInformation, MB_OK);
 end;
 
 //==========================================================
@@ -305,14 +311,11 @@ begin
     uninstallString := GetUninstallString(oldVersionProductId);
   end;
 
-  //MsgBox('prod act='+oldVersionProductId+', uninstall='+uninstallString, mbInformation, MB_OK);
-
   if (uninstallString <> '') then begin
 
     uninstallOption:=('/x '+oldVersionProductId+' REBOOT=ReallySuppress /qb-');
 
     Log('!!!uninstallOption='+uninstallOption+', uninstall='+uninstallString);
-    MsgBox('uninstallOption='+uninstallOption+', uninstall='+uninstallString, mbInformation, MB_OK);
 
     if Exec('msiexec.exe', uninstallOption,'', SW_HIDE, ewWaitUntilTerminated, resultCode) then begin
       Result := 1
@@ -371,7 +374,6 @@ begin
 
   runtimeLevel := 0;
   UpdateRuntimeLevel();
-  //MsgBox('runtimeLevel=' + IntToStr(runtimeLevel), mbInformation, MB_OK);
   if (runtimeLevel <> 1) then begin
     MsgBox(CustomMessage('RuntimeInstallationFailedMessage'), mbInformation, MB_OK);
   end;
@@ -397,14 +399,14 @@ begin
   case CurPageID of
     wpSelectDir:
     begin
-      if (IsAdminLoggedOn or IsPowerUserLoggedOn) then begin
+      if (IsAdmin or IsPowerUserLoggedOn) then begin
         Log('admin user');
       end else begin
-        Log('pos=' + IntToStr(pos(ExpandConstant('{pf}'),WizardForm.DirEdit.Text)));
-        if (pos(ExpandConstant('{pf}'),WizardForm.DirEdit.Text) = 1) then begin
+        Log('pos=' + IntToStr(pos(ExpandConstant('{autopf}'),WizardForm.DirEdit.Text)));
+        if (pos(ExpandConstant('{autopf}'),WizardForm.DirEdit.Text) = 1) then begin
           Log('dir bef=' + WizardForm.DirEdit.Text);
-          WizardForm.DirEdit.Text := ExpandConstant('{localappdata}\{#MyInstallDirectory}');
-          Log('dir aft=' + WizardForm.DirEdit.Text);
+          //WizardForm.DirEdit.Text := ExpandConstant('{localappdata}\{#MyInstallDirectory}');
+          //Log('dir aft=' + WizardForm.DirEdit.Text);
         end;
       end;
     end;
@@ -438,14 +440,10 @@ begin
   case CurUninstallStep of
     usUninstall:
       begin
-        ExitRunningApp();
-        MsgBox('CurUninstallStepChanged:' #13#13 'Uninstall is about to start.', mbInformation, MB_OK)
-        // ...insert code to perform pre-uninstall tasks here...
+        ExitRunningAppBeforeUninstall();
       end;
     usPostUninstall:
       begin
-        //MsgBox('CurUninstallStepChanged:' #13#13 'Uninstall just finished.', mbInformation, MB_OK);
-        // ...insert code to perform post-uninstall tasks here...
       end;
   end;
 end;
