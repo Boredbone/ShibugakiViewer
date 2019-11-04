@@ -449,6 +449,13 @@ namespace ShibugakiViewer.Models
             this.viewerImageChangeGate = true;
         }
 
+#if DEBUG
+        ~Client()
+        {
+            Debug.WriteLine("client finalized");
+        }
+#endif
+
         /// <summary>
         /// ページ・状態変更時処理
         /// </summary>

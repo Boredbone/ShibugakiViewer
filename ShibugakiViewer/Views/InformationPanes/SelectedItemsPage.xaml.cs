@@ -44,8 +44,8 @@ namespace ShibugakiViewer.Views.InformationPanes
             var thisInstance = d as SelectedItemsPage;
             var value = e.NewValue as SelectionManager;
 
-            thisInstance.list.ItemsSource = value.Ids;
-            thisInstance.tagList.ItemsSource = value.CommonTags;
+            thisInstance.list.ItemsSource = value?.Ids;
+            thisInstance.tagList.ItemsSource = value?.CommonTags;
 
         }
 

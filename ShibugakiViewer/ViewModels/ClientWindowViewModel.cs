@@ -555,6 +555,13 @@ namespace ShibugakiViewer.ViewModels
             this.Search = new SearchPageViewModel(this).AddTo(this.Disposables);
         }
 
+#if DEBUG
+        ~ClientWindowViewModel()
+        {
+            System.Diagnostics.Debug.WriteLine("vm finalized");
+        }
+#endif
+
 
         /// <summary>
         /// キーボード操作を登録

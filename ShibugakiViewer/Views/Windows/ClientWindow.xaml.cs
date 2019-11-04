@@ -46,10 +46,18 @@ namespace ShibugakiViewer.Views.Windows
             this.fileInformation.AddTo(this.disposables);
         }
 
+#if DEBUG
+        ~ClientWindow()
+        {
+            System.Diagnostics.Debug.WriteLine("window finalized");
+        }
+#endif
+
         public void Dispose()
         {
             this.disposables.Dispose();
             (this.DataContext as IDisposable)?.Dispose();
+            this.DataContext = null;
         }
 
         private void Window_Closed(object sender, EventArgs e)
