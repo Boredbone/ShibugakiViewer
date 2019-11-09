@@ -87,6 +87,14 @@ namespace ShibugakiViewer
             AppDomain.CurrentDomain.UnhandledException
                 += CurrentDomain_UnhandledException;
 
+            {
+                // Set current directory
+                var executingFilePath = Assembly.GetEntryAssembly().Location;
+                var executingFileDirectory = Path.GetDirectoryName(executingFilePath);
+                Directory.SetCurrentDirectory(executingFileDirectory);
+                //Environment.CurrentDirectory = executingFileDirectory;
+            }
+
             // Ensure the current culture passed into bindings is the OS culture.
             // By default, WPF uses en-US as the culture, regardless of the system settings.
             FrameworkElement.LanguageProperty.OverrideMetadata(
