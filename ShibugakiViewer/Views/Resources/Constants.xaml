@@ -118,8 +118,8 @@
 
     <SolidColorBrush x:Key="MenuTextColor" Color="#FF383838"/>
 
-    <SolidColorBrush x:Key="UnitSearchItemColor" Color="#FFFBBD80"/>
-    <SolidColorBrush x:Key="ComplexSearchItemColor" Color="#FFFDA6A6"/>
+    <SolidColorBrush x:Key="UnitSearchItemColor" Color="#ffcc80"/>
+    <SolidColorBrush x:Key="ComplexSearchItemColor" Color="#ffab91"/>
 
 
     <SolidColorBrush x:Key="SettingTitleColor" Color="LightGray"/>
@@ -135,10 +135,10 @@
     <SolidColorBrush x:Key="SearchItemCoverNormalColor" Color="#00F5F5F5"/>
     <SolidColorBrush x:Key="SearchItemCoverHoverColor" Color="#40F5F5F5"/>
 
-    <SolidColorBrush x:Key="ThumbnailSelectColor" Color="#FF55682F"/>
-    <SolidColorBrush x:Key="ThumbnailSelectHoverColor" Color="#FF647537"/>
+    <SolidColorBrush x:Key="ThumbnailSelectColor" Color="#8c9900"/>
+    <SolidColorBrush x:Key="ThumbnailSelectHoverColor" Color="#afb42b"/>
     <SolidColorBrush x:Key="ThumbnailDefaultBorderColor" Color="LightGray"/>
-    <SolidColorBrush x:Key="ThumbnailGroupBorderColor" Color="#FFC59454"/>
+    <SolidColorBrush x:Key="ThumbnailGroupBorderColor" Color="#ca9b52"/>
 
     <SolidColorBrush x:Key="ThumbnailNameTextColor" Color="White"/>
     <SolidColorBrush x:Key="ThumbnailSizeTextColor" Color="#C0FFFFFF"/>
@@ -146,11 +146,11 @@
 
     <SolidColorBrush x:Key="BaseColor" Color="White"/>
 
-    <SolidColorBrush x:Key="ControlColor" Color="DarkOliveGreen"/>
+    <!--<SolidColorBrush x:Key="ControlColor" Color="DarkOliveGreen"/>-->
 
     <!-- #FFf6ad49#FFb9d08b -->
     <SolidColorBrush x:Key="TagItemColor" Color="#ffcc80"/>
-    <SolidColorBrush x:Key="PathItemColor" Color="#c5e1a5"/>
+    <SolidColorBrush x:Key="PathItemColor" Color="#d2ce56"/>
 
     <SolidColorBrush x:Key="TagTextColor" Color="Black"/>
 
@@ -170,26 +170,27 @@
     <SolidColorBrush x:Key="TagListBackColor" Color="#FFEDEDED"/>
     <SolidColorBrush x:Key="TagListBorderColor" Color="Black"/>
 
-    <SolidColorBrush x:Key="TabColor0" Color="#fff8b862"/>
-    <SolidColorBrush x:Key="TabColor1" Color="#93D87C"/><!-- #ffaacf53"/>-->
-    <SolidColorBrush x:Key="TabColor2" Color="#ffbbc8e6"/>
+    <SolidColorBrush x:Key="TabColor0" Color="#ffb74d"/>
+    <SolidColorBrush x:Key="TabColor1" Color="#afb42b"/><!-- #ffaacf53"/>-->
+    <SolidColorBrush x:Key="TabColor2" Color="#b2dfdb"/>
     <SolidColorBrush x:Key="ThumbnailColor" Color="Beige"/>
-    <SolidColorBrush x:Key="ControllerColor" Color="#FFFDCA94"/>
+    <SolidColorBrush x:Key="ControllerColor" Color="#ffcc80"/>
     <SolidColorBrush x:Key="TreeBackGround" Color="#FFF5F5F5"/>
 
     <SolidColorBrush x:Key="LoadingTextForeGround" Color="Gray"/>
 
-    <SolidColorBrush x:Key="ProgressColor" Color="#FF2e2930"/>
+    <!--<SolidColorBrush x:Key="ProgressColor" Color="#FF2e2930"/>-->
     <!--<x:String x:Key="ProgressBarIndeterminateForegroundThemeBrush">#FF2e2930</system:String>-->
 
 
-    <SolidColorBrush x:Key="OptionPaneColor" Color="#FFF5F5F5"/>
+    <SolidColorBrush x:Key="ToolPanelColor" Color="#FFF5F5F5"/>
+    <SolidColorBrush x:Key="OptionPaneColor" Color="#f9f5e8"/>
 
 
     <SolidColorBrush x:Key="CheckBoxBaseColor" Color="#A0FFFFFF"/>
     <SolidColorBrush x:Key="CheckBoxHoverColor" Color="LightGray"/>
 
-    <SolidColorBrush x:Key="MenuBackgroundColor" Color="#FFFAD3AF"/>
+    <SolidColorBrush x:Key="MenuBackgroundColor" Color="#ffcc80"/>
 
     <SolidColorBrush x:Key="ButtonBackground" Color="#FFE0E0E0"/>
     <SolidColorBrush x:Key="ButtonHoverBackground" Color="#FFD0D0D0"/>

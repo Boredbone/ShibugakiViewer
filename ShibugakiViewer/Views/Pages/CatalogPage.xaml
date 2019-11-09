@@ -35,10 +35,10 @@
                 HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
                 Style="{StaticResource flatButtonStyle}"
                 BorderThickness="0" Padding="1"
-                PointerHoverBackground="#FFC0D0C0"
-                PointerHoverBorderBrush="#FF506050"
-                PressedBackground="#FFA0B0A0"
-                PressedBorderBrush="#FFA0B0A0"
+                PointerHoverBackground="#cfd8dc"
+                PointerHoverBorderBrush="#29434e"
+                PressedBackground="#c5e1a5"
+                PressedBorderBrush="#c5e1a5"
                 PressedBorderThickness="0"
                 DisabledBorderBrush="LightGray">
                 
@@ -283,7 +283,7 @@
 
         <ContentControl Visibility="Collapsed" Content="{StaticResource rootControl}"/>
 
-        <Grid Grid.Row="0" Background="{StaticResource OptionPaneColor}">
+        <Grid Grid.Row="0" Background="{StaticResource ToolPanelColor}">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>

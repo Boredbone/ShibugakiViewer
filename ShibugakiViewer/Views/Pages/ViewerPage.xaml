@@ -228,7 +228,7 @@
                                 <Border
                                     x:Name="transformDialog"
                                     IsEnabled="{Binding IsTransformDialogEnabled.Value,Mode=TwoWay}"
-                                    Background="{StaticResource OptionPaneColor}"
+                                    Background="{StaticResource ToolPanelColor}"
                                     Width="Auto"
                                     BorderBrush="Gray"
                                     BorderThickness="1">

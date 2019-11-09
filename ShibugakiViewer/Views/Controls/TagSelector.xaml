@@ -22,7 +22,7 @@
     </UserControl.Resources>
 
 
-    <Border Background="{StaticResource OptionPaneColor}" BorderBrush="Gray" BorderThickness="1"
+    <Border Background="{StaticResource ToolPanelColor}" BorderBrush="Gray" BorderThickness="1"
             Height="Auto" Width="270"
             HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid MaxHeight="450" 

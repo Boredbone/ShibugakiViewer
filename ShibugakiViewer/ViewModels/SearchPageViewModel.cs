@@ -57,7 +57,8 @@ namespace ShibugakiViewer.ViewModels
         public ReactivePropertySlim<TabMode> SelectedTab { get; }
         public ReadOnlyReactivePropertySlim<int> CurrentSearchType { get; }
         public ReadOnlyReactivePropertySlim<bool> IsFavoriteSearch { get; }
-                
+        public ReadOnlyReactivePropertySlim<Visibility> IsFavoriteSearchSortVisible { get; }
+
         private readonly ClientWindowViewModel parent;
 
 
@@ -145,7 +146,14 @@ namespace ShibugakiViewer.ViewModels
                 .Select(x => x == 1)
                 .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.Disposables);
-            
+
+            this.IsFavoriteSearchSortVisible = this.IsFavoriteSearch
+                .CombineLatest(this.SelectedTab, (a, b) => a && b == TabMode.Favorite)
+                .Select(x => VisibilityHelper.Set(x))
+                .ToReadOnlyReactivePropertySlim()
+                .AddTo(this.Disposables);
+
+
 
             this.ClickHistoryCommand = new DelegateCommand<SearchInformation>(x =>
             {

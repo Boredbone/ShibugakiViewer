@@ -98,7 +98,7 @@
                                         <b:PopupDialogBehavior.Content>
                                             <Border
                                                 x:Name="fileOperationDialog"
-                                                Background="{StaticResource OptionPaneColor}"
+                                                Background="{StaticResource ToolPanelColor}"
                                                 Width="Auto"
                                                 BorderBrush="Gray"
                                                 BorderThickness="1">
@@ -407,7 +407,7 @@
                                     IsDockToWindow="True">
                                     <b:PopupDialogBehavior.Content>
                                         <Border
-                                            Background="{StaticResource OptionPaneColor}"
+                                            Background="{StaticResource ToolPanelColor}"
                                             Width="Auto"
                                             VerticalAlignment="Stretch"
                                             BorderBrush="Gray"

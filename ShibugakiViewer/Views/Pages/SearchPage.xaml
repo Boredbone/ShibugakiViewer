@@ -227,14 +227,13 @@
                         Margin="8"/>
 
                     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Bottom"
+                            MaxWidth="320"
                           Visibility="{Binding IsFavoriteSearch.Value,Mode=OneWay,
                         Converter={StaticResource TrueToVisibleConverter}}"
                           Margin="8">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
                         <TextBlock 
@@ -247,14 +246,13 @@
                             Grid.Column="1"
                             Text="{Binding CurrentSearch.Value.Name,Mode=TwoWay,UpdateSourceTrigger=Explicit}"
                             HorizontalAlignment="Stretch"
-                            Margin="8,0,0,0"
-                            MaxWidth="300"
+                            Margin="8,0,10,0"
                             Background="#80FFFFFF"
                             FontSize="{StaticResource NormalTextSize}"
                             VerticalAlignment="Bottom"
                             xb:TextBoxBehavior.UpdateByReturn="True"/>
 
-
+                        <!--
                         <cc:FlatButton
                             Grid.Column="2"
                             Content="{StaticResource UpSymbol}"
@@ -271,7 +269,7 @@
                             ToolTipService.ToolTip="{x:Static properties:Resources.Down}"
                             Width="48" Height="48"
                             VerticalAlignment="Center" Margin="10,10,20,10"
-                            Command="{Binding DownFavoriteCommand}"/>
+                            Command="{Binding DownFavoriteCommand}"/>-->
                         
                         
                     </Grid>
@@ -323,7 +321,7 @@
                                     Background="{Binding ElementName=togglePanel,Path=Background,Mode=OneWay}">
 
                         <cc:FlatButton 
-                            Width="56" Height="48" Margin="4,10,4,10"
+                            Width="56" Height="48" Margin="4,10,12,10"
                             Content="{StaticResource AddSymbol}"
                             Style="{StaticResource symbolButton}"
                             VerticalAlignment="Center" HorizontalAlignment="Center"
@@ -349,6 +347,25 @@
                             Converter={StaticResource TrueToVisibleConverter}}"
                             ToolTip="{x:Static properties:Resources.UnFavoriteButton_ToolTip}"
                             Command="{Binding AddToFavoriteCommand}"/>
+
+
+                        <cc:FlatButton
+                            Width="48" Height="48" Margin="-8,10,2,10"
+                            Content="{StaticResource UpSymbol}"
+                            Style="{StaticResource symbolButton}"
+                            VerticalAlignment="Center" HorizontalAlignment="Center"
+                            Visibility="{Binding IsFavoriteSearchSortVisible.Value,Mode=OneWay}"
+                            ToolTipService.ToolTip="{x:Static properties:Resources.Up}"
+                            Command="{Binding UpFavoriteCommand}"/>
+
+                        <cc:FlatButton
+                            Width="48" Height="48" Margin="2,10,2,10"
+                            Content="{StaticResource DownSymbol}"
+                            Style="{StaticResource symbolButton}"
+                            ToolTipService.ToolTip="{x:Static properties:Resources.Down}"
+                            VerticalAlignment="Center" HorizontalAlignment="Center"
+                            Visibility="{Binding IsFavoriteSearchSortVisible.Value,Mode=OneWay}"
+                            Command="{Binding DownFavoriteCommand}"/>
 
                     </StackPanel>
                 </Grid>
