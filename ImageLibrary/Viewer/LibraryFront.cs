@@ -592,8 +592,11 @@ namespace ImageLibrary.Viewer
                 this.SearchAsync(0, 0, true).FireAndForget();
             }
 
-            this.CacheClearedSubject.OnNext
-                (new CacheClearedEventArgs() { Action = action, });
+            if (!this.CacheClearedSubject.IsDisposed)
+            {
+                this.CacheClearedSubject.OnNext
+                    (new CacheClearedEventArgs() { Action = action, });
+            }
         }
 
         /// <summary>
