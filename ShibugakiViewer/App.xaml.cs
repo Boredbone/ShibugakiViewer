@@ -575,13 +575,11 @@ namespace ShibugakiViewer
                 return null;
             }
 
-            var menu = new[]
-            {
-                new System.Windows.Forms.MenuItem(this.Core.GetResourceString("OpenNewWindow"),//."&Settings (S)",
-                    (o, e) => this.ShowClientWindow(null)),
-                new System.Windows.Forms.MenuItem(this.Core.GetResourceString("Exit"),
-                    (o, e) => this.ExitAll())
-            };
+            var menuStrip = new System.Windows.Forms.ContextMenuStrip();
+            menuStrip.Items.Add(this.Core.GetResourceString("OpenNewWindow"),//."&Settings (S)",
+                    null, (o, e) => this.ShowClientWindow(null));
+            menuStrip.Items.Add(this.Core.GetResourceString("Exit"),
+                    null, (o, e) => this.ExitAll());
 
             var subscription = new CompositeDisposable();
 
@@ -590,7 +588,7 @@ namespace ShibugakiViewer
                 Text = this.Core.AppName,
                 Icon = icon,
                 Visible = true,
-                ContextMenu = new System.Windows.Forms.ContextMenu(menu),
+                ContextMenuStrip = menuStrip,
             }.AddTo(subscription);
 
             this.Core.SystemNotification

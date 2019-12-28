@@ -94,15 +94,11 @@ const
   oldVersionProductIdDef='{E8E4B62C-D200-4411-81F9-324A942F180C}';
   oldVersionUpgradeCodeKey='SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UpgradeCodes\13BE2E17FBA93A44898A7DD0AD01DA42';
 
-  dotnetCore64Url = 'https://download.visualstudio.microsoft.com/download/pr/b3b81103-619a-48d8-ac1b-e03bbe153b7c/566b0f50872164abd1478a5b3ec38ffa/dotnet-runtime-3.0.0-win-x64.exe';
-  dotnetCore86Url = 'https://download.visualstudio.microsoft.com/download/pr/ffc76eb1-6293-46e9-8d31-ad804995f870/ccf2eeafb0bdf336a092bfdd52a0dfca/dotnet-runtime-3.0.0-win-x86.exe';
-  dotnetCore64DesktopUrl = 'https://download.visualstudio.microsoft.com/download/pr/fe9d105b-5d40-4f12-b238-6b6e1af9f812/341fc13950347d95fef8522cb3d77009/windowsdesktop-runtime-3.0.0-win-x64.exe';
-  dotnetCore86DesktopUrl = 'https://download.visualstudio.microsoft.com/download/pr/03f6f2e1-bc0f-4185-b5c2-8399d5b3aac4/96f0664754609069159b7acd19772c77/windowsdesktop-runtime-3.0.0-win-x86.exe';
+  dotnetCore64Url = 'https://download.visualstudio.microsoft.com/download/pr/a1510e74-b31a-4434-b8a0-8074ff31fb3f/b7de8ecba4a14d8312551cfdc745dea1/windowsdesktop-runtime-3.1.0-win-x64.exe';
+  dotnetCore86Url = 'https://download.visualstudio.microsoft.com/download/pr/e93147bb-7654-46d6-954a-bbd54da63b9b/cbdba4605fd04dc3886ca772d3953c53/windowsdesktop-runtime-3.1.0-win-x86.exe';
 
-  dotnetCore64Filename = 'dotnet-runtime-3.0.0-win-x64.exe';
-  dotnetCore86Filename = 'dotnet-runtime-3.0.0-win-x86.exe';
-  dotnetCore64DesktopFilename = 'windowsdesktop-runtime-3.0.0-win-x64.exe';
-  dotnetCore86DesktopFilename = 'windowsdesktop-runtime-3.0.0-win-x86.exe';
+  dotnetCore64Filename = 'windowsdesktop-runtime-3.1.0-win-x64.exe';
+  dotnetCore86Filename = 'windowsdesktop-runtime-3.1.0-win-x86.exe';
 
 
 var
@@ -123,10 +119,8 @@ begin
 
   if IsWin64 then begin
     idpAddFileComp(dotnetCore64Url, ExpandConstant('{tmp}\')+dotnetCore64Filename,'core');
-    idpAddFileComp(dotnetCore64DesktopUrl, ExpandConstant('{tmp}\')+dotnetCore64DesktopFilename,'desktop');
   end else begin
     idpAddFileComp(dotnetCore86Url, ExpandConstant('{tmp}\')+dotnetCore86Filename,'core');
-    idpAddFileComp(dotnetCore86DesktopUrl, ExpandConstant('{tmp}\')+dotnetCore86DesktopFilename,'desktop');
   end;
   idpDownloadAfter(wpReady);
 
@@ -366,10 +360,8 @@ var
 begin
   if IsWin64 then begin
     Exec(ExpandConstant('{tmp}\')+dotnetCore64Filename,'/install /passive /norestart','',SW_SHOW,ewWaitUntilTerminated,resultCode);
-    Exec(ExpandConstant('{tmp}\')+dotnetCore64DesktopFilename,'/install /passive /norestart','',SW_SHOW,ewWaitUntilTerminated,resultCode);
   end else begin
     Exec(ExpandConstant('{tmp}\')+dotnetCore86Filename,'/install /passive /norestart','',SW_SHOW,ewWaitUntilTerminated,resultCode);
-    Exec(ExpandConstant('{tmp}\')+dotnetCore86DesktopFilename,'/install /passive /norestart','',SW_SHOW,ewWaitUntilTerminated,resultCode);
   end;
 
   runtimeLevel := 0;
