@@ -52,27 +52,26 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Types]
 Name: "NoRuntime"; Description: "Install All"; Check: IsNoRuntimeExists
-Name: "CoreOnly"; Description: "Install Desktop"; Check: IsOnlyCoreRuntimeExists
 Name: "HasRuntime"; Description: "Not Install Runtime"; Check: IsAllRuntimeExists
 
 [Components]
 Name: "Program"; Description: "Program Files"; Flags: fixed
 
-Name: core; Description: ".NET Core Runtime"; Types: NoRuntime; Flags: checkablealone disablenouninstallwarning;
-Name: desktop; Description: ".NET Core Desktop Runtime"; Types: CoreOnly NoRuntime; Flags: checkablealone disablenouninstallwarning;
+;Name: core; Description: ".NET Core Runtime"; Types: NoRuntime; Flags: checkablealone disablenouninstallwarning;
+Name: core; Description: ".NET Core Desktop Runtime"; Types: NoRuntime; Flags: checkablealone disablenouninstallwarning;
 
 [Files]
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
-Source: "..\..\RuntimeCheckerCore\bin\Release\netcoreapp3.0\RuntimeCheckerCore.deps.json"; DestDir: RuntimeCheckerCore; Flags: dontcopy
-Source: "..\..\RuntimeCheckerCore\bin\Release\netcoreapp3.0\RuntimeCheckerCore.dll"; DestDir: RuntimeCheckerCore; Flags: dontcopy
-Source: "..\..\RuntimeCheckerCore\bin\Release\netcoreapp3.0\RuntimeCheckerCore.exe"; DestDir: RuntimeCheckerCore; Flags: dontcopy
-Source: "..\..\RuntimeCheckerCore\bin\Release\netcoreapp3.0\RuntimeCheckerCore.runtimeconfig.json"; DestDir: RuntimeCheckerCore; Flags: dontcopy
+;Source: "..\..\RuntimeCheckerCore\bin\Release\netcoreapp3.1\RuntimeCheckerCore.deps.json"; DestDir: RuntimeCheckerCore; Flags: dontcopy
+;Source: "..\..\RuntimeCheckerCore\bin\Release\netcoreapp3.1\RuntimeCheckerCore.dll"; DestDir: RuntimeCheckerCore; Flags: dontcopy
+;Source: "..\..\RuntimeCheckerCore\bin\Release\netcoreapp3.1\RuntimeCheckerCore.exe"; DestDir: RuntimeCheckerCore; Flags: dontcopy
+;Source: "..\..\RuntimeCheckerCore\bin\Release\netcoreapp3.1\RuntimeCheckerCore.runtimeconfig.json"; DestDir: RuntimeCheckerCore; Flags: dontcopy
 
-Source: "..\..\RuntimeCheckerDesktop\bin\Release\netcoreapp3.0\RuntimeCheckerDesktop.deps.json"; DestDir: RuntimeCheckerDesktop; Flags: dontcopy
-Source: "..\..\RuntimeCheckerDesktop\bin\Release\netcoreapp3.0\RuntimeCheckerDesktop.dll"; DestDir: RuntimeCheckerDesktop; Flags: dontcopy
-Source: "..\..\RuntimeCheckerDesktop\bin\Release\netcoreapp3.0\RuntimeCheckerDesktop.exe"; DestDir: RuntimeCheckerDesktop; Flags: dontcopy
-Source: "..\..\RuntimeCheckerDesktop\bin\Release\netcoreapp3.0\RuntimeCheckerDesktop.runtimeconfig.json"; DestDir: RuntimeCheckerDesktop; Flags: dontcopy
+Source: "..\..\RuntimeCheckerDesktop\bin\Release\netcoreapp3.1\RuntimeCheckerDesktop.deps.json"; DestDir: RuntimeCheckerDesktop; Flags: dontcopy
+Source: "..\..\RuntimeCheckerDesktop\bin\Release\netcoreapp3.1\RuntimeCheckerDesktop.dll"; DestDir: RuntimeCheckerDesktop; Flags: dontcopy
+Source: "..\..\RuntimeCheckerDesktop\bin\Release\netcoreapp3.1\RuntimeCheckerDesktop.exe"; DestDir: RuntimeCheckerDesktop; Flags: dontcopy
+Source: "..\..\RuntimeCheckerDesktop\bin\Release\netcoreapp3.1\RuntimeCheckerDesktop.runtimeconfig.json"; DestDir: RuntimeCheckerDesktop; Flags: dontcopy
 
 Source: "..\..\ShibugakiViewer.Launcher.Net45\bin\Release\ShibugakiViewer.Launcher.Net45.exe"; DestDir: ShibugakiViewerLauncher; Flags: dontcopy
 Source: "..\..\ShibugakiViewer.Launcher.Net45\bin\Release\ShibugakiViewer.Launcher.Net45.exe.config"; DestDir: ShibugakiViewerLauncher; Flags: dontcopy
@@ -329,24 +328,35 @@ begin
   if runtimeLevel <=0 then
   begin
     // Copy checker app and run
-
-    ExtractTemporaryFiles('RuntimeCheckerCore\*');
-    Exec(ExpandConstant('{tmp}\')+'RuntimeCheckerCore\RuntimeCheckerCore.exe' , '', '', SW_HIDE, ewWaitUntilTerminated, resultCode);
+    
+    ExtractTemporaryFiles('RuntimeCheckerDesktop\*');
+    Exec(ExpandConstant('{tmp}\')+'RuntimeCheckerDesktop\RuntimeCheckerDesktop.exe' , '', '', SW_HIDE, ewWaitUntilTerminated, resultCode);
+    
     if (resultCode > 0) then begin
-      // Core runtime exists
-      ExtractTemporaryFiles('RuntimeCheckerDesktop\*');
-      Exec(ExpandConstant('{tmp}\')+'RuntimeCheckerDesktop\RuntimeCheckerDesktop.exe' , '', '', SW_HIDE, ewWaitUntilTerminated, resultCode);
-      if (resultCode > 0) then begin
-        // Desktop runtime exists
-        runtimeLevel:=1;
-      end else begin
-        // Core only
-        runtimeLevel:=2;
-      end;
+      // Desktop runtime exists
+      runtimeLevel:=1;
     end else begin
       // No runtime
       runtimeLevel:=3;
     end;
+
+    //ExtractTemporaryFiles('RuntimeCheckerCore\*');
+    //Exec(ExpandConstant('{tmp}\')+'RuntimeCheckerCore\RuntimeCheckerCore.exe' , '', '', SW_HIDE, ewWaitUntilTerminated, resultCode);
+    //if (resultCode > 0) then begin
+    //  // Core runtime exists
+    //  ExtractTemporaryFiles('RuntimeCheckerDesktop\*');
+    //  Exec(ExpandConstant('{tmp}\')+'RuntimeCheckerDesktop\RuntimeCheckerDesktop.exe' , '', '', SW_HIDE, ewWaitUntilTerminated, resultCode);
+    //  if (resultCode > 0) then begin
+    //    // Desktop runtime exists
+    //    runtimeLevel:=1;
+    //  end else begin
+    //    // Core only
+    //    runtimeLevel:=2;
+    //  end;
+    //end else begin
+    //  // No runtime
+    //  runtimeLevel:=3;
+    //end;
 
     Log('runtimeLevel=' + IntToStr(runtimeLevel));
     //1:core&desktop 2:core 3:none
@@ -410,13 +420,6 @@ function IsAllRuntimeExists: Boolean;
 begin
   UpdateRuntimeLevel();
   Result :=(runtimeLevel = 1);
-end;
-
-//==========================================================
-function IsOnlyCoreRuntimeExists: Boolean;
-begin
-  UpdateRuntimeLevel();
-  Result :=(runtimeLevel = 2);
 end;
 
 //==========================================================

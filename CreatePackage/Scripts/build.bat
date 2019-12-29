@@ -5,7 +5,7 @@ call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tool
 
 cd %~dp0
 
-cd "..\bin\Debug\netcoreapp3.0"
+cd "..\bin\Debug\netcoreapp3.1"
 CreatePackage.exe clean
 if %ERRORLEVEL% neq 0 (
     echo Failed error=%ERRORLEVEL%
@@ -21,6 +21,7 @@ if %ERRORLEVEL% neq 0 (
     exit /B
 )
 
+echo bulid
 
 MSBuild "..\..\ShibugakiViewer.sln" /t:clean;rebuild /p:Configuration=Release;Platform="Any CPU" /fl /v:m
 if %ERRORLEVEL% neq 0 (
@@ -28,12 +29,16 @@ if %ERRORLEVEL% neq 0 (
     exit /B
 )
 
-cd "..\bin\Debug\netcoreapp3.0"
+echo file
+
+cd "..\bin\Debug\netcoreapp3.1"
 CreatePackage.exe file
 if %ERRORLEVEL% neq 0 (
     echo Failed error=%ERRORLEVEL%
     exit /B
 )
+
+echo zip
 
 CreatePackage.exe zip
 if %ERRORLEVEL% neq 0 (
@@ -41,6 +46,7 @@ if %ERRORLEVEL% neq 0 (
     exit /B
 )
 
+echo instaler
 
 cd "..\..\..\Installer"
 "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer.iss

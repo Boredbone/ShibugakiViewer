@@ -97,8 +97,8 @@ namespace CreatePackage
         static void ResolveFiles()
         {
             var packageRootPath = @"..\..\..\Package";
-            var sourceRootPath = @"..\..\..\..\ShibugakiViewer\bin\Release\netcoreapp3.0";
-            var launcherSourceRootPath = @"..\..\..\..\ShibugakiViewer.Launcher\bin\Release\netcoreapp3.0";
+            var sourceRootPath = @"..\..\..\..\ShibugakiViewer\bin\Release\netcoreapp3.1";
+            var launcherSourceRootPath = @"..\..\..\..\ShibugakiViewer.Launcher\bin\Release\netcoreapp3.1";
 
             var launcherDestPath = packageRootPath + @"\ShibugakiViewer";
             var mainDestPath = packageRootPath + @"\ShibugakiViewer\bin";
