@@ -6,9 +6,9 @@ ShibugakiViewer
 Manager and Viewer App for Image Files
 
 
-for Windows 7/8/8.1/10
+for Windows 10
 
-.NET Framework 4.6.2 or higher is required.
+.NET Core Desktop Runtime 3.1 or higher is required.
 
 [Release Notes](ReleaseNotes.md)
 

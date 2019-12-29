@@ -6,9 +6,9 @@ ShibugakiViewer
 画像ファイルの管理・表示アプリ
 
 
-for Windows 7/8/8.1/10
+for Windows 10
 
-.NET Framework 4.6.2以上が必要です。
+.NET Core Desktop Runtime 3.1以上が必要です。
 
 [リリースノート](ReleaseNotes.md)
 
