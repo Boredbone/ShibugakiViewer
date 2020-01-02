@@ -46,6 +46,8 @@ namespace ShibugakiViewer.Views.Controls
 
         private HashSet<TagInformation> generatedTags;
 
+        private bool isFirstKeyPressed = false;
+
         public ClientWindowViewModel ViewModel
         {
             get
@@ -341,7 +343,7 @@ namespace ShibugakiViewer.Views.Controls
                 this.DecideTag(this.list.SelectedItem as TagInformation);
                 e.Handled = true;
             }
-            else
+            else if(isFirstKeyPressed)
             {
                 var focused = FocusManager.GetFocusedElement(this) ?? Keyboard.FocusedElement;
                 if (focused is TextBox || focused is ComboBox || focused is ComboBoxItem)
@@ -455,6 +457,11 @@ namespace ShibugakiViewer.Views.Controls
             }
             this.list.ScrollIntoView(matchTag);
             return this.SelectItem(matchTag);
+        }
+
+        private void UserControl_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            isFirstKeyPressed = true;
         }
     }
 }

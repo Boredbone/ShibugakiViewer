@@ -184,7 +184,7 @@
 
 
     <SolidColorBrush x:Key="ToolPanelColor" Color="#FFF5F5F5"/>
-    <SolidColorBrush x:Key="OptionPaneColor" Color="#f9f5e8"/>
+    <SolidColorBrush x:Key="OptionPaneColor" Color="#f8f5e8"/>
 
 
     <SolidColorBrush x:Key="CheckBoxBaseColor" Color="#A0FFFFFF"/>

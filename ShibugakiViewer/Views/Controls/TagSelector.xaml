@@ -13,6 +13,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              IsEnabledChanged="UserControl_IsEnabledChanged"
+             PreviewKeyDown="UserControl_PreviewKeyDown"
              PreviewKeyUp="UserControl_PreviewKeyUp"
              DataContextChanged="UserControl_DataContextChanged">
 
