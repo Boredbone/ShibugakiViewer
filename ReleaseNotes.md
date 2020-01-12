@@ -1,5 +1,12 @@
 # Release Notes
 
+## Version 2.0.0 (2020/01/12)
+- Use .NET Core 3.1
+- Support WebP formatted images
+- Change application launch method
+- Change installer tool
+- Read rotation information in Exif
+
 ## Version 1.4.6 (2017/06/24)
 - Fix the issue of touch manipulation on Windows 10 Creators Update
 
