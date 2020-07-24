@@ -317,7 +317,7 @@ namespace ShibugakiViewer.Models.ImageViewer
         {
             var filePath = file?.FullPath ?? path;
 
-            if (filePath == null)
+            if (filePath.IsNullOrWhiteSpace())
             {
                 return;
             }
@@ -333,10 +333,21 @@ namespace ShibugakiViewer.Models.ImageViewer
             {
                 if (image != null && image.Image != null)
                 {
-                    if (file != null && (file.Width <= 0 || file.Height <= 0))
+                    if (file != null)
                     {
-                        file.Width = image.Information.GraphicSize.Width;
-                        file.Height = image.Information.GraphicSize.Height;
+                        if (file.Width <= 0 || file.Height <= 0)
+                        {
+                            file.Width = image.Information.GraphicSize.Width;
+                            file.Height = image.Information.GraphicSize.Height;
+                        }
+                        if (file.Size <= 0)
+                        {
+                            if (image.Information.FileSize > 0)
+                            {
+                                file.Size = image.Information.FileSize;
+                                ImageLibrary.Creation.ImageFileUtility.UpdateInformation(file, false, true);
+                            }
+                        }
                     }
                     observer.OnNext(image);
                     observer.OnCompleted();
