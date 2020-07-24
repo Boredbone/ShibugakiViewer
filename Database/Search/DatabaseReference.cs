@@ -27,7 +27,7 @@ namespace Database.Search
             => obj.Replace("'", "''");
 
         public static DatabaseReference ToLowerEqualsString(object obj)
-            => new DatabaseReference($"'{ToEscapedString(obj).ToLower()}'");
+            => new DatabaseReference($"'{ToLowerOnlyAscii(ToEscapedString(obj))}'");
 
         public static DatabaseReference ToEqualsString(object obj)
             => new DatabaseReference($"'{ToEscapedString(obj)}'");
@@ -35,7 +35,21 @@ namespace Database.Search
             => new DatabaseReference($"'{ToEscapedString(obj)}'");
 
         private static string ToGlobReference(string reference)
-            => ToEscapedString(reference.ToLower().Replace("[", "[[]"));
+            => ToEscapedString(ToLowerOnlyAscii(reference).Replace("[", "[[]"));
+
+        private static string ToLowerOnlyAscii(string str)
+        {
+            var toLowerDiff = ('a' - 'A');
+            var res = str.ToCharArray();
+            for(int i = 0; i < res.Length; i++)
+            {
+                if (res[i] >= 'A' && res[i] <= 'Z')
+                {
+                    res[i] = (char)(res[i] + toLowerDiff);
+                }
+            }
+            return new string(res);
+        }
 
         public static DatabaseReference Match(string reference)
             => new DatabaseReference($"GLOB '{ToGlobReference(reference)}'");

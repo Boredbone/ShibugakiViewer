@@ -36,6 +36,12 @@ namespace Test
         }
 
         [TestMethod]
+        public async Task DatabaseNameTest()
+        {
+            await new Sample().NameTest();
+        }
+
+        [TestMethod]
         public async Task TimeOperationTest()
         {
             await new Sample().Method2(DateTimeOffset.Now.Offset);
@@ -500,6 +506,70 @@ namespace Test
                 Console.WriteLine("g");
             }
         }
+
+        public async Task NameTest()
+        {
+
+            using (var connection = this.database.Connect())
+            {
+                this.table1.Drop(connection);
+                await this.database.InitializeAsync(connection);
+            }
+
+
+            LibraryOwner.SetConfig(new LibraryConfiguration(""));
+
+            var path = new string[]{
+                @"I:\f2\metro\Éclair\Windows-8-Wallpaper-Tile-Room-Blue_2.jpg",
+                @"I:\f2\metro\ＡｂＣ\Windows-8-Wallpaper-Tile-Room-Blue_2.jpg",
+                @"I:\f2\metro\ａｂｃ\Windows-8-Wallpaper-Tile-Room-Blue_2.jpg",
+            };
+
+            var items = path.Select(x => new Record(x)).ToArray();
+
+            var currentTime = DateTimeOffset.Now;
+
+            await this.database.RequestTransactionAsync(async context =>
+            {
+                foreach (var item in items)
+                {
+                    await this.table1.AddAsync(item, context);
+                }
+            });
+
+
+            using (var connection = this.database.Connect())
+            {
+                var first = this.table1.AsQueryable(connection).FirstOrDefault();
+
+                Assert.IsNotNull(first);
+                Assert.AreEqual(items[0].Id, first.Id);
+                Assert.AreEqual(path[0], first.FullPath);
+
+
+                Console.WriteLine("Id: {0}", first.Id);
+                Console.WriteLine("Name: {0}", first.FileName);
+            }
+            for (int i = 0; i < path.Length; i++)
+            {
+                using (var connection = this.database.Connect())
+                {
+                    var res = this.table1
+                        .AsQueryable(connection)
+                        .Where(FileProperty.FullPath.ToSearch(path[i], CompareMode.Equal))
+                        .ToArray();
+
+                    Assert.AreEqual(1, res.Length);
+                    var first = res[0];
+                    Assert.AreEqual(items[i].Id, first.Id);
+                    Assert.AreEqual(path[i], first.FullPath);
+
+                    Console.WriteLine("Id: {0}", first.Id);
+                    Console.WriteLine("Name: {0}", first.FileName);
+                }
+            }
+        }
+
 
         private async Task<Record[]> SearchAsync(IDbConnection connection,string sql)
         {
