@@ -200,7 +200,7 @@ namespace ShibugakiViewer.Views.Controls
                 
                 if (this.isImageLoaded)
                 {
-                    this.DoAutoScaling();
+                    this.DoAutoScaling(true);
                 }
                 this.scaleInitializeFlag = true;
                 this.ScrollBarVisibility = VisibilityHelper.Set(false);
@@ -1104,7 +1104,7 @@ namespace ShibugakiViewer.Views.Controls
             {
                 this.IsChanging = true;
                 this.isImageLoaded = true;
-                this.DoAutoScaling();
+                this.DoAutoScaling(false);
 
                 this.scaleInitializeFlag = false;
                 this.IsChanging = false;
@@ -1115,11 +1115,11 @@ namespace ShibugakiViewer.Views.Controls
         /// 画面に合わせて画像をスケーリング
         /// </summary>
         /// <returns></returns>
-        private bool DoAutoScaling()
+        private bool DoAutoScaling(bool isImageChanged)
         {
             this.ignoreNextScaleChange = true;
 
-            var zoomed = FitImageToScrollView(true);
+            var zoomed = FitImageToScrollView(true, isImageChanged);
             //新しい画像に移ったときはやる、画質が変化しただけの時はやらない
 
             if (this.scaleInitializeFlag && !zoomed)
@@ -1168,15 +1168,15 @@ namespace ShibugakiViewer.Views.Controls
 
         private double GetFitScale()
         {
-            return GetFitOrFillScale(false);
+            return GetFitOrFillScale(false, false);
         }
 
         private double GetFillScale()
         {
-            return GetFitOrFillScale(true);
+            return GetFitOrFillScale(true, false);
         }
 
-        private double GetFitOrFillScale(bool fill)
+        private double GetFitOrFillScale(bool fill, bool isImageChanged)
         {
             var view = this.ScrollViewer;
             var image = this.Image;
@@ -1184,6 +1184,12 @@ namespace ShibugakiViewer.Views.Controls
             var originalWidth = image.ActualWidth;
             var originalHeight = image.ActualHeight;
             //DesiredSizeだとワンテンポ遅れるのでNG
+
+            if (isImageChanged)
+            {
+                originalWidth = -1;
+                originalHeight = -1;
+            }
 
             var width = originalWidth <= 0 ? this.ImageWidth : originalWidth;
             var height = originalHeight <= 0 ? this.ImageHeight : originalHeight;
@@ -1209,7 +1215,7 @@ namespace ShibugakiViewer.Views.Controls
             }
         }
 
-        public void ZoomImage(double? centerX, double? centerY, double scale,
+        private void ZoomImage(double? centerX, double? centerY, double scale,
             double timeMilliSeconds, bool exponential, bool fixCenter)
         {
             if (scale < float.Epsilon)
@@ -1389,7 +1395,7 @@ namespace ShibugakiViewer.Views.Controls
             return new Size(width, height);
         }
 
-        public bool FitImageToScrollView(bool disableAnimation)
+        private bool FitImageToScrollView(bool disableAnimation, bool isImageChanged)
         {
             if (!this.isImageLoaded)
             {
@@ -1406,7 +1412,7 @@ namespace ShibugakiViewer.Views.Controls
                 {
                     var oldScale = this.ZoomFactor;
 
-                    var newScale = GetFitOrFillScale(this.IsFill);
+                    var newScale = GetFitOrFillScale(this.IsFill, isImageChanged);
                     var originalScale = this.originalScale;
 
 
@@ -1554,7 +1560,7 @@ namespace ShibugakiViewer.Views.Controls
 
             if (oldSize.Width <= 0 || oldSize.Height <= 0)
             {
-                this.FitImageToScrollView(true);
+                this.FitImageToScrollView(true, false);
             }
 
             var sv = (ScrollViewer)sender;
