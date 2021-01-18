@@ -259,6 +259,11 @@ namespace ShibugakiViewer.Models.ImageViewer
                 this.IsNotFound = true;
                 return false;
             }
+            catch (IOException)
+            {
+                this.IsNotFound = true;
+                return false;
+            }
             catch (NotSupportedException)
             {
                 //this.IsNotFound = true;
