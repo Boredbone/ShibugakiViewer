@@ -224,9 +224,9 @@ namespace ShibugakiViewer.Models
             this.ColumnLength = new ReactivePropertySlim<int>(-1).AddTo(this.Disposables);
             this.RowLength = new ReactivePropertySlim<int>(-1).AddTo(this.Disposables);
 
-            this.CatalogIndex = this.ToReactivePropertySlimAsSynchronized(x => x.CatalogIndexInner, this.Disposables)
+            this.CatalogIndex = this.ToReactivePropertySlimAsSynchronized(x => x.CatalogIndexInner)
                 .AddTo(this.Disposables);
-            this.ViewerIndex = this.ToReactivePropertySlimAsSynchronized(x => x.ViewerIndexInner, this.Disposables)
+            this.ViewerIndex = this.ToReactivePropertySlimAsSynchronized(x => x.ViewerIndexInner)
                 .AddTo(this.Disposables);
 
 
