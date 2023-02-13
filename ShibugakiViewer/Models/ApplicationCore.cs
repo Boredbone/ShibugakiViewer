@@ -19,7 +19,7 @@ using ImageLibrary.Core;
 using ImageLibrary.Creation;
 using ImageLibrary.SearchProperty;
 using ImageLibrary.Viewer;
-using Microsoft.WindowsAPICodePack.Shell;
+//using Microsoft.WindowsAPICodePack.Shell;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using ShibugakiViewer.Models.ImageViewer;
@@ -874,7 +874,25 @@ namespace ShibugakiViewer.Models
         /// <returns></returns>
         public bool AddFolder(string defaultPath, out string lastSelectedPath)
         {
+#if true
             lastSelectedPath = null;
+            try
+            {
+                var selector = new FolderSelector();
+                if (!selector.ShowDialog(defaultPath))
+                {
+                    return false;
+                }
+                lastSelectedPath = selector.LastSelectedPath;
+
+                return this.Library.Folders.RegisterFolders(selector.SelectedItems.ToArray());
+            }
+            catch
+            {
+                //TODO
+            }
+            return false;
+#else
 
             string folderPath = null;
             using (var fbd = new FolderSelectDialog())
@@ -899,6 +917,7 @@ namespace ShibugakiViewer.Models
 
             try
             {
+#if !DEBUG
                 if ((".library-ms").Equals(Path.GetExtension(folderPath)))
                 {
                     //Windowsライブラリの場合
@@ -918,6 +937,7 @@ namespace ShibugakiViewer.Models
                     }
                 }
                 else
+#endif
                 {
                     //通常フォルダ
                     folders.Add(folderPath);
@@ -930,6 +950,7 @@ namespace ShibugakiViewer.Models
             }
 
             return this.Library.Folders.RegisterFolders(folders.ToArray());
+#endif
         }
 
         public bool IsVersionCheckEnabled()
