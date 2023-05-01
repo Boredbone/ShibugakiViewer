@@ -418,18 +418,22 @@ namespace ShibugakiViewer
             return window;
         }
 
-        public ClientWindow ShowFirstClient(bool withCatalog, string[] files)
+        public ClientWindow? ShowFirstClient(bool withCatalog, string[] files)
         {
 
-            //通知アイコン
+            // Notification icon
             this.ShowNotifyIcon()?.AddTo(this.disposables);
 
-            ClientWindow window;
+            ClientWindow? window;
 
-            //ウィンドウ
+            // Window
             if (withCatalog)
             {
                 window = this.ShowClientWindowWithCatalog();
+            }
+            else if (files != null && files.Length > 0 && files[0] == "-m")
+            {
+                window = null;
             }
             else
             {
