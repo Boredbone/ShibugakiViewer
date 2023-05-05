@@ -50,6 +50,7 @@ namespace ShibugakiViewer.Models.ImageViewer
 
             using var resizedBmp = new System.Drawing.Bitmap(resizeWidth, resizeHeight);
             using var g = System.Drawing.Graphics.FromImage(resizedBmp);
+            g.Clear(System.Drawing.Color.White);
             g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Bilinear;
             g.DrawImage(image, 0, 0, resizeWidth, resizeHeight);
 
