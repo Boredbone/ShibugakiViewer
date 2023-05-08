@@ -1109,7 +1109,8 @@ namespace ImageLibrary.Core
                 {
                     return null;
                 }
-                var hash = System.Security.Cryptography.MD5.HashData(Encoding.Unicode.GetBytes(id));
+                var hash = System.IO.Hashing.XxHash128.Hash(Encoding.Unicode.GetBytes(id));
+                //var hash = System.Security.Cryptography.MD5.HashData(Encoding.Unicode.GetBytes(id));
                 var hashStr = new StringBuilder();
                 for (int i = 0; i < hash.Length; i++)
                 {
