@@ -841,7 +841,7 @@ namespace ImageLibrary.File
                 Size = this.Size,
                 Directory = this.Directory,
                 Rating = RateConvertingHelper.ToRating(this.Rating),
-                Tags = this.TagSet.Read().ToList(),
+                Tags = this.TagSet.ReadAll(),
                 IsGroup = this.IsGroup,
             };
         }

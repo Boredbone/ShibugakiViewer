@@ -45,6 +45,13 @@ namespace ImageLibrary.Tag
             tag.IsIgnored = false;
             this.Add(tag.Id);
         }
+        public void TryAdd(TagInformation tag)
+        {
+            if (!this.Tags.Contains(tag.Id))
+            {
+                this.Add(tag);
+            }
+        }
 
         public void Add(int item)
         {
@@ -129,6 +136,14 @@ namespace ImageLibrary.Tag
             {
                 yield return item;
             }
+        }
+        public List<int> ReadAll()
+        {
+            return this.Tags.ToList();
+        }
+        public List<int> ReadAllSorted()
+        {
+            return this.Tags.OrderBy(x => library.Tags.GetTagValue(x).Name).ToList();
         }
 
 

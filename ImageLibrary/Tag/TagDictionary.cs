@@ -70,7 +70,7 @@ namespace ImageLibrary.Tag
         /// <returns></returns>
         public TagInformation GetTagValue(int key)
         {
-            TagInformation tag;
+            TagInformation? tag;
 
             lock (this.gate)
             {
@@ -100,7 +100,7 @@ namespace ImageLibrary.Tag
         /// </summary>
         /// <param name="shortcut"></param>
         /// <returns></returns>
-        public KeyValuePair<int, TagInformation> GetTag(string shortcut)
+        public KeyValuePair<int, TagInformation?> GetTag(string shortcut)
         {
             lock (this.gate)
             {
@@ -109,7 +109,7 @@ namespace ImageLibrary.Tag
 
                 if (result != null)
                 {
-                    return result.Value;
+                    return new(result.Value.Key, result.Value.Value);
                 }
 
                 var sc = shortcut.ToUpper();
@@ -121,10 +121,10 @@ namespace ImageLibrary.Tag
                 if (res2 != null)
                 {
                     res2.Value.Value.Shortcut = sc;
-                    return res2.Value;
+                    return new(res2.Value.Key, res2.Value.Value);
                 }
             }
-            return new KeyValuePair<int, TagInformation>(-1, null);
+            return new(-1, null);
         }
 
         /// <summary>
