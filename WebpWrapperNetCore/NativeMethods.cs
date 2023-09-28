@@ -9,19 +9,23 @@ namespace WebpWrapper
     [SuppressUnmanagedCodeSecurity]
     class NativeMethods
     {
-        private const string dllName = "libwebp.dll";
-        private const int WEBP_DECODER_ABI_VERSION = 0x0208;
+        private const string dllName = "libwebpdecoder.dll";
+        private const int WEBP_DECODER_ABI_VERSION = 0x0209;
 
         [DllImport("kernel32", CharSet = CharSet.Unicode)]
         private static extern IntPtr LoadLibrary(string lpFileName);
 
         static NativeMethods()
         {
-            var dllPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+            var dllPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? "",
                 "runtimes", "win-" + (Environment.Is64BitProcess ? "x64" : "x86"), "native", dllName);
-            if (!(File.Exists(dllPath) && LoadLibrary(dllPath) != IntPtr.Zero))
+            if (!File.Exists(dllPath))
             {
-                throw new DllNotFoundException(dllPath);
+                throw new DllNotFoundException($"{dllPath} is not found");
+            }
+            if (LoadLibrary(dllPath) == IntPtr.Zero)
+            {
+                throw new DllNotFoundException($"unable to load {dllPath}");
             }
         }
 

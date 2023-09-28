@@ -9,15 +9,15 @@ namespace WebpWrapper
 
         public static Bitmap Decode(Span<byte> source)
         {
-            Bitmap bmp = null;
-            BitmapData bmpData = null;
+            Bitmap? bmp = null;
+            BitmapData? bmpData = null;
             try
             {
                 unsafe
                 {
                     fixed (byte* p = source)
                     {
-                        IntPtr ptrData = new IntPtr(p);
+                        IntPtr ptrData = new(p);
                         if (NativeMethods.WebPGetInfo(ptrData, (UIntPtr)source.Length,
                             out var width, out var height) == 0)
                         {
@@ -98,8 +98,8 @@ namespace WebpWrapper
         private static Bitmap DecodeWithOption
             (IntPtr ptrData, int length, int width, int height, ref WebPDecoderConfig config)
         {
-            Bitmap bmp = null;
-            BitmapData bmpData = null;
+            Bitmap? bmp = null;
+            BitmapData? bmpData = null;
 
             try
             {

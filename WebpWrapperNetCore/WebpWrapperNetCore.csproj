@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net7.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -21,10 +22,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="runtimes\win-x64\native\libwebp.dll">
+    <None Update="runtimes\win-x64\native\libwebpdecoder.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="runtimes\win-x86\native\libwebp.dll">
+    <None Update="runtimes\win-x86\native\libwebpdecoder.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
