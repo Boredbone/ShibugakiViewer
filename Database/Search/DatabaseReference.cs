@@ -13,24 +13,24 @@ namespace Database.Search
     {
         private readonly string reference;
 
-        public DatabaseReference(string reference)
+        public DatabaseReference(string? reference)
         {
-            this.reference = reference;
+            this.reference = reference ?? string.Empty;
         }
 
         public override string ToString() => this.reference;
 
-        private static string ToEscapedString(object obj)
-            => ToEscapedString(obj.ToString());
+        //private static string ToEscapedString(object obj)
+        //    => ToEscapedString(obj.ToString());
 
         private static string ToEscapedString(string obj)
             => obj.Replace("'", "''");
 
-        public static DatabaseReference ToLowerEqualsString(object obj)
+        public static DatabaseReference ToLowerEqualsString(string obj)
             => new DatabaseReference($"'{ToLowerOnlyAscii(ToEscapedString(obj))}'");
 
-        public static DatabaseReference ToEqualsString(object obj)
-            => new DatabaseReference($"'{ToEscapedString(obj)}'");
+        //public static DatabaseReference ToEqualsString(object obj)
+        //    => new DatabaseReference($"'{ToEscapedString(obj)}'");
         public static DatabaseReference ToEqualsString(string obj)
             => new DatabaseReference($"'{ToEscapedString(obj)}'");
 

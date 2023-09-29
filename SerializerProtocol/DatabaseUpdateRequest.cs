@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace SerializerProtocol;
 
@@ -14,3 +15,7 @@ public class DatabaseUpdateRequest
     public int? Rating { get; set; }
 
 }
+
+[JsonSerializable(typeof(DatabaseUpdateRequest))]
+public partial class DatabaseUpdateRequestSerializerContext : JsonSerializerContext { }
+

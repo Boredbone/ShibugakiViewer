@@ -931,8 +931,18 @@ namespace Test
             return library;
         }
 
+        private Task<Record[]> SearchAsync
+            (FileProperty property, int reference, CompareMode mode)
+            =>SearchAsync(property,SearchReferences.From(reference),mode);
+        private Task<Record[]> SearchAsync
+            (FileProperty property, long reference, CompareMode mode)
+            => SearchAsync(property, SearchReferences.From(reference), mode);
+        private Task<Record[]> SearchAsync
+            (FileProperty property, string reference, CompareMode mode)
+            => SearchAsync(property, SearchReferences.From(reference), mode);
+
         private async Task<Record[]> SearchAsync
-            (FileProperty property, object reference, CompareMode mode)
+            (FileProperty property, SearchReferences reference, CompareMode mode)
         {
 
             var search = new SearchInformation(new ComplexSearch(false));
@@ -940,7 +950,7 @@ namespace Test
                 .Add(new UnitSearch()
                 {
                     Property = property,
-                    Reference = reference,
+                    SearchReference = reference,
                     Mode = mode,
                 });
 
@@ -951,7 +961,13 @@ namespace Test
             return files;
         }
         private Record[] Search
-            (FileProperty property, object reference, CompareMode mode)
+            (FileProperty property, int reference, CompareMode mode)
+            => Search(property, SearchReferences.From(reference), mode);
+        private Record[] Search
+            (FileProperty property, long reference, CompareMode mode)
+            => Search(property, SearchReferences.From(reference), mode);
+        private Record[] Search
+            (FileProperty property, SearchReferences reference, CompareMode mode)
         {
 
             var search = new SearchInformation(new ComplexSearch(false));
@@ -959,7 +975,7 @@ namespace Test
                 .Add(new UnitSearch()
                 {
                     Property = property,
-                    Reference = reference,
+                    SearchReference = reference,
                     Mode = mode,
                 });
 

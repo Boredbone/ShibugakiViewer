@@ -58,7 +58,7 @@ namespace ShibugakiViewer.ViewModels.Controls
         public string TagComboBoxDefault { get; private set; }
         public ReadOnlyReactivePropertySlim<Visibility> TagComboBoxDefaultVisibility { get; private set; }
 
-        public ReactivePropertySlim<int?> NumericText { get; private set; }
+        public ReactivePropertySlim<long?> NumericText { get; private set; }
         public ReadOnlyReactivePropertySlim<Visibility> NumericTextVisibility { get; private set; }
 
         public ReactivePropertySlim<double?> FloatText { get; private set; }
@@ -82,8 +82,8 @@ namespace ShibugakiViewer.ViewModels.Controls
         public string IsVString { get; private set; }
         public ReadOnlyReactivePropertySlim<Visibility> IsVStringVisibility { get; private set; }
 
-        public ReactiveCommand OkCommand { get; }
-        public ReactiveCommand CancelCommand { get; }
+        public ReactiveCommandSlim<object?> OkCommand { get; }
+        public ReactiveCommandSlim<object?> CancelCommand { get; }
         public ReactivePropertySlim<bool> IsEditing { get; }
 
         private ApplicationCore settings;
@@ -145,14 +145,14 @@ namespace ShibugakiViewer.ViewModels.Controls
 
             this.OkCommand = this.PropertyListSelectedIndex
                 .Select(x => x >= 0)
-                .ToReactiveCommand()
+                .ToReactiveCommandSlim()
                 .WithSubscribe(_ =>
                 {
                     this.Commit();
                     this.IsEditing.Value = false;
-                }, this.unsubscribers);
-            this.CancelCommand = new ReactiveCommand()
-                .WithSubscribe(_ => this.IsEditing.Value = false, this.unsubscribers);
+                }).AddTo(this.unsubscribers);
+            this.CancelCommand = new ReactiveCommandSlim()
+                .WithSubscribe(_ => this.IsEditing.Value = false).AddTo(this.unsubscribers);
 
 
             var propertyObserver = this.PropertyListSelectedIndex
@@ -250,9 +250,8 @@ namespace ShibugakiViewer.ViewModels.Controls
 
         private int GetEqualitySelectorIndex(bool flag) => flag ? 1 : 0;
 
-        private void Init(UnitSearch source)
+        private void Init(UnitSearch? source)
         {
-
             this.PropertyListSelectedIndex = new ReactivePropertySlim<int>(-2).AddTo(this.unsubscribers);
             
             this.CompareOperatorSelectedIndex = new ReactivePropertySlim<int>
@@ -262,25 +261,26 @@ namespace ShibugakiViewer.ViewModels.Controls
                 (source == null ? 0 : this.GetEqualitySelectorIndex(!source.Mode.ContainsEqual()));
 
             this.TextBoxContent = new ReactivePropertySlim<string>
-                ((source == null || !source.Property.IsText()) ? "" : source.Reference.ToString()).AddTo(this.unsubscribers);
+                ((source == null || !source.Property.IsText()) ? "" : (source?.SearchReference?.Str ?? string.Empty))
+                .AddTo(this.unsubscribers);
 
             this.DateContent = new ReactivePropertySlim<DateTime>
-                ((source == null || !source.Property.IsDate())
-                ? DateTime.Now : ((DateTimeOffset)source.Reference).Date).AddTo(this.unsubscribers);
+                ((source?.SearchReference == null || !source.Property.IsDate())
+                ? DateTime.Now : source.SearchReference.DateTime.Date).AddTo(this.unsubscribers);
 
             this.TagListSelectedIndex = new ReactivePropertySlim<int>
-                ((source == null || source.Property != FileProperty.ContainsTag) ? -1
-                : this.RegisteredTags.FindIndex(x => x.Key == (int)source.Reference)).AddTo(this.unsubscribers);
+                ((source?.SearchReference == null || source.Property != FileProperty.ContainsTag) ? -1
+                : this.RegisteredTags.FindIndex(x => x.Key == source.SearchReference.Num32)).AddTo(this.unsubscribers);
 
-            this.NumericText = new ReactivePropertySlim<int?>(
-                (source != null && source.Property.IsInteger())
-                ? ((int?)(source.Reference as long?) ?? (source.Reference as int?))
+            this.NumericText = new ReactivePropertySlim<long?>(
+                (source?.SearchReference?.Num != null && source.Property.IsInteger())
+                ? source.SearchReference.Num64
                 : null)
                 .AddTo(this.unsubscribers);
 
             this.FloatText = new ReactivePropertySlim<double?>(
-                (source != null && source.Property.IsFloat())
-                ? (source.Reference as double?) ?? (source.Reference as int?)
+                (source?.SearchReference?.Num != null && source.Property.IsFloat())
+                ? source.SearchReference.NumDouble
                 : null)
                 .AddTo(this.unsubscribers);
 
@@ -294,7 +294,7 @@ namespace ShibugakiViewer.ViewModels.Controls
             {
                 var newList = new List<DirectoryInfo>();
 
-                var text = source.Reference as string;
+                var text = source.SearchReference?.Str;
 
 
                 if (source.Property == FileProperty.DirectoryPathStartsWith
@@ -416,9 +416,8 @@ namespace ShibugakiViewer.ViewModels.Controls
         }
 
 
-        private UnitSearch ToNewSetting(FileProperty property)
+        private UnitSearch? ToNewSetting(FileProperty property)
         {
-
             var reference = this.GetReference(property);
             if (reference == null)
             {
@@ -428,7 +427,7 @@ namespace ShibugakiViewer.ViewModels.Controls
             var newSetting = new UnitSearch()
             {
                 Property = property,
-                Reference = reference,
+                SearchReference = reference,
             };
 
             if (property.IsComperable())
@@ -450,14 +449,14 @@ namespace ShibugakiViewer.ViewModels.Controls
         /// </summary>
         /// <param name="property"></param>
         /// <returns></returns>
-        private object GetReference(FileProperty property)
+        private SearchReferences? GetReference(FileProperty property)
         {
 
             if (property == FileProperty.DirectoryPathStartsWith)
             {
-                return this.DirectoryList
+                return SearchReferences.From(this.DirectoryList
                     .Select(x => x.GetSelectedLabel())
-                    .Join();
+                    .Join());
             }
             else if (property == FileProperty.ContainsTag)
             {
@@ -465,33 +464,25 @@ namespace ShibugakiViewer.ViewModels.Controls
                         && this.TagListSelectedIndex.Value < this.RegisteredTags.Count)
                 {
                     var item = this.RegisteredTags[this.TagListSelectedIndex.Value];
-                    return item.Key;
+                    return SearchReferences.From(item.Key);
                 }
             }
 
             if (property.IsInteger())
             {
                 var num = this.NumericText.Value ?? 0;
-
-                if (property == FileProperty.Size)
-                {
-                    return (long)num;
-                }
-                else
-                {
-                    return num;
-                }
+                return SearchReferences.From(num);
             }
 
 
             if (property.IsFloat())
             {
-                return this.FloatText.Value ?? 0.0;
+                return SearchReferences.From(this.FloatText.Value ?? 0.0);
             }
 
             if (property.IsText())
             {
-                return this.TextBoxContent.Value;
+                return SearchReferences.From(this.TextBoxContent.Value);
             }
 
             if (property.IsDate())
@@ -501,8 +492,7 @@ namespace ShibugakiViewer.ViewModels.Controls
                 var date = this.DateContent.Value;
                 var fixedDate = new DateTimeOffset(date.Date, DateTimeOffset.Now.Offset);
 
-
-                return fixedDate;
+                return SearchReferences.From(fixedDate);
             }
 
 
@@ -516,7 +506,7 @@ namespace ShibugakiViewer.ViewModels.Controls
 
 
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         protected void RaisePropertyChanged(string propertyName)
             => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         public void Dispose() => this.unsubscribers.Dispose();

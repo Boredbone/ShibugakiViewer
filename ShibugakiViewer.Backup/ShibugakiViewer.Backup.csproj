@@ -5,6 +5,7 @@
     <TargetFramework>net7.0-windows</TargetFramework>
     <Authors>Boredbone</Authors>
     <Version>2.1.0</Version>
+    <RollForward>Major</RollForward>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

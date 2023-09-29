@@ -422,17 +422,21 @@ namespace LibraryConverter.Compat
         {
             var property = source.Property.Convert();
 
+            var str = source.StringListReference?
+                .Select(x => (x == null) ? "" : x.Replace("\n", "")).Join();
+
+            var reference = (str != null)
+                ? SearchReferences.From(str)
+                : this.ConvertReference(source.SingleReference);
+
             if (property.IsComperable())
             {
                 return new UnitSearch()
                 {
                     Mode = (CompareMode)source.Mode,
                     Property = property,
-                    Reference = source.StringListReference?
-                    .Select(x => (x == null) ? "" : x.Replace("\n", "")).Join()
-                    ?? this.ConvertReference(source.SingleReference),
+                    SearchReference = reference,
                 };
-
             }
             else
             {
@@ -440,18 +444,15 @@ namespace LibraryConverter.Compat
                 {
                     Mode = source.IsNot ? CompareMode.NotEqual : CompareMode.Equal,
                     Property = property,
-                    Reference = source.StringListReference?
-                    .Select(x => (x == null) ? "" : x.Replace("\n", "")).Join()
-                    ?? this.ConvertReference(source.SingleReference),
+                    SearchReference = reference,
                 };
-
             }
-
-
         }
 
-        private object ConvertReference(object source)
+        private SearchReferences ConvertReference(object source)
         {
+            return SearchReferences.ConvertFrom(source);
+            /*
             var ui32 = source as uint?;
             var i32 = source as int?;
             var ui64 = source as ulong?;
@@ -461,7 +462,7 @@ namespace LibraryConverter.Compat
                 : (i32.HasValue) ? i32.Value
                 : (ui64.HasValue) ? (long)ui64.Value
                 : (i64.HasValue) ? i64.Value
-                : source;
+                : source;*/
 
         }
 

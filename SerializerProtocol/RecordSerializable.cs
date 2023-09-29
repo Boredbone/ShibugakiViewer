@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace SerializerProtocol;
 
@@ -21,3 +22,6 @@ public class RecordSerializable
     public string? Directory { get; set; }
     public bool IsGroup { get; set; }
 }
+
+[JsonSerializable(typeof(RecordSerializable))]
+public partial class RecordSerializableSerializerContext : JsonSerializerContext { }

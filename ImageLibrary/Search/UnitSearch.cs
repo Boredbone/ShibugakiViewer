@@ -34,8 +34,9 @@ namespace ImageLibrary.Search
         }
         private CompareMode _fieldMode;
 
-        [DataMember]
-        public object Reference
+        [DataMember(EmitDefaultValue = false)]
+        [Obsolete]
+        public object? Reference
         {
             get { return _fieldReference; }
             set
@@ -44,11 +45,27 @@ namespace ImageLibrary.Search
                 {
                     _fieldReference = value;
                     this.IsEdited = true;
-                    RaisePropertyChanged(nameof(Reference));
+                    //RaisePropertyChanged(nameof(Reference));
                 }
             }
         }
-        private object _fieldReference;
+        private object? _fieldReference;
+
+        [DataMember(EmitDefaultValue = false)]
+        public SearchReferences? SearchReference
+        {
+            get { return _fieldSearchReference; }
+            set
+            {
+                if (_fieldSearchReference != value)
+                {
+                    _fieldSearchReference = value;
+                    this.IsEdited = true;
+                }
+            }
+        }
+        private SearchReferences? _fieldSearchReference = null;
+
 
 
         [DataMember]
@@ -67,13 +84,13 @@ namespace ImageLibrary.Search
         }
         private FileProperty _fieldProperty;
 
-        public INotifyCollectionChanged Children => null;
+        public INotifyCollectionChanged? Children => null;
 
         public bool IsUnit => true;
 
-        public ComplexSearch Parent { get; set; }
+        public ComplexSearch? Parent { get; set; }
 
-        public string ReferenceLabel
+        public string? ReferenceLabel
         {
             get
             {
@@ -92,7 +109,7 @@ namespace ImageLibrary.Search
                 }
             }
         }
-        private string _fieldReferenceLabel;
+        private string? _fieldReferenceLabel;
 
         public bool IsEdited { get; private set; }
 
@@ -101,43 +118,42 @@ namespace ImageLibrary.Search
         {
         }
 
-        public IDatabaseExpression ToSql()
+        public IDatabaseExpression? ToSql()
         {
-            return this.Property.ToSearch(this.Reference, this.Mode);
+            return (this.SearchReference != null)
+                ? this.Property.ToSearch(this.SearchReference, this.Mode)
+                : null;
         }
 
 
         public void RefreshReferenceLabel()
         {
-            if (this.Reference != null)
+            if (this.SearchReference != null)
             {
                 if (this.Property == FileProperty.ContainsTag)
                 {
                     this.ReferenceLabel = LibraryOwner.GetCurrent()
-                        .Tags.GetTagValue((int)this.Reference)?.Name;
+                        .Tags.GetTagValue(this.SearchReference.Num32)?.Name;
                 }
                 else if (this.Property.IsDate())
                 {
-                    if (this.Property == FileProperty.DateTimeCreated
-                        || this.Property == FileProperty.DateTimeModified
-                        || this.Property == FileProperty.DateTimeRegistered)
+                    if (this.Property.IsDateTime())
                     {
-                        this.ReferenceLabel = ((DateTimeOffset)this.Reference).ToString("G");
+                        this.ReferenceLabel = this.SearchReference.DateTime.ToString("G");
                     }
                     else
                     {
-                        this.ReferenceLabel = ((DateTimeOffset)this.Reference).ToString("d");
+                        this.ReferenceLabel = this.SearchReference.DateTime.ToString("d");
                     }
                 }
                 else if (this.Property == FileProperty.Size)
                 {
-                    this.ReferenceLabel = FileSizeConverter.ConvertAuto((long)this.Reference);
+                    this.ReferenceLabel = FileSizeConverter.ConvertAuto(this.SearchReference.Num64);
                 }
                 else
                 {
-                    this.ReferenceLabel = this.Reference.ToString();
+                    this.ReferenceLabel = this.SearchReference.ToString();
                 }
-
             }
         }
 
@@ -146,6 +162,16 @@ namespace ImageLibrary.Search
             this.Parent?.Remove(this);
         }
 
+        public void Migrate()
+        {
+#pragma warning disable CS0612
+            if (this.Reference != null)
+            {
+                this.SearchReference = SearchReferences.ConvertFrom(this.Reference);
+                this.Reference = null;
+            }
+#pragma warning restore CS0612
+        }
 
 
         public void CopyFrom(UnitSearch source)
@@ -153,7 +179,10 @@ namespace ImageLibrary.Search
             this.Property = source.Property;
             this.Mode = source.Mode;
 
+#pragma warning disable CS0612
             this.Reference = source.Reference;
+#pragma warning restore CS0612
+            this.SearchReference = source.SearchReference;
 
             this._fieldReferenceLabel = null;
         }
@@ -177,6 +206,7 @@ namespace ImageLibrary.Search
 
             return this.Property == ot.Property
                 && this.Mode == ot.Mode
+                && this.ReferenceLabel != null
                 && this.ReferenceLabel.Equals(ot.ReferenceLabel);
         }
 
@@ -192,7 +222,7 @@ namespace ImageLibrary.Search
         }
 
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void RaisePropertyChanged(string propertyName)
             => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

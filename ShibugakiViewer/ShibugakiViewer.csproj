@@ -11,6 +11,8 @@
     <Copyright>Boredbone 2019</Copyright>
     <Authors>Boredbone</Authors>
     <EnableDefaultApplicationDefinition>false</EnableDefaultApplicationDefinition>
+    <RollForward>Major</RollForward>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

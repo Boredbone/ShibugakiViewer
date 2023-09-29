@@ -11,6 +11,7 @@
     <Authors>Boredbone</Authors>
     <Product>ShibugakiViewer</Product>
     <Copyright>Boredbone 2019</Copyright>
+    <RollForward>Major</RollForward>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

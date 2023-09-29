@@ -71,7 +71,7 @@ namespace ImageLibrary.Search
 
 
         [DataMember]
-        public string Name
+        public string? Name
         {
             get { return _fieldName; }
             set
@@ -83,11 +83,11 @@ namespace ImageLibrary.Search
                 }
             }
         }
-        private string _fieldName;
+        private string? _fieldName;
 
 
         [DataMember]
-        public string ThumbnailFilePath
+        public string? ThumbnailFilePath
         {
             get { return _fieldThumbnailFilePath; }
             set
@@ -99,13 +99,13 @@ namespace ImageLibrary.Search
                 }
             }
         }
-        private string _fieldThumbnailFilePath;
-
-        
+        private string? _fieldThumbnailFilePath;
 
 
 
-        public string Key { get; set; }
+
+
+        public string? Key { get; set; }
 
 
         public SearchInformation(ComplexSearch root)
@@ -114,7 +114,7 @@ namespace ImageLibrary.Search
             this.SortSettings = new List<SortSetting>();
         }
 
-        public IDatabaseExpression GetWhereSql()
+        public IDatabaseExpression? GetWhereSql()
         {
             return this.Root.ToSql();
         }
@@ -180,78 +180,33 @@ namespace ImageLibrary.Search
 
                 if (prop.IsDate())
                 {
-                    if (DateTimeOffset.TryParse(obj.Reference.ToString(), out var datetime))
+                    if (obj.ReferenceNum.HasValue)
                     {
                         return new UnitSearch()
                         {
                             Mode = (CompareMode)obj.Mode,
-                            Reference = datetime,
+                            SearchReference = SearchReferences.FromUnixTime((long)obj.ReferenceNum),
                             Property = prop,
                         };
                     }
                 }
-                if(obj.Reference is JsonElement je)
+                //if(obj.Reference is JsonElement je)
                 {
-                    if (je.ValueKind == JsonValueKind.String)
+                    if (obj.ReferenceStr != null)
                     {
                         return new UnitSearch()
                         {
                             Mode = (CompareMode)obj.Mode,
-                            Reference = je.ToString(),
+                            SearchReference = SearchReferences.From(obj.ReferenceStr),
                             Property = prop,
                         };
                     }
-                    else if (je.ValueKind == JsonValueKind.Number)
-                    {
-                        if (prop.IsFloat())
-                        {
-                            if (je.TryGetDouble(out var num))
-                            {
-                                return new UnitSearch()
-                                {
-                                    Mode = (CompareMode)obj.Mode,
-                                    Reference = num,
-                                    Property = prop,
-                                };
-                            }
-                        }
-                        else
-                        {
-                            if (je.TryGetInt32(out var num))
-                            {
-                                return new UnitSearch()
-                                {
-                                    Mode = (CompareMode)obj.Mode,
-                                    Reference = num,
-                                    Property = prop,
-                                };
-                            }
-                        }
-                    }
-                    else if (je.ValueKind == JsonValueKind.True)
+                    else if (obj.ReferenceNum.HasValue)
                     {
                         return new UnitSearch()
                         {
                             Mode = (CompareMode)obj.Mode,
-                            Reference = true,
-                            Property = prop,
-                        };
-                    }
-                    else if (je.ValueKind == JsonValueKind.False)
-                    {
-                        return new UnitSearch()
-                        {
-                            Mode = (CompareMode)obj.Mode,
-                            Reference = false,
-                            Property = prop,
-                        };
-                    }
-                    else if (je.ValueKind == JsonValueKind.Null)
-                    {
-                        return new UnitSearch()
-                        {
-                            Mode = (CompareMode)obj.Mode,
-                            Reference = null,
+                            SearchReference = SearchReferences.From(obj.ReferenceNum.Value),
                             Property = prop,
                         };
                     }
@@ -260,7 +215,7 @@ namespace ImageLibrary.Search
                 return new UnitSearch()
                 {
                     Mode = (CompareMode)obj.Mode,
-                    Reference = obj.Reference.ToString(),
+                    SearchReference = new SearchReferences(),
                     Property = prop,
                 };
             }
@@ -274,7 +229,7 @@ namespace ImageLibrary.Search
                 Name = obj.Name,
             };
         }
-        private static SearchNodeSerializable SearchNodeToSerializable(ISqlSearch obj)
+        private static SearchNodeSerializable? SearchNodeToSerializable(ISqlSearch obj)
         {
             if (obj is ComplexSearch cmp)
             {
@@ -282,7 +237,7 @@ namespace ImageLibrary.Search
                 {
                     IsOr = cmp.IsOr,
                     Children = cmp.Convert(SearchNodeToSerializable).ToList(),
-                    Property=-1,
+                    Property = -1,
                 };
             }
             else if (obj is UnitSearch unit)
@@ -290,7 +245,8 @@ namespace ImageLibrary.Search
                 return new SearchNodeSerializable()
                 {
                     Mode = (int)unit.Mode,
-                    Reference = unit.Reference,
+                    ReferenceNum = unit.SearchReference?.Num,
+                    ReferenceStr = unit.SearchReference?.Str,
                     Property = (int)unit.Property,
                 };
             }
@@ -305,6 +261,11 @@ namespace ImageLibrary.Search
                 Name = this.Name,
                 ThumbnailId = System.Web.HttpUtility.UrlEncode(this.ThumbnailFilePath),
             };
+        }
+
+        public void Migrate()
+        {
+            this.Root.Migrate();
         }
 
         public bool HasSameSearch(SearchInformation other)
@@ -373,22 +334,22 @@ namespace ImageLibrary.Search
         public IDatabaseExpression GetFilterString(Library library)
             => library.RecordQuery.GetFilterString(this);
 
-        public Task<Record[]> SearchAsync(Library library, long skip, long take, Record skipUntil = null)
+        public Task<Record[]> SearchAsync(Library library, long skip, long take, Record? skipUntil = null)
             => library.RecordQuery.SearchAsync(this, skip, take, skipUntil);
 
 
         public long Count(Library library)
             => library.RecordQuery.Count(this);
 
-        public Record[] Search(Library library, long skip, long take, Record skipUntil = null)
+        public Record[] Search(Library library, long skip, long take, Record? skipUntil = null)
             => library.RecordQuery.Search(this, skip, take, skipUntil);
 
         public static SearchInformation GenerateEmpty() => new SearchInformation(new ComplexSearch(false));
 
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         protected void RaisePropertyChanged(string propertyName)
             => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
-    
+
 }

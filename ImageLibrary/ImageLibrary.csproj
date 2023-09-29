@@ -5,6 +5,7 @@
     <UseWPF>true</UseWPF>
     <Authors>Boredbone</Authors>
     <Version>2.1.0</Version>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

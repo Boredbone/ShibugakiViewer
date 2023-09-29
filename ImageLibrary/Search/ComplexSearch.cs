@@ -19,7 +19,7 @@ namespace ImageLibrary.Search
     [DataContract]
     public class ComplexSearch : ISqlSearch
     {
-        public INotifyCollectionChanged Children => InnerChildren;
+        public INotifyCollectionChanged? Children => InnerChildren;
 
         private ObservableCollection<ISqlSearch> InnerChildren
         {
@@ -35,7 +35,7 @@ namespace ImageLibrary.Search
         }
         private ObservableCollection<ISqlSearch> _fieldInnerChildren;
 
-        public ComplexSearch Parent { get; set; }
+        public ComplexSearch? Parent { get; set; }
 
         [DataMember]
         private List<ISqlSearch> SavedChildren
@@ -43,7 +43,7 @@ namespace ImageLibrary.Search
             get { return this.InnerChildren.ToList(); }
             set
             {
-                this.InnerChildren = new ObservableCollection<ISqlSearch>(value);
+                this.InnerChildren = (value != null) ? (new(value)) : new();
             }
         }
 
@@ -74,13 +74,12 @@ namespace ImageLibrary.Search
 
         public ComplexSearch(bool or)
         {
-            this.Initialize();
-
+            this.InnerChildren = new();
             this.IsOr = or;
         }
         private void Initialize()
         {
-            this.InnerChildren = new ObservableCollection<ISqlSearch>();
+            this.InnerChildren = new();
         }
 
         [OnDeserializing]
@@ -89,6 +88,10 @@ namespace ImageLibrary.Search
             this.Initialize();
         }
 
+        public void Migrate()
+        {
+            this.InnerChildren.ForEach(x => x.Migrate());
+        }
 
         public ComplexSearch Add(ISqlSearch method)
         {
@@ -98,7 +101,7 @@ namespace ImageLibrary.Search
             return this;
         }
 
-        public IDatabaseExpression ToSql()
+        public IDatabaseExpression? ToSql()
         {
             var items = this.InnerChildren
                 .Select(x => x.ToSql())
@@ -181,7 +184,7 @@ namespace ImageLibrary.Search
             return ((this.IsOr) ? "OR" : "AND") + "," + this.InnerChildren.Count.ToString();
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void RaisePropertyChanged(string propertyName)
             => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

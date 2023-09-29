@@ -15,6 +15,7 @@ using Database.Search;
 using ImageLibrary.Core;
 using ImageLibrary.Exif;
 using ImageLibrary.File;
+using ImageLibrary.Search;
 using ImageLibrary.SearchProperty;
 using ImageLibrary.Tag;
 using ImageLibrary.Viewer;
@@ -96,8 +97,8 @@ namespace ShibugakiViewer.ViewModels
         private Subject<bool> MouseExButtonSubject { get; }
         public IObservable<bool> MouseExButtonPressed => this.MouseExButtonSubject.AsObservable();
 
-        public ReactiveProperty<string> PaneSelectedPath { get; }
-        public ReactiveProperty<TagInformation> PaneSelectedTag { get; }
+        public ReactivePropertySlim<string?> PaneSelectedPath { get; }
+        public ReactivePropertySlim<TagInformation?> PaneSelectedTag { get; }
 
 
         public ReactiveProperty<bool> IsOptionPageOpen { get; }
@@ -233,16 +234,16 @@ namespace ShibugakiViewer.ViewModels
             .AddTo(this.Disposables);
 
 
-            this.PaneSelectedPath = new ReactiveProperty<string>((string)null)
+            this.PaneSelectedPath = new ReactivePropertySlim<string?>(null)
                 .AddTo(this.Disposables);
             this.PaneSelectedPath.Where(x => !string.IsNullOrWhiteSpace(x))
-                .Subscribe(x => this.StartPathOrTagSearch(FileProperty.DirectoryPathStartsWith, x))
+                .Subscribe(x => this.StartPathOrTagSearch(FileProperty.DirectoryPathStartsWith, SearchReferences.From(x)))
                 .AddTo(this.Disposables);
 
-            this.PaneSelectedTag = new ReactiveProperty<TagInformation>((TagInformation)null)
+            this.PaneSelectedTag = new ReactivePropertySlim<TagInformation?>(null)
                 .AddTo(this.Disposables);
             this.PaneSelectedTag.Where(x => x != null)
-                .Subscribe(x => this.StartPathOrTagSearch(FileProperty.ContainsTag, x.Id))
+                .Subscribe(x => this.StartPathOrTagSearch(FileProperty.ContainsTag, SearchReferences.From(x.Id)))
                 .AddTo(this.Disposables);
 
             this.DefaultPaneMode = client.SelectedPage
@@ -610,7 +611,7 @@ namespace ShibugakiViewer.ViewModels
 
         }
 
-        private void StartPathOrTagSearch(FileProperty property, object reference)
+        private void StartPathOrTagSearch(FileProperty property, SearchReferences reference)
         {
             if (this.Client.StartNewSearch(property, reference, CompareMode.Equal))
             {

@@ -159,7 +159,7 @@ namespace ImageLibrary.Creation
                 this.IgnoredFolders.Select(x => new UnitSearch()
                 {
                     Property = FileProperty.DirectoryPathStartsWith,
-                    Reference = PathUtility.WithoutPostSeparator(x),
+                    SearchReference = SearchReferences.From(PathUtility.WithoutPostSeparator(x)),
                     Mode = CompareMode.Equal,
                 })
                 .ForEach(x => complex.Add(x));

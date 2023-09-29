@@ -55,7 +55,7 @@ namespace ImageLibrary.Core
             return GetFilterString(search);
         }
 
-        private IDatabaseExpression GetFilterString(IDatabaseExpression sql)
+        private IDatabaseExpression GetFilterString(IDatabaseExpression? sql)
         {
             var groupFilter = (this.Library.IsGroupingEnabled)
                 ? DatabaseExpression.Or(
@@ -78,7 +78,7 @@ namespace ImageLibrary.Core
         /// <param name="skip"></param>
         /// <param name="take"></param>
         /// <returns></returns>
-        public async Task<Record[]> SearchAsync(SearchInformation criteria, long skip, long take, Record skipUntil)
+        public async Task<Record[]> SearchAsync(SearchInformation criteria, long skip, long take, Record? skipUntil)
         {
             //TODO データベースの状態が変わると、最初に数えたHit数と現在の検索結果が異なる可能性がある
 
@@ -116,7 +116,7 @@ namespace ImageLibrary.Core
 
             return records;
         }
-        public Record[] Search(SearchInformation criteria, long skip, long take, Record skipUntil)
+        public Record[] Search(SearchInformation criteria, long skip, long take, Record? skipUntil)
         {
             criteria.SetDateToNow();
 

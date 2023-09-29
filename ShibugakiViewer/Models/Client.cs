@@ -92,8 +92,8 @@ namespace ShibugakiViewer.Models
         public ReadOnlyReactivePropertySlim<long> Length { get; }
         public ReadOnlyReactiveProperty<Record> SelectedRecord { get; }
 
-        private ReactivePropertySlim<Record> ViewerDisplayingInner { get; }
-        public ReadOnlyReactiveProperty<Record> ViewerDisplaying { get; }
+        private ReactivePropertySlim<Record?> ViewerDisplayingInner { get; }
+        public ReadOnlyReactiveProperty<Record?> ViewerDisplaying { get; }
 
         private Subject<long> PrepareNextSubject { get; }
 
@@ -126,7 +126,7 @@ namespace ShibugakiViewer.Models
         private History<ViewState> History { get; }
 
         private OldNewPair<long> lastViewerImageIndex;
-        private Record lastGroup = null;
+        private Record? lastGroup = null;
 
         public ReadOnlyReactivePropertySlim<int> BackHistoryCount => this.History.BackHistoryCount;
         public ReadOnlyReactivePropertySlim<int> ForwardHistoryCount => this.History.ForwardHistoryCount;
@@ -608,13 +608,13 @@ namespace ShibugakiViewer.Models
         /// <param name="property"></param>
         /// <param name="reference"></param>
         /// <param name="mode"></param>
-        public bool StartNewSearch(FileProperty property, object reference, CompareMode mode)
+        public bool StartNewSearch(FileProperty property, SearchReferences reference, CompareMode mode)
         {
             return this.StartNewSearch(
                 new UnitSearch()
                 {
                     Property = property,
-                    Reference = reference,
+                    SearchReference = reference,
                     Mode = mode,
                 }
             );
@@ -1235,7 +1235,7 @@ namespace ShibugakiViewer.Models
                 search.Root.Add(new UnitSearch()
                 {
                     Property = FileProperty.DirectoryPathStartsWith,
-                    Reference = record.Directory,
+                    SearchReference = SearchReferences.From(record.Directory),
                     Mode = CompareMode.Equal,
                 });
 

@@ -272,6 +272,24 @@ namespace ImageLibrary.Core
             }
         }
 
+        private void Migrate()
+        {
+            if (this.FavoriteSearch != null)
+            {
+                foreach(var item in this.FavoriteSearch)
+                {
+                    item.Migrate();
+                }
+            }
+            if(this.SearchSettings != null)
+            {
+                foreach (var item in this.SearchSettings)
+                {
+                    item.Migrate();
+                }
+            }
+        }
+
         /// <summary>
         /// ファイルから読み込み
         /// </summary>
@@ -292,6 +310,7 @@ namespace ImageLibrary.Core
             if (loadedLibSettings.Value != null)
             {
                 tmpLibSettings = loadedLibSettings.Value;
+                tmpLibSettings.Migrate();
             }
             else
             {
