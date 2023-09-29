@@ -31,11 +31,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.0.143" />
+    <PackageReference Include="Dapper" Version="2.0.151" />
     <PackageReference Include="ExifLib.Standard" Version="1.7.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
-    <PackageReference Include="ReactiveProperty" Version="9.2.0" />
+    <PackageReference Include="ReactiveProperty" Version="9.3.2" />
     <PackageReference Include="RestoreWindowPlace" Version="2.1.0" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118" />
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
@@ -43,7 +43,7 @@
     <PackageReference Include="System.Interactive" Version="6.0.1" />
     <PackageReference Include="System.Reactive" Version="6.0.0" />
     <PackageReference Include="System.ServiceModel.Syndication" Version="7.0.0" />
-    <PackageReference Include="XamlAnimatedGif" Version="2.1.1" />
+    <PackageReference Include="XamlAnimatedGif" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -78,7 +78,7 @@
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="if &quot;$(ConfigurationName)&quot; == &quot;Release&quot; (&#xD;&#xA;powershell -ExecutionPolicy RemoteSigned -File &quot;$(ProjectDir)resolve_version.ps1&quot;&#xD;&#xA;)" />
+    <Exec Command="set DO_FLAG=FALSE&#xD;&#xA;if &quot;$(ConfigurationName)&quot; == &quot;Release&quot; set DO_FLAG=TRUE&#xD;&#xA;if not exist &quot;$(ProjectDir)VersionInformation.cs&quot; set DO_FLAG=TRUE&#xD;&#xA;if %25DO_FLAG%25==TRUE (&#xD;&#xA;powershell -ExecutionPolicy RemoteSigned -File &quot;$(ProjectDir)resolve_version.ps1&quot;&#xD;&#xA;)" />
   </Target>
   
   <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
