@@ -11,7 +11,7 @@ namespace ShibugakiViewer.Models.Utility
         private List<int> RandomSequence { get; set; }
         private int Index { get; set; }
 
-        private static Random random = new Random();
+        //private static Random random = new Random();
 
         private int _fieldLength;
         public int Length
@@ -128,10 +128,52 @@ namespace ShibugakiViewer.Models.Utility
                     return new int[] { 0, 1 };
 
                 default:
-                    return Enumerable
-                        .Range(0, this.Length)
-                        .OrderBy(x => random.Next(this.Length))
-                        .ToArray();
+                    return GenerateRandomArray(this.Length, -1);
+                    //return Enumerable
+                    //    .Range(0, this.Length)
+                    //    .OrderBy(x => random.Next(this.Length))
+                    //    .ToArray();
+            }
+        }
+
+        private static int[] GenerateRandomArray(int maxLength, int fixedIndex)
+        {
+            var arr = Enumerable.Range(0, maxLength).ToArray();
+            Shuffle(arr, fixedIndex);
+            return arr;
+        }
+
+        public static void Shuffle(int[] array)
+        {
+            var random = Random.Shared;
+            int n = array.Length;
+
+            //for (var i = array.Length - 1; i > 0; --i)
+            //{
+            //    var j = random.Next(i + 1);
+            //    (array[j], array[i]) = (array[i], array[j]);
+            //}
+
+            for (int i = 0; i < n - 1; i++)
+            {
+                int j = random.Next(i, n);
+                (array[j], array[i]) = (array[i], array[j]);
+            }
+        }
+        public static void Shuffle(int[] array, int fixedIndex)
+        {
+            if (fixedIndex < 0 || fixedIndex >= array.Length)
+            {
+                Shuffle(array);
+                return;
+            }
+            var random = Random.Shared;
+            for (var i = array.Length - 2; i > 0; --i)
+            {
+                var j = random.Next(i + 1);
+                var ii = (i < fixedIndex) ? i : (i + 1);
+                var jj = (j < fixedIndex) ? j : (j + 1);
+                (array[jj], array[ii]) = (array[ii], array[jj]);
             }
         }
     }
