@@ -90,10 +90,10 @@ namespace ShibugakiViewer.Models
         public ReadOnlyReactivePropertySlim<int> PageSize { get; }
 
         public ReadOnlyReactivePropertySlim<long> Length { get; }
-        public ReadOnlyReactiveProperty<Record> SelectedRecord { get; }
+        public ReadOnlyReactivePropertySlim<Record?> SelectedRecord { get; }
 
         private ReactivePropertySlim<Record?> ViewerDisplayingInner { get; }
-        public ReadOnlyReactiveProperty<Record?> ViewerDisplaying { get; }
+        public ReadOnlyReactivePropertySlim<Record?> ViewerDisplaying { get; }
 
         private Subject<long> PrepareNextSubject { get; }
 
@@ -116,11 +116,11 @@ namespace ShibugakiViewer.Models
         public IObservable<CacheClearedEventArgs> ViewerCacheClearedTrigger { get; }
 
 
-        public ReadOnlyReactiveProperty<PageType> SelectedPage { get; }
+        public ReadOnlyReactivePropertySlim<PageType> SelectedPage { get; }
         private Subject<PageType> PageChangeRequestSubject { get; }
 
         public SelectionManager SelectedItems { get; }
-        public ReadOnlyReactiveProperty<int> SelectedItemsCount { get; }
+        public ReadOnlyReactivePropertySlim<int> SelectedItemsCount { get; }
 
         private Subject<long> ChangeToViewerSubject { get; }
         private History<ViewState> History { get; }
@@ -150,7 +150,7 @@ namespace ShibugakiViewer.Models
 
             this.SelectedItemsCount = this.SelectedItems
                 .ObserveProperty(x => x.Count)
-                .ToReadOnlyReactiveProperty()
+                .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.Disposables);
 
             this.IsGroupMode = this.front.IsGroupMode.ToReadOnlyReactivePropertySlim().AddTo(this.Disposables);
@@ -165,7 +165,7 @@ namespace ShibugakiViewer.Models
 
             this.PageChangeRequestSubject = new Subject<PageType>().AddTo(this.Disposables);
             this.SelectedPage = this.PageChangeRequestSubject.Skip(pageChangeSkip)
-                .ToReadOnlyReactiveProperty(firstPage)
+                .ToReadOnlyReactivePropertySlim(firstPage)
                 .AddTo(this.Disposables);
 
             this.IsStateChangingSubject = new BehaviorSubject<bool>(false).AddTo(this.Disposables);
@@ -173,9 +173,9 @@ namespace ShibugakiViewer.Models
             this.IsCatalogRenderingEnabledSubject = new Subject<bool>().AddTo(this.Disposables);
             this.CatalogScrollIndexSubject = new Subject<long>().AddTo(this.Disposables);
 
-            this.ViewerDisplayingInner = new ReactivePropertySlim<Record>().AddTo(this.Disposables);
+            this.ViewerDisplayingInner = new ReactivePropertySlim<Record?>().AddTo(this.Disposables);
             this.ViewerDisplaying = this.ViewerDisplayingInner
-                .ToReadOnlyReactiveProperty().AddTo(this.Disposables);
+                .ToReadOnlyReactivePropertySlim().AddTo(this.Disposables);
 
 
 
@@ -267,7 +267,7 @@ namespace ShibugakiViewer.Models
             //情報を表示すべきRecord
             this.SelectedRecord = viewerDisplaying
                 .Merge(catalogDisplaying)
-                .ToReadOnlyReactiveProperty()
+                .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.Disposables);
 
             //Exif

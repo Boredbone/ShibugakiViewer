@@ -276,7 +276,7 @@
                                 DataContext="{Binding Search}"/>
                         </TabItem>
                         <TabItem Header="Catalog" Style="{StaticResource noHeaderTabItemStyle}">
-                            <!---->
+                            
                             <pages:CatalogPage
                                 x:Name="catalogPage"
                                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
@@ -287,7 +287,7 @@
                                 x:Name="viewerPage"
                                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                 DataContext="{Binding Viewer}"/>
-                        </TabItem>
+                        </TabItem><!---->
                         <!--
                         <TabItem Header="Slideshow" Style="{StaticResource noHeaderTabItemStyle}">
                             <pages:SlideshowPage

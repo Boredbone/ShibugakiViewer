@@ -83,17 +83,17 @@ namespace ShibugakiViewer.ViewModels
 
         public ReactiveProperty<int> SelectedTab { get; }
 
-        public ReactiveCommand BackCommand { get; }
-        public ReactiveCommand MoveToSearchPageCommand { get; }
-        public ReactiveCommand OpenPaneCommand { get; }
-        public ReactiveCommand OpenInformationPaneCommand { get; }
-        public ReactiveCommand OpenSettingPaneCommand { get; }
-        public ReactiveCommand OpenSettingWindowCommand { get; }
-        public ReactiveCommand FileDropCommand { get; }
-        public ReactiveCommand OpenHelpPaneCommand { get; }
+        public ReactiveCommandSlim<object?> BackCommand { get; }
+        public ReactiveCommandSlim<object?> MoveToSearchPageCommand { get; }
+        public ReactiveCommandSlim<object?> OpenPaneCommand { get; }
+        public ReactiveCommandSlim<object?> OpenInformationPaneCommand { get; }
+        public ReactiveCommandSlim<object?> OpenSettingPaneCommand { get; }
+        public ReactiveCommandSlim<object?> OpenSettingWindowCommand { get; }
+        public ReactiveCommandSlim<object?> FileDropCommand { get; }
+        public ReactiveCommandSlim<object?> OpenHelpPaneCommand { get; }
 
-        public ReactiveCommand MouseExButtonLeftCommand { get; }
-        public ReactiveCommand MouseExButtonRightCommand { get; }
+        public ReactiveCommandSlim<object?> MouseExButtonLeftCommand { get; }
+        public ReactiveCommandSlim<object?> MouseExButtonRightCommand { get; }
         private Subject<bool> MouseExButtonSubject { get; }
         public IObservable<bool> MouseExButtonPressed => this.MouseExButtonSubject.AsObservable();
 
@@ -101,45 +101,45 @@ namespace ShibugakiViewer.ViewModels
         public ReactivePropertySlim<TagInformation?> PaneSelectedTag { get; }
 
 
-        public ReactiveProperty<bool> IsOptionPageOpen { get; }
-        public ReactiveProperty<bool> IsPaneOpen { get; }
+        public ReadOnlyReactivePropertySlim<bool> IsOptionPageOpen { get; }
+        public ReactivePropertySlim<bool> IsPaneOpen { get; }
         public ReactiveProperty<bool> IsInformationPaneOpen { get; }
-        public ReactiveProperty<bool> IsPaneFixed { get; }
+        public ReactivePropertySlim<bool> IsPaneFixed { get; }
         public ReactiveProperty<bool> IsSettingPaneOpen { get; }
         public ReactiveProperty<bool> IsHelpPaneOpen { get; }
 
-        public ReactiveProperty<double> FrameWidth { get; }
+        public ReactivePropertySlim<double> FrameWidth { get; }
 
         //public Subject<SplitViewDisplayMode> PageChangedSubject { get; }
         public ReactiveProperty<SplitViewDisplayMode> PaneDisplayMode { get; }
 
-        public ReactiveProperty<double> JumpListWidth { get; }
+        public ReadOnlyReactivePropertySlim<double> JumpListWidth { get; }
 
-        public ReactiveProperty<OptionPaneType> SelectedInformationPage { get; }
+        public ReactivePropertySlim<OptionPaneType> SelectedInformationPage { get; }
 
 
-        public ReactiveCommand<string> OptionPageCommand { get; }
+        public ReactiveCommandSlim<string> OptionPageCommand { get; }
 
         private ReadOnlyReactivePropertySlim<PaneMode> DefaultPaneMode { get; }
 
-        public ReactiveProperty<Visibility> OptionPaneVisibility { get; }
-        public ReactiveProperty<Visibility> PaneOpenButtonVisibility { get; }
-        public ReactiveProperty<Visibility> PaneFixButtonVisibility { get; }
+        public ReadOnlyReactivePropertySlim<Visibility> OptionPaneVisibility { get; }
+        public ReactivePropertySlim<Visibility> PaneOpenButtonVisibility { get; }
+        public ReadOnlyReactivePropertySlim<Visibility> PaneFixButtonVisibility { get; }
 
-        public ReactiveProperty<bool> IsPopupOpen { get; }
+        public ReactivePropertySlim<bool> IsPopupOpen { get; }
         public ReactiveProperty<bool> IsFullScreen { get; }
 
-        public ReadOnlyReactiveProperty<Record> SelectedRecord => this.Client.SelectedRecord;
-        public ReadOnlyReactiveProperty<string> WindowTitle { get; }
+        public ReadOnlyReactivePropertySlim<Record> SelectedRecord => this.Client.SelectedRecord;
+        public ReadOnlyReactivePropertySlim<string?> WindowTitle { get; }
 
         public double TagSelectorScrollOffset { get; set; }
         public TagInformation TagSelectorLastSelected { get; set; }
-        public ReactiveProperty<int> TagSelectorSortMode { get; }
+        public ReactivePropertySlim<int> TagSelectorSortMode { get; }
 
         public IReadOnlyList<ExifVisibilityItem> ExifVisibilityList
             => this.Core.Library.ExifManager.TagVisibilityList;
-        public ReactiveProperty<bool> ExifVisibilityCheck { get; }
-        public ReadOnlyReactiveProperty<bool> IsExifEnabled { get; }
+        public ReactivePropertySlim<bool> ExifVisibilityCheck { get; }
+        public ReadOnlyReactivePropertySlim<bool> IsExifEnabled { get; }
 
         public KeyReceiver<object> KeyReceiver { get; }
         
@@ -174,19 +174,19 @@ namespace ShibugakiViewer.ViewModels
                     var file = (x.Page == PageType.Viewer) ? x.Item?.FileName : null;
                     return (file == null) ? core.AppName : (file + " - " + core.AppName);
                 })
-                .ToReadOnlyReactiveProperty()
+                .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.Disposables);
 
-            this.SelectedInformationPage = new ReactiveProperty<OptionPaneType>
+            this.SelectedInformationPage = new ReactivePropertySlim<OptionPaneType>
                 (core.IsViewerPageLeftBarFixed ? OptionPaneType.ItemInfo : OptionPaneType.None)
                 .AddTo(this.Disposables);
 
-            this.IsPaneOpen = new ReactiveProperty<bool>(core.IsViewerPageLeftBarFixed)
+            this.IsPaneOpen = new ReactivePropertySlim<bool>(core.IsViewerPageLeftBarFixed)
                 .AddTo(this.Disposables);
 
 
             this.IsPaneFixed = core
-                .ToReactivePropertyAsSynchronized(x => x.IsViewerPageLeftBarFixed)
+                .ToReactivePropertySlimAsSynchronized(x => x.IsViewerPageLeftBarFixed)
                 .AddTo(this.Disposables);
 
             this.SelectedTab = client.SelectedPage
@@ -256,7 +256,7 @@ namespace ShibugakiViewer.ViewModels
 
             this.IsOptionPageOpen = this.SelectedInformationPage
                 .Select(x => x > 0)
-                .ToReactiveProperty()
+                .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.Disposables);
 
 
@@ -266,7 +266,7 @@ namespace ShibugakiViewer.ViewModels
                 .ToReactiveProperty(false)
                 .AddTo(this.Disposables);
 
-            this.OpenInformationPaneCommand = new ReactiveCommand()
+            this.OpenInformationPaneCommand = new ReactiveCommandSlim()
                 .WithSubscribe(_ =>
                 {
                     if (this.IsInformationPaneOpen.Value)
@@ -284,7 +284,8 @@ namespace ShibugakiViewer.ViewModels
                             this.SelectedInformationPage.Value = OptionPaneType.None;
                         }
                     }
-                }, this.Disposables);
+                })
+                .AddTo(this.Disposables);
 
 
 
@@ -294,7 +295,7 @@ namespace ShibugakiViewer.ViewModels
                 .ToReactiveProperty(false)
                 .AddTo(this.Disposables);
 
-            this.OpenSettingPaneCommand = new ReactiveCommand()
+            this.OpenSettingPaneCommand = new ReactiveCommandSlim()
                 .WithSubscribe(_ =>
                 {
                     if (this.IsSettingPaneOpen.Value)
@@ -309,7 +310,8 @@ namespace ShibugakiViewer.ViewModels
                             this.SelectedInformationPage.Value = OptionPaneType.None;
                         }
                     }
-                }, this.Disposables);
+                })
+                .AddTo(this.Disposables);
 
 
 
@@ -319,7 +321,7 @@ namespace ShibugakiViewer.ViewModels
                 .ToReactiveProperty(false)
                 .AddTo(this.Disposables);
 
-            this.OpenHelpPaneCommand = new ReactiveCommand()
+            this.OpenHelpPaneCommand = new ReactiveCommandSlim()
                 .WithSubscribe(_ =>
                 {
                     if (this.IsHelpPaneOpen.Value)
@@ -334,16 +336,17 @@ namespace ShibugakiViewer.ViewModels
                             this.SelectedInformationPage.Value = OptionPaneType.None;
                         }
                     }
-                }, this.Disposables);
+                })
+                .AddTo(this.Disposables);
 
 
 
             this.OptionPaneVisibility = this.SelectedInformationPage
                 .Select(x => VisibilityHelper.Set(x > 0))
-                .ToReactiveProperty()
+                .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.Disposables);
 
-            this.FrameWidth = new ReactiveProperty<double>(300).AddTo(this.Disposables);
+            this.FrameWidth = new ReactivePropertySlim<double>(300).AddTo(this.Disposables);
 
             this.IsFullScreen = client.SelectedPage.Select(_ => false).ToReactiveProperty().AddTo(this.Disposables);
 
@@ -375,17 +378,16 @@ namespace ShibugakiViewer.ViewModels
                 .AddTo(this.Disposables);
 
 
-            this.PaneOpenButtonVisibility = new ReactiveProperty<Visibility>(Visibility.Collapsed)
-                .ToReactiveProperty()
+            this.PaneOpenButtonVisibility = new ReactivePropertySlim<Visibility>(Visibility.Collapsed)
                 .AddTo(this.Disposables);
 
             var isWide = this.FrameWidth.Select(y => y > middleWindowWidth).Publish().RefCount();
             this.PaneFixButtonVisibility = isWide.Select(y => VisibilityHelper.Set(y))
-                .ToReactiveProperty().AddTo(this.Disposables);
+                .ToReadOnlyReactivePropertySlim().AddTo(this.Disposables);
             isWide.Where(y => !y).Skip(2).Subscribe(y => this.IsPaneFixed.Value = false).AddTo(this.Disposables);
 
             this.JumpListWidth = this.IsOptionPageOpen.Select(x => x ? compactPaneWidth : openPaneWidth)
-                .ToReactiveProperty().AddTo(this.Disposables);
+                .ToReadOnlyReactivePropertySlim().AddTo(this.Disposables);
 
             this.IsOptionPageOpen.Subscribe(x =>
             {
@@ -399,16 +401,17 @@ namespace ShibugakiViewer.ViewModels
 
 
 
-            this.OpenSettingWindowCommand = new ReactiveCommand()
-                .WithSubscribe(_ => ((App)Application.Current).ShowSettingWindow(-1), this.Disposables);
+            this.OpenSettingWindowCommand = new ReactiveCommandSlim()
+                .WithSubscribe(_ => ((App)Application.Current).ShowSettingWindow(-1))
+                .AddTo(this.Disposables);
 
-            this.OptionPageCommand = new ReactiveCommand<string>().AddTo(this.Disposables);
-
-
-
+            this.OptionPageCommand = new ReactiveCommandSlim<string>().AddTo(this.Disposables);
 
 
-            this.IsPopupOpen = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
+
+
+
+            this.IsPopupOpen = new ReactivePropertySlim<bool>(false).AddTo(this.Disposables);
 
             this.IsPopupOpen
                 .Subscribe(x => this.KeyReceiver.Mode
@@ -484,42 +487,46 @@ namespace ShibugakiViewer.ViewModels
                 .AddTo(this.Disposables);
 
             this.TagSelectorSortMode = core
-                .ToReactivePropertyAsSynchronized(x => x.TagSelectorSortMode)
+                .ToReactivePropertySlimAsSynchronized(x => x.TagSelectorSortMode)
                 .AddTo(this.Disposables);
 
-            this.ExifVisibilityCheck = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
+            this.ExifVisibilityCheck = new ReactivePropertySlim<bool>(false).AddTo(this.Disposables);
             this.ExifVisibilityCheck
                 .Skip(1)
                 .Subscribe(x => core.Library.ExifManager.EnableAll(x)).AddTo(this.Disposables);
 
             this.IsExifEnabled = core.Library.ExifManager.HasVisibleItem
-                .ToReadOnlyReactiveProperty().AddTo(this.Disposables);
+                .ToReadOnlyReactivePropertySlim().AddTo(this.Disposables);
 
 
             this.BackCommand = client.BackHistoryCount
                 .Select(x => x > 0)
-                .ToReactiveCommand()
-                .WithSubscribe(_ => client.Back(), this.Disposables);
+                .ToReactiveCommandSlim()
+                .WithSubscribe(_ => client.Back())
+                .AddTo(this.Disposables);
 
-            this.MoveToSearchPageCommand = new ReactiveCommand()
-                .WithSubscribe(x => client.MoveToSearch(), this.Disposables);
+            this.MoveToSearchPageCommand = new ReactiveCommandSlim()
+                .WithSubscribe(x => client.MoveToSearch())
+                .AddTo(this.Disposables);
 
-            this.OpenPaneCommand = new ReactiveCommand()
-                .WithSubscribe(_ => this.TogglePane(OptionPaneType.None), this.Disposables);
+            this.OpenPaneCommand = new ReactiveCommandSlim()
+                .WithSubscribe(_ => this.TogglePane(OptionPaneType.None))
+                .AddTo(this.Disposables);
 
             // ウインドウへのファイルのドラッグ&ドロップ
-            this.FileDropCommand = new ReactiveCommand()
+            this.FileDropCommand = new ReactiveCommandSlim()
                 .WithSubscribe(obj =>
                 {
                     if (obj is string[] files)
                     {
                         this.Client.ActivateFiles(files);
                     }
-                }, this.Disposables);
+                })
+                .AddTo(this.Disposables);
 
             this.MouseExButtonSubject = new Subject<bool>().AddTo(this.Disposables);
 
-            this.MouseExButtonLeftCommand = new ReactiveCommand()
+            this.MouseExButtonLeftCommand = new ReactiveCommandSlim()
                 .WithSubscribe(_ =>
                 {
                     if (core.UseExtendedMouseButtonsToSwitchImage
@@ -531,9 +538,10 @@ namespace ShibugakiViewer.ViewModels
                     {
                         client.Back();
                     }
-                }, this.Disposables);
+                })
+                .AddTo(this.Disposables);
 
-            this.MouseExButtonRightCommand = new ReactiveCommand()
+            this.MouseExButtonRightCommand = new ReactiveCommandSlim()
                 .WithSubscribe(_ =>
                 {
                     if (core.UseExtendedMouseButtonsToSwitchImage
@@ -545,7 +553,8 @@ namespace ShibugakiViewer.ViewModels
                     {
                         client.Forward();
                     }
-                }, this.Disposables);
+                })
+                .AddTo(this.Disposables);
             
 
             //Keyboard

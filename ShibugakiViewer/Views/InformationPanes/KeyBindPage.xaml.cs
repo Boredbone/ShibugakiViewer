@@ -41,9 +41,9 @@ namespace ShibugakiViewer.Views.InformationPanes
     public class KeyBindPageViewModel : DisposableBase
     {
 
-        public ReactiveProperty<int> CursorKeyBind { get; }
-        public ReactiveProperty<Visibility> CursorKeyToMoveVisibility { get; }
-        public ReactiveProperty<Visibility> CursorKeyToFlipVisibility { get; }
+        public ReactivePropertySlim<int> CursorKeyBind { get; }
+        public ReadOnlyReactivePropertySlim<Visibility> CursorKeyToMoveVisibility { get; }
+        public ReadOnlyReactivePropertySlim<Visibility> CursorKeyToFlipVisibility { get; }
 
         
         public KeyBindPageViewModel()
@@ -51,15 +51,15 @@ namespace ShibugakiViewer.Views.InformationPanes
             var core = ((App)Application.Current).Core;
 
             this.CursorKeyBind = core
-                .ToReactivePropertyAsSynchronized(x => x.CursorKeyBind).AddTo(this.Disposables);
+                .ToReactivePropertySlimAsSynchronized(x => x.CursorKeyBind).AddTo(this.Disposables);
 
             this.CursorKeyToFlipVisibility = this.CursorKeyBind
                 .Select(x => VisibilityHelper.Set(x != 1))
-                .ToReactiveProperty().AddTo(this.Disposables);
+                .ToReadOnlyReactivePropertySlim().AddTo(this.Disposables);
 
             this.CursorKeyToMoveVisibility = this.CursorKeyBind
                 .Select(x => VisibilityHelper.Set(x == 1))
-                .ToReactiveProperty().AddTo(this.Disposables);
+                .ToReadOnlyReactivePropertySlim().AddTo(this.Disposables);
             
         }
     }

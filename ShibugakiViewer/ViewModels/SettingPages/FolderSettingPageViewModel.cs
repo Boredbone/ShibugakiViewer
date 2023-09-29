@@ -22,16 +22,16 @@ namespace ShibugakiViewer.ViewModels.SettingPages
 
         public FolderDictionary Folders => this.library.Folders;
 
-        public ReactiveProperty<bool> IsProfessionalFolderSettingEnabled { get; }
-        public ReactiveProperty<bool> IsEditable { get; }
-        public ReactiveProperty<bool> IsInitializeMode { get; }
-        public ReadOnlyReactiveProperty<bool> IsProfessionalFolderSettingEnabledView { get; }
+        public ReactivePropertySlim<bool> IsProfessionalFolderSettingEnabled { get; }
+        public ReadOnlyReactivePropertySlim<bool> IsEditable { get; }
+        public ReactivePropertySlim<bool> IsInitializeMode { get; }
+        public ReadOnlyReactivePropertySlim<bool> IsProfessionalFolderSettingEnabledView { get; }
 
-        public ReactiveCommand IgnoreCommand { get; }
-        public ReactiveCommand RefreshCommand { get; }
-        public ReactiveCommand AddCommand { get; }
+        public ReactiveCommandSlim<object?> IgnoreCommand { get; }
+        public ReactiveCommandSlim<object?> RefreshCommand { get; }
+        public ReactiveCommandSlim<object?> AddCommand { get; }
 
-        private string previousSelectedDirectory;
+        private string? previousSelectedDirectory;
 
         private readonly Library library;
 
@@ -48,10 +48,10 @@ namespace ShibugakiViewer.ViewModels.SettingPages
 
             this.IsEditable = this.library.IsCreating
                 .Select(x => !x)
-                .ToReactiveProperty()
+                .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.Disposables);
 
-            this.IsInitializeMode = new ReactiveProperty<bool>(false);//.AddTo(this.Disposables);
+            this.IsInitializeMode = new ReactivePropertySlim<bool>(false);//.AddTo(this.Disposables);
 
             Disposable.Create(() =>
             {
@@ -66,32 +66,42 @@ namespace ShibugakiViewer.ViewModels.SettingPages
 
 
             this.IsProfessionalFolderSettingEnabled = core
-                .ToReactivePropertyAsSynchronized(x => x.IsProfessionalFolderSettingEnabled)
+                .ToReactivePropertySlimAsSynchronized(x => x.IsProfessionalFolderSettingEnabled)
                 .AddTo(this.Disposables);
 
             this.IsProfessionalFolderSettingEnabledView = this.IsProfessionalFolderSettingEnabled
                 .CombineLatest(this.IsInitializeMode, (a, b) => a && !b)
-                .ToReadOnlyReactiveProperty()
+                .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.Disposables);
 
             this.IgnoreCommand = this.IsEditable
-                .ToReactiveCommand()
-                .WithSubscribeOfType<FolderInformation>(folder => folder?.Ignore(), this.Disposables);
+                .ToReactiveCommandSlim()
+                .AddTo(this.Disposables);
+
+            this.IgnoreCommand
+                .OfType<FolderInformation>()
+                .Subscribe(folder => folder?.Ignore())
+                .AddTo(this.Disposables);
 
             this.RefreshCommand = this.IsEditable
                 .CombineLatest(this.IsInitializeMode, (a, b) => a && !b)
-                .ToReactiveCommand()
-                .WithSubscribeOfType<FolderInformation>(folder =>
+                .ToReactiveCommandSlim()
+                .AddTo(this.Disposables);
+
+            this.RefreshCommand
+                .OfType<FolderInformation>()
+                .Subscribe(folder =>
                 {
                     if (folder != null)
                     {
                         folder.RefreshEnable = true;
                         this.library.RefreshLibraryAsync(true).FireAndForget();
                     }
-                }, this.Disposables);
+                })
+                .AddTo(this.Disposables);
 
             this.AddCommand = this.IsEditable
-                .ToReactiveCommand()
+                .ToReactiveCommandSlim()
                 .WithSubscribe(_ =>
                 {
                     var dir = this.previousSelectedDirectory?.Split(System.IO.Path.DirectorySeparatorChar);
@@ -110,7 +120,8 @@ namespace ShibugakiViewer.ViewModels.SettingPages
                         this.previousSelectedDirectory = folderPath;
                     }
 
-                }, this.Disposables);
+                })
+                .AddTo(this.Disposables);
         }
     }
 }

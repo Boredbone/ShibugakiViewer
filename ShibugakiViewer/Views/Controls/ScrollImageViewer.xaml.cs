@@ -923,7 +923,7 @@ namespace ShibugakiViewer.Views.Controls
         private DateTime lastSourceChangedTime;
 
         private Subject<double> MetaImageZoomFactorSubject { get; }
-        public ReadOnlyReactiveProperty<double> MetaImageZoomFactor { get; }
+        public ReadOnlyReactivePropertySlim<double> MetaImageZoomFactor { get; }
 
         private double dpiScale = 1.0;
         private double originalScale = 1.0;

@@ -14,7 +14,7 @@ namespace ShibugakiViewer.Models
         private static int id;
 
         public List<KeyValuePair<string, TreeNode<string>>> Children { get; set; }
-        public ReactiveProperty<int> SelectedIndex { get; private set; }
+        public ReactivePropertySlim<int> SelectedIndex { get; private set; }
         public int ID { get; private set; }
 
         public DirectoryInfo(List<KeyValuePair<string, TreeNode<string>>> source)
@@ -22,7 +22,7 @@ namespace ShibugakiViewer.Models
             this.Children = new List<KeyValuePair<string, TreeNode<string>>>();
             this.Children.Add(new KeyValuePair<string, TreeNode<string>>("", null));
             this.Children.AddRange(source);
-            this.SelectedIndex = new ReactiveProperty<int>(-1);
+            this.SelectedIndex = new(-1);
             this.ID = id;
             id++;
         }

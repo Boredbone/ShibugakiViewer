@@ -15,19 +15,19 @@ namespace ShibugakiViewer.ViewModels
 {
     class WelcomeWindowViewModel : DisposableBase
     {
-        public ReactiveCommand StartRefreshCommand { get; }
+        public ReactiveCommandSlim<object?> StartRefreshCommand { get; }
 
         private Subject<bool> ExitSubject { get; }
         public IObservable<bool> Exit => this.ExitSubject.AsObservable();
 
-        public ReactiveProperty<bool> IsCheckFileShellInformation { get; }
+        public ReactivePropertySlim<bool> IsCheckFileShellInformation { get; }
 
-        public ReactiveProperty<int> SelectedTab { get; }
+        public ReactivePropertySlim<int> SelectedTab { get; }
 
         public bool WaitTextVisibility { get; set; } = true;
 
-        public ReactiveCommand ChangeTabCommand { get; }
-        public ReactiveCommand ConvertOldLibraryCommand { get; }
+        public ReactiveCommandSlim ChangeTabCommand { get; }
+        public ReactiveCommandSlim<object?> ConvertOldLibraryCommand { get; }
 
         private readonly App application;
 
@@ -40,24 +40,27 @@ namespace ShibugakiViewer.ViewModels
             this.ExitSubject = new Subject<bool>().AddTo(this.Disposables);
 
             this.IsCheckFileShellInformation = library
-                .ToReactivePropertyAsSynchronized(x => x.CheckFileShellInformation)
+                .ToReactivePropertySlimAsSynchronized(x => x.CheckFileShellInformation)
                 .AddTo(this.Disposables);
 
             var oldConvertable = core.IsOldConvertable();
 
             var firstTab = oldConvertable ? 4 : 0;
 
-            this.SelectedTab = new ReactiveProperty<int>(firstTab).AddTo(this.Disposables);
+            this.SelectedTab = new ReactivePropertySlim<int>(firstTab).AddTo(this.Disposables);
 
-            this.ChangeTabCommand = new ReactiveCommand()
-                .WithSubscribeOfType<string>(x =>
+            this.ChangeTabCommand = new ReactiveCommandSlim().AddTo(this.Disposables);
+            this.ChangeTabCommand
+                .OfType<string>()
+                .Subscribe(x =>
                 {
                     var index = 0;
                     if (int.TryParse(x, out index))
                     {
                         this.SelectedTab.Value = index;
                     }
-                }, this.Disposables);
+                })
+                .AddTo(this.Disposables);
 
             library.Loaded.ObserveOnUIDispatcher().Subscribe(_ =>
             {
@@ -75,17 +78,19 @@ namespace ShibugakiViewer.ViewModels
 
             this.StartRefreshCommand = library.IsCreating
                 .Select(x => !x)
-                .ToReactiveCommand()
+                .ToReactiveCommandSlim()
                 .WithSubscribe(_ =>
                 {
                     this.SelectedTab.Value = 3;
                     library.StartRefreshLibrary();
-                }, this.Disposables);
+                })
+                .AddTo(this.Disposables);
 
             this.ConvertOldLibraryCommand = Observable
                 .Return(oldConvertable)
-                .ToReactiveCommand()
-                .WithSubscribe(_ => application.ConvertOldLibrary(), this.Disposables);
+                .ToReactiveCommandSlim()
+                .WithSubscribe(_ => application.ConvertOldLibrary())
+                .AddTo(this.Disposables);
         }
 
     }

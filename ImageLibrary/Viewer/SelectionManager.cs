@@ -52,8 +52,8 @@ namespace ImageLibrary.Viewer
 
         public ObservableCollection<TagInformation> CommonTags { get; }
 
-        public ReactiveProperty<int> CommonRating { get; }
-        public ReadOnlyReactiveProperty<bool> IsRatingUnknown { get; }
+        public ReactivePropertySlim<int> CommonRating { get; }
+        public ReadOnlyReactivePropertySlim<bool> IsRatingUnknown { get; }
 
         private int CommonRatingInner
         {
@@ -95,9 +95,9 @@ namespace ImageLibrary.Viewer
                 .Subscribe(_ => this.RefreshCommonInformation())
                 .AddTo(this.Disposables);
 
-            this.CommonRating = new ReactiveProperty<int>(this.CommonRatingInner).AddTo(this.Disposables);
+            this.CommonRating = new ReactivePropertySlim<int>(this.CommonRatingInner).AddTo(this.Disposables);
             this.IsRatingUnknown = this.CommonRating.Select(x => x < 0)
-                .ToReadOnlyReactiveProperty().AddTo(this.Disposables);
+                .ToReadOnlyReactivePropertySlim().AddTo(this.Disposables);
 
             this.CommonRating.Subscribe(x =>
             {

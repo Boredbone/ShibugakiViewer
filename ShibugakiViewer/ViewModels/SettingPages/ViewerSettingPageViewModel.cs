@@ -17,39 +17,39 @@ namespace ShibugakiViewer.ViewModels.SettingPages
     class ViewerSettingPageViewModel : DisposableBase
     {
 
-        public ReactiveProperty<int> CursorKeyBind { get; }
+        public ReactivePropertySlim<int> CursorKeyBind { get; }
         [Range(64, 512)]
         public ReactiveProperty<int> ThumbnailSize { get; }
-        public ReactiveProperty<bool> IsAutoInformationPaneEnabled { get; }
+        public ReactivePropertySlim<bool> IsAutoInformationPaneEnabled { get; }
 
-        public ReactiveProperty<bool> IsDarkTheme { get; }
+        public ReactivePropertySlim<bool> IsDarkTheme { get; }
 
-        public ReactiveProperty<bool> IsGroupingEnabled { get; }
-        public ReactiveProperty<bool> RefreshLibraryCompletely { get; }
+        public ReactivePropertySlim<bool> IsGroupingEnabled { get; }
+        public ReactivePropertySlim<bool> RefreshLibraryCompletely { get; }
 
-        public ReactiveProperty<bool> IsFlipReversed { get; }
-        public ReactiveProperty<bool> IsAnimatedGifEnabled { get; }
-        public ReactiveProperty<bool> IsExifOrientationDisabled { get; }
-        public ReactiveProperty<bool> IsOpenNavigationWithSingleTapEnabled { get; }
-        public ReactiveProperty<bool> UseExtendedMouseButtonsToSwitchImage { get; }
-        public ReactiveProperty<bool> RefreshLibraryOnLaunched { get; }
-        public ReactiveProperty<bool> IsLibraryRefreshStatusVisible { get; }
-        public ReactiveProperty<bool> IsFolderUpdatedNotificationVisible { get; }
-        public ReactiveProperty<bool> IsViewerMoveButtonDisabled { get; }
-        public ReactiveProperty<bool> IsCheckFileShellInformation { get; }
+        public ReactivePropertySlim<bool> IsFlipReversed { get; }
+        public ReactivePropertySlim<bool> IsAnimatedGifEnabled { get; }
+        public ReactivePropertySlim<bool> IsExifOrientationDisabled { get; }
+        public ReactivePropertySlim<bool> IsOpenNavigationWithSingleTapEnabled { get; }
+        public ReactivePropertySlim<bool> UseExtendedMouseButtonsToSwitchImage { get; }
+        public ReactivePropertySlim<bool> RefreshLibraryOnLaunched { get; }
+        public ReactivePropertySlim<bool> IsLibraryRefreshStatusVisible { get; }
+        public ReactivePropertySlim<bool> IsFolderUpdatedNotificationVisible { get; }
+        public ReactivePropertySlim<bool> IsViewerMoveButtonDisabled { get; }
+        public ReactivePropertySlim<bool> IsCheckFileShellInformation { get; }
 
-        public ReactiveProperty<bool> IsFill { get; }
-        public ReactiveProperty<bool> IsResizingAlways { get; }
-        public ReactiveProperty<bool> IsSlideshowFullScreen { get; }
-        public ReactiveProperty<bool> UseLogicalPixel { get; }
+        public ReactivePropertySlim<bool> IsFill { get; }
+        public ReactivePropertySlim<bool> IsResizingAlways { get; }
+        public ReactivePropertySlim<bool> IsSlideshowFullScreen { get; }
+        public ReactivePropertySlim<bool> UseLogicalPixel { get; }
 
-        public ReactiveProperty<double> AnimationTimeSec { get; }
-        public ReactiveProperty<int> FlipTimeSec { get; }
+        public ReactivePropertySlim<double> AnimationTimeSec { get; }
+        public ReactivePropertySlim<int> FlipTimeSec { get; }
 
-        public ReactiveProperty<Color> BackColor { get; }
+        public ReactivePropertySlim<Color> BackColor { get; }
 
-        public ReactiveProperty<bool> IsVersionCheckEnabled { get; }
-        public ReactiveProperty<int> ScalingMode { get; }
+        public ReactivePropertySlim<bool> IsVersionCheckEnabled { get; }
+        public ReactivePropertySlim<int> ScalingMode { get; }
 
 
         public ViewerSettingPageViewModel()
@@ -64,92 +64,92 @@ namespace ShibugakiViewer.ViewModels.SettingPages
                 .AddTo(this.Disposables);
 
             this.IsAutoInformationPaneEnabled = core
-                .ToReactivePropertyAsSynchronized(x => x.IsAutoInformationPaneDisabled, x => !x, x => !x)
+                .ToReactivePropertySlimAsSynchronized(x => x.IsAutoInformationPaneDisabled, x => !x, x => !x)
                 .AddTo(this.Disposables);
 
             this.IsDarkTheme = core
-                .ToReactivePropertyAsSynchronized(x => x.IsDarkTheme)
+                .ToReactivePropertySlimAsSynchronized(x => x.IsDarkTheme)
                 .AddTo(this.Disposables);
 
             this.BackColor = core
-                .ToReactivePropertyAsSynchronized(x => x.BackgroundColor)
+                .ToReactivePropertySlimAsSynchronized(x => x.BackgroundColor)
                 .AddTo(this.Disposables);
 
 
             this.IsGroupingEnabled = library
-                .ToReactivePropertyAsSynchronized(x => x.IsGroupingEnabled)
+                .ToReactivePropertySlimAsSynchronized(x => x.IsGroupingEnabled)
                 .AddTo(this.Disposables);
 
             this.RefreshLibraryCompletely = library
-                .ToReactivePropertyAsSynchronized(x => x.RefreshLibraryCompletely)
+                .ToReactivePropertySlimAsSynchronized(x => x.RefreshLibraryCompletely)
                 .AddTo(this.Disposables);
 
             this.IsFlipReversed = core
-                .ToReactivePropertyAsSynchronized(x => x.IsFlipReversed)
+                .ToReactivePropertySlimAsSynchronized(x => x.IsFlipReversed)
                 .AddTo(this.Disposables);
             this.IsAnimatedGifEnabled = core
-                .ToReactivePropertyAsSynchronized(x => x.IsAnimatedGifEnabled)
+                .ToReactivePropertySlimAsSynchronized(x => x.IsAnimatedGifEnabled)
                 .AddTo(this.Disposables);
             this.IsExifOrientationDisabled = core
-                .ToReactivePropertyAsSynchronized(x => x.IsExifOrientationDisabled)
+                .ToReactivePropertySlimAsSynchronized(x => x.IsExifOrientationDisabled)
                 .AddTo(this.Disposables);
             this.IsOpenNavigationWithSingleTapEnabled = core
-                .ToReactivePropertyAsSynchronized(x => x.IsOpenNavigationWithSingleTapEnabled)
+                .ToReactivePropertySlimAsSynchronized(x => x.IsOpenNavigationWithSingleTapEnabled)
                 .AddTo(this.Disposables);
             this.UseExtendedMouseButtonsToSwitchImage = core
-                .ToReactivePropertyAsSynchronized(x => x.UseExtendedMouseButtonsToSwitchImage)
+                .ToReactivePropertySlimAsSynchronized(x => x.UseExtendedMouseButtonsToSwitchImage)
                 .AddTo(this.Disposables);
             this.RefreshLibraryOnLaunched = core
-                .ToReactivePropertyAsSynchronized(x => x.RefreshLibraryOnLaunched)
+                .ToReactivePropertySlimAsSynchronized(x => x.RefreshLibraryOnLaunched)
                 .AddTo(this.Disposables);
             this.IsLibraryRefreshStatusVisible = core
-                .ToReactivePropertyAsSynchronized(x => x.IsLibraryRefreshStatusVisible)
+                .ToReactivePropertySlimAsSynchronized(x => x.IsLibraryRefreshStatusVisible)
                 .AddTo(this.Disposables);
             this.IsFolderUpdatedNotificationVisible = core
-                .ToReactivePropertyAsSynchronized(x => x.IsFolderUpdatedNotificationVisible)
+                .ToReactivePropertySlimAsSynchronized(x => x.IsFolderUpdatedNotificationVisible)
                 .AddTo(this.Disposables);
 
             this.IsViewerMoveButtonDisabled = core
-                .ToReactivePropertyAsSynchronized(x => x.IsViewerMoveButtonDisabled)
+                .ToReactivePropertySlimAsSynchronized(x => x.IsViewerMoveButtonDisabled)
                 .AddTo(this.Disposables);
 
             this.IsFill = core
-                .ToReactivePropertyAsSynchronized(x => x.IsSlideshowResizeToFill)
+                .ToReactivePropertySlimAsSynchronized(x => x.IsSlideshowResizeToFill)
                 .AddTo(this.Disposables);
 
             this.IsResizingAlways = core
-                .ToReactivePropertyAsSynchronized(x => x.IsSlideshowResizingAlways)
+                .ToReactivePropertySlimAsSynchronized(x => x.IsSlideshowResizingAlways)
                 .AddTo(this.Disposables);
 
             this.IsSlideshowFullScreen = core
-                .ToReactivePropertyAsSynchronized(x => x.IsSlideshowFullScreen)
+                .ToReactivePropertySlimAsSynchronized(x => x.IsSlideshowFullScreen)
                 .AddTo(this.Disposables);
 
             this.UseLogicalPixel = core
-                .ToReactivePropertyAsSynchronized(x => x.UseLogicalPixel)
+                .ToReactivePropertySlimAsSynchronized(x => x.UseLogicalPixel)
                 .AddTo(this.Disposables);
 
             this.IsCheckFileShellInformation = library
-                .ToReactivePropertyAsSynchronized(x => x.CheckFileShellInformation)
+                .ToReactivePropertySlimAsSynchronized(x => x.CheckFileShellInformation)
                 .AddTo(this.Disposables);
 
 
-            this.AnimationTimeSec = core.ToReactivePropertyAsSynchronized
+            this.AnimationTimeSec = core.ToReactivePropertySlimAsSynchronized
                 (x => x.SlideshowAnimationTimeMillisec, x => x / 1000.0, x => (int)(x * 1000.0))
                 .AddTo(this.Disposables);
 
 
-            this.FlipTimeSec = core.ToReactivePropertyAsSynchronized
+            this.FlipTimeSec = core.ToReactivePropertySlimAsSynchronized
                 (x => x.SlideshowFlipTimeMillisec, x => x / 1000, x => x * 1000).AddTo(this.Disposables);
 
             this.CursorKeyBind = core
-                .ToReactivePropertyAsSynchronized(x => x.CursorKeyBind).AddTo(this.Disposables);
+                .ToReactivePropertySlimAsSynchronized(x => x.CursorKeyBind).AddTo(this.Disposables);
 
-            this.IsVersionCheckEnabled = core.ToReactivePropertyAsSynchronized
+            this.IsVersionCheckEnabled = core.ToReactivePropertySlimAsSynchronized
                 (x => x.SkipVersionCheck, x => !x, x => !x).AddTo(this.Disposables);
 
             this.ScalingMode = core
-                .ToReactivePropertyAsSynchronized(x => x.ScalingMode)
+                .ToReactivePropertySlimAsSynchronized(x => x.ScalingMode)
                 .AddTo(this.Disposables);
             
         }

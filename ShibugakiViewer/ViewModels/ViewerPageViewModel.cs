@@ -33,56 +33,56 @@ namespace ShibugakiViewer.ViewModels
         private const double edgeTapThreshold = 0.2;
         private const double zoomFactorDisplayTime = 1500.0;
 
-        public ReadOnlyReactiveProperty<Record> Record => this.client.ViewerDisplaying;
-        public ReactiveProperty<double> ZoomFactor { get; }
+        public ReadOnlyReactivePropertySlim<Record> Record => this.client.ViewerDisplaying;
+        public ReactivePropertySlim<double> ZoomFactor { get; }
         public ReadOnlyReactivePropertySlim<double> CurrentZoomFactorPercent { get; }
-        public ReactiveProperty<double> DesiredZoomFactor { get; }
-        public ReactiveProperty<double> DisplayZoomFactor { get; }
-        public ReactiveProperty<Visibility> ZoomFactorVisibility { get; }
-        public ReactiveProperty<bool> IsImageChanging { get; }
+        public ReactivePropertySlim<double> DesiredZoomFactor { get; }
+        public ReadOnlyReactivePropertySlim<double> DisplayZoomFactor { get; }
+        public ReadOnlyReactivePropertySlim<Visibility> ZoomFactorVisibility { get; }
+        public ReactivePropertySlim<bool> IsImageChanging { get; }
 
-        public ReactiveProperty<bool> IsInHorizontalMirror { get; }
-        public ReactiveProperty<bool> IsInVerticalMirror { get; }
-        public ReactiveProperty<bool> IsAutoScalingEnabled { get; }
+        public ReactivePropertySlim<bool> IsInHorizontalMirror { get; }
+        public ReactivePropertySlim<bool> IsInVerticalMirror { get; }
+        public ReactivePropertySlim<bool> IsAutoScalingEnabled { get; }
 
         public ReactiveProperty<long> DisplayIndex { get; }
-        public ReadOnlyReactiveProperty<long> Length { get; }
+        public ReadOnlyReactivePropertySlim<long> Length { get; }
 
-        public ReactiveProperty<bool> IsRandom { get; }
+        public ReactivePropertySlim<bool> IsRandom { get; }
         private readonly RandomNumber randomNumber;
         
-        public ReactiveCommand TapCommand { get; }
-        public ReactiveCommand PointerMoveCommand { get; }
-        public ReactiveCommand OpenPaneCommand { get; }
-        public ReactiveCommand TogglePaneCommand { get; }
-        public ReactiveCommand BackCommand { get; }
+        public ReactiveCommandSlim TapCommand { get; }
+        public ReactiveCommandSlim<object?> PointerMoveCommand { get; }
+        public ReactiveCommandSlim<object?> OpenPaneCommand { get; }
+        public ReactiveCommandSlim<object?> TogglePaneCommand { get; }
+        public ReactiveCommandSlim<object?> BackCommand { get; }
+                              
+        public ReactiveCommandSlim<object?> MoveToGroupCommand { get; }
+                              
+                              
+        public ReactiveCommandSlim<object?> HorizontalMirrorCommand { get; }
+        public ReactiveCommandSlim<object?> VerticalMirrorCommand { get; }
+        public ReactiveCommandSlim<object?> RotateCwCommand { get; }
+        public ReactiveCommandSlim<object?> RotateCcwCommand { get; }
+        public ReactivePropertySlim<bool> IsTransformDialogEnabled { get; }
 
-        public ReactiveCommand MoveToGroupCommand { get; }
+        public ReactivePropertySlim<double> ViewWidth { get; }
+        public ReactivePropertySlim<double> ViewHeight { get; }
+        public ReadOnlyReactivePropertySlim<bool> UsePhysicalPixel { get; }
+        public ReadOnlyReactivePropertySlim<int> ScalingMode { get; }
 
+        public ReactivePropertySlim<bool> IsTopBarOpen { get; }
+        public ReactivePropertySlim<bool> IsTopBarFixed { get; }
+        public ReadOnlyReactivePropertySlim<Visibility> SplitViewButtonVisibility { get; }
 
-        public ReactiveCommand HorizontalMirrorCommand { get; }
-        public ReactiveCommand VerticalMirrorCommand { get; }
-        public ReactiveCommand RotateCwCommand { get; }
-        public ReactiveCommand RotateCcwCommand { get; }
-        public ReactiveProperty<bool> IsTransformDialogEnabled { get; }
+        public ReactivePropertySlim<bool> IsScrollRequested { get; }
+        public ReactivePropertySlim<int> Orientation { get; }
 
-        public ReactiveProperty<double> ViewWidth { get; }
-        public ReactiveProperty<double> ViewHeight { get; }
-        public ReadOnlyReactiveProperty<bool> UsePhysicalPixel { get; }
-        public ReadOnlyReactiveProperty<int> ScalingMode { get; }
+        public ReactivePropertySlim<bool> IsGifAnimationEnabled { get; }
+        public ReactivePropertySlim<bool> IsExifOrientationDisabled { get; }
 
-        public ReactiveProperty<bool> IsTopBarOpen { get; }
-        public ReactiveProperty<bool> IsTopBarFixed { get; }
-        public ReactiveProperty<Visibility> SplitViewButtonVisibility { get; }
-
-        public ReactiveProperty<bool> IsScrollRequested { get; }
-        public ReactiveProperty<int> Orientation { get; }
-
-        public ReactiveProperty<bool> IsGifAnimationEnabled { get; }
-        public ReactiveProperty<bool> IsExifOrientationDisabled { get; }
-
-        public ReadOnlyReactiveProperty<bool> IsFill { get; }
-        public ReadOnlyReactiveProperty<bool> IsZoomoutOnly { get; }
+        public ReadOnlyReactivePropertySlim<bool> IsFill { get; }
+        public ReadOnlyReactivePropertySlim<bool> IsZoomoutOnly { get; }
 
         public ReactiveProperty<bool> IsSlideshowPlaying { get; }
         private Subject<Unit> SlideshowSubject { get; }
@@ -97,12 +97,12 @@ namespace ShibugakiViewer.ViewModels
         public Action<object, MouseEventArgs> PointerDownAction { get; }
         public Action<object, MouseEventArgs> PointerUpAction { get; }
         
-        public ReactiveProperty<bool> IsLeftButtonEnter { get; }
-        public ReactiveProperty<bool> IsRightButtonEnter { get; }
-        public ReactiveProperty<bool> IsLeftButtonPressed { get; }
-        public ReactiveProperty<bool> IsRightButtonPressed { get; }
+        public ReactivePropertySlim<bool> IsLeftButtonEnter { get; }
+        public ReactivePropertySlim<bool> IsRightButtonEnter { get; }
+        public ReactivePropertySlim<bool> IsLeftButtonPressed { get; }
+        public ReactivePropertySlim<bool> IsRightButtonPressed { get; }
 
-        public ReadOnlyReactiveProperty<Visibility> MoveButtonVisibility { get; }
+        public ReadOnlyReactivePropertySlim<Visibility> MoveButtonVisibility { get; }
 
         private readonly ClientWindowViewModel parent;
         private readonly Client client;
@@ -133,11 +133,11 @@ namespace ShibugakiViewer.ViewModels
             })
             .AddTo(this.Disposables);
 
-            this.Length = client.Length.ToReadOnlyReactiveProperty().AddTo(this.Disposables);
+            this.Length = client.Length.ToReadOnlyReactivePropertySlim().AddTo(this.Disposables);
 
             this.randomNumber = new RandomNumber();
             this.IsRandom = parent.Core
-                .ToReactivePropertyAsSynchronized(x => x.IsSlideshowRandom).AddTo(this.Disposables);
+                .ToReactivePropertySlimAsSynchronized(x => x.IsSlideshowRandom).AddTo(this.Disposables);
             
             this.IsRandom.Select(_ => Unit.Default)
                 .Merge(this.Length.Select(_ => Unit.Default))
@@ -164,15 +164,15 @@ namespace ShibugakiViewer.ViewModels
             
 
 
-            this.ZoomFactor = new ReactiveProperty<double>().AddTo(this.Disposables);
-            this.DesiredZoomFactor = new ReactiveProperty<double>(0.0).AddTo(this.Disposables);
+            this.ZoomFactor = new ReactivePropertySlim<double>().AddTo(this.Disposables);
+            this.DesiredZoomFactor = new ReactivePropertySlim<double>(0.0).AddTo(this.Disposables);
 
             this.CurrentZoomFactorPercent = this.ZoomFactor
                 .Select(x => x * 100.0)
                 .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.Disposables);
 
-            this.DisplayZoomFactor = this.CurrentZoomFactorPercent.ToReactiveProperty().AddTo(this.Disposables);
+            this.DisplayZoomFactor = this.CurrentZoomFactorPercent.ToReadOnlyReactivePropertySlim().AddTo(this.Disposables);
 
             this.DisplayZoomFactor.Where(x => x != this.CurrentZoomFactorPercent.Value)
                 .Subscribe(x => this.ChangeZoomFactor(x / 100.0))
@@ -181,15 +181,15 @@ namespace ShibugakiViewer.ViewModels
             this.UsePhysicalPixel = parent.Core
                 .ObserveProperty(x => x.UseLogicalPixel)
                 .Select(x => !x)
-                .ToReadOnlyReactiveProperty()
+                .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.Disposables);
 
             this.ScalingMode = parent.Core
                 .ObserveProperty(x => x.ScalingMode)
-                .ToReadOnlyReactiveProperty()
+                .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.Disposables);
 
-            this.IsImageChanging = new ReactiveProperty<bool>().AddTo(this.Disposables);
+            this.IsImageChanging = new ReactivePropertySlim<bool>().AddTo(this.Disposables);
 
             //拡大率表示ポップアップ
             this.ZoomFactorVisibility = this.ZoomFactor.Select(x => true)
@@ -197,27 +197,27 @@ namespace ShibugakiViewer.ViewModels
                 .Where(x => !this.IsImageChanging.Value)
                 .Merge(this.IsImageChanging.Where(x => x).Select(x => !x))
                 .Select(x => VisibilityHelper.Set(x))
-                .ToReactiveProperty(Visibility.Collapsed)
+                .ToReadOnlyReactivePropertySlim(Visibility.Collapsed)
                 .AddTo(this.Disposables);
 
             this.IsGifAnimationEnabled = parent.Core
-                .ToReactivePropertyAsSynchronized(x => x.IsAnimatedGifEnabled)
+                .ToReactivePropertySlimAsSynchronized(x => x.IsAnimatedGifEnabled)
                 .AddTo(this.Disposables);
 
             this.IsExifOrientationDisabled = parent.Core
-                .ToReactivePropertyAsSynchronized(x => x.IsExifOrientationDisabled)
+                .ToReactivePropertySlimAsSynchronized(x => x.IsExifOrientationDisabled)
                 .AddTo(this.Disposables);
 
 
             this.IsFill = parent.Core
                 .ObserveProperty(x => x.IsSlideshowResizeToFill)
-                .ToReadOnlyReactiveProperty()
+                .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.Disposables);
 
             this.IsZoomoutOnly = parent.Core
                 .ObserveProperty(x => x.IsSlideshowResizingAlways)
                 .Select(x => !x)
-                .ToReadOnlyReactiveProperty()
+                .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.Disposables);
 
             parent.MouseExButtonPressed
@@ -240,34 +240,36 @@ namespace ShibugakiViewer.ViewModels
             
 
 
-            this.ViewWidth = new ReactiveProperty<double>().AddTo(this.Disposables);
+            this.ViewWidth = new ReactivePropertySlim<double>().AddTo(this.Disposables);
             this.ViewWidth.Subscribe(x => client.ViewWidth = x).AddTo(this.Disposables);
-            this.ViewHeight = new ReactiveProperty<double>().AddTo(this.Disposables);
+            this.ViewHeight = new ReactivePropertySlim<double>().AddTo(this.Disposables);
             this.ViewHeight.Subscribe(x => client.ViewHeight = x).AddTo(this.Disposables);
             
-            this.IsInHorizontalMirror = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
-            this.IsInVerticalMirror = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
-            this.IsAutoScalingEnabled = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
-            this.Orientation = new ReactiveProperty<int>().AddTo(this.Disposables);
+            this.IsInHorizontalMirror = new ReactivePropertySlim<bool>(false).AddTo(this.Disposables);
+            this.IsInVerticalMirror = new ReactivePropertySlim<bool>(false).AddTo(this.Disposables);
+            this.IsAutoScalingEnabled = new ReactivePropertySlim<bool>(false).AddTo(this.Disposables);
+            this.Orientation = new ReactivePropertySlim<int>().AddTo(this.Disposables);
 
-            this.IsScrollRequested = new ReactiveProperty<bool>().AddTo(this.Disposables);
+            this.IsScrollRequested = new ReactivePropertySlim<bool>().AddTo(this.Disposables);
 
-            this.IsTopBarOpen = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
+            this.IsTopBarOpen = new ReactivePropertySlim<bool>(false).AddTo(this.Disposables);
             this.IsTopBarFixed = parent.Core
-                .ToReactivePropertyAsSynchronized(x => x.IsViewerPageTopBarFixed)
+                .ToReactivePropertySlimAsSynchronized(x => x.IsViewerPageTopBarFixed)
                 .AddTo(this.Disposables);
             if (this.IsTopBarFixed.Value)
             {
                 this.IsTopBarOpen.Value = true;
             }
 
-            this.OpenPaneCommand = new ReactiveCommand()
-                .WithSubscribe(_ => parent.TogglePane(OptionPaneType.ItemInfo), this.Disposables);
+            this.OpenPaneCommand = new ReactiveCommandSlim()
+                .WithSubscribe(_ => parent.TogglePane(OptionPaneType.ItemInfo))
+                .AddTo(this.Disposables);
 
-            this.TogglePaneCommand = new ReactiveCommand()
-                .WithSubscribe(_ => this.TogglePane(), this.Disposables);
+            this.TogglePaneCommand = new ReactiveCommandSlim()
+                .WithSubscribe(_ => this.TogglePane())
+                .AddTo(this.Disposables);
 
-            this.TapCommand = new ReactiveCommand().AddTo(this.Disposables);
+            this.TapCommand = new ReactiveCommandSlim().AddTo(this.Disposables);
 
             var tapped = this.TapCommand.OfType<ViewerTapEventArgs>()
                 .Publish().RefCount();
@@ -313,7 +315,7 @@ namespace ShibugakiViewer.ViewModels
                 .AddTo(this.Disposables);
 
 
-            this.PointerMoveCommand = new ReactiveCommand()
+            this.PointerMoveCommand = new ReactiveCommandSlim()
                 .WithSubscribe(x =>
                 {
                     var y = ((Point)x).Y;
@@ -333,17 +335,19 @@ namespace ShibugakiViewer.ViewModels
                         }
                         this.topBarOpenedByPointer = false;
                     }
-                }, this.Disposables);
+                })
+                .AddTo(this.Disposables);
 
 
             this.BackCommand = client.BackHistoryCount
                 .Select(x => x > 0)
-                .ToReactiveCommand()
-                .WithSubscribe(_ => client.Back(), this.Disposables);
+                .ToReactiveCommandSlim()
+                .WithSubscribe(_ => client.Back())
+                .AddTo(this.Disposables);
 
             this.SplitViewButtonVisibility = parent.IsPaneFixed
                 .Select(x => VisibilityHelper.Set(!x))
-                .ToReactiveProperty()
+                .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.Disposables);
 
             this.IsSlideshowPlaying = this.client.SelectedPage
@@ -395,19 +399,26 @@ namespace ShibugakiViewer.ViewModels
 
             // Transform Dialog
 
-            this.IsTransformDialogEnabled = new ReactiveProperty<bool>(true).AddTo(this.Disposables);
+            this.IsTransformDialogEnabled = new ReactivePropertySlim<bool>(true).AddTo(this.Disposables);
 
-            this.VerticalMirrorCommand = new ReactiveCommand()
-                .WithSubscribe(_ => { this.VerticalMirror(); this.HidePopup(); }, this.Disposables);
-            this.HorizontalMirrorCommand = new ReactiveCommand()
-                .WithSubscribe(_ => { this.HorizontalMirror(); this.HidePopup(); }, this.Disposables);
-            this.RotateCwCommand = new ReactiveCommand()
-                .WithSubscribe(_ => { this.Rotate(1); this.HidePopup(); }, this.Disposables);
-            this.RotateCcwCommand = new ReactiveCommand()
-                .WithSubscribe(_ => { this.Rotate(-1); this.HidePopup(); }, this.Disposables);
+            this.VerticalMirrorCommand = new ReactiveCommandSlim()
+                .WithSubscribe(_ => { this.VerticalMirror(); this.HidePopup(); })
+                .AddTo(this.Disposables);
+            this.HorizontalMirrorCommand = new ReactiveCommandSlim()
+                .WithSubscribe(_ => { this.HorizontalMirror(); this.HidePopup(); })
+                .AddTo(this.Disposables);
+            this.RotateCwCommand = new ReactiveCommandSlim()
+                .WithSubscribe(_ => { this.Rotate(1); this.HidePopup(); })
+                .AddTo(this.Disposables);
+            this.RotateCcwCommand = new ReactiveCommandSlim()
+                .WithSubscribe(_ => { this.Rotate(-1); this.HidePopup(); })
+                .AddTo(this.Disposables);
 
-            this.MoveToGroupCommand = this.Record.Select(x => x?.IsGroup ?? false).ToReactiveCommand()
-                .WithSubscribe(_ => this.client.DisplayGroup(0), this.Disposables);
+            this.MoveToGroupCommand = this.Record
+                .Select(x => x?.IsGroup ?? false)
+                .ToReactiveCommandSlim()
+                .WithSubscribe(_ => this.client.DisplayGroup(0))
+                .AddTo(this.Disposables);
 
             this.CheckHorizontalScrollRequestFunction = () =>
             {
@@ -444,14 +455,14 @@ namespace ShibugakiViewer.ViewModels
             this.MoveButtonVisibility = parent.Core
                 .ObserveProperty(x => x.IsViewerMoveButtonDisabled)
                 .Select(x => VisibilityHelper.Set(!x))
-                .ToReadOnlyReactiveProperty()
+                .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.Disposables);
 
             
-            this.IsLeftButtonEnter = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
-            this.IsRightButtonEnter = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
-            this.IsLeftButtonPressed = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
-            this.IsRightButtonPressed = new ReactiveProperty<bool>(false).AddTo(this.Disposables);
+            this.IsLeftButtonEnter = new ReactivePropertySlim<bool>(false).AddTo(this.Disposables);
+            this.IsRightButtonEnter = new ReactivePropertySlim<bool>(false).AddTo(this.Disposables);
+            this.IsLeftButtonPressed = new ReactivePropertySlim<bool>(false).AddTo(this.Disposables);
+            this.IsRightButtonPressed = new ReactivePropertySlim<bool>(false).AddTo(this.Disposables);
 
             this.PointerMoveAction = (o, e) =>
             {

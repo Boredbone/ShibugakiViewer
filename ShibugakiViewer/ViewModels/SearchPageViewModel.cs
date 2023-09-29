@@ -29,25 +29,25 @@ namespace ShibugakiViewer.ViewModels
     {
         public ReactiveProperty<SearchInformation> CurrentSearch { get; }
 
-        public DelegateCommand StartSearchCommand { get; }
-        public DelegateCommand AddCriteriaCommand { get; }
-        public DelegateCommand AddToFavoriteCommand { get; }
-        public DelegateCommand SwitchModeCommand { get; }
-        public DelegateCommand<ISqlSearch> ItemClickCommand { get; }
-        public DelegateCommand NewSearchCommand { get; }
+        public ReactiveCommandSlim StartSearchCommand { get; }
+        public ReactiveCommandSlim AddCriteriaCommand { get; }
+        public ReactiveCommandSlim AddToFavoriteCommand { get; }
+        public ReactiveCommandSlim SwitchModeCommand { get; }
+        public ReactiveCommandSlim<ISqlSearch> ItemClickCommand { get; }
+        public ReactiveCommandSlim NewSearchCommand { get; }
 
         public ReactivePropertySlim<bool> IsEditing { get; }
         public ReadOnlyReactivePropertySlim<bool> IsThumbnailVisible { get; }
 
-        public ReactiveCommand SelectHistoryCommand { get; }
-        public ReactiveCommand SelectFavoriteCommand { get; }
-        public DelegateCommand<SearchInformation> ClickHistoryCommand { get; }
-        public DelegateCommand<SearchInformation> ClickFavoriteCommand { get; }
-        public DelegateCommand ShowHistoryCommand { get; }
-        public DelegateCommand ShowFavoriteCommand { get; }
+        public ReactiveCommandSlim SelectHistoryCommand { get; }
+        public ReactiveCommandSlim SelectFavoriteCommand { get; }
+        public ReactiveCommandSlim<SearchInformation> ClickHistoryCommand { get; }
+        public ReactiveCommandSlim<SearchInformation> ClickFavoriteCommand { get; }
+        public ReactiveCommandSlim ShowHistoryCommand { get; }
+        public ReactiveCommandSlim ShowFavoriteCommand { get; }
 
-        public DelegateCommand UpFavoriteCommand { get; }
-        public DelegateCommand DownFavoriteCommand { get; }
+        public ReactiveCommandSlim UpFavoriteCommand { get; }
+        public ReactiveCommandSlim DownFavoriteCommand { get; }
 
 
         public ReadOnlyReactiveCollection<SearchInformation> HistoryList { get; }
@@ -85,9 +85,9 @@ namespace ShibugakiViewer.ViewModels
 
             this.IsEditing = new ReactivePropertySlim<bool>(false).AddTo(this.Disposables);
 
-            
-            this.SelectHistoryCommand = new ReactiveCommand().AddTo(this.Disposables);
-            this.SelectFavoriteCommand = new ReactiveCommand().AddTo(this.Disposables);
+
+            this.SelectHistoryCommand = new ReactiveCommandSlim().AddTo(this.Disposables);
+            this.SelectFavoriteCommand = new ReactiveCommandSlim().AddTo(this.Disposables);
 
             var hitoryItem = this.SelectHistoryCommand
                 .OfType<SearchInformation>()
@@ -95,7 +95,7 @@ namespace ShibugakiViewer.ViewModels
 
             var favoriteItem = this.SelectFavoriteCommand
                 .OfType<SearchInformation>();
-            
+
             this.CurrentSearch = Observable
                 .Merge(hitoryItem, favoriteItem)//, newItem)
                 .ToReactiveProperty(SearchInformation.GenerateEmpty())
@@ -155,59 +155,68 @@ namespace ShibugakiViewer.ViewModels
 
 
 
-            this.ClickHistoryCommand = new DelegateCommand<SearchInformation>(x =>
-            {
-                if (x == null)
+            this.ClickHistoryCommand = new ReactiveCommandSlim<SearchInformation>()
+                .WithSubscribe(x =>
                 {
-                    return;
-                }
-                if (!this.IsEditing.Value
-                    || this.CurrentSearch.Value == null
-                    || this.CurrentSearch.Value.Key.IsNullOrEmpty()
-                    || this.CurrentSearch.Value.Key.Equals(x.Key))
-                {
-                    this.StartSearch(client, x);
-                }
-                else
-                {
-                    this.SelectHistoryCommand.Execute(x);
-                }
-            });
+                    if (x == null)
+                    {
+                        return;
+                    }
+                    if (!this.IsEditing.Value
+                        || this.CurrentSearch.Value == null
+                        || this.CurrentSearch.Value.Key.IsNullOrEmpty()
+                        || this.CurrentSearch.Value.Key.Equals(x.Key))
+                    {
+                        this.StartSearch(client, x);
+                    }
+                    else
+                    {
+                        this.SelectHistoryCommand.Execute(x);
+                    }
+                })
+                .AddTo(this.Disposables);
 
-            this.ClickFavoriteCommand = new DelegateCommand<SearchInformation>(x =>
-            {
-                if (x == null)
+            this.ClickFavoriteCommand = new ReactiveCommandSlim<SearchInformation>()
+                .WithSubscribe(x =>
                 {
-                    return;
-                }
-                if (!this.IsEditing.Value
-                    || this.CurrentSearch.Value == null
-                    || this.CurrentSearch.Value.Key.IsNullOrEmpty()
-                    || this.CurrentSearch.Value.Key.Equals(x.Key))
+                    if (x == null)
+                    {
+                        return;
+                    }
+                    if (!this.IsEditing.Value
+                        || this.CurrentSearch.Value == null
+                        || this.CurrentSearch.Value.Key.IsNullOrEmpty()
+                        || this.CurrentSearch.Value.Key.Equals(x.Key))
+                    {
+                        this.StartSearch(client, x);
+                    }
+                    else
+                    {
+                        this.SelectFavoriteCommand.Execute(x);
+                    }
+                })
+                .AddTo(this.Disposables);
+
+            this.StartSearchCommand = new ReactiveCommandSlim()
+                .WithSubscribe(() => this.StartSearch(client, this.CurrentSearch.Value))
+                .AddTo(this.Disposables);
+
+            this.AddCriteriaCommand = new ReactiveCommandSlim()
+                .WithSubscribe(() => this.EditSearch(this.CurrentSearch.Value.Root))
+                .AddTo(this.Disposables);
+
+            this.ItemClickCommand = new ReactiveCommandSlim<ISqlSearch>()
+                .WithSubscribe(search =>
                 {
-                    this.StartSearch(client, x);
-                }
-                else
-                {
-                    this.SelectFavoriteCommand.Execute(x);
-                }
-            });
+                    if (search != null)
+                    {
+                        this.EditSearch(search);
+                    }
+                })
+                .AddTo(this.Disposables);
 
-            this.StartSearchCommand = new DelegateCommand
-                (() => this.StartSearch(client, this.CurrentSearch.Value));
-
-            this.AddCriteriaCommand = new DelegateCommand
-                (() => this.EditSearch(this.CurrentSearch.Value.Root));
-
-            this.ItemClickCommand = new DelegateCommand<ISqlSearch>(search =>
-            {
-                if (search != null)
-                {
-                    this.EditSearch(search);
-                }
-            });
-
-            this.AddToFavoriteCommand = new DelegateCommand(() =>
+            this.AddToFavoriteCommand = new ReactiveCommandSlim()
+                .WithSubscribe(() =>
                 {
                     var item = this.CurrentSearch.Value;
                     if (item == null)
@@ -224,10 +233,12 @@ namespace ShibugakiViewer.ViewModels
                         searcher.MarkSearchFavorite(item);
                     }
 
-                });
+                })
+                .AddTo(this.Disposables);
 
 
-            this.SwitchModeCommand = new DelegateCommand(()=>
+            this.SwitchModeCommand = new ReactiveCommandSlim()
+                .WithSubscribe(() =>
                 {
                     var item = this.CurrentSearch.Value;
                     if (item == null)
@@ -236,30 +247,41 @@ namespace ShibugakiViewer.ViewModels
                     }
 
                     item.Root.IsOr = !item.Root.IsOr;
-                });
+                })
+                .AddTo(this.Disposables);
 
-            this.NewSearchCommand = new DelegateCommand
-                (() => this.CurrentSearch.Value = SearchInformation.GenerateEmpty());
+            this.NewSearchCommand = new ReactiveCommandSlim()
+                .WithSubscribe
+                (() => this.CurrentSearch.Value = SearchInformation.GenerateEmpty())
+                .AddTo(this.Disposables);
 
-            this.ShowFavoriteCommand = new DelegateCommand
-                (() => this.SelectedTab.Value = TabMode.Favorite);
-            this.ShowHistoryCommand = new DelegateCommand
-                (() => this.SelectedTab.Value = TabMode.History);
+            this.ShowFavoriteCommand = new ReactiveCommandSlim()
+                .WithSubscribe
+                (() => this.SelectedTab.Value = TabMode.Favorite)
+                .AddTo(this.Disposables);
+            this.ShowHistoryCommand = new ReactiveCommandSlim()
+                .WithSubscribe
+                (() => this.SelectedTab.Value = TabMode.History)
+                .AddTo(this.Disposables);
 
-            this.UpFavoriteCommand = new DelegateCommand(() =>
-            {
-                if (this.IsFavoriteSearch.Value)
+            this.UpFavoriteCommand = new ReactiveCommandSlim()
+                .WithSubscribe(() =>
                 {
-                    searcher.MoveFavoriteItem(this.CurrentSearch.Value, -1, IsCtrlOrShiftKeyPressed());
-                }
-            });
-            this.DownFavoriteCommand = new DelegateCommand(() =>
-            {
-                if (this.IsFavoriteSearch.Value)
+                    if (this.IsFavoriteSearch.Value)
+                    {
+                        searcher.MoveFavoriteItem(this.CurrentSearch.Value, -1, IsCtrlOrShiftKeyPressed());
+                    }
+                })
+                .AddTo(this.Disposables);
+            this.DownFavoriteCommand = new ReactiveCommandSlim()
+                .WithSubscribe(() =>
                 {
-                    searcher.MoveFavoriteItem(this.CurrentSearch.Value, 1, IsCtrlOrShiftKeyPressed());
-                }
-            });
+                    if (this.IsFavoriteSearch.Value)
+                    {
+                        searcher.MoveFavoriteItem(this.CurrentSearch.Value, 1, IsCtrlOrShiftKeyPressed());
+                    }
+                })
+                .AddTo(this.Disposables);
         }
 
         private bool HasFavoriteSearch(SearchInformation search)

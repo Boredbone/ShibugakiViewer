@@ -183,9 +183,9 @@ namespace ShibugakiViewer.Views.Controls
 
         #region DockControl
 
-        public FrameworkElement DockControl
+        public FrameworkElement? DockControl
         {
-            get { return (FrameworkElement)GetValue(DockControlProperty); }
+            get { return (FrameworkElement?)GetValue(DockControlProperty); }
             set { SetValue(DockControlProperty, value); }
         }
 
@@ -522,7 +522,7 @@ namespace ShibugakiViewer.Views.Controls
         public void Show
             (FrameworkElement content, Thickness position,
             HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment,
-            FrameworkElement dock = null, bool isMaskVisible = true)
+            FrameworkElement? dock = null, bool isMaskVisible = true)
         {
             this.IsMasked = isMaskVisible;
             this.DockControl = dock;

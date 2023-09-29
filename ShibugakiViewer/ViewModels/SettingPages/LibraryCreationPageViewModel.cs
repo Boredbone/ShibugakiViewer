@@ -16,13 +16,13 @@ namespace ShibugakiViewer.ViewModels.SettingPages
 {
     class LibraryCreationPageViewModel : DisposableBase
     {
-        public ReactiveCommand RefreshLibraryCommand { get; }
+        public ReactiveCommandSlim<object?> RefreshLibraryCommand { get; }
 
-        public ReadOnlyReactiveProperty<string> LibraryRefreshStatus { get; }
-        public ReadOnlyReactiveProperty<int> MaxCount { get; }
-        public ReadOnlyReactiveProperty<int> CurrentCount { get; }
+        public ReadOnlyReactivePropertySlim<string?> LibraryRefreshStatus { get; }
+        public ReadOnlyReactivePropertySlim<int> MaxCount { get; }
+        public ReadOnlyReactivePropertySlim<int> CurrentCount { get; }
 
-        public ReactiveProperty<string> Text { get; }
+        public ReactivePropertySlim<string> Text { get; }
         
 
         public ReactiveCollection<LibraryUpdateHistoryItem> LibraryUpdateHistory 
@@ -35,22 +35,22 @@ namespace ShibugakiViewer.ViewModels.SettingPages
             this.core = ((App)Application.Current).Core;
             var library = core.Library;
 
-            this.Text = new ReactiveProperty<string>().AddTo(this.Disposables);
+            this.Text = new ReactivePropertySlim<string>().AddTo(this.Disposables);
             
 
             this.MaxCount = library.FileEnumerated
-                .ToReadOnlyReactiveProperty()
+                .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.Disposables);
 
             this.CurrentCount = library.FileLoaded
                 .Buffer(TimeSpan.FromMilliseconds(500))
                 .Where(x => x.Count > 0)
                 .Select(x => x.Last())
-                .ToReadOnlyReactiveProperty()
+                .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.Disposables);
 
             this.LibraryRefreshStatus = library.Loading
-                .ToReadOnlyReactiveProperty().AddTo(this.Disposables);
+                .ToReadOnlyReactivePropertySlim().AddTo(this.Disposables);
 
 
             library.Loaded
@@ -66,12 +66,13 @@ namespace ShibugakiViewer.ViewModels.SettingPages
 
             this.RefreshLibraryCommand = library.IsCreating
                 .Select(x => !x)
-                .ToReactiveCommand()
+                .ToReactiveCommandSlim()
                 .WithSubscribe(_ =>
                 {
                     this.Text.Value = "processing";
                     library.StartRefreshLibrary();
-                }, this.Disposables);
+                })
+                .AddTo(this.Disposables);
             
         }
     }
