@@ -13,75 +13,10 @@ using Database.Table;
 using ImageLibrary.Core;
 using ImageLibrary.File;
 using ImageLibrary.SearchProperty;
+using SerializerProtocol;
 
 namespace ImageLibrary.Search
 {
-    public class SearchNodeSerializable
-    {
-        public int Mode { get; set; }
-        public object Reference { get; set; }
-        public int Property { get; set; }
-        public bool IsOr { get; set; }
-        public List<SearchNodeSerializable> Children { get; set; }
-    }
-    public class SortSettingSerializable
-    {
-        public int Property { get; set; }
-        public bool IsDescending { get; set; }
-    }
-    public class SearchInformationSerializable
-    {
-        public SearchNodeSerializable Root { get; set; }
-        public List<SortSettingSerializable> SortSettings { get; set; }
-        public string Name { get; set; }
-        public string ThumbnailId { get; set; }
-
-    }
-    public class SearchRequest
-    {
-        public SearchInformationSerializable Info { get; set; }
-        public int Take { get; set; }
-        public int Skip { get; set; }
-
-    }
-    public class SearchResult
-    {
-        public List<RecordSerializable> Records { get; set; }
-        public int Offset { get; set; }
-        public int Total { get; set; }
-
-    }
-
-    public class RecordSerializable
-    {
-        public string? Id { get; set; }
-        public long DateCreated { get; set; }
-        public long DateModified { get; set; }
-        public long DateRegistered { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public long Size { get; set; }
-        public List<int>? Tags { get; set; }
-        public int Rating { get; set; }
-        public string? Directory { get; set; }
-        public bool IsGroup { get; set; }
-    }
-
-    public class TagInfo
-    {
-        public int Id { get; set; }
-        public string? Name { get; set; }
-    }
-
-    public class DatabaseUpdateRequest
-    {
-        public List<string>? Ids { get; set; }
-        public List<int>? TagsToAdd { get; set; }
-        public List<int>? TagsToRemove { get; set; }
-        public int? Rating { get; set; }
-
-    }
-
     /// <summary>
     /// 検索設定
     /// </summary>

@@ -39,4 +39,6 @@
     <ProjectReference Include="..\Database\Database.csproj" />
   </ItemGroup>
 
+  <Import Project="..\SerializerProtocol\SerializerProtocol.projitems" Label="Shared" />
+
 </Project>

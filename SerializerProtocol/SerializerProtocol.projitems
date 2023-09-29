@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>31b374c1-c534-410e-9e5b-e752f21aaae7</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>SerializerProtocol</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)DatabaseUpdateRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RecordSerializable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SearchRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TagInfo.cs" />
+  </ItemGroup>
+</Project>

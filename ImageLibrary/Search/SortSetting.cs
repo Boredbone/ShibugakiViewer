@@ -7,8 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Boredbone.Utility.Extensions;
 using Database.Search;
-using ImageLibrary.File;
 using ImageLibrary.SearchProperty;
+using SerializerProtocol;
 
 namespace ImageLibrary.Search
 {

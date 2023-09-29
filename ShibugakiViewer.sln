@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuntimeCheckerDesktop", "Ru
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreatePackage", "CreatePackage\CreatePackage.csproj", "{4332C772-E4DC-4295-9028-BBB1C42373C0}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SerializerProtocol", "SerializerProtocol\SerializerProtocol.shproj", "{31B374C1-C534-410E-9E5B-E752F21AAAE7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,5 +107,10 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9344425F-837A-4CB2-B0B9-692D67AC1DDD}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		SerializerProtocol\SerializerProtocol.projitems*{31b374c1-c534-410e-9e5b-e752f21aaae7}*SharedItemsImports = 13
+		SerializerProtocol\SerializerProtocol.projitems*{538b3a4d-3ede-4a5c-865f-7619e7a75977}*SharedItemsImports = 5
+		SerializerProtocol\SerializerProtocol.projitems*{5518b371-d822-455f-ae89-14dffd5914c3}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

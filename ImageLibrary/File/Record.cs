@@ -15,6 +15,7 @@ using ImageLibrary.Exif;
 using ImageLibrary.Search;
 using ImageLibrary.SearchProperty;
 using ImageLibrary.Tag;
+using SerializerProtocol;
 
 namespace ImageLibrary.File
 {
