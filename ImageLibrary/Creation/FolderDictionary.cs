@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Boredbone.Utility.Extensions;
 using Boredbone.Utility.Notification;
 using Boredbone.Utility.Tools;
+using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 
 namespace ImageLibrary.Creation
@@ -24,15 +25,22 @@ namespace ImageLibrary.Creation
         private Subject<FolderInformation> AddedSubject { get; }
         public IObservable<FolderInformation> Added => this.AddedSubject.AsObservable();
 
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
+        public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
         public int Count => this.registeredFolders.Count;
 
         private FolderWatcher FolderWatcher { get; }
-        public HashSet<string> FileTypeFilter { get; set; }
+        public HashSet<string>? FileTypeFilter { get; set; }
 
         private Subject<FolderUpdatedEventArgs> FolderUpdatedSubject { get; }
         public IObservable<FolderUpdatedEventArgs> FolderUpdated => this.FolderUpdatedSubject.AsObservable();
+
+        private readonly ReactivePropertySlim<bool> isFolderWatching = new(true);
+        public bool IsFolderWatching
+        {
+            get => this.isFolderWatching.Value;
+            set => this.isFolderWatching.Value = value;
+        }
 
         private int maxId = -1;
 
@@ -51,9 +59,25 @@ namespace ImageLibrary.Creation
             //フォルダ変更監視
             this.FolderWatcher = new FolderWatcher().AddTo(this.Disposables);
 
-            this.FolderWatcher.FolderChanged
+            //this.FolderWatcher.FolderChanged
+            //    .Where(x => x.ChangeType != WatcherChangeTypes.Changed)
+            //    .BufferUntilThrottle(TimeSpan.FromSeconds(4), true)
+            //    .Subscribe(x => this.CheckFolderUpdate(x))
+            //    .AddTo(this.Disposables);
+
+            var folderChangedEvent = this.FolderWatcher.FolderChanged
                 .Where(x => x.ChangeType != WatcherChangeTypes.Changed)
-                .BufferUntilThrottle(TimeSpan.FromSeconds(4), true)
+                .Publish().RefCount();
+
+            var bufferCondition = folderChangedEvent
+                .Select(_ => true)
+                .Where(_ => this.isFolderWatching.Value)
+                .Throttle(TimeSpan.FromSeconds(4))
+                .Merge(this.isFolderWatching.Where(x => x));
+
+            folderChangedEvent
+                .Buffer(bufferCondition)
+                .Where(x => x.Count > 0)
                 .Subscribe(x => this.CheckFolderUpdate(x))
                 .AddTo(this.Disposables);
         }
