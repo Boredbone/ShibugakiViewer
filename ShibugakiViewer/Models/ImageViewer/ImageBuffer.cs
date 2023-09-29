@@ -306,7 +306,8 @@ namespace ShibugakiViewer.Models.ImageViewer
         {
             if ((file != null || path != null) && !token.IsCancellationRequested)
             {
-                this.RequestLoadingMain(file, path, option, observer, hasPriority, token);
+                Task.Run(() =>
+                this.RequestLoadingMain(file, path, option, observer, hasPriority, token));
             }
         }
         

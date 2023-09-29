@@ -57,8 +57,34 @@ namespace ImageLibrary.Tag
             this.Tags.Add(item);
             this.CollectionChanged?.Invoke
                 (this, new NotifyCollectionChangedEventArgs
-                    (NotifyCollectionChangedAction.Reset));
-
+                (NotifyCollectionChangedAction.Reset));
+        }
+        public void Edit(IEnumerable<int>? addedTags, IEnumerable<int>? removedTags)
+        {
+            if (addedTags is not null)
+            {
+                foreach (var t in addedTags)
+                {
+                    if (!this.Tags.Contains(t))
+                    {
+                        this.Tags.Add(t);
+                    }
+                }
+            }
+            if (removedTags is not null)
+            {
+                foreach (var t in removedTags)
+                {
+                    if (this.Tags.Contains(t))
+                    {
+                        this.Tags.Remove(t);
+                    }
+                }
+            }
+            this.IsEdited = true;
+            this.CollectionChanged?.Invoke
+                (this, new NotifyCollectionChangedEventArgs
+                (NotifyCollectionChangedAction.Reset));
         }
 
         public void Remove(TagInformation tag)
@@ -75,7 +101,8 @@ namespace ImageLibrary.Tag
             this.IsEdited = true;
             this.Tags.Remove(item);
             this.CollectionChanged?.Invoke
-                (this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                (this, new NotifyCollectionChangedEventArgs
+                (NotifyCollectionChangedAction.Reset));
         }
 
         public void Toggle(TagInformation tag)

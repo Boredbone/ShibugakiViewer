@@ -80,6 +80,38 @@ namespace ImageLibrary.Core
         private bool _fieldCheckFileShellInformation;
 
 
+        [DataMember]
+        public string ThumbnailDirectory
+        {
+            get { return _fieldThumbnailDirectory; }
+            set
+            {
+                if (_fieldThumbnailDirectory != value)
+                {
+                    _fieldThumbnailDirectory = value;
+                    this.isChanged = true;
+                }
+            }
+        }
+        private string _fieldThumbnailDirectory;
+
+        [DataMember]
+        public string UploadedFileSaveDirectory
+        {
+            get { return _fieldUploadedFileSaveDirectory; }
+            set
+            {
+                if (_fieldUploadedFileSaveDirectory != value)
+                {
+                    _fieldUploadedFileSaveDirectory = value;
+                    this.isChanged = true;
+                }
+            }
+        }
+        private string _fieldUploadedFileSaveDirectory;
+
+
+
 
         private bool isChanged;
 
@@ -104,6 +136,9 @@ namespace ImageLibrary.Core
 
             this.IsGroupingEnabled = true;
             this.RefreshLibraryCompletely = false;
+
+            this.ThumbnailDirectory = string.Empty;
+            this.UploadedFileSaveDirectory = string.Empty;
         }
 
         /// <summary>

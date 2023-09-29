@@ -13,6 +13,7 @@ using Database.Table;
 using ImageLibrary.Core;
 using ImageLibrary.Exif;
 using ImageLibrary.Search;
+using ImageLibrary.SearchProperty;
 using ImageLibrary.Tag;
 
 namespace ImageLibrary.File
@@ -825,6 +826,24 @@ namespace ImageLibrary.File
 
 
         #endregion
+
+        public RecordSerializable ToSerializable()
+        {
+            return new RecordSerializable()
+            {
+                Id = System.Web.HttpUtility.UrlEncode(this.Id, Encoding.UTF8),
+                DateCreated = UnixTime.FromDateTime(this.DateCreated),
+                DateModified = UnixTime.FromDateTime(this.DateModified),
+                DateRegistered = UnixTime.FromDateTime(this.DateRegistered),
+                Width = this.Width,
+                Height = this.Height,
+                Size = this.Size,
+                Directory = this.Directory,
+                Rating = RateConvertingHelper.ToRating(this.Rating),
+                Tags = this.TagSet.Read().ToList(),
+                IsGroup = this.IsGroup,
+            };
+        }
 
         public override string ToString()
         {

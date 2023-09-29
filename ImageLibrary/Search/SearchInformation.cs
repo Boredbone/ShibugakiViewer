@@ -5,15 +5,83 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Boredbone.Utility.Extensions;
 using Database.Search;
 using Database.Table;
 using ImageLibrary.Core;
 using ImageLibrary.File;
+using ImageLibrary.SearchProperty;
 
 namespace ImageLibrary.Search
 {
+    public class SearchNodeSerializable
+    {
+        public int Mode { get; set; }
+        public object Reference { get; set; }
+        public int Property { get; set; }
+        public bool IsOr { get; set; }
+        public List<SearchNodeSerializable> Children { get; set; }
+    }
+    public class SortSettingSerializable
+    {
+        public int Property { get; set; }
+        public bool IsDescending { get; set; }
+    }
+    public class SearchInformationSerializable
+    {
+        public SearchNodeSerializable Root { get; set; }
+        public List<SortSettingSerializable> SortSettings { get; set; }
+        public string Name { get; set; }
+        public string ThumbnailId { get; set; }
+
+    }
+    public class SearchRequest
+    {
+        public SearchInformationSerializable Info { get; set; }
+        public int Take { get; set; }
+        public int Skip { get; set; }
+
+    }
+    public class SearchResult
+    {
+        public List<RecordSerializable> Records { get; set; }
+        public int Offset { get; set; }
+        public int Total { get; set; }
+
+    }
+
+    public class RecordSerializable
+    {
+        public string? Id { get; set; }
+        public long DateCreated { get; set; }
+        public long DateModified { get; set; }
+        public long DateRegistered { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public long Size { get; set; }
+        public List<int>? Tags { get; set; }
+        public int Rating { get; set; }
+        public string? Directory { get; set; }
+        public bool IsGroup { get; set; }
+    }
+
+    public class TagInfo
+    {
+        public int Id { get; set; }
+        public string? Name { get; set; }
+    }
+
+    public class DatabaseUpdateRequest
+    {
+        public List<string>? Ids { get; set; }
+        public List<int>? TagsToAdd { get; set; }
+        public List<int>? TagsToRemove { get; set; }
+        public int? Rating { get; set; }
+
+    }
+
     /// <summary>
     /// 検索設定
     /// </summary>
@@ -153,6 +221,154 @@ namespace ImageLibrary.Search
                 ThumbnailFilePath = this.ThumbnailFilePath,
                 Key = this.Key,
                 Name = this.Name,
+            };
+        }
+
+        private static ISqlSearch SearchNodeFromSerializable(SearchNodeSerializable obj)
+        {
+            if (obj.Property < 0)
+            {
+                var sc = new ComplexSearch(obj.IsOr);
+                if (obj.Children != null)
+                {
+                    foreach (var item in obj.Children)
+                    {
+                        var ch = SearchNodeFromSerializable(item);
+                        sc.Add(ch);
+                    }
+                }
+                return sc;
+            }
+            else
+            {
+                var prop = (FileProperty)obj.Property;
+
+                if (prop.IsDate())
+                {
+                    if (DateTimeOffset.TryParse(obj.Reference.ToString(), out var datetime))
+                    {
+                        return new UnitSearch()
+                        {
+                            Mode = (CompareMode)obj.Mode,
+                            Reference = datetime,
+                            Property = prop,
+                        };
+                    }
+                }
+                if(obj.Reference is JsonElement je)
+                {
+                    if (je.ValueKind == JsonValueKind.String)
+                    {
+                        return new UnitSearch()
+                        {
+                            Mode = (CompareMode)obj.Mode,
+                            Reference = je.ToString(),
+                            Property = prop,
+                        };
+                    }
+                    else if (je.ValueKind == JsonValueKind.Number)
+                    {
+                        if (prop.IsFloat())
+                        {
+                            if (je.TryGetDouble(out var num))
+                            {
+                                return new UnitSearch()
+                                {
+                                    Mode = (CompareMode)obj.Mode,
+                                    Reference = num,
+                                    Property = prop,
+                                };
+                            }
+                        }
+                        else
+                        {
+                            if (je.TryGetInt32(out var num))
+                            {
+                                return new UnitSearch()
+                                {
+                                    Mode = (CompareMode)obj.Mode,
+                                    Reference = num,
+                                    Property = prop,
+                                };
+                            }
+                        }
+                    }
+                    else if (je.ValueKind == JsonValueKind.True)
+                    {
+                        return new UnitSearch()
+                        {
+                            Mode = (CompareMode)obj.Mode,
+                            Reference = true,
+                            Property = prop,
+                        };
+                    }
+                    else if (je.ValueKind == JsonValueKind.False)
+                    {
+                        return new UnitSearch()
+                        {
+                            Mode = (CompareMode)obj.Mode,
+                            Reference = false,
+                            Property = prop,
+                        };
+                    }
+                    else if (je.ValueKind == JsonValueKind.Null)
+                    {
+                        return new UnitSearch()
+                        {
+                            Mode = (CompareMode)obj.Mode,
+                            Reference = null,
+                            Property = prop,
+                        };
+                    }
+                }
+                //Debug.WriteLine(obj.Reference.GetType());
+                return new UnitSearch()
+                {
+                    Mode = (CompareMode)obj.Mode,
+                    Reference = obj.Reference.ToString(),
+                    Property = prop,
+                };
+            }
+        }
+        public static SearchInformation FromSerializable(SearchInformationSerializable obj)
+        {
+            return new SearchInformation((ComplexSearch)SearchNodeFromSerializable(obj.Root))
+            {
+                SortSettings = obj.SortSettings.Select(x => SortSetting.FromSerializableObject(x)).ToList(),
+                ThumbnailFilePath = System.Web.HttpUtility.UrlDecode(obj.ThumbnailId),
+                Name = obj.Name,
+            };
+        }
+        private static SearchNodeSerializable SearchNodeToSerializable(ISqlSearch obj)
+        {
+            if (obj is ComplexSearch cmp)
+            {
+                return new SearchNodeSerializable()
+                {
+                    IsOr = cmp.IsOr,
+                    Children = cmp.Convert(SearchNodeToSerializable).ToList(),
+                    Property=-1,
+                };
+            }
+            else if (obj is UnitSearch unit)
+            {
+                return new SearchNodeSerializable()
+                {
+                    Mode = (int)unit.Mode,
+                    Reference = unit.Reference,
+                    Property = (int)unit.Property,
+                };
+            }
+            return null;
+        }
+        public SearchInformationSerializable ToSerializable()
+        {
+            return new SearchInformationSerializable()
+            {
+                Root = SearchNodeToSerializable(this.Root),
+                SortSettings = this.SortSettings.Select(x => x.ToSerializableObject()).ToList(),
+                Name = this.Name,
+                ThumbnailId = System.Web.HttpUtility.UrlEncode(this.ThumbnailFilePath),
             };
         }
 

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29326.143
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33502.453
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShibugakiViewer", "ShibugakiViewer\ShibugakiViewer.csproj", "{7379BEF1-334D-4813-B05B-8DD3F2C78A72}"
 EndProject
@@ -27,11 +27,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebpWrapperNetCore", "WebpW
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShibugakiViewer.Launcher.Net45", "ShibugakiViewer.Launcher.Net45\ShibugakiViewer.Launcher.Net45.csproj", "{A1DAE511-CB03-4206-8D46-ADC74761851E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuntimeCheckerCore", "RuntimeCheckerCore\RuntimeCheckerCore.csproj", "{CB900412-9B52-4B14-BACA-2BA227F36E6C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuntimeCheckerCore", "RuntimeCheckerCore\RuntimeCheckerCore.csproj", "{CB900412-9B52-4B14-BACA-2BA227F36E6C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuntimeCheckerDesktop", "RuntimeCheckerDesktop\RuntimeCheckerDesktop.csproj", "{C924821A-0191-4F20-8175-FD3077B1C1E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuntimeCheckerDesktop", "RuntimeCheckerDesktop\RuntimeCheckerDesktop.csproj", "{C924821A-0191-4F20-8175-FD3077B1C1E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreatePackage", "CreatePackage\CreatePackage.csproj", "{4332C772-E4DC-4295-9028-BBB1C42373C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreatePackage", "CreatePackage\CreatePackage.csproj", "{4332C772-E4DC-4295-9028-BBB1C42373C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

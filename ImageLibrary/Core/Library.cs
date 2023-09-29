@@ -71,6 +71,8 @@ namespace ImageLibrary.Core
         public GroupQuery GroupQuery { get; }
         public Grouping Grouping { get; }
 
+        public Func<string, string, Task<bool>>? CreateThumbnailFunc { get; set; } = null;
+
         private DatabaseFront Database { get; }
 
         private TypedTable<Record, string> Records { get; }
@@ -128,6 +130,32 @@ namespace ImageLibrary.Core
 
         private PropertiesLevel FileCheckLevel
             => this.CheckFileShellInformation ? PropertiesLevel.Shell : PropertiesLevel.Basic;
+
+        public string ThumbnailDirectory
+        {
+            get { return this.librarySettings.ThumbnailDirectory; }
+            set
+            {
+                if (this.librarySettings.ThumbnailDirectory != value)
+                {
+                    this.librarySettings.ThumbnailDirectory = value;
+                    RaisePropertyChanged(nameof(ThumbnailDirectory));
+                }
+            }
+        }
+
+        public string UploadedFileSaveDirectory
+        {
+            get { return this.librarySettings.UploadedFileSaveDirectory; }
+            set
+            {
+                if (this.librarySettings.UploadedFileSaveDirectory != value)
+                {
+                    this.librarySettings.UploadedFileSaveDirectory = value;
+                    RaisePropertyChanged(nameof(UploadedFileSaveDirectory));
+                }
+            }
+        }
 
 
 
@@ -1038,5 +1066,89 @@ namespace ImageLibrary.Core
             await this.LoadAsync();
         }
 
+        private async Task<bool> CreateThumbnailAsync(string id, string destPath)
+        {
+            if (this.CreateThumbnailFunc == null)
+            {
+                return false;
+            }
+            var record = await this.GetRecordAsync(id);
+
+            if (record == null)
+            {
+                return false;
+            }
+            var actPath = record.FullPath;
+            try
+            {
+                if (!System.IO.File.Exists(actPath))
+                {
+                    return false;
+                }
+                var result = await this.CreateThumbnailFunc(actPath, destPath);
+                return result;
+            }
+            catch
+            {
+            }
+            return false;
+        }
+
+        public async Task<string?> GetOrCreateThumbnailAsync(string id)
+        {
+            try
+            {
+                if (id.IsNullOrWhiteSpace()
+                    || this.ThumbnailDirectory.IsNullOrWhiteSpace()
+                    || !System.IO.Directory.Exists(this.ThumbnailDirectory))
+                {
+                    return null;
+                }
+                var filename = System.IO.Path.GetFileNameWithoutExtension(id);
+                if (filename.IsNullOrWhiteSpace())
+                {
+                    return null;
+                }
+                var hash = System.Security.Cryptography.MD5.HashData(Encoding.Unicode.GetBytes(id));
+                var hashStr = new StringBuilder();
+                for (int i = 0; i < hash.Length; i++)
+                {
+                    hashStr.Append(hash[i].ToString("x2"));
+                }
+
+                var directory = System.IO.Path.GetFullPath(System.IO.Path.Combine(
+                    this.ThumbnailDirectory,
+                    "shibugakiviewer/thumbs",
+                    hash[0].ToString("x2")));
+                //Debug.WriteLine($"dir={directory}");
+
+                System.IO.Directory.CreateDirectory(directory);
+
+                var suffix = (filename.Length <= 8) ? filename : filename.Substring(filename.Length - 8);
+
+                var thumbName = $"{hashStr.ToString()}{suffix}.jpeg";
+                var thumbPath = System.IO.Path.Combine(directory, thumbName);
+
+                Debug.WriteLine($"th={thumbPath}");
+
+                if (!System.IO.File.Exists(thumbPath))
+                {
+                    var created = await this.CreateThumbnailAsync(id, thumbPath);
+                    if (!created)
+                    {
+                        return null;
+                    }
+                }
+                if (System.IO.File.Exists(thumbPath))
+                {
+                    return thumbPath;
+                }
+            }
+            catch(Exception e)
+            {
+                Debug.WriteLine(e);
+            }
+            return null;
+        }
     }
 }

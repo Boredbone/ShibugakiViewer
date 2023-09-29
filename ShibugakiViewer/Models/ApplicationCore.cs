@@ -612,6 +612,8 @@ namespace ShibugakiViewer.Models
                 .Where(x => x != null)
                 .Publish().RefCount();
 
+            this.Library.CreateThumbnailFunc = (s, d) => ImageResize.Resize(s, d, 128);
+
             //リソースから文字列を取得
             this.InitializeResourceString();
 

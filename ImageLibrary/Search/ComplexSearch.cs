@@ -144,6 +144,11 @@ namespace ImageLibrary.Search
             return clone;
         }
 
+        public IEnumerable<T> Convert<T>(Func<ISqlSearch, T> converter)
+        {
+            return this.InnerChildren.Select(x => converter(x));
+        }
+
         public bool ValueEquals(ISqlSearch other)
         {
             if (object.ReferenceEquals(this, other))

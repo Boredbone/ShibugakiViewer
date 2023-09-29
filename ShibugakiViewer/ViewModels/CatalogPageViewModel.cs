@@ -157,7 +157,7 @@ namespace ShibugakiViewer.ViewModels
 
             //スクロールが落ち着いたら再読み込み
             this.StartIndex
-                .Throttle(TimeSpan.FromMilliseconds(3000))
+                .Throttle(TimeSpan.FromMilliseconds(2000))
                 .ObserveOnUIDispatcher()
                 .Subscribe(_ => this.RefreshTrigger = !this.RefreshTrigger)
                 .AddTo(this.Disposables);

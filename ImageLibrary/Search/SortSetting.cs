@@ -68,6 +68,15 @@ namespace ImageLibrary.Search
             return new SortSetting() { Property = property, IsDescending = isDescending };
         }
 
+        public static SortSetting FromSerializableObject(SortSettingSerializable obj)
+        {
+            return new SortSetting() { Property = (FileProperty)obj.Property, IsDescending = obj.IsDescending };
+        }
+        public SortSettingSerializable ToSerializableObject()
+        {
+            return new SortSettingSerializable() { Property = (int)this.Property, IsDescending = this.IsDescending };
+        }
+
         private string ToSql()
             => this.Property.ToSort(this.IsDescending);
 
