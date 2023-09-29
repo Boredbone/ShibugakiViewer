@@ -63,6 +63,8 @@ namespace ShibugakiViewer.Models
         public Version LatestReleasedVersion => this.versionCheck.LatestVersion;
         public Version AppCurrentVersion => this.versionCheck.CurrentVersion;
 
+        public static bool ExpandTagShortcut => false;
+
 
         public string AppName
         {

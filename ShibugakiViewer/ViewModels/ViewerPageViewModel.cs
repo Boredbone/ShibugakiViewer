@@ -606,13 +606,31 @@ namespace ShibugakiViewer.ViewModels
         }
 
 
+        private void ToggleTagWithShortCut(string code)
+        {
+            var tag = this.library.Tags.GetTag(code).Value;
+            var record = this.Record.Value;
+            if (record is not null && tag is not null)
+            {
+                record.TagSet.Toggle(tag);
+            }
+        }
         private void SetTagWithShortCut(string code)
         {
-            var res = this.library.Tags.GetTag(code).Value;
-
-            if (res != null)
+            var tag = this.library.Tags.GetTag(code).Value;
+            var record = this.Record.Value;
+            if (record is not null && tag is not null)
             {
-                this.ToggleTag(res);
+                record.TagSet.TryAdd(tag);
+            }
+        }
+        private void RemoveTagWithShortCut(string code)
+        {
+            var tag = this.library.Tags.GetTag(code).Value;
+            var record = this.Record.Value;
+            if (record is not null && tag is not null)
+            {
+                record.TagSet.Remove(tag);
             }
         }
 
@@ -897,10 +915,28 @@ namespace ShibugakiViewer.ViewModels
             //keyReceiver.Register(k => (int)k == 187, (t, key) => this.SetRating(true), pageFilter);
             //keyReceiver.Register(k => (int)k == 189, (t, key) => this.SetRating(false), pageFilter);
 
-            keyReceiver.Register(k => k >= Key.A && k <= Key.Z,
-                (t, key) => this.SetTagWithShortCut(((char)(key - Key.A + 'a')).ToString()),
-                cursorFilter);
+            if (ApplicationCore.ExpandTagShortcut)
+            {
+                keyReceiver.Register(k => k >= Key.A && k <= Key.Z,
+                    (t, key) => this.SetTagWithShortCut(((char)(key - Key.A + 'a')).ToString()),
+                    cursorFilter);
+                keyReceiver.Register(k => k >= Key.A && k <= Key.Z,
+                    (t, key) => this.SetTagWithShortCut("^" + ((char)(key - Key.A + 'a')).ToString()),
+                    cursorFilter, modifier: ModifierKeys.Shift);
 
+                keyReceiver.Register(k => k >= Key.A && k <= Key.Z,
+                    (t, key) => this.RemoveTagWithShortCut(((char)(key - Key.A + 'a')).ToString()),
+                    cursorFilter, modifier: ModifierKeys.Alt);
+                keyReceiver.Register(k => k >= Key.A && k <= Key.Z,
+                    (t, key) => this.RemoveTagWithShortCut("^" + ((char)(key - Key.A + 'a')).ToString()),
+                    cursorFilter, modifier: ModifierKeys.Control | ModifierKeys.Shift);
+            }
+            else
+            {
+                keyReceiver.Register(k => k >= Key.A && k <= Key.Z,
+                    (t, key) => this.ToggleTagWithShortCut(((char)(key - Key.A + 'a')).ToString()),
+                    cursorFilter);
+            }
 
             keyReceiver.Register(Key.H, (t, key) => this.HorizontalMirror(),
                 cursorFilter, modifier: ModifierKeys.Control);

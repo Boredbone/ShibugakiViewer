@@ -22,6 +22,7 @@ using System.Windows.Controls.Primitives;
 using System.Reactive.Disposables;
 using Reactive.Bindings.Extensions;
 using ShibugakiViewer.Models.Utility;
+using ShibugakiViewer.Models;
 
 namespace ShibugakiViewer.Views.Controls
 {
@@ -33,8 +34,11 @@ namespace ShibugakiViewer.Views.Controls
 
 
         public static string[] Alphabets { get; }
-            = Enumerable.Range('A', 'Z' - 'A' + 1)
-            .Select(x => Convert.ToChar(x).ToString()).Append(" ").ToArray();
+            = Enumerable.Range('A', 'Z' - 'A' + 1).Select(x => Convert.ToChar(x).ToString())
+            .Concat(Enumerable.Range('A', ApplicationCore.ExpandTagShortcut ? ('Z' - 'A' + 1) : 0)
+                .Select(x => "^" + Convert.ToChar(x).ToString()))
+            .Append(" ")
+            .ToArray();
 
         private readonly Dictionary<string, IDisposable> disposables;
 

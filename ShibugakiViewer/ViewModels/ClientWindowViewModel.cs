@@ -607,10 +607,12 @@ namespace ShibugakiViewer.ViewModels
             this.KeyReceiver.Register(Key.Escape,
                 (t, key) => this.ClosePopup(), isPopupOpenFilter, (int)KeyReceiverMode.PopupIsOpened);
 
-
-            this.KeyReceiver.Register(Key.Q,
-                (_, __) => ((App)Application.Current).ExitAll(),
-                0, modifier: ModifierKeys.Alt);
+            if (!ApplicationCore.ExpandTagShortcut)
+            {
+                this.KeyReceiver.Register(Key.Q,
+                    (_, __) => ((App)Application.Current).ExitAll(),
+                    0, modifier: ModifierKeys.Alt);
+            }
 
 #if DEBUG
             this.KeyReceiver.Register(Key.NumPad5,

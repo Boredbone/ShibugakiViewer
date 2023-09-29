@@ -280,7 +280,7 @@ namespace ShibugakiViewer.Views.Converters
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             var str = value?.ToString();
-            if (!str.IsNullOrWhiteSpace() && str.Length == 1)
+            if (!str.IsNullOrWhiteSpace() && (str.Length == 1 || (str.Length == 2 && str[0] == '^')))
             {
                 return str;
             }
