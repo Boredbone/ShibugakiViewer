@@ -72,6 +72,7 @@ namespace ImageLibrary.Core
         public Grouping Grouping { get; }
 
         public Func<string, string, Task<bool>>? CreateThumbnailFunc { get; set; } = null;
+        public Func<string, string, int, Task<bool>>? ConvertImageFileFunc { get; set; } = null;
 
         private DatabaseFront Database { get; }
 
@@ -153,6 +154,18 @@ namespace ImageLibrary.Core
                 {
                     this.librarySettings.UploadedFileSaveDirectory = value;
                     RaisePropertyChanged(nameof(UploadedFileSaveDirectory));
+                }
+            }
+        }
+        public string ConvertedFileSaveDirectory
+        {
+            get { return this.librarySettings.ConvertedFileSaveDirectory; }
+            set
+            {
+                if (this.librarySettings.ConvertedFileSaveDirectory != value)
+                {
+                    this.librarySettings.ConvertedFileSaveDirectory = value;
+                    RaisePropertyChanged(nameof(ConvertedFileSaveDirectory));
                 }
             }
         }
@@ -1094,13 +1107,15 @@ namespace ImageLibrary.Core
             return false;
         }
 
-        public async Task<string?> GetOrCreateThumbnailAsync(string id)
+
+        private static string? GetConvertedFilePath
+            (string? id, string? baseDirectory,string directoryName,string ext)
         {
             try
             {
                 if (id.IsNullOrWhiteSpace()
-                    || this.ThumbnailDirectory.IsNullOrWhiteSpace()
-                    || !System.IO.Directory.Exists(this.ThumbnailDirectory))
+                    || baseDirectory.IsNullOrWhiteSpace()
+                    || !System.IO.Directory.Exists(baseDirectory))
                 {
                     return null;
                 }
@@ -1109,7 +1124,7 @@ namespace ImageLibrary.Core
                 {
                     return null;
                 }
-                var hash = System.IO.Hashing.XxHash128.Hash(Encoding.Unicode.GetBytes(id));
+                var hash = System.IO.Hashing.XxHash3.Hash(Encoding.Unicode.GetBytes(id));
                 //var hash = System.Security.Cryptography.MD5.HashData(Encoding.Unicode.GetBytes(id));
                 var hashStr = new StringBuilder();
                 for (int i = 0; i < hash.Length; i++)
@@ -1118,8 +1133,8 @@ namespace ImageLibrary.Core
                 }
 
                 var directory = System.IO.Path.GetFullPath(System.IO.Path.Combine(
-                    this.ThumbnailDirectory,
-                    "shibugakiviewer/thumbs",
+                    baseDirectory,
+                    directoryName,
                     hash[0].ToString("x2")));
                 //Debug.WriteLine($"dir={directory}");
 
@@ -1127,11 +1142,25 @@ namespace ImageLibrary.Core
 
                 var suffix = (filename.Length <= 8) ? filename : filename.Substring(filename.Length - 8);
 
-                var thumbName = $"{hashStr.ToString()}{suffix}.jpeg";
-                var thumbPath = System.IO.Path.Combine(directory, thumbName);
+                var thumbName = $"{hashStr.ToString()}{suffix}.{ext}";
+                return System.IO.Path.Combine(directory, thumbName);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+            }
+            return null;
+        }
 
-                Debug.WriteLine($"th={thumbPath}");
 
+        public async Task<string?> GetOrCreateThumbnailAsync(string? id)
+        {
+            var thumbPath = GetConvertedFilePath
+                (id, this.ThumbnailDirectory, "shibugakiviewer/thumbs", "jpeg");
+            if (thumbPath.IsNullOrWhiteSpace()) { return null; }
+
+            try
+            {
                 if (!System.IO.File.Exists(thumbPath))
                 {
                     var created = await this.CreateThumbnailAsync(id, thumbPath);
@@ -1150,6 +1179,65 @@ namespace ImageLibrary.Core
                 Debug.WriteLine(e);
             }
             return null;
+        }
+        private async Task<string?> GetOrCreateConvertedFileMainAsync(Record record)
+        {
+            if (record?.FullPath is null)
+            {
+                return null;
+            }
+            if (record.Width < 2000 && record.Height < 2000)
+            {
+                return null;
+            }
+            var ext = System.IO.Path.GetExtension(record.FullPath).ToLower();
+            if (ext != ".avif")
+            {
+                return null;
+            }
+            var convPath = GetConvertedFilePath
+                (record.FullPath, this.ConvertedFileSaveDirectory, "shibugakiviewer/converted", "png");
+            if (convPath.IsNullOrWhiteSpace())
+            {
+                return null;
+            }
+
+            try
+            {
+                if (!System.IO.File.Exists(convPath)
+                    && this.ConvertImageFileFunc is not null
+                    && System.IO.File.Exists(record.FullPath))
+                {
+                    var created = await this.ConvertImageFileFunc(record.FullPath, convPath, 1280);
+                    if (!created)
+                    {
+                        return null;
+                    }
+                }
+                if (System.IO.File.Exists(convPath))
+                {
+                    return convPath;
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+            }
+            return null;
+        }
+        public async Task<string?> GetOrCreateConvertedFileAsync(string? id)
+        {
+            if (id.IsNullOrWhiteSpace())
+            {
+                return null;
+            }
+            var record = await this.GetRecordAsync(id);
+            if (record?.FullPath is null)
+            {
+                return null;
+            }
+            var path = await GetOrCreateConvertedFileMainAsync(record);
+            return path ?? record.FullPath;
         }
     }
 }

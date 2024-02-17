@@ -110,6 +110,20 @@ namespace ImageLibrary.Core
         }
         private string _fieldUploadedFileSaveDirectory;
 
+        [DataMember]
+        public string ConvertedFileSaveDirectory
+        {
+            get { return _fieldConvertedFileSaveDirectory; }
+            set
+            {
+                if (_fieldConvertedFileSaveDirectory != value)
+                {
+                    _fieldConvertedFileSaveDirectory = value;
+                    this.isChanged = true;
+                }
+            }
+        }
+        private string _fieldConvertedFileSaveDirectory;
 
 
 
@@ -139,6 +153,7 @@ namespace ImageLibrary.Core
 
             this.ThumbnailDirectory = string.Empty;
             this.UploadedFileSaveDirectory = string.Empty;
+            this.ConvertedFileSaveDirectory = string.Empty;
         }
 
         /// <summary>

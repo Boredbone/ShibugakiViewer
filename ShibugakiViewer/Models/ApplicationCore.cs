@@ -614,7 +614,8 @@ namespace ShibugakiViewer.Models
                 .Where(x => x != null)
                 .Publish().RefCount();
 
-            this.Library.CreateThumbnailFunc = (s, d) => ImageResize.Resize(s, d, 128);
+            this.Library.CreateThumbnailFunc = (s, d) => ImageResize.Resize(s, d, 128, true);
+            this.Library.ConvertImageFileFunc = (s, d, l) => ImageResize.Resize(s, d, l, false);
 
             //リソースから文字列を取得
             this.InitializeResourceString();
@@ -636,7 +637,6 @@ namespace ShibugakiViewer.Models
 
             this.isChanged = true;
             this.PropertyChangedAsObservable().Subscribe(x => this.isChanged = true).AddTo(this.Disposables);
-
 
             var libraryHasItem = this.Library.HasItems();
 
