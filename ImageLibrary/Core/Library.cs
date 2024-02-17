@@ -510,7 +510,7 @@ namespace ImageLibrary.Core
             }
         }
 
-        public async Task<string[]> GetRegionIdsMainAsync
+        public async Task<string[]?> GetRegionIdsMainAsync
             (IDbConnection connection, ISearchCriteria criteria, long index1, long index2, IDatabaseExpression filter)
         {
 
@@ -523,18 +523,11 @@ namespace ImageLibrary.Core
 
             var startIndex = index1;
             var endIndex = index2;
-            //var startRecord = record1;
-            //var endRecord = record2;
-
-            if (index2 < index1)
+            if (endIndex < startIndex)
             {
-                startIndex = index2;
-                endIndex = index1;
-                //startRecord = record2;
-                //endRecord = record1;
+                (endIndex, startIndex) = (startIndex, endIndex);
             }
-
-            if (index2 - index1 == 1)
+            if (endIndex - startIndex == 1)
             {
                 return null;
             }

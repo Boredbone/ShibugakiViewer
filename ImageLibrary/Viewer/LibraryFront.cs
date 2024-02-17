@@ -659,7 +659,7 @@ namespace ImageLibrary.Viewer
         /// 全て選択
         /// </summary>
         /// <returns></returns>
-        public Task<string[]> GetAllIdsAsync()
+        public Task<string[]?> GetAllIdsAsync()
         {
             return Task.Run(async () =>
             {
@@ -683,7 +683,7 @@ namespace ImageLibrary.Viewer
         /// <param name="start"></param>
         /// <param name="end"></param>
         /// <returns></returns>
-        public Task<string[]> GetRegionIdsAsync(Record start, Record end)
+        public Task<string[]?> GetRegionIdsAsync(Record start, Record end)
         {
             return Task.Run(async () =>
             {

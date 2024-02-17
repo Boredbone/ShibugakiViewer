@@ -722,7 +722,10 @@ namespace ShibugakiViewer.Models
             }
 
             var ids = await this.front.GetRegionIdsAsync(this.SelectedItems.LastSelectedItem, item);
-            this.SelectedItems.AddRange(ids);
+            if (ids is not null)
+            {
+                this.SelectedItems.AddRange(ids);
+            }
             this.SelectedItems.AddOrReplace(item);
         }
 

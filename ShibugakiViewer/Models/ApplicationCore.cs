@@ -876,7 +876,7 @@ namespace ShibugakiViewer.Models
         /// <param name="defaultPath"></param>
         /// <param name="lastSelectedPath"></param>
         /// <returns></returns>
-        public bool AddFolder(string defaultPath, out string lastSelectedPath)
+        public bool AddFolder(string defaultPath, out string? lastSelectedPath)
         {
 #if true
             lastSelectedPath = null;
