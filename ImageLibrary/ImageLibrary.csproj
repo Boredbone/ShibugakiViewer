@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <Authors>Boredbone</Authors>
-    <Version>2.1.0</Version>
+    <Version>3.0.0</Version>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
@@ -25,14 +25,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.0.151" />
+    <PackageReference Include="Dapper" Version="2.1.28" />
     <PackageReference Include="ExifLib.Standard" Version="1.7.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="ReactiveProperty" Version="9.3.2" />
+    <PackageReference Include="ReactiveProperty" Version="9.4.1" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118" />
     <PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />
     <PackageReference Include="System.Interactive" Version="6.0.1" />
-    <PackageReference Include="System.IO.Hashing" Version="8.0.0-preview.3.23174.8" />
+    <PackageReference Include="System.IO.Hashing" Version="8.0.0" />
     <PackageReference Include="System.Reactive" Version="6.0.0" />
   </ItemGroup>
 

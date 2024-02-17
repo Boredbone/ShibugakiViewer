@@ -2,17 +2,19 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon>Assets\Icons\appicon.ico</ApplicationIcon>
-    <Version>2.1.0</Version>
+    <Version>3.0.0</Version>
     <Description>Image Database</Description>
     <Copyright>Boredbone 2019</Copyright>
     <Authors>Boredbone</Authors>
     <EnableDefaultApplicationDefinition>false</EnableDefaultApplicationDefinition>
     <RollForward>Major</RollForward>
     <Nullable>enable</Nullable>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -31,19 +33,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.0.151" />
+    <PackageReference Include="Dapper" Version="2.1.28" />
     <PackageReference Include="ExifLib.Standard" Version="1.7.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
-    <PackageReference Include="ReactiveProperty" Version="9.3.2" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
+    <PackageReference Include="ReactiveProperty" Version="9.4.1" />
     <PackageReference Include="RestoreWindowPlace" Version="2.1.0" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118" />
-    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.2" />
     <PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />
     <PackageReference Include="System.Interactive" Version="6.0.1" />
     <PackageReference Include="System.Reactive" Version="6.0.0" />
-    <PackageReference Include="System.ServiceModel.Syndication" Version="7.0.0" />
-    <PackageReference Include="XamlAnimatedGif" Version="2.2.0" />
+    <PackageReference Include="System.ServiceModel.Syndication" Version="8.0.0" />
+    <PackageReference Include="XamlAnimatedGif" Version="2.2.3" />
   </ItemGroup>
 
   <ItemGroup>
