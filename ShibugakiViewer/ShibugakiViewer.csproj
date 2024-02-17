@@ -49,6 +49,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AvifDecoder\AvifDecoder.csproj" />
     <ProjectReference Include="..\CsCommon\CsCommon.csproj" />
     <ProjectReference Include="..\Database\Database.csproj" />
     <ProjectReference Include="..\ImageLibrary\ImageLibrary.csproj" />
