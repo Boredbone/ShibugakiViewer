@@ -379,9 +379,9 @@ namespace ShibugakiViewer
         {
             ClientWindow window;// = new ClientWindow(PageType.Viewer, 1) { ShowActivated = true };
 
-            if (files != null && files.Count(x => x.HasText()) == 1)
+            if (files != null && files.Any(x => x.HasText()))
             {
-                window = new ClientWindow(PageType.Viewer, 2) { ShowActivated = true };
+                window = new ClientWindow(PageType.Viewer, 1) { ShowActivated = true };
             }
             else
             {
